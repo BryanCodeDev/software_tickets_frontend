@@ -232,21 +232,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                   </div>
                 </div>
 
-                {/* Stats */}
-                <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-3 gap-2">
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-purple-600">--</p>
-                    <p className="text-xs text-gray-500">Tickets</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-indigo-600">--</p>
-                    <p className="text-xs text-gray-500">Resueltos</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-green-600">Online</p>
-                    <p className="text-xs text-gray-500">Estado</p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

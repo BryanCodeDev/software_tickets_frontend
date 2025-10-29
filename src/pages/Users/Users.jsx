@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { usersAPI } from '../../api';
+import { inventoryAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { FaUsers, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 
@@ -8,13 +9,17 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const [formData, setFormData] = useState({ username: '', email: '', roleId: 1 });
+  const [formData, setFormData] = useState({ username: '', name: '', email: '', password: '', roleId: 1, it: '' });
   const [formLoading, setFormLoading] = useState(false);
+  const [uniqueITs, setUniqueITs] = useState([]);
+  const [inventoryItems, setInventoryItems] = useState([]);
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
     if (user && user.role?.name === 'Administrador') {
       fetchUsers();
+      fetchUniqueITs();
+      fetchInventoryItems();
     }
   }, [user]);
 
@@ -29,15 +34,40 @@ const Users = () => {
     }
   };
 
+  const fetchUniqueITs = async () => {
+    try {
+      const data = await inventoryAPI.fetchUniqueITs();
+      setUniqueITs(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchInventoryItems = async () => {
+    try {
+      const data = await inventoryAPI.fetchInventory();
+      setInventoryItems(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleCreate = () => {
     setEditingUser(null);
-    setFormData({ username: '', email: '', roleId: 1 });
+    setFormData({ username: '', name: '', email: '', password: '', roleId: 1, it: '' });
     setShowModal(true);
   };
 
   const handleEdit = (usr) => {
     setEditingUser(usr);
-    setFormData({ username: usr.username, email: usr.email, roleId: usr.roleId });
+    setFormData({
+      username: usr.username,
+      name: usr.name || '',
+      email: usr.email,
+      password: '',
+      roleId: usr.roleId,
+      it: usr.it || ''
+    });
     setShowModal(true);
   };
 
@@ -57,14 +87,12 @@ const Users = () => {
     setFormLoading(true);
     try {
       if (editingUser) {
-        await usersAPI.updateUser(editingUser.id, formData);
+        await usersAPI.updateUser(editingUser.id, { roleId: formData.roleId, it: formData.it });
       } else {
-        // For create, need to add password, but since it's admin, perhaps generate or require
-        // For simplicity, assume password is handled separately or use a default
         await fetch('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...formData, password: 'defaultpassword' }),
+          body: JSON.stringify(formData),
         });
       }
       fetchUsers();
@@ -130,8 +158,10 @@ const Users = () => {
                       </span>
                     </div>
                     <div className="space-y-2 text-sm text-gray-600 mb-4">
+                      <p><strong>Nombre:</strong> {usr.name || usr.username}</p>
                       <p><strong>Email:</strong> {usr.email}</p>
                       <p><strong>Rol:</strong> {usr.Role?.name}</p>
+                      <p><strong>IT:</strong> {usr.it ? `${usr.it} (${inventoryItems.find(item => item.it === usr.it)?.area || 'Sin área'})` : 'No asignado'}</p>
                     </div>
                     <div className="flex space-x-2">
                       <button
@@ -189,6 +219,22 @@ const Users = () => {
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                   required
+                  disabled={editingUser}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nombre *
+                </label>
+                <input
+                  type="text"
+                  placeholder="Nombre completo"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                  required
+                  disabled={editingUser}
                 />
               </div>
 
@@ -203,8 +249,25 @@ const Users = () => {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                   required
+                  disabled={editingUser}
                 />
               </div>
+
+              {!editingUser && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Contraseña *
+                  </label>
+                  <input
+                    type="password"
+                    placeholder="Contraseña"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                    required
+                  />
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -218,6 +281,22 @@ const Users = () => {
                   <option value={1}>Administrador</option>
                   <option value={2}>Técnico</option>
                   <option value={3}>Empleado</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  IT del Computador
+                </label>
+                <select
+                  value={formData.it}
+                  onChange={(e) => setFormData({ ...formData, it: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                >
+                  <option value="">Seleccionar IT</option>
+                  {uniqueITs.map((item) => (
+                    <option key={item.it} value={item.it}>{item.it} ({item.area})</option>
+                  ))}
                 </select>
               </div>
 

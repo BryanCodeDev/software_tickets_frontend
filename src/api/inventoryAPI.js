@@ -85,6 +85,16 @@ const inventoryAPI = {
       throw error;
     }
   },
+
+  fetchUniqueITs: async () => {
+    try {
+      const response = await api.get('/inventory/unique/its');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching unique ITs:', error);
+      throw error;
+    }
+  },
 };
 
 export default inventoryAPI;
