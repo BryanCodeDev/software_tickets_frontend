@@ -1,28 +1,39 @@
 import React, { useContext, useState, useEffect } from 'react';
 import AuthContext from '../context/AuthContext.jsx';
-import { usersAPI } from '../api';
+import { usersAPI, inventoryAPI } from '../api';
 
 const Profile = () => {
   const { user, updateUser } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
-    department: ''
+    username: '',
+    it: ''
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [uniqueITs, setUniqueITs] = useState([]);
 
   useEffect(() => {
     if (user) {
       setFormData({
         name: user.name || '',
         email: user.email || '',
-        phone: user.phone || '',
-        department: user.department || ''
+        username: user.username || '',
+        it: user.it || ''
       });
     }
+    fetchUniqueITs();
   }, [user]);
+
+  const fetchUniqueITs = async () => {
+    try {
+      const data = await inventoryAPI.fetchUniqueITs();
+      setUniqueITs(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -88,28 +99,33 @@ const Profile = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Teléfono
+                Nombre de Usuario
               </label>
               <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
+                type="text"
+                name="username"
+                value={formData.username}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                required
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Departamento
+                Código IT
               </label>
-              <input
-                type="text"
-                name="department"
-                value={formData.department}
+              <select
+                name="it"
+                value={formData.it}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              />
+              >
+                <option value="">Seleccionar IT</option>
+                {uniqueITs.map((item) => (
+                  <option key={item.it} value={item.it}>{item.it} ({item.area})</option>
+                ))}
+              </select>
             </div>
           </div>
 
