@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import AuthContext from '../context/AuthContext.jsx';
 
@@ -17,14 +17,13 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       </svg>
     ),
     label: 'Panel Principal',
-    description: 'Vista general'
+    description: 'Vista general del sistema'
   });
 
   // Role-based menu items
   const role = user?.role?.name;
 
   if (role === 'Administrador') {
-    // Full access
     menuItems.push(
       {
         path: '/tickets',
@@ -34,7 +33,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </svg>
         ),
         label: 'Tickets',
-        description: 'Gestión de incidencias'
+        description: 'Gestión de incidencias IT'
       },
       {
         path: '/inventory',
@@ -44,18 +43,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </svg>
         ),
         label: 'Inventario',
-        description: 'Control de activos'
-      },
-      {
-        path: '/repository',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z" />
-          </svg>
-        ),
-        label: 'Repositorio',
-        description: 'Archivos compartidos'
+        description: 'Control de activos tecnológicos'
       },
       {
         path: '/documents',
@@ -65,7 +53,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </svg>
         ),
         label: 'Documentos',
-        description: 'Documentos oficiales'
+        description: 'Archivos oficiales y políticas'
       },
       {
         path: '/credentials',
@@ -75,7 +63,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </svg>
         ),
         label: 'Credenciales',
-        description: 'Gestión de accesos'
+        description: 'Gestión segura de accesos'
       },
       {
         path: '/users',
@@ -85,11 +73,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </svg>
         ),
         label: 'Usuarios',
-        description: 'Gestión de usuarios'
+        description: 'Administración de usuarios'
       }
     );
   } else if (role === 'Técnico') {
-    // Técnico: Tickets, Inventory, Documents, Repository
     menuItems.push(
       {
         path: '/tickets',
@@ -99,7 +86,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </svg>
         ),
         label: 'Tickets',
-        description: 'Gestión de incidencias'
+        description: 'Gestión de incidencias IT'
       },
       {
         path: '/inventory',
@@ -109,18 +96,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </svg>
         ),
         label: 'Inventario',
-        description: 'Control de activos'
-      },
-      {
-        path: '/repository',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z" />
-          </svg>
-        ),
-        label: 'Repositorio',
-        description: 'Documentación técnica'
+        description: 'Control de activos tecnológicos'
       },
       {
         path: '/documents',
@@ -134,7 +110,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       }
     );
   } else if (role === 'Empleado') {
-    // Empleado/Solicitante: Tickets, Documents (public), Repository (public)
     menuItems.push(
       {
         path: '/tickets',
@@ -144,18 +119,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </svg>
         ),
         label: 'Tickets',
-        description: 'Crear y seguir tickets'
-      },
-      {
-        path: '/repository',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z" />
-          </svg>
-        ),
-        label: 'Repositorio',
-        description: 'Documentos públicos'
+        description: 'Crear y seguir solicitudes'
       },
       {
         path: '/documents',
@@ -170,6 +134,17 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     );
   }
 
+  const getRoleBadge = (roleName) => {
+    const badges = {
+      'Administrador': { color: 'from-red-500 to-pink-600', icon: '👑', text: 'Admin' },
+      'Técnico': { color: 'from-blue-500 to-cyan-600', icon: '🔧', text: 'Tech' },
+      'Empleado': { color: 'from-green-500 to-emerald-600', icon: '👤', text: 'User' }
+    };
+    return badges[roleName] || badges['Empleado'];
+  };
+
+  const roleBadge = getRoleBadge(role);
+
   return (
     <>
       {/* Mobile Overlay */}
@@ -182,25 +157,29 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
       {/* Sidebar */}
       <aside className={`
-        fixed lg:static inset-y-0 left-0 z-50 w-64 sm:w-72 lg:w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out
+        fixed lg:static inset-y-0 left-0 z-50 w-72 lg:w-80 bg-gradient-to-b from-gray-50 to-white border-r border-gray-200 shadow-xl lg:shadow-none transform transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-4 sm:p-6 border-b border-gray-200 bg-linear-to-br from-purple-50 to-white">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2 sm:space-x-3">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform">
-                  <span className="text-white font-bold text-lg sm:text-xl">D</span>
+          <div className="relative p-6 bg-gradient-to-br from-purple-600 via-violet-600 to-indigo-600 overflow-hidden">
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+            
+            <div className="relative flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-200">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-br from-purple-600 to-violet-600 font-bold text-2xl">D</span>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-lg sm:text-xl font-bold text-gray-900 truncate">Duvy Class</h2>
-                  <p className="text-xs sm:text-sm text-gray-600 font-medium truncate">Sistema IT Pro</p>
+                  <h2 className="text-xl font-bold text-white truncate drop-shadow-lg">DuvyClass</h2>
+                  <p className="text-xs text-purple-100 font-medium truncate">Gestión Tecnológica</p>
                 </div>
               </div>
               <button
                 onClick={toggleSidebar}
-                className="lg:hidden p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                className="lg:hidden p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200 backdrop-blur-sm"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -210,72 +189,81 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </div>
 
           {/* User Info Card */}
-          <div className="p-3 sm:p-4 mx-3 sm:mx-4 mt-4 bg-linear-to-br from-purple-500 to-violet-600 rounded-xl shadow-lg">
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center ring-2 ring-white/30">
-                <span className="text-white font-bold text-base sm:text-lg">
-                  {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
-                </span>
+          <div className="p-4">
+            <div className="relative bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+              {/* Gradient accent */}
+              <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${roleBadge.color}`}></div>
+              
+              <div className="p-4">
+                <div className="flex items-start space-x-3">
+                  {/* Avatar */}
+                  <div className={`relative w-14 h-14 rounded-xl bg-gradient-to-br ${roleBadge.color} flex items-center justify-center shadow-lg ring-4 ring-white`}>
+                    <span className="text-white font-bold text-xl">
+                      {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
+                    </span>
+                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white shadow-md animate-pulse"></div>
+                  </div>
+                  
+                  {/* User Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-gray-900 truncate">
+                          {user?.name || user?.username || 'Usuario'}
+                        </p>
+                        {user?.email && (
+                          <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                        )}
+                      </div>
+                      <span className={`shrink-0 text-lg`}>{roleBadge.icon}</span>
+                    </div>
+                    
+                    {/* Role Badge */}
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold text-white bg-gradient-to-r ${roleBadge.color} shadow-sm`}>
+                        {user?.role?.name || 'Empleado'}
+                      </span>
+                      {user?.department && (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium text-gray-600 bg-gray-100">
+                          {user.department}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-3 gap-2">
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-purple-600">--</p>
+                    <p className="text-xs text-gray-500">Tickets</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-indigo-600">--</p>
+                    <p className="text-xs text-gray-500">Resueltos</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-green-600">Online</p>
+                    <p className="text-xs text-gray-500">Estado</p>
+                  </div>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-white truncate">
-                  {user?.name || user?.username || 'Usuario'}
-                </p>
-                <p className="text-xs text-purple-100 truncate">
-                  {user?.role?.name || 'Rol'}
-                </p>
-                {user?.department && (
-                  <p className="text-xs text-purple-200 truncate">
-                    {user.department}
-                  </p>
-                )}
-              </div>
-              <div className="w-2 h-2 bg-green-400 rounded-full shadow-lg animate-pulse"></div>
             </div>
           </div>
 
           {/* Navigation Menu */}
-          <nav className="flex-1 px-2 sm:px-3 py-4 sm:py-6 space-y-1 overflow-y-auto">
-            <div className="mb-3 px-2 sm:px-3">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Navegación
+          <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+            <div className="mb-3 px-3">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                Menú Principal
               </p>
             </div>
             
             {menuItems.map((item) => {
               const isActive = location.pathname === item.path;
-              const isNewTicket = item.path === 'new-ticket';
-
-              if (isNewTicket) {
-                return (
-                  <button
-                    key={item.path}
-                    onClick={() => {
-                      // Navigate to tickets page and trigger new ticket modal
-                      window.location.href = '/tickets?new=true';
-                      if (window.innerWidth < 1024) {
-                        toggleSidebar();
-                      }
-                    }}
-                    className="w-full group relative flex items-center px-2 sm:px-3 py-2.5 sm:py-3 text-sm font-medium rounded-xl transition-all duration-200 text-gray-700 hover:text-purple-700 hover:bg-purple-50"
-                  >
-                    <div className="shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center mr-2 sm:mr-3 transition-all bg-gray-100 group-hover:bg-purple-100 group-hover:scale-110">
-                      <div className="text-gray-600 group-hover:text-purple-600">
-                        {item.icon}
-                      </div>
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-sm sm:text-base truncate">{item.label}</span>
-                      </div>
-                      <div className="text-xs mt-0.5 truncate text-gray-500 group-hover:text-purple-600">
-                        {item.description}
-                      </div>
-                    </div>
-                  </button>
-                );
-              }
 
               return (
                 <Link
@@ -287,38 +275,40 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     }
                   }}
                   className={`
-                    group relative flex items-center px-2 sm:px-3 py-2.5 sm:py-3 text-sm font-medium rounded-xl transition-all duration-200
+                    group relative flex items-center px-3 py-3.5 rounded-xl transition-all duration-200
                     ${isActive
-                      ? 'bg-linear-to-r from-purple-600 to-violet-600 text-white shadow-lg shadow-purple-500/30'
-                      : 'text-gray-700 hover:text-purple-700 hover:bg-purple-50'
+                      ? 'bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-lg shadow-purple-500/30 scale-[1.02]'
+                      : 'text-gray-700 hover:text-purple-700 hover:bg-purple-50/80'
                     }
                   `}
                 >
-                  {/* Active indicator */}
+                  {/* Active indicator bar */}
                   {isActive && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full"></div>
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-white rounded-r-full shadow-lg"></div>
                   )}
 
+                  {/* Icon container */}
                   <div className={`
-                    shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center mr-2 sm:mr-3 transition-all
+                    shrink-0 w-11 h-11 rounded-xl flex items-center justify-center mr-3 transition-all duration-200
                     ${isActive
-                      ? 'bg-white/20'
-                      : 'bg-gray-100 group-hover:bg-purple-100 group-hover:scale-110'
+                      ? 'bg-white/20 shadow-inner'
+                      : 'bg-gradient-to-br from-gray-100 to-gray-50 group-hover:from-purple-100 group-hover:to-purple-50 group-hover:scale-110 shadow-sm'
                     }
                   `}>
-                    <div className={isActive ? 'text-white' : 'text-gray-600 group-hover:text-purple-600'}>
+                    <div className={`transition-colors ${isActive ? 'text-white' : 'text-gray-600 group-hover:text-purple-600'}`}>
                       {item.icon}
                     </div>
                   </div>
 
+                  {/* Text content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-sm sm:text-base truncate">{item.label}</span>
+                    <div className="flex items-center justify-between mb-0.5">
+                      <span className="font-bold text-sm truncate">{item.label}</span>
                       {item.badge && (
                         <span className={`
                           ml-2 px-2 py-0.5 text-xs font-bold rounded-full
                           ${isActive
-                            ? 'bg-white/20 text-white'
+                            ? 'bg-white/30 text-white'
                             : 'bg-purple-100 text-purple-700'
                           }
                         `}>
@@ -326,14 +316,15 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                         </span>
                       )}
                     </div>
-                    <div className={`text-xs mt-0.5 truncate ${isActive ? 'text-purple-100' : 'text-gray-500 group-hover:text-purple-600'}`}>
+                    <p className={`text-xs truncate leading-tight ${isActive ? 'text-purple-100' : 'text-gray-500 group-hover:text-purple-600'}`}>
                       {item.description}
-                    </div>
+                    </p>
                   </div>
 
+                  {/* Arrow indicator */}
                   {isActive && (
-                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    <svg className="w-5 h-5 text-white animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                     </svg>
                   )}
                 </Link>
@@ -341,28 +332,34 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             })}
           </nav>
 
-
           {/* Footer */}
-          <div className="p-3 sm:p-4 border-t border-gray-200">
-            <div className="flex items-center justify-between text-xs">
-              <div className="min-w-0 flex-1">
-                <p className="text-gray-600 font-medium truncate">© 2025 Duvy Class</p>
-                <p className="text-gray-400 truncate">v1.0.0</p>
+          <div className="p-4 border-t border-gray-200 bg-gradient-to-br from-gray-50 to-white">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-gray-700 truncate">Sistema DuvyClass</p>
+                <p className="text-xs text-gray-500 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                  Versión 1.0.0
+                </p>
               </div>
-              <div className="flex space-x-1 sm:space-x-2 ml-2">
-                <button className="p-1.5 rounded-lg text-gray-400 hover:text-purple-600 hover:bg-purple-50 transition-colors">
+              <div className="flex space-x-1">
+                <button className="p-2 rounded-lg text-gray-400 hover:text-purple-600 hover:bg-purple-50 transition-all duration-200 hover:scale-110">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </button>
-                <button className="p-1.5 rounded-lg text-gray-400 hover:text-purple-600 hover:bg-purple-50 transition-colors">
+                <button className="p-2 rounded-lg text-gray-400 hover:text-purple-600 hover:bg-purple-50 transition-all duration-200 hover:scale-110">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </button>
               </div>
             </div>
+            
+            <p className="text-xs text-center text-gray-400">
+              © 2025 Desarrollado por <span className="font-semibold text-purple-600">Bryan Muñoz</span>
+            </p>
           </div>
         </div>
       </aside>

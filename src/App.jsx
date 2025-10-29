@@ -7,7 +7,6 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Tickets from './pages/Tickets/Tickets';
 import Inventory from './pages/Inventory/Inventory';
-import Repository from './pages/Repository/Repository';
 import Documents from './pages/Documents/Documents';
 import Credentials from './pages/Credentials/Credentials';
 import Users from './pages/Users/Users';
@@ -77,19 +76,6 @@ function App() {
                     <Navbar toggleSidebar={toggleSidebar} />
                     <main className="p-0 sm:p-1 lg:p-2">
                       <Inventory />
-                    </main>
-                  </div>
-                </div>
-              </ProtectedRoute>
-            } />
-            <Route path="/repository" element={
-              <ProtectedRoute>
-                <div className="flex">
-                  <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-                  <div className="flex-1 lg:ml-0 transition-all duration-300">
-                    <Navbar toggleSidebar={toggleSidebar} />
-                    <main className="p-0 sm:p-1 lg:p-2">
-                      <Repository />
                     </main>
                   </div>
                 </div>
