@@ -23,6 +23,18 @@ const Tickets = () => {
   const [formData, setFormData] = useState({ title: '', description: '', priority: 'media', status: 'abierto', attachments: [] });
   const [attachmentPreviews, setAttachmentPreviews] = useState([]);
   const [editFormData, setEditFormData] = useState({ title: '', description: '', priority: 'media', status: 'abierto' });
+  const [titleFilter, setTitleFilter] = useState('');
+
+  // Standardized ticket titles
+  const standardizedTitles = [
+    'Problemas con SAMP',
+    'Problemas con impresoras',
+    'Problemas con contraseña',
+    'Problemas con Heinsohn',
+    'Problemas con Excel, Word, PDF',
+    'Problemas con acceso a carpetas',
+    'Problemas con el navegador'
+  ];
   const [formLoading, setFormLoading] = useState(false);
   const [notification, setNotification] = useState(null);
   const { user } = useContext(AuthContext);
@@ -96,6 +108,11 @@ const Tickets = () => {
     setAttachmentPreviews([]);
     setShowCreateModal(true);
   };
+
+  // Filter tickets based on title
+  const filteredTickets = tickets.filter(ticket =>
+    titleFilter === '' || ticket.title?.toLowerCase().includes(titleFilter.toLowerCase())
+  );
 
   const handleEdit = (ticket) => {
     const userRole = user?.role?.name;
@@ -327,10 +344,36 @@ const Tickets = () => {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    setFormData({ ...formData, attachments: files });
+
+    // Validate file types and sizes
+    const allowedTypes = [
+      'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+      'video/mp4', 'video/avi', 'video/mov', 'video/wmv',
+      '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.txt'
+    ];
+    const maxSize = 10 * 1024 * 1024; // 10MB
+
+    const validFiles = files.filter(file => {
+      const isValidType = allowedTypes.some(type =>
+        file.type === type || file.name.toLowerCase().endsWith(type)
+      );
+      const isValidSize = file.size <= maxSize;
+
+      if (!isValidType) {
+        showNotification(`Tipo de archivo no permitido: ${file.name}`, 'error');
+        return false;
+      }
+      if (!isValidSize) {
+        showNotification(`Archivo demasiado grande (máx. 10MB): ${file.name}`, 'error');
+        return false;
+      }
+      return true;
+    });
+
+    setFormData({ ...formData, attachments: validFiles });
 
     // Create previews for images and videos
-    const previews = files.map(file => {
+    const previews = validFiles.map(file => {
       if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
         return {
           file,
@@ -426,7 +469,7 @@ const Tickets = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-medium text-gray-600">Total</p>
-                <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{tickets.length}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{filteredTickets.length}</p>
               </div>
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-xl flex items-center justify-center">
                 <svg className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -441,7 +484,7 @@ const Tickets = () => {
               <div>
                 <p className="text-xs sm:text-sm font-medium text-gray-600">Abiertos</p>
                 <p className="text-2xl sm:text-3xl font-bold text-purple-600 mt-1">
-                  {tickets.filter(t => t.status?.toLowerCase() === 'abierto').length}
+                  {filteredTickets.filter(t => t.status?.toLowerCase() === 'abierto').length}
                 </p>
               </div>
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-violet-100 rounded-xl flex items-center justify-center">
@@ -457,7 +500,7 @@ const Tickets = () => {
               <div>
                 <p className="text-xs sm:text-sm font-medium text-gray-600">En Progreso</p>
                 <p className="text-2xl sm:text-3xl font-bold text-violet-600 mt-1">
-                  {tickets.filter(t => t.status?.toLowerCase() === 'en progreso').length}
+                  {filteredTickets.filter(t => t.status?.toLowerCase() === 'en progreso').length}
                 </p>
               </div>
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-violet-100 rounded-xl flex items-center justify-center">
@@ -473,7 +516,7 @@ const Tickets = () => {
               <div>
                 <p className="text-xs sm:text-sm font-medium text-gray-600">Resueltos</p>
                 <p className="text-2xl sm:text-3xl font-bold text-indigo-600 mt-1">
-                  {tickets.filter(t => t.status?.toLowerCase() === 'resuelto' || t.status?.toLowerCase() === 'cerrado').length}
+                  {filteredTickets.filter(t => t.status?.toLowerCase() === 'resuelto' || t.status?.toLowerCase() === 'cerrado').length}
                 </p>
               </div>
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
@@ -488,7 +531,21 @@ const Tickets = () => {
         {/* Tickets List */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-900">Lista de Tickets</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">Lista de Tickets</h2>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <select
+                  value={titleFilter}
+                  onChange={(e) => setTitleFilter(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-sm"
+                >
+                  <option value="">Todos los títulos</option>
+                  {standardizedTitles.map((title, index) => (
+                    <option key={index} value={title}>{title}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
 
           {tickets.length === 0 ? (
@@ -503,7 +560,7 @@ const Tickets = () => {
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {tickets.map((ticket) => (
+              {filteredTickets.map((ticket) => (
                 <div key={ticket.id} className="p-4 sm:p-6 hover:bg-gray-50 transition-colors cursor-pointer">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                     <div className="flex-1 min-w-0">
@@ -592,14 +649,18 @@ const Tickets = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Título *
                 </label>
-                <input
-                  type="text"
-                  placeholder="Ingresa el título del ticket"
+                <select
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base mb-2"
                   required
-                />
+                >
+                  <option value="">Selecciona un título estandarizado</option>
+                  {standardizedTitles.map((title, index) => (
+                    <option key={index} value={title}>{title}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-gray-500">Selecciona un título estandarizado para mantener consistencia</p>
               </div>
 
               <div>
@@ -754,14 +815,18 @@ const Tickets = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Título *
                 </label>
-                <input
-                  type="text"
-                  placeholder="Ingresa el título del ticket"
+                <select
                   value={editFormData.title}
                   onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base mb-2"
                   required
-                />
+                >
+                  <option value="">Selecciona un título estandarizado</option>
+                  {standardizedTitles.map((title, index) => (
+                    <option key={index} value={title}>{title}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-gray-500">Selecciona un título estandarizado para mantener consistencia</p>
               </div>
 
               <div>
@@ -1009,40 +1074,46 @@ const Tickets = () => {
                         <FaImage className="w-5 h-5 mr-2 text-purple-600" />
                         Adjuntos ({attachments.length})
                       </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-4">
                         {attachments.map((attachment, idx) => (
                           <div key={idx} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                             {attachment.type?.startsWith('image/') ? (
-                              <img
-                                src={`http://localhost:5000/${attachment.path}`}
-                                alt={attachment.filename}
-                                className="w-full h-32 object-cover rounded-lg mb-2"
-                              />
+                              <div className="mb-3">
+                                <img
+                                  src={`http://localhost:5000/${attachment.path}`}
+                                  alt={attachment.filename}
+                                  className="w-full max-h-96 object-contain rounded-lg border border-gray-300"
+                                />
+                              </div>
                             ) : attachment.type?.startsWith('video/') ? (
-                              <video
-                                controls
-                                className="w-full h-32 object-cover rounded-lg mb-2"
-                              >
-                                <source src={`http://localhost:5000/${attachment.path}`} type={attachment.type} />
-                              </video>
+                              <div className="mb-3">
+                                <video
+                                  controls
+                                  className="w-full max-h-96 rounded-lg border border-gray-300"
+                                  preload="metadata"
+                                >
+                                  <source src={`http://localhost:5000/${attachment.path}`} type={attachment.type} />
+                                  Tu navegador no soporta el elemento de video.
+                                </video>
+                              </div>
                             ) : (
-                              <div className="w-full h-32 bg-gray-200 rounded-lg mb-2 flex items-center justify-center">
+                              <div className="w-full h-32 bg-gray-200 rounded-lg mb-3 flex items-center justify-center">
                                 <FaFile className="w-8 h-8 text-gray-400" />
                               </div>
                             )}
-                            <p className="text-sm text-gray-600 truncate">{attachment.filename}</p>
-                            <div className="flex items-center justify-between mt-2">
-                              <a
-                                href={`http://localhost:5000/${attachment.path}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-purple-600 hover:text-purple-700 text-sm font-medium"
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 truncate">{attachment.filename}</p>
+                                <p className="text-xs text-gray-500">
+                                  {(attachment.size / 1024 / 1024).toFixed(2)} MB • Subido por {attachment.uploader?.name || attachment.uploader?.username || 'Usuario'}
+                                </p>
+                              </div>
+                              <button
+                                onClick={() => window.open(`http://localhost:5000/${attachment.path}`, '_blank')}
+                                className="ml-3 px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-md transition-colors"
                               >
-                                Ver completo
-                              </a>
-                              <span className="text-xs text-gray-500">
-                                {attachment.uploader?.name || attachment.uploader?.username || 'Usuario'}
-                              </span>
+                                Descargar
+                              </button>
                             </div>
                           </div>
                         ))}
