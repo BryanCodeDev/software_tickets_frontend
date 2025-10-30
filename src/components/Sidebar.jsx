@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { FaCrown, FaWrench, FaUser } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext.jsx';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
@@ -136,9 +137,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   const getRoleBadge = (roleName) => {
     const badges = {
-      'Administrador': { color: 'from-red-500 to-pink-600', icon: '👑', text: 'Admin' },
-      'Técnico': { color: 'from-blue-500 to-cyan-600', icon: '🔧', text: 'Tech' },
-      'Empleado': { color: 'from-green-500 to-emerald-600', icon: '👤', text: 'User' }
+      'Administrador': { color: 'from-red-500 to-pink-600', icon: <FaCrown />, text: 'Admin', iconColor: 'text-red-500' },
+      'Técnico': { color: 'from-blue-500 to-cyan-600', icon: <FaWrench />, text: 'Tech', iconColor: 'text-blue-500' },
+      'Empleado': { color: 'from-green-500 to-emerald-600', icon: <FaUser />, text: 'User', iconColor: 'text-green-500' }
     };
     return badges[roleName] || badges['Empleado'];
   };
@@ -157,12 +158,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
       {/* Sidebar */}
       <aside className={`
-        fixed lg:static inset-y-0 left-0 z-50 w-72 lg:w-80 bg-gradient-to-b from-gray-50 to-white border-r border-gray-200 shadow-xl lg:shadow-none transform transition-transform duration-300 ease-in-out
+        fixed lg:static inset-y-0 left-0 z-50 w-72 lg:w-80 bg-linear-to-b from-gray-50 to-white border-r border-gray-200 shadow-xl lg:shadow-none transform transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="relative p-6 bg-gradient-to-br from-purple-600 via-violet-600 to-indigo-600 overflow-hidden">
+          <div className="relative p-6 bg-linear-to-br from-purple-600 via-violet-600 to-indigo-600 overflow-hidden">
             {/* Decorative elements */}
             <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
@@ -170,7 +171,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <div className="relative flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-200">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-br from-purple-600 to-violet-600 font-bold text-2xl">D</span>
+                  <span className="text-transparent bg-clip-text bg-linear-to-br from-purple-600 to-violet-600 font-bold text-2xl">D</span>
                 </div>
                 <div className="min-w-0 flex-1">
                   <h2 className="text-xl font-bold text-white truncate drop-shadow-lg">DuvyClass</h2>
@@ -192,12 +193,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           <div className="p-4">
             <div className="relative bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
               {/* Gradient accent */}
-              <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${roleBadge.color}`}></div>
+              <div className={`absolute inset-x-0 top-0 h-1 bg-linear-to-r ${roleBadge.color}`}></div>
               
               <div className="p-4">
                 <div className="flex items-start space-x-3">
                   {/* Avatar */}
-                  <div className={`relative w-14 h-14 rounded-xl bg-gradient-to-br ${roleBadge.color} flex items-center justify-center shadow-lg ring-4 ring-white`}>
+                  <div className={`relative w-14 h-14 rounded-xl bg-linear-to-br ${roleBadge.color} flex items-center justify-center shadow-lg ring-4 ring-white`}>
                     <span className="text-white font-bold text-xl">
                       {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
                     </span>
@@ -215,12 +216,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                           <p className="text-xs text-gray-500 truncate">{user.email}</p>
                         )}
                       </div>
-                      <span className={`shrink-0 text-lg`}>{roleBadge.icon}</span>
+                      <span className={`shrink-0 text-lg ${roleBadge.iconColor}`}>{roleBadge.icon}</span>
                     </div>
                     
                     {/* Role Badge */}
                     <div className="mt-2 flex items-center gap-2">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold text-white bg-gradient-to-r ${roleBadge.color} shadow-sm`}>
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold text-white bg-linear-to-r ${roleBadge.color} shadow-sm`}>
                         {user?.role?.name || 'Empleado'}
                       </span>
                       {user?.department && (
@@ -262,7 +263,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                   className={`
                     group relative flex items-center px-3 py-3.5 rounded-xl transition-all duration-200
                     ${isActive
-                      ? 'bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-lg shadow-purple-500/30 scale-[1.02]'
+                      ? 'bg-linear-to-r from-purple-600 to-violet-600 text-white shadow-lg shadow-purple-500/30 scale-[1.02]'
                       : 'text-gray-700 hover:text-purple-700 hover:bg-purple-50/80'
                     }
                   `}
@@ -277,7 +278,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     shrink-0 w-11 h-11 rounded-xl flex items-center justify-center mr-3 transition-all duration-200
                     ${isActive
                       ? 'bg-white/20 shadow-inner'
-                      : 'bg-gradient-to-br from-gray-100 to-gray-50 group-hover:from-purple-100 group-hover:to-purple-50 group-hover:scale-110 shadow-sm'
+                      : 'bg-linear-to-br from-gray-100 to-gray-50 group-hover:from-purple-100 group-hover:to-purple-50 group-hover:scale-110 shadow-sm'
                     }
                   `}>
                     <div className={`transition-colors ${isActive ? 'text-white' : 'text-gray-600 group-hover:text-purple-600'}`}>
@@ -318,7 +319,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-gray-200 bg-gradient-to-br from-gray-50 to-white">
+          <div className="p-4 border-t border-gray-200 bg-linear-to-br from-gray-50 to-white">
             <div className="flex items-center justify-between mb-3">
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-bold text-gray-700 truncate">Sistema DuvyClass</p>
