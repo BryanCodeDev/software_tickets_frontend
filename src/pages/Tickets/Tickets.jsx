@@ -110,17 +110,29 @@ const Tickets = () => {
 
   const fetchUsers = async () => {
     try {
-      const users = await usersAPI.fetchUsers();
-      setAvailableUsers(users);
+      // Only fetch users if user has appropriate role
+      if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico') {
+        const users = await usersAPI.fetchUsers();
+        setAvailableUsers(users);
 
-      // Filter technicians and administrators
-      const techUsers = users.filter(user => user.Role?.name === 'Técnico');
-      const adminUsers = users.filter(user => user.Role?.name === 'Administrador');
+        // Filter technicians and administrators
+        const techUsers = users.filter(user => user.Role?.name === 'Técnico');
+        const adminUsers = users.filter(user => user.Role?.name === 'Administrador');
 
-      setTechnicians(techUsers);
-      setAdministrators(adminUsers);
+        setTechnicians(techUsers);
+        setAdministrators(adminUsers);
+      } else {
+        // For employees, set empty arrays or handle differently
+        setAvailableUsers([]);
+        setTechnicians([]);
+        setAdministrators([]);
+      }
     } catch (err) {
       console.error('Error al cargar usuarios:', err);
+      // Don't show error notification for employees - they just can't see users
+      if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico') {
+        showNotification('Error al cargar los usuarios. Verifica que tengas permisos.', 'error');
+      }
     }
   };
 
@@ -276,22 +288,23 @@ const Tickets = () => {
     setSelectedTicket(ticket);
     try {
       const data = await ticketsAPI.fetchTicketById(ticket.id);
-      console.log('Ticket data:', data);
-      console.log('TicketAttachments:', data.TicketAttachments);
-      console.log('Attachments array:', Array.isArray(data.TicketAttachments));
-      if (data.TicketAttachments) {
-        data.TicketAttachments.forEach((att, idx) => {
-          console.log(`Attachment ${idx}:`, att);
-          console.log(`Type: ${att.type}, Filename: ${att.filename}, Path: ${att.path}`);
-        });
-      }
       setComments(data.comments || []);
       setMessages(data.messages || []);
       setAttachments(data.TicketAttachments || []);
 
-      // Cargar mensajes persistentes desde la API
-      const persistentMessages = await messagesAPI.fetchMessages(ticket.id);
-      setMessages(persistentMessages);
+      // Cargar mensajes persistentes desde la API - only if user has permission
+      try {
+        const persistentMessages = await messagesAPI.fetchMessages(ticket.id);
+        setMessages(persistentMessages);
+      } catch (msgErr) {
+        console.error('Error al cargar mensajes:', msgErr);
+        // Don't show error for employees - they just can't see messages from other tickets
+        if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico') {
+          showNotification('Error al cargar los mensajes del ticket.', 'error');
+        }
+        // Set empty messages array for employees without access
+        setMessages([]);
+      }
 
       // Unirse a la sala del ticket para recibir actualizaciones en tiempo real
       joinTicketRoom(ticket.id);
@@ -840,25 +853,31 @@ const Tickets = () => {
                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
                   >
                     <option value="">Sin asignar</option>
-                    <optgroup label="Técnicos Individuales">
-                      {technicians.map((tech) => (
-                        <option key={tech.id} value={tech.id}>
-                          {tech.name || tech.username} (Técnico)
-                        </option>
-                      ))}
-                    </optgroup>
-                    <optgroup label="Administradores Individuales">
-                      {administrators.map((admin) => (
-                        <option key={admin.id} value={admin.id}>
-                          {admin.name || admin.username} (Administrador)
-                        </option>
-                      ))}
-                    </optgroup>
-                    <optgroup label="Grupos">
-                      <option value="all-technicians">Todos los Técnicos</option>
-                      <option value="all-administrators">Todos los Administradores</option>
-                      <option value="technicians-and-admins">Técnicos y Administradores</option>
-                    </optgroup>
+                    {technicians.length > 0 && (
+                      <optgroup label="Técnicos Individuales">
+                        {technicians.map((tech) => (
+                          <option key={tech.id} value={tech.id}>
+                            {tech.name || tech.username} (Técnico)
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+                    {administrators.length > 0 && (
+                      <optgroup label="Administradores Individuales">
+                        {administrators.map((admin) => (
+                          <option key={admin.id} value={admin.id}>
+                            {admin.name || admin.username} (Administrador)
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+                    {(technicians.length > 0 || administrators.length > 0) && (
+                      <optgroup label="Grupos">
+                        {technicians.length > 0 && <option value="all-technicians">Todos los Técnicos</option>}
+                        {administrators.length > 0 && <option value="all-administrators">Todos los Administradores</option>}
+                        {technicians.length > 0 && administrators.length > 0 && <option value="technicians-and-admins">Técnicos y Administradores</option>}
+                      </optgroup>
+                    )}
                   </select>
                 </div>
                 <div>
@@ -986,25 +1005,31 @@ const Tickets = () => {
                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
                   >
                     <option value="">Sin asignar</option>
-                    <optgroup label="Técnicos Individuales">
-                      {technicians.map((tech) => (
-                        <option key={tech.id} value={tech.id}>
-                          {tech.name || tech.username} (Técnico)
-                        </option>
-                      ))}
-                    </optgroup>
-                    <optgroup label="Administradores Individuales">
-                      {administrators.map((admin) => (
-                        <option key={admin.id} value={admin.id}>
-                          {admin.name || admin.username} (Administrador)
-                        </option>
-                      ))}
-                    </optgroup>
-                    <optgroup label="Grupos">
-                      <option value="all-technicians">Todos los Técnicos</option>
-                      <option value="all-administrators">Todos los Administradores</option>
-                      <option value="technicians-and-admins">Técnicos y Administradores</option>
-                    </optgroup>
+                    {technicians.length > 0 && (
+                      <optgroup label="Técnicos Individuales">
+                        {technicians.map((tech) => (
+                          <option key={tech.id} value={tech.id}>
+                            {tech.name || tech.username} (Técnico)
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+                    {administrators.length > 0 && (
+                      <optgroup label="Administradores Individuales">
+                        {administrators.map((admin) => (
+                          <option key={admin.id} value={admin.id}>
+                            {admin.name || admin.username} (Administrador)
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+                    {(technicians.length > 0 || administrators.length > 0) && (
+                      <optgroup label="Grupos">
+                        {technicians.length > 0 && <option value="all-technicians">Todos los Técnicos</option>}
+                        {administrators.length > 0 && <option value="all-administrators">Todos los Administradores</option>}
+                        {technicians.length > 0 && administrators.length > 0 && <option value="technicians-and-admins">Técnicos y Administradores</option>}
+                      </optgroup>
+                    )}
                   </select>
                 </div>
                 <div>
@@ -1119,7 +1144,12 @@ const Tickets = () => {
                     </h3>
                     <div className="space-y-3 max-h-96 overflow-y-auto mb-4">
                       {messages.length === 0 ? (
-                        <p className="text-sm text-gray-500 text-center">No hay mensajes aún. ¡Inicia la conversación!</p>
+                        <p className="text-sm text-gray-500 text-center">
+                          {user?.role?.name === 'Empleado' && selectedTicket?.userId !== user?.id && selectedTicket?.assignedTo !== user?.id
+                            ? 'No tienes permisos para ver los mensajes de este ticket.'
+                            : 'No hay mensajes aún. ¡Inicia la conversación!'
+                          }
+                        </p>
                       ) : (
                         messages.map((message) => (
                           <div key={message.id} className={`flex ${message.sender?.id === user?.id ? 'justify-end' : 'justify-start'}`}>
@@ -1212,22 +1242,26 @@ const Tickets = () => {
                     </div>
 
                     {/* Send Message Form */}
-                    <form onSubmit={handleSendMessage} className="flex space-x-2">
-                      <input
-                        type="text"
-                        placeholder="Escribe un mensaje..."
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm"
-                      />
-                      <button
-                        type="submit"
-                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors flex items-center"
-                        disabled={!newMessage.trim()}
-                      >
-                        <FaPaperPlane className="w-4 h-4" />
-                      </button>
-                    </form>
+                    {(user?.role?.name === 'Administrador' ||
+                      user?.role?.name === 'Técnico' ||
+                      (user?.role?.name === 'Empleado' && selectedTicket?.userId === user?.id)) && (
+                      <form onSubmit={handleSendMessage} className="flex space-x-2">
+                        <input
+                          type="text"
+                          placeholder="Escribe un mensaje..."
+                          value={newMessage}
+                          onChange={(e) => setNewMessage(e.target.value)}
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm"
+                        />
+                        <button
+                          type="submit"
+                          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors flex items-center"
+                          disabled={!newMessage.trim()}
+                        >
+                          <FaPaperPlane className="w-4 h-4" />
+                        </button>
+                      </form>
+                    )}
                   </div>
 
                   {/* Attachments - Only show images and videos */}
