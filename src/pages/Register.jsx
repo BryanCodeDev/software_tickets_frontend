@@ -4,6 +4,7 @@ import AuthContext from '../context/AuthContext.jsx';
 
 const Register = () => {
   const [formData, setFormData] = useState({
+    name: '',
     username: '',
     email: '',
     password: '',
@@ -57,8 +58,8 @@ const Register = () => {
     }
 
     try {
-      console.log('Attempting to register user:', formData.username, formData.email);
-      await register(formData.username, formData.email, formData.password);
+      console.log('Attempting to register user:', formData.name, formData.username, formData.email);
+      await register(formData.name, formData.username, formData.email, formData.password);
       console.log('Registration successful, navigating to login');
       navigate('/login');
       // Note: User is not automatically logged in after registration
@@ -69,7 +70,7 @@ const Register = () => {
       setLoading(false);
     }
     try {
-      await register(formData.username, formData.email, formData.password);
+      await register(formData.name, formData.username, formData.email, formData.password);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.error || 'Error al registrarse');
@@ -191,6 +192,30 @@ const Register = () => {
                   </div>
                 </div>
               )}
+
+              <div>
+                <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Nombre Completo
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    autoComplete="name"
+                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    placeholder="Tu nombre completo"
+                  />
+                </div>
+              </div>
 
               <div>
                 <label htmlFor="username" className="block text-sm font-semibold text-gray-700 mb-2">

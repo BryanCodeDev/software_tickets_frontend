@@ -10,9 +10,9 @@ const authAPI = {
     }
   },
 
-  register: async (username, email, password) => {
+  register: async (name, username, email, password) => {
     try {
-      const response = await api.post('/auth/register', { username, email, password });
+      const response = await api.post('/auth/register', { name, username, email, password });
       return response.data;
     } catch (error) {
       throw error.response?.data?.error || 'Error al registrarse';
