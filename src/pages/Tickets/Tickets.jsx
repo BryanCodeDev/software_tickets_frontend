@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { ticketsAPI, messagesAPI } from '../../api';
+import { ticketsAPI, messagesAPI, usersAPI } from '../../api';
 import { joinTicketRoom, leaveTicketRoom, onNewMessage, onMessageUpdated, onMessageDeleted, onNewComment, onTicketUpdated, offNewMessage, offMessageUpdated, offMessageDeleted, offNewComment, offTicketUpdated } from '../../api/socket';
 import AuthContext from '../../context/AuthContext.jsx';
 import { FaEdit, FaTrash, FaComment, FaPlus, FaCheck, FaTimes, FaEye, FaImage, FaVideo, FaFile, FaPaperPlane, FaEllipsisV, FaPen, FaTrashAlt } from 'react-icons/fa';
@@ -20,10 +20,13 @@ const Tickets = () => {
   const [editMessageContent, setEditMessageContent] = useState('');
   const [attachments, setAttachments] = useState([]);
   const messagesEndRef = useRef(null);
-  const [formData, setFormData] = useState({ title: '', description: '', priority: 'media', status: 'abierto', attachments: [] });
+  const [formData, setFormData] = useState({ title: '', description: '', priority: 'media', status: 'abierto', assignedTo: '', attachments: [] });
   const [attachmentPreviews, setAttachmentPreviews] = useState([]);
-  const [editFormData, setEditFormData] = useState({ title: '', description: '', priority: 'media', status: 'abierto' });
+  const [editFormData, setEditFormData] = useState({ title: '', description: '', priority: 'media', status: 'abierto', assignedTo: '' });
   const [titleFilter, setTitleFilter] = useState('');
+  const [availableUsers, setAvailableUsers] = useState([]);
+  const [technicians, setTechnicians] = useState([]);
+  const [administrators, setAdministrators] = useState([]);
 
   // Standardized ticket titles
   const standardizedTitles = [
@@ -37,10 +40,12 @@ const Tickets = () => {
   ];
   const [formLoading, setFormLoading] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
     fetchTickets();
+    fetchUsers();
 
     // Configurar listeners de WebSocket para mensajes y tickets
     const handleNewMessage = (newMessage) => {
@@ -103,8 +108,24 @@ const Tickets = () => {
     }
   };
 
+  const fetchUsers = async () => {
+    try {
+      const users = await usersAPI.fetchUsers();
+      setAvailableUsers(users);
+
+      // Filter technicians and administrators
+      const techUsers = users.filter(user => user.Role?.name === 'Técnico');
+      const adminUsers = users.filter(user => user.Role?.name === 'Administrador');
+
+      setTechnicians(techUsers);
+      setAdministrators(adminUsers);
+    } catch (err) {
+      console.error('Error al cargar usuarios:', err);
+    }
+  };
+
   const handleCreate = () => {
-    setFormData({ title: '', description: '', priority: 'media', status: 'abierto', attachments: [] });
+    setFormData({ title: '', description: '', priority: 'media', status: 'abierto', assignedTo: '', attachments: [] });
     setAttachmentPreviews([]);
     setShowCreateModal(true);
   };
@@ -140,7 +161,8 @@ const Tickets = () => {
       setEditFormData({
         title: ticket.title,
         description: ticket.description,
-        priority: ticket.priority
+        priority: ticket.priority,
+        assignedTo: ticket.assignedTo || ''
       });
     } else {
       showNotification('No tienes permisos para editar este ticket', 'error');
@@ -161,7 +183,7 @@ const Tickets = () => {
       confirmMessage = '¿Estás seguro de que deseas eliminar este ticket? Solo puedes eliminar tickets cerrados o de tu propiedad.';
     }
 
-    if (window.confirm(confirmMessage)) {
+    showConfirmDialog(confirmMessage, async () => {
       try {
         await ticketsAPI.deleteTicket(id);
         fetchTickets();
@@ -171,19 +193,32 @@ const Tickets = () => {
         const errorMessage = err.response?.data?.error || 'Error al eliminar el ticket. Verifica que tengas los permisos necesarios.';
         showNotification(errorMessage, 'error');
       }
-    }
+    });
   };
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
     setFormLoading(true);
     try {
+      // Handle group assignments
+      let assignedToValue = formData.assignedTo;
+      if (formData.assignedTo === 'all-technicians') {
+        // For now, assign to first technician (you might want to create multiple tickets or handle differently)
+        assignedToValue = technicians.length > 0 ? technicians[0].id : null;
+      } else if (formData.assignedTo === 'all-administrators') {
+        assignedToValue = administrators.length > 0 ? administrators[0].id : null;
+      } else if (formData.assignedTo === 'technicians-and-admins') {
+        // Assign to first available technician or admin
+        assignedToValue = technicians.length > 0 ? technicians[0].id : (administrators.length > 0 ? administrators[0].id : null);
+      }
+
       // Create ticket first
       const ticket = await ticketsAPI.createTicket({
         title: formData.title,
         description: formData.description,
         priority: formData.priority,
-        status: formData.status
+        status: formData.status,
+        assignedTo: assignedToValue || null
       });
 
       // Upload attachments if any
@@ -212,7 +247,18 @@ const Tickets = () => {
     e.preventDefault();
     setFormLoading(true);
     try {
-      await ticketsAPI.updateTicket(editingTicket.id, editFormData);
+      // Handle group assignments for edit
+      let assignedToValue = editFormData.assignedTo;
+      if (editFormData.assignedTo === 'all-technicians') {
+        assignedToValue = technicians.length > 0 ? technicians[0].id : null;
+      } else if (editFormData.assignedTo === 'all-administrators') {
+        assignedToValue = administrators.length > 0 ? administrators[0].id : null;
+      } else if (editFormData.assignedTo === 'technicians-and-admins') {
+        assignedToValue = technicians.length > 0 ? technicians[0].id : (administrators.length > 0 ? administrators[0].id : null);
+      }
+
+      const updateData = { ...editFormData, assignedTo: assignedToValue || null };
+      await ticketsAPI.updateTicket(editingTicket.id, updateData);
       fetchTickets();
       setShowEditModal(false);
       showNotification('Ticket actualizado exitosamente', 'success');
@@ -230,9 +276,18 @@ const Tickets = () => {
     setSelectedTicket(ticket);
     try {
       const data = await ticketsAPI.fetchTicketById(ticket.id);
+      console.log('Ticket data:', data);
+      console.log('TicketAttachments:', data.TicketAttachments);
+      console.log('Attachments array:', Array.isArray(data.TicketAttachments));
+      if (data.TicketAttachments) {
+        data.TicketAttachments.forEach((att, idx) => {
+          console.log(`Attachment ${idx}:`, att);
+          console.log(`Type: ${att.type}, Filename: ${att.filename}, Path: ${att.path}`);
+        });
+      }
       setComments(data.comments || []);
       setMessages(data.messages || []);
-      setAttachments(data.attachments || []);
+      setAttachments(data.TicketAttachments || []);
 
       // Cargar mensajes persistentes desde la API
       const persistentMessages = await messagesAPI.fetchMessages(ticket.id);
@@ -279,16 +334,16 @@ const Tickets = () => {
   };
 
   const handleDeleteMessage = async (messageId) => {
-    if (!window.confirm('¿Estás seguro de que deseas eliminar este mensaje?')) return;
-
-    try {
-      await messagesAPI.deleteMessage(messageId);
-      showNotification('Mensaje eliminado exitosamente', 'success');
-    } catch (err) {
-      console.error('Error al eliminar mensaje:', err);
-      const errorMessage = err.response?.data?.error || 'Error al eliminar mensaje. Verifica que tengas permisos para eliminar este mensaje.';
-      showNotification(errorMessage, 'error');
-    }
+    showConfirmDialog('¿Estás seguro de que deseas eliminar este mensaje?', async () => {
+      try {
+        await messagesAPI.deleteMessage(messageId);
+        showNotification('Mensaje eliminado exitosamente', 'success');
+      } catch (err) {
+        console.error('Error al eliminar mensaje:', err);
+        const errorMessage = err.response?.data?.error || 'Error al eliminar mensaje. Verifica que tengas permisos para eliminar este mensaje.';
+        showNotification(errorMessage, 'error');
+      }
+    });
   };
 
   const scrollToBottom = () => {
@@ -321,6 +376,21 @@ const Tickets = () => {
   const showNotification = (message, type) => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 5000);
+  };
+
+  const showConfirmDialog = (message, onConfirm) => {
+    setConfirmDialog({ message, onConfirm });
+  };
+
+  const handleConfirm = () => {
+    if (confirmDialog?.onConfirm) {
+      confirmDialog.onConfirm();
+    }
+    setConfirmDialog(null);
+  };
+
+  const handleCancelConfirm = () => {
+    setConfirmDialog(null);
   };
 
   const getStatusColor = (status) => {
@@ -436,6 +506,37 @@ const Tickets = () => {
         </div>
       )}
 
+      {/* Custom Confirmation Dialog */}
+      {confirmDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full border border-gray-200">
+            <div className="p-4 sm:p-6">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <FaTimes className="w-6 h-6 text-red-600" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">Confirmar Acción</h3>
+              <p className="text-sm text-gray-600 text-center mb-6">{confirmDialog.message}</p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={handleCancelConfirm}
+                  className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleConfirm}
+                  className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  Confirmar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header Section */}
         <div className="mb-6 sm:mb-8">
@@ -529,7 +630,7 @@ const Tickets = () => {
         </div>
 
         {/* Tickets List */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
           <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900">Lista de Tickets</h2>
@@ -629,7 +730,7 @@ const Tickets = () => {
       {/* Create Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-sm sm:max-w-lg w-full max-h-[95vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm sm:max-w-lg w-full max-h-[95vh] overflow-y-auto border border-gray-200">
             <div className="p-4 sm:p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg sm:text-2xl font-bold text-gray-900">Nuevo Ticket</h2>
@@ -728,7 +829,38 @@ const Tickets = () => {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Asignado a
+                  </label>
+                  <select
+                    value={formData.assignedTo}
+                    onChange={(e) => setFormData({ ...formData, assignedTo: e.target.value })}
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                  >
+                    <option value="">Sin asignar</option>
+                    <optgroup label="Técnicos Individuales">
+                      {technicians.map((tech) => (
+                        <option key={tech.id} value={tech.id}>
+                          {tech.name || tech.username} (Técnico)
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Administradores Individuales">
+                      {administrators.map((admin) => (
+                        <option key={admin.id} value={admin.id}>
+                          {admin.name || admin.username} (Administrador)
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Grupos">
+                      <option value="all-technicians">Todos los Técnicos</option>
+                      <option value="all-administrators">Todos los Administradores</option>
+                      <option value="technicians-and-admins">Técnicos y Administradores</option>
+                    </optgroup>
+                  </select>
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Prioridad
@@ -795,7 +927,7 @@ const Tickets = () => {
       {/* Edit Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-sm sm:max-w-lg w-full max-h-[95vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm sm:max-w-lg w-full max-h-[95vh] overflow-y-auto border border-gray-200">
             <div className="p-4 sm:p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg sm:text-2xl font-bold text-gray-900">Editar Ticket</h2>
@@ -843,7 +975,38 @@ const Tickets = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Asignado a
+                  </label>
+                  <select
+                    value={editFormData.assignedTo}
+                    onChange={(e) => setEditFormData({ ...editFormData, assignedTo: e.target.value })}
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                  >
+                    <option value="">Sin asignar</option>
+                    <optgroup label="Técnicos Individuales">
+                      {technicians.map((tech) => (
+                        <option key={tech.id} value={tech.id}>
+                          {tech.name || tech.username} (Técnico)
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Administradores Individuales">
+                      {administrators.map((admin) => (
+                        <option key={admin.id} value={admin.id}>
+                          {admin.name || admin.username} (Administrador)
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Grupos">
+                      <option value="all-technicians">Todos los Técnicos</option>
+                      <option value="all-administrators">Todos los Administradores</option>
+                      <option value="technicians-and-admins">Técnicos y Administradores</option>
+                    </optgroup>
+                  </select>
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Prioridad
@@ -910,7 +1073,7 @@ const Tickets = () => {
       {/* Detail Modal */}
       {showDetailModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-y-auto border border-gray-200">
             <div className="p-4 sm:p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
@@ -1067,59 +1230,64 @@ const Tickets = () => {
                     </form>
                   </div>
 
-                  {/* Attachments */}
-                  {attachments.length > 0 && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                        <FaImage className="w-5 h-5 mr-2 text-purple-600" />
-                        Adjuntos ({attachments.length})
-                      </h3>
-                      <div className="space-y-4">
-                        {attachments.map((attachment, idx) => (
-                          <div key={idx} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                            {attachment.type?.startsWith('image/') ? (
-                              <div className="mb-3">
-                                <img
-                                  src={`http://localhost:5000/${attachment.path}`}
-                                  alt={attachment.filename}
-                                  className="w-full max-h-96 object-contain rounded-lg border border-gray-300"
-                                />
-                              </div>
-                            ) : attachment.type?.startsWith('video/') ? (
-                              <div className="mb-3">
-                                <video
-                                  controls
-                                  className="w-full max-h-96 rounded-lg border border-gray-300"
-                                  preload="metadata"
+                  {/* Attachments - Only show images and videos */}
+                  {(() => {
+                    const mediaAttachments = attachments.filter(att =>
+                      att.type?.startsWith('image/') || att.type?.startsWith('video/')
+                    );
+                    return mediaAttachments.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                          <FaImage className="w-5 h-5 mr-2 text-purple-600" />
+                          Imágenes y Videos ({mediaAttachments.length})
+                        </h3>
+                        <div className="space-y-4">
+                          {mediaAttachments.map((attachment, idx) => (
+                            <div key={idx} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                              {attachment.type?.startsWith('image/') ? (
+                                <div className="mb-3">
+                                  <img
+                                    src={`http://localhost:5000/uploads/tickets/${attachment.filename}`}
+                                    alt={attachment.filename}
+                                    className="w-full max-h-96 object-contain rounded-lg border border-gray-300"
+                                    onError={(e) => {
+                                      console.error('Error loading image:', e.target.src);
+                                      e.target.style.display = 'none';
+                                    }}
+                                  />
+                                </div>
+                              ) : attachment.type?.startsWith('video/') ? (
+                                <div className="mb-3">
+                                  <video
+                                    controls
+                                    className="w-full max-h-96 rounded-lg border border-gray-300"
+                                    preload="metadata"
+                                  >
+                                    <source src={`http://localhost:5000/uploads/tickets/${attachment.filename}`} type={attachment.type} />
+                                    Tu navegador no soporta el elemento de video.
+                                  </video>
+                                </div>
+                              ) : null}
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-gray-900 truncate">{attachment.filename}</p>
+                                  <p className="text-xs text-gray-500">
+                                    {(attachment.size / 1024 / 1024).toFixed(2)} MB • Subido por {attachment.uploader?.name || attachment.uploader?.username || 'Usuario'}
+                                  </p>
+                                </div>
+                                <button
+                                  onClick={() => window.open(`http://localhost:5000/uploads/tickets/${attachment.filename}`, '_blank')}
+                                  className="ml-3 px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-md transition-colors"
                                 >
-                                  <source src={`http://localhost:5000/${attachment.path}`} type={attachment.type} />
-                                  Tu navegador no soporta el elemento de video.
-                                </video>
+                                  Descargar
+                                </button>
                               </div>
-                            ) : (
-                              <div className="w-full h-32 bg-gray-200 rounded-lg mb-3 flex items-center justify-center">
-                                <FaFile className="w-8 h-8 text-gray-400" />
-                              </div>
-                            )}
-                            <div className="flex items-center justify-between">
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-900 truncate">{attachment.filename}</p>
-                                <p className="text-xs text-gray-500">
-                                  {(attachment.size / 1024 / 1024).toFixed(2)} MB • Subido por {attachment.uploader?.name || attachment.uploader?.username || 'Usuario'}
-                                </p>
-                              </div>
-                              <button
-                                onClick={() => window.open(`http://localhost:5000/${attachment.path}`, '_blank')}
-                                className="ml-3 px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-md transition-colors"
-                              >
-                                Descargar
-                              </button>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
                 </div>
 
                 {/* Sidebar */}

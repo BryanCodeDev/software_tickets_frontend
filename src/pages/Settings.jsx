@@ -3,20 +3,26 @@ import { useTranslation } from 'react-i18next';
 import AuthContext from '../context/AuthContext.jsx';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { usersAPI } from '../api';
+import { FaCheck, FaTimes } from 'react-icons/fa';
 
 const Settings = () => {
   const { t, i18n } = useTranslation();
   const { user } = useContext(AuthContext);
   const { darkMode, setTheme } = useTheme();
-  const [settings, setSettings] = useState({
-    notifications: true,
-    emailAlerts: true,
-    darkMode: false,
-    language: 'es'
+  const [settings, setSettings] = useState(() => {
+    // Initialize with saved theme preference
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialDarkMode = savedTheme === 'dark' || (!savedTheme && prefersDark);
+
+    return {
+      darkMode: initialDarkMode,
+      language: 'es'
+    };
   });
   const [loading, setLoading] = useState(false);
   const [loadingSettings, setLoadingSettings] = useState(true);
-  const [message, setMessage] = useState('');
+  const [notification, setNotification] = useState(null);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
@@ -24,7 +30,6 @@ const Settings = () => {
     confirmPassword: ''
   });
   const [passwordLoading, setPasswordLoading] = useState(false);
-  const [passwordMessage, setPasswordMessage] = useState('');
 
   useEffect(() => {
     loadSettings();
@@ -33,25 +38,19 @@ const Settings = () => {
   const loadSettings = async () => {
     try {
       const userSettings = await usersAPI.getSettings();
-      setSettings({
-        notifications: userSettings.notifications,
-        emailAlerts: userSettings.emailAlerts,
-        darkMode: userSettings.darkMode,
-        language: userSettings.language
-      });
-      setTheme(userSettings.darkMode);
-      i18n.changeLanguage(userSettings.language);
-      setSettings(prev => ({ ...prev, darkMode: userSettings.darkMode }));
+      const darkModeValue = userSettings.darkMode || false;
+      setSettings(prev => ({
+        ...prev,
+        darkMode: darkModeValue,
+        language: userSettings.language || 'es'
+      }));
+      setTheme(darkModeValue);
+      i18n.changeLanguage(userSettings.language || 'es');
     } catch (error) {
       console.error('Error loading settings:', error);
-      setSettings({
-        notifications: true,
-        emailAlerts: true,
-        darkMode: false,
-        language: 'es'
-      });
-      setTheme(false);
-      i18n.changeLanguage('es');
+      // Keep the initial state on error
+      setTheme(settings.darkMode);
+      i18n.changeLanguage(settings.language);
     } finally {
       setLoadingSettings(false);
     }
@@ -68,20 +67,24 @@ const Settings = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage('');
 
     try {
       await usersAPI.updateSettings(settings);
       setTheme(settings.darkMode);
       i18n.changeLanguage(settings.language);
-      setMessage(t('Configuración guardada exitosamente'));
+      showNotification(t('Configuración guardada exitosamente'), 'success');
     } catch (error) {
-      setMessage(t('Error al guardar la configuración'));
+      showNotification(t('Error al guardar la configuración. Por favor, inténtalo de nuevo.'), 'error');
       console.error(error);
     } finally {
       setLoading(false);
     }
   };
+
+ const showNotification = (message, type) => {
+   setNotification({ message, type });
+   setTimeout(() => setNotification(null), 5000);
+ };
 
   const handleDarkModeToggle = (e) => {
     const newDarkMode = e.target.checked;
@@ -99,10 +102,9 @@ const Settings = () => {
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     setPasswordLoading(true);
-    setPasswordMessage('');
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setPasswordMessage('Las contraseñas no coinciden');
+      showNotification('Las contraseñas no coinciden', 'error');
       setPasswordLoading(false);
       return;
     }
@@ -112,11 +114,11 @@ const Settings = () => {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       });
-      setPasswordMessage('Contraseña cambiada exitosamente');
+      showNotification('Contraseña cambiada exitosamente', 'success');
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
       setTimeout(() => setShowPasswordModal(false), 2000);
     } catch (error) {
-      setPasswordMessage(error || 'Error al cambiar la contraseña');
+      showNotification(error || 'Error al cambiar la contraseña. Por favor, inténtalo de nuevo.', 'error');
       console.error(error);
     } finally {
       setPasswordLoading(false);
@@ -125,6 +127,36 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 px-4 sm:px-6 lg:px-8">
+      {/* Notification */}
+      {notification && (
+        <div className="fixed top-4 right-4 z-50 max-w-sm">
+          <div className={`flex items-center p-4 rounded-lg shadow-lg transition-all duration-300 ${
+            notification.type === 'success'
+              ? 'bg-green-50 border border-green-200 text-green-800'
+              : 'bg-red-50 border border-red-200 text-red-800'
+          }`}>
+            <div className="shrink-0">
+              {notification.type === 'success' ? (
+                <FaCheck className="w-5 h-5 text-green-400" />
+              ) : (
+                <FaTimes className="w-5 h-5 text-red-400" />
+              )}
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium">{notification.message}</p>
+            </div>
+            <div className="ml-auto pl-3">
+              <button
+                onClick={() => setNotification(null)}
+                className="inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 hover:bg-gray-50"
+              >
+                <FaTimes className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="mb-8">
@@ -137,57 +169,6 @@ const Settings = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Notificaciones */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                {t('Notificaciones')}
-              </h2>
-            </div>
-            <div className="p-6 space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-                <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
-                    {t('Notificaciones Push')}
-                  </label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t('Recibe notificaciones en tiempo real')}
-                  </p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                  <input
-                    type="checkbox"
-                    name="notifications"
-                    checked={settings.notifications}
-                    onChange={handleChange}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 dark:peer-checked:bg-purple-500"></div>
-                </label>
-              </div>
-
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-                <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
-                    {t('Alertas por Email')}
-                  </label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t('Recibe actualizaciones por correo electrónico')}
-                  </p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                  <input
-                    type="checkbox"
-                    name="emailAlerts"
-                    checked={settings.emailAlerts}
-                    onChange={handleChange}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 dark:peer-checked:bg-purple-500"></div>
-                </label>
-              </div>
-            </div>
-          </div>
 
           {/* Apariencia */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -292,16 +273,6 @@ const Settings = () => {
           </div>
         </form>
 
-        {/* Message Alert */}
-        {message && (
-          <div className={`p-4 rounded-xl border ${
-            message.includes('Error') 
-              ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-300' 
-              : 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300'
-          }`}>
-            {message}
-          </div>
-        )}
 
         {/* Password Change Modal */}
         {showPasswordModal && (
@@ -324,15 +295,6 @@ const Settings = () => {
               </div>
 
               <form onSubmit={handlePasswordSubmit} className="p-6 space-y-5">
-                {passwordMessage && (
-                  <div className={`p-3 rounded-lg text-sm border ${
-                    passwordMessage.includes('Error') || passwordMessage.includes('no coinciden') 
-                      ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-300' 
-                      : 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300'
-                  }`}>
-                    {passwordMessage}
-                  </div>
-                )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">

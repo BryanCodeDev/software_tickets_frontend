@@ -11,21 +11,21 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider = ({ children }) => {
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    // Check for saved theme preference or default to light mode
+  const [darkMode, setDarkMode] = useState(() => {
+    // Initialize with saved theme or default to light
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return savedTheme === 'dark' || (!savedTheme && prefersDark);
+  });
 
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-      setDarkMode(true);
+  useEffect(() => {
+    // Apply theme on mount
+    if (darkMode) {
       document.documentElement.classList.add('dark');
     } else {
-      setDarkMode(false);
       document.documentElement.classList.remove('dark');
     }
-  }, []);
+  }, [darkMode]);
 
   const toggleDarkMode = () => {
     const newDarkMode = !darkMode;

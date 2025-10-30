@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { credentialsAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
-import { FaLock, FaPlus, FaEdit, FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaLock, FaPlus, FaEdit, FaTrash, FaEye, FaEyeSlash, FaCheck, FaTimes } from 'react-icons/fa';
 
 const Credentials = () => {
   const [credentials, setCredentials] = useState([]);
@@ -12,6 +12,8 @@ const Credentials = () => {
   const [showFormPassword, setShowFormPassword] = useState(false);
   const [formData, setFormData] = useState({ service: '', username: '', password: '', area: '', showPassword: false });
   const [formLoading, setFormLoading] = useState(false);
+  const [notification, setNotification] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
@@ -52,14 +54,16 @@ const Credentials = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar esta credencial?')) {
+    showConfirmDialog('¿Estás seguro de que deseas eliminar esta credencial?', async () => {
       try {
         await credentialsAPI.deleteCredential(id);
         fetchCredentials();
+        showNotification('Credencial eliminada exitosamente', 'success');
       } catch (err) {
         console.error(err);
+        showNotification('Error al eliminar la credencial. Por favor, inténtalo de nuevo.', 'error');
       }
-    }
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -68,13 +72,16 @@ const Credentials = () => {
     try {
       if (editingCredential) {
         await credentialsAPI.updateCredential(editingCredential.id, formData);
+        showNotification('Credencial actualizada exitosamente', 'success');
       } else {
         await credentialsAPI.createCredential(formData);
+        showNotification('Credencial creada exitosamente', 'success');
       }
       fetchCredentials();
       setShowModal(false);
     } catch (err) {
       console.error(err);
+      showNotification('Error al guardar la credencial. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
     } finally {
       setFormLoading(false);
     }
@@ -92,6 +99,26 @@ const Credentials = () => {
     setShowFormPassword(prev => !prev);
   };
 
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
+
+  const showConfirmDialog = (message, onConfirm) => {
+    setConfirmDialog({ message, onConfirm });
+  };
+
+  const handleConfirm = () => {
+    if (confirmDialog?.onConfirm) {
+      confirmDialog.onConfirm();
+    }
+    setConfirmDialog(null);
+  };
+
+  const handleCancelConfirm = () => {
+    setConfirmDialog(null);
+  };
+
   if (!user || user.role?.name !== 'Administrador') {
     return <div className="container mx-auto p-6">Acceso Denegado</div>;
   }
@@ -100,6 +127,67 @@ const Credentials = () => {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+      {/* Notification */}
+      {notification && (
+        <div className="fixed top-4 right-4 z-50 max-w-sm">
+          <div className={`flex items-center p-4 rounded-lg shadow-lg transition-all duration-300 ${
+            notification.type === 'success'
+              ? 'bg-green-50 border border-green-200 text-green-800'
+              : 'bg-red-50 border border-red-200 text-red-800'
+          }`}>
+            <div className="shrink-0">
+              {notification.type === 'success' ? (
+                <FaCheck className="w-5 h-5 text-green-400" />
+              ) : (
+                <FaTimes className="w-5 h-5 text-red-400" />
+              )}
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium">{notification.message}</p>
+            </div>
+            <div className="ml-auto pl-3">
+              <button
+                onClick={() => setNotification(null)}
+                className="inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 hover:bg-gray-50"
+              >
+                <FaTimes className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Confirmation Dialog */}
+      {confirmDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full border border-gray-200">
+            <div className="p-4 sm:p-6">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <FaTimes className="w-6 h-6 text-red-600" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">Confirmar Acción</h3>
+              <p className="text-sm text-gray-600 text-center mb-6">{confirmDialog.message}</p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={handleCancelConfirm}
+                  className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleConfirm}
+                  className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  Confirmar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div>
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -122,7 +210,7 @@ const Credentials = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
           <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
             <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Todas las Credenciales</h2>
           </div>
@@ -187,7 +275,7 @@ const Credentials = () => {
       {/* Modal for Create/Edit */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-sm sm:max-w-lg w-full max-h-[95vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm sm:max-w-lg w-full max-h-[95vh] overflow-y-auto border border-gray-200">
             <div className="p-4 sm:p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg sm:text-2xl font-bold text-gray-900">

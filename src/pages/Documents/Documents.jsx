@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { documentsAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
-import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes } from 'react-icons/fa';
 
 const Documents = () => {
   const [documents, setDocuments] = useState([]);
@@ -11,6 +11,8 @@ const Documents = () => {
   const [editingDocument, setEditingDocument] = useState(null);
   const [formData, setFormData] = useState({ title: '', description: '', type: '', category: '', expiryDate: '', file: null });
   const [editFormData, setEditFormData] = useState({ title: '', description: '', type: '', category: '', expiryDate: '' });
+  const [notification, setNotification] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
@@ -43,8 +45,10 @@ const Documents = () => {
       await documentsAPI.uploadDocument(data);
       fetchDocuments();
       setFormData({ title: '', description: '', type: '', category: '', expiryDate: '', file: null });
+      showNotification('Documento subido exitosamente', 'success');
     } catch (err) {
       console.error(err);
+      showNotification('Error al subir el documento. Por favor, inténtalo de nuevo.', 'error');
     } finally {
       setUploadLoading(false);
     }
@@ -68,28 +72,113 @@ const Documents = () => {
       await documentsAPI.updateDocument(editingDocument.id, editFormData);
       fetchDocuments();
       setShowEditModal(false);
+      showNotification('Documento actualizado exitosamente', 'success');
     } catch (err) {
       console.error(err);
+      showNotification('Error al actualizar el documento. Por favor, inténtalo de nuevo.', 'error');
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar este documento?')) {
+    showConfirmDialog('¿Estás seguro de que deseas eliminar este documento?', async () => {
       try {
         await documentsAPI.deleteDocument(id);
         fetchDocuments();
+        showNotification('Documento eliminado exitosamente', 'success');
       } catch (err) {
         console.error(err);
+        showNotification('Error al eliminar el documento. Por favor, inténtalo de nuevo.', 'error');
       }
-    }
+    });
   };
 
   const canEdit = user?.role?.name === 'Administrador';
+
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
+
+  const showConfirmDialog = (message, onConfirm) => {
+    setConfirmDialog({ message, onConfirm });
+  };
+
+  const handleConfirm = () => {
+    if (confirmDialog?.onConfirm) {
+      confirmDialog.onConfirm();
+    }
+    setConfirmDialog(null);
+  };
+
+  const handleCancelConfirm = () => {
+    setConfirmDialog(null);
+  };
 
   if (loading) return <div>Loading...</div>;
 
   return (
     <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+      {/* Notification */}
+      {notification && (
+        <div className="fixed top-4 right-4 z-50 max-w-sm">
+          <div className={`flex items-center p-4 rounded-lg shadow-lg transition-all duration-300 ${
+            notification.type === 'success'
+              ? 'bg-green-50 border border-green-200 text-green-800'
+              : 'bg-red-50 border border-red-200 text-red-800'
+          }`}>
+            <div className="shrink-0">
+              {notification.type === 'success' ? (
+                <FaCheck className="w-5 h-5 text-green-400" />
+              ) : (
+                <FaTimes className="w-5 h-5 text-red-400" />
+              )}
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium">{notification.message}</p>
+            </div>
+            <div className="ml-auto pl-3">
+              <button
+                onClick={() => setNotification(null)}
+                className="inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 hover:bg-gray-50"
+              >
+                <FaTimes className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Confirmation Dialog */}
+      {confirmDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full border border-gray-200">
+            <div className="p-4 sm:p-6">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <FaTimes className="w-6 h-6 text-red-600" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">Confirmar Acción</h3>
+              <p className="text-sm text-gray-600 text-center mb-6">{confirmDialog.message}</p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={handleCancelConfirm}
+                  className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleConfirm}
+                  className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  Confirmar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div>
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -107,7 +196,7 @@ const Documents = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           {/* Upload Section */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
             <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
               <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Subir Documento</h2>
             </div>
@@ -197,7 +286,7 @@ const Documents = () => {
           </div>
 
           {/* Documents List */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
             <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
               <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Todos los Documentos</h2>
             </div>
@@ -265,7 +354,7 @@ const Documents = () => {
       {/* Edit Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-gray-200">
             <div className="p-4 sm:p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg sm:text-2xl font-bold text-gray-900">Editar Documento</h2>

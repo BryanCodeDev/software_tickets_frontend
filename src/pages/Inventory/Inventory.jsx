@@ -23,6 +23,7 @@ const Inventory = () => {
   });
   const [formLoading, setFormLoading] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState(null);
   const [detectingHardware, setDetectingHardware] = useState(false);
   const { user } = useContext(AuthContext);
 
@@ -36,7 +37,7 @@ const Inventory = () => {
       setInventory(data);
     } catch (err) {
       console.error('Error al cargar inventario:', err);
-      alert('Error al cargar el inventario. Por favor, recarga la página.');
+      showNotification('Error al cargar el inventario. Por favor, recarga la página.', 'error');
     } finally {
       setLoading(false);
     }
@@ -79,7 +80,7 @@ const Inventory = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar este artículo? Esta acción no se puede deshacer.')) {
+    showConfirmDialog('¿Estás seguro de que deseas eliminar este artículo? Esta acción no se puede deshacer.', async () => {
       try {
         await inventoryAPI.deleteInventoryItem(id);
         fetchInventory();
@@ -88,7 +89,7 @@ const Inventory = () => {
         console.error('Error al eliminar:', err);
         showNotification('Error al eliminar el artículo. Por favor, inténtalo de nuevo.', 'error');
       }
-    }
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -117,6 +118,21 @@ const Inventory = () => {
   const showNotification = (message, type) => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 5000);
+  };
+
+  const showConfirmDialog = (message, onConfirm) => {
+    setConfirmDialog({ message, onConfirm });
+  };
+
+  const handleConfirm = () => {
+    if (confirmDialog?.onConfirm) {
+      confirmDialog.onConfirm();
+    }
+    setConfirmDialog(null);
+  };
+
+  const handleCancelConfirm = () => {
+    setConfirmDialog(null);
   };
 
   const handleDetectHardware = async () => {
@@ -182,6 +198,37 @@ const Inventory = () => {
         </div>
       )}
 
+      {/* Custom Confirmation Dialog */}
+      {confirmDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-sm w-full border border-gray-200">
+            <div className="p-4 sm:p-6">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <FaTimes className="w-6 h-6 text-red-600" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">Confirmar Acción</h3>
+              <p className="text-sm text-gray-600 text-center mb-6">{confirmDialog.message}</p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={handleCancelConfirm}
+                  className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleConfirm}
+                  className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  Confirmar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-[2000px] mx-auto">
         {/* Header Section */}
         <div className="mb-4 sm:mb-6 md:mb-8">
@@ -215,7 +262,7 @@ const Inventory = () => {
         </div>
 
         {/* Main Content */}
-        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl border border-gray-200 overflow-hidden">
           <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 border-b border-gray-200 bg-gray-50">
             <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-gray-900">
               Todos los Artículos
@@ -414,7 +461,7 @@ const Inventory = () => {
       {/* Modal for Create/Edit */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-[95vw] sm:max-w-md md:max-w-lg lg:max-w-xl max-h-[95vh] overflow-y-auto">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-[95vw] sm:max-w-md md:max-w-lg lg:max-w-xl max-h-[95vh] overflow-y-auto border border-gray-200">
             <div className="sticky top-0 bg-white p-3 sm:p-4 md:p-6 border-b border-gray-200 z-10">
               <div className="flex items-center justify-between gap-3">
                 <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 break-words flex-1">

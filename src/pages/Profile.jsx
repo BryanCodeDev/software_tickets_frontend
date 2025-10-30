@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import AuthContext from '../context/AuthContext.jsx';
 import { usersAPI, inventoryAPI } from '../api';
+import { FaCheck, FaTimes } from 'react-icons/fa';
 
 const Profile = () => {
   const { user, updateUser } = useContext(AuthContext);
@@ -11,7 +12,7 @@ const Profile = () => {
     it: ''
   });
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [notification, setNotification] = useState(null);
   const [uniqueITs, setUniqueITs] = useState([]);
 
   useEffect(() => {
@@ -45,28 +46,62 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage('');
 
     try {
       const updatedUser = await usersAPI.updateProfile(formData);
       updateUser(updatedUser);
-      setMessage('Perfil actualizado exitosamente');
+      showNotification('Perfil actualizado exitosamente', 'success');
     } catch (error) {
-      setMessage('Error al actualizar el perfil');
+      showNotification('Error al actualizar el perfil. Por favor, inténtalo de nuevo.', 'error');
       console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {/* Notification */}
+      {notification && (
+        <div className="fixed top-4 right-4 z-50 max-w-sm">
+          <div className={`flex items-center p-4 rounded-lg shadow-lg transition-all duration-300 ${
+            notification.type === 'success'
+              ? 'bg-green-50 border border-green-200 text-green-800'
+              : 'bg-red-50 border border-red-200 text-red-800'
+          }`}>
+            <div className="shrink-0">
+              {notification.type === 'success' ? (
+                <FaCheck className="w-5 h-5 text-green-400" />
+              ) : (
+                <FaTimes className="w-5 h-5 text-red-400" />
+              )}
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium">{notification.message}</p>
+            </div>
+            <div className="ml-auto pl-3">
+              <button
+                onClick={() => setNotification(null)}
+                className="inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 hover:bg-gray-50"
+              >
+                <FaTimes className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="mb-6 sm:mb-8">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Mi Perfil</h1>
         <p className="text-base sm:text-lg text-gray-600">Gestiona tu información personal</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -145,11 +180,6 @@ const Profile = () => {
           </div>
         </form>
 
-        {message && (
-          <div className={`mt-4 p-4 rounded-lg ${message.includes('Error') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
-            {message}
-          </div>
-        )}
       </div>
     </div>
   );
