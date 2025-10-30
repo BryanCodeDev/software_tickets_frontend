@@ -156,7 +156,7 @@ const Inventory = () => {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-violet-50 to-indigo-50 py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-6 lg:px-8">
       <div className="flex items-center justify-center min-h-[50vh] sm:min-h-[60vh]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 border-b-2 border-purple-600 mx-auto mb-3 sm:mb-4"></div>
@@ -167,7 +167,7 @@ const Inventory = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-violet-50 to-indigo-50 py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-6 lg:px-8">
       {/* Notification */}
       {notification && (
         <div className="fixed top-2 right-2 sm:top-4 sm:right-4 z-50 max-w-[calc(100vw-1rem)] sm:max-w-sm">
@@ -184,7 +184,7 @@ const Inventory = () => {
               )}
             </div>
             <div className="ml-2 sm:ml-3 flex-1 min-w-0">
-              <p className="text-xs sm:text-sm font-medium break-words">{notification.message}</p>
+              <p className="text-xs sm:text-sm font-medium wrap-break-word">{notification.message}</p>
             </div>
             <div className="ml-2 sm:ml-auto sm:pl-3">
               <button
@@ -236,22 +236,22 @@ const Inventory = () => {
             <div className="flex items-start sm:items-center justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gradient-to-r from-purple-600 to-violet-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg shrink-0">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-linear-to-r from-purple-600 to-violet-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg shrink-0">
                     <FaBox className="text-white text-sm sm:text-base md:text-lg" />
                   </div>
-                  <span className="break-words leading-tight">
+                  <span className="wrap-break-word leading-tight">
                     <span className="hidden md:inline">Inventario de Equipos de Cómputo</span>
                     <span className="hidden sm:inline md:hidden">Inventario de Equipos</span>
                     <span className="sm:hidden">Inventario</span>
                   </span>
                 </h1>
-                <p className="mt-1 sm:mt-2 text-xs sm:text-sm md:text-base text-gray-600 break-words">
+                <p className="mt-1 sm:mt-2 text-xs sm:text-sm md:text-base text-gray-600 wrap-break-word">
                   Control y seguimiento de equipos informáticos 2025
                 </p>
               </div>
               <button
                 onClick={handleCreate}
-                className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-4 sm:py-2.5 md:px-6 md:py-3 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white text-xs sm:text-sm md:text-base font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 shrink-0"
+                className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-4 sm:py-2.5 md:px-6 md:py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white text-xs sm:text-sm md:text-base font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 shrink-0"
               >
                 <FaPlus className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span className="hidden xs:inline sm:hidden md:inline">Nuevo</span>
@@ -287,11 +287,11 @@ const Inventory = () => {
                 {/* Mobile/Tablet Card Layout (< 1280px) */}
                 <div className="block xl:hidden space-y-3 sm:space-y-4">
                   {inventory.map((item) => (
-                    <div key={item.id} className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200 hover:shadow-md hover:border-purple-300 transition-all duration-200">
+                    <div key={item.id} className="bg-linear-to-br from-gray-50 to-gray-100 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200 hover:shadow-md hover:border-purple-300 transition-all duration-200">
                       <div className="flex items-start justify-between gap-2 mb-3">
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-center gap-2 mb-2">
-                            <h3 className="text-sm sm:text-base font-semibold text-gray-900 break-words">{item.propiedad}</h3>
+                            <h3 className="text-sm sm:text-base font-semibold text-gray-900 wrap-break-word">{item.propiedad}</h3>
                             <span className={`px-2 py-0.5 sm:py-1 text-xs font-medium rounded-full whitespace-nowrap ${
                               item.status === 'disponible' ? 'bg-green-100 text-green-700' :
                               item.status === 'en uso' ? 'bg-blue-100 text-blue-700' :
@@ -406,7 +406,7 @@ const Inventory = () => {
                             <div className="max-w-[100px] truncate" title={item.capacidad}>{item.capacidad}</div>
                           </td>
                           <td className="px-3 py-3 text-sm text-gray-500">
-                            <div className="max-w-[80px] truncate" title={item.ram}>{item.ram}</div>
+                            <div className="max-w-20 truncate" title={item.ram}>{item.ram}</div>
                           </td>
                           <td className="px-3 py-3 text-sm text-gray-500">
                             <div className="max-w-[100px] truncate" title={item.marca}>{item.marca}</div>
@@ -464,7 +464,7 @@ const Inventory = () => {
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-[95vw] sm:max-w-md md:max-w-lg lg:max-w-xl max-h-[95vh] overflow-y-auto border border-gray-200">
             <div className="sticky top-0 bg-white p-3 sm:p-4 md:p-6 border-b border-gray-200 z-10">
               <div className="flex items-center justify-between gap-3">
-                <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 break-words flex-1">
+                <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 wrap-break-word flex-1">
                   {editingItem ? 'Editar Equipo' : 'Nuevo Equipo de Cómputo'}
                 </h2>
                 <button
@@ -672,7 +672,7 @@ const Inventory = () => {
                 </button>
                 <button
                   type="submit"
-                  className="order-1 sm:order-3 sm:flex-1 px-3 sm:px-4 py-2.5 sm:py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white text-sm sm:text-base font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="order-1 sm:order-3 sm:flex-1 px-3 sm:px-4 py-2.5 sm:py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white text-sm sm:text-base font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   disabled={formLoading || detectingHardware}
                 >
                   {formLoading ? (
