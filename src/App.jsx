@@ -4,6 +4,8 @@ import AuthContext, { AuthProvider } from './context/AuthContext.jsx';
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import TermsAndConditions from './pages/TermsAndConditions';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import Dashboard from './pages/Dashboard';
 import Tickets from './pages/Tickets/Tickets';
 import Inventory from './pages/Inventory/Inventory';
@@ -42,6 +44,8 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <div className="flex">

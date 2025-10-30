@@ -57,6 +57,18 @@ const Register = () => {
     }
 
     try {
+      console.log('Attempting to register user:', formData.username, formData.email);
+      await register(formData.username, formData.email, formData.password);
+      console.log('Registration successful, navigating to login');
+      navigate('/login');
+      // Note: User is not automatically logged in after registration
+    } catch (err) {
+      console.error('Registration failed:', err);
+      setError(err.response?.data?.error || 'Error al registrarse');
+    } finally {
+      setLoading(false);
+    }
+    try {
       await register(formData.username, formData.email, formData.password);
       navigate('/dashboard');
     } catch (err) {
@@ -79,9 +91,9 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex">
+    <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 flex">
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-600 via-violet-600 to-indigo-600 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-linear-to-br from-purple-600 via-violet-600 to-indigo-600 p-12 flex-col justify-between relative overflow-hidden">
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-48 -mt-48"></div>
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-white opacity-5 rounded-full -ml-40 -mb-40"></div>
@@ -111,7 +123,7 @@ const Register = () => {
             <h3 className="text-white font-semibold text-lg mb-4">Beneficios de registrarte:</h3>
             <ul className="space-y-3">
               <li className="flex items-center space-x-3">
-                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
@@ -119,7 +131,7 @@ const Register = () => {
                 <span className="text-purple-100">Gestión de tickets en tiempo real</span>
               </li>
               <li className="flex items-center space-x-3">
-                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
@@ -127,7 +139,7 @@ const Register = () => {
                 <span className="text-purple-100">Control completo de inventario IT</span>
               </li>
               <li className="flex items-center space-x-3">
-                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
@@ -135,7 +147,7 @@ const Register = () => {
                 <span className="text-purple-100">Repositorio de documentación técnica</span>
               </li>
               <li className="flex items-center space-x-3">
-                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
@@ -152,7 +164,7 @@ const Register = () => {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center space-x-3 mb-8">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-violet-600 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 bg-linear-to-br from-purple-600 to-violet-600 rounded-xl flex items-center justify-center shadow-lg">
               <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
               </svg>
@@ -170,7 +182,7 @@ const Register = () => {
               {error && (
                 <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
                   <div className="flex items-start">
-                    <svg className="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-red-500 mt-0.5 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                     </svg>
                     <div>
@@ -344,13 +356,13 @@ const Register = () => {
                 <div className="ml-3 text-sm">
                   <label htmlFor="terms" className="text-gray-600">
                     Acepto los{' '}
-                    <a href="#" className="font-medium text-purple-600 hover:text-purple-500">
+                    <Link to="/terms-and-conditions" className="font-medium text-purple-600 hover:text-purple-500">
                       Términos y Condiciones
-                    </a>{' '}
+                    </Link>{' '}
                     y la{' '}
-                    <a href="#" className="font-medium text-purple-600 hover:text-purple-500">
+                    <Link to="/privacy-policy" className="font-medium text-purple-600 hover:text-purple-500">
                       Política de Privacidad
-                    </a>
+                    </Link>
                   </label>
                 </div>
               </div>
@@ -358,7 +370,7 @@ const Register = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
+                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
               >
                 {loading ? (
                   <>
