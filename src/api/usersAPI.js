@@ -83,6 +83,43 @@ const usersAPI = {
       throw error.response?.data?.error || 'Error al guardar configuración';
     }
   },
+
+  // Two-Factor Authentication
+  enable2FA: async () => {
+    try {
+      const response = await api.post('/users/2fa/enable');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || 'Error al habilitar 2FA';
+    }
+  },
+
+  disable2FA: async () => {
+    try {
+      const response = await api.post('/users/2fa/disable');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || 'Error al deshabilitar 2FA';
+    }
+  },
+
+  verify2FA: async (token) => {
+    try {
+      const response = await api.post('/users/2fa/verify', { token });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || 'Error al verificar código 2FA';
+    }
+  },
+
+  get2FAStatus: async () => {
+    try {
+      const response = await api.get('/users/2fa/status');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || 'Error al obtener estado 2FA';
+    }
+  },
 };
 
 export default usersAPI;
