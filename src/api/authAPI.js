@@ -18,6 +18,24 @@ const authAPI = {
       throw error.response?.data?.error || 'Error al registrarse';
     }
   },
+
+  requestPasswordReset: async (email) => {
+    try {
+      const response = await api.post('/users/request-password-reset', { email });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || 'Error al solicitar restablecimiento de contraseña';
+    }
+  },
+
+  resetPassword: async (token, newPassword) => {
+    try {
+      const response = await api.post('/users/reset-password', { token, newPassword });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || 'Error al restablecer contraseña';
+    }
+  },
 };
 
 export default authAPI;
