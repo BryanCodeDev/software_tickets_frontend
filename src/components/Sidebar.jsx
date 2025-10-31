@@ -158,7 +158,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
       {/* Sidebar */}
       <aside className={`
-        fixed lg:static inset-y-0 left-0 z-50 w-72 lg:w-80 bg-linear-to-b from-gray-50 to-white border-r border-gray-200 shadow-xl lg:shadow-none transform transition-transform duration-300 ease-in-out
+        fixed lg:static inset-y-0 left-0 z-50 w-72 lg:w-80 bg-linear-to-b from-gray-50 to-white border-r border-gray-200 shadow-xl lg:shadow-none transform transition-transform duration-300 ease-in-out overflow-y-auto lg:overflow-visible
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">

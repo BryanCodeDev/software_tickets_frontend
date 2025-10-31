@@ -229,7 +229,7 @@ const Inventory = () => {
         </div>
       )}
 
-      <div className="max-w-[2000px] mx-auto">
+      <div className="max-w-full mx-auto">
         {/* Header Section */}
         <div className="mb-4 sm:mb-6 md:mb-8">
           <div className="flex flex-col gap-3 sm:gap-4">
@@ -364,61 +364,41 @@ const Inventory = () => {
                 </div>
 
                 {/* Desktop Table Layout (>= 1280px) */}
-                <div className="hidden xl:block overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
+                <div className="hidden xl:block">
+                  <table className="w-full table-fixed divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Propiedad</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">IT</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Área</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Responsable</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Serial</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Capacidad</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">RAM</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Marca</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Ubicación</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Garantía</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Estado</th>
+                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Propiedad</th>
+                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">IT</th>
+                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Área</th>
+                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Responsable</th>
+                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Serial</th>
+                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Capacidad</th>
+                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">RAM</th>
+                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Marca</th>
+                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Ubicación</th>
+                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Garantía</th>
+                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Estado</th>
                         {canEdit && (
-                          <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Acciones</th>
+                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Acciones</th>
                         )}
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {inventory.map((item) => (
                         <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                          <td className="px-3 py-3 text-sm font-medium text-gray-900">
-                            <div className="max-w-[150px] truncate" title={item.propiedad}>{item.propiedad}</div>
-                          </td>
-                          <td className="px-3 py-3 text-sm text-gray-500">
-                            <div className="max-w-[100px] truncate" title={item.it}>{item.it}</div>
-                          </td>
-                          <td className="px-3 py-3 text-sm text-gray-500">
-                            <div className="max-w-[150px] truncate" title={item.area}>{item.area}</div>
-                          </td>
-                          <td className="px-3 py-3 text-sm text-gray-500">
-                            <div className="max-w-[150px] truncate" title={item.responsable}>{item.responsable}</div>
-                          </td>
-                          <td className="px-3 py-3 text-sm text-gray-500">
-                            <div className="max-w-[120px] truncate" title={item.serial}>{item.serial}</div>
-                          </td>
-                          <td className="px-3 py-3 text-sm text-gray-500">
-                            <div className="max-w-[100px] truncate" title={item.capacidad}>{item.capacidad}</div>
-                          </td>
-                          <td className="px-3 py-3 text-sm text-gray-500">
-                            <div className="max-w-20 truncate" title={item.ram}>{item.ram}</div>
-                          </td>
-                          <td className="px-3 py-3 text-sm text-gray-500">
-                            <div className="max-w-[100px] truncate" title={item.marca}>{item.marca}</div>
-                          </td>
-                          <td className="px-3 py-3 text-sm text-gray-500">
-                            <div className="max-w-[120px] truncate" title={item.location || '-'}>{item.location || '-'}</div>
-                          </td>
-                          <td className="px-3 py-3 text-sm text-gray-500 whitespace-nowrap">
-                            {item.warrantyExpiry ? new Date(item.warrantyExpiry).toLocaleDateString('es-ES') : '-'}
-                          </td>
-                          <td className="px-3 py-3">
-                            <span className={`px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap ${
+                          <td className="px-2 py-2 text-sm font-medium text-gray-900 truncate" title={item.propiedad}>{item.propiedad}</td>
+                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.it}>{item.it}</td>
+                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.area}>{item.area}</td>
+                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.responsable}>{item.responsable}</td>
+                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.serial}>{item.serial}</td>
+                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.capacidad}>{item.capacidad}</td>
+                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.ram}>{item.ram}</td>
+                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.marca}>{item.marca}</td>
+                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.location || '-'}>{item.location || '-'}</td>
+                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.warrantyExpiry ? new Date(item.warrantyExpiry).toLocaleDateString('es-ES') : '-'}>{item.warrantyExpiry ? new Date(item.warrantyExpiry).toLocaleDateString('es-ES') : '-'}</td>
+                          <td className="px-2 py-2">
+                            <span className={`px-1.5 py-0.5 text-xs font-medium rounded-full ${
                               item.status === 'disponible' ? 'bg-green-100 text-green-700' :
                               item.status === 'en uso' ? 'bg-blue-100 text-blue-700' :
                               item.status === 'mantenimiento' ? 'bg-yellow-100 text-yellow-700' :
@@ -428,21 +408,21 @@ const Inventory = () => {
                             </span>
                           </td>
                           {canEdit && (
-                            <td className="px-3 py-3">
-                              <div className="flex gap-2">
+                            <td className="px-2 py-2">
+                              <div className="flex gap-1">
                                 <button
                                   onClick={() => handleEdit(item)}
-                                  className="text-blue-600 hover:text-blue-900 hover:bg-blue-50 p-1.5 rounded-lg transition-colors"
+                                  className="text-blue-600 hover:text-blue-900 hover:bg-blue-50 p-1 rounded-lg transition-colors"
                                   title="Editar"
                                 >
-                                  <FaEdit className="w-4 h-4" />
+                                  <FaEdit className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                   onClick={() => handleDelete(item.id)}
-                                  className="text-red-600 hover:text-red-900 hover:bg-red-50 p-1.5 rounded-lg transition-colors"
+                                  className="text-red-600 hover:text-red-900 hover:bg-red-50 p-1 rounded-lg transition-colors"
                                   title="Eliminar"
                                 >
-                                  <FaTrash className="w-4 h-4" />
+                                  <FaTrash className="w-3.5 h-3.5" />
                                 </button>
                               </div>
                             </td>
@@ -461,7 +441,7 @@ const Inventory = () => {
       {/* Modal for Create/Edit */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-[95vw] sm:max-w-md md:max-w-lg lg:max-w-xl max-h-[95vh] overflow-y-auto border border-gray-200">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-[95vw] sm:max-w-md md:max-w-lg lg:max-w-4xl xl:max-w-5xl max-h-[95vh] overflow-y-auto border border-gray-200">
             <div className="sticky top-0 bg-white p-3 sm:p-4 md:p-6 border-b border-gray-200 z-10">
               <div className="flex items-center justify-between gap-3">
                 <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 wrap-break-word flex-1">
@@ -479,7 +459,7 @@ const Inventory = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4 md:space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                     Propiedad *
@@ -507,37 +487,45 @@ const Inventory = () => {
                     required
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                  Área *
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ej: MATERIA PRIMA"
-                  value={formData.area}
-                  onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                  required
-                />
-              </div>
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                    Área *
+                  </label>
+                  <select
+                    value={formData.area}
+                    onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                    required
+                  >
+                    <option value="">Selecciona un área</option>
+                    <option value="Alta Dirección">Alta Dirección</option>
+                    <option value="Ventas">Ventas</option>
+                    <option value="Dirección Técnica">Dirección Técnica</option>
+                    <option value="Cadena de abastecimiento">Cadena de abastecimiento</option>
+                    <option value="Gestión de Operaciones">Gestión de Operaciones</option>
+                    <option value="Mercadeo">Mercadeo</option>
+                    <option value="Gestión de Calidad">Gestión de Calidad</option>
+                    <option value="Gestión de Talento Humano">Gestión de Talento Humano</option>
+                    <option value="Gestión Administrativa">Gestión Administrativa</option>
+                    <option value="Gestión Financiera">Gestión Financiera</option>
+                  </select>
+                </div>
 
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                  Responsable *
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ej: Oscar"
-                  value={formData.responsable}
-                  onChange={(e) => setFormData({ ...formData, responsable: e.target.value })}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                  required
-                />
-              </div>
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                    Responsable *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ej: Oscar"
+                    value={formData.responsable}
+                    onChange={(e) => setFormData({ ...formData, responsable: e.target.value })}
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                    required
+                  />
+                </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                     Serial *
@@ -565,9 +553,7 @@ const Inventory = () => {
                     required
                   />
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                     RAM *
@@ -595,9 +581,7 @@ const Inventory = () => {
                     required
                   />
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                     Ubicación
@@ -622,22 +606,22 @@ const Inventory = () => {
                     className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                  Estado
-                </label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                >
-                  <option value="disponible">Disponible</option>
-                  <option value="en uso">En Uso</option>
-                  <option value="mantenimiento">Mantenimiento</option>
-                  <option value="fuera de servicio">Fuera de Servicio</option>
-                </select>
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                    Estado
+                  </label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                  >
+                    <option value="disponible">Disponible</option>
+                    <option value="en uso">En Uso</option>
+                    <option value="mantenimiento">Mantenimiento</option>
+                    <option value="fuera de servicio">Fuera de Servicio</option>
+                  </select>
+                </div>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-gray-200">
