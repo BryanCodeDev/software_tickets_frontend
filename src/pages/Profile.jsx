@@ -167,7 +167,6 @@ const Profile = () => {
           <div className="flex items-center justify-between pt-4">
             <div className="text-sm text-gray-600">
               <p><strong>Rol:</strong> {user?.role?.name || 'N/A'}</p>
-              <p><strong>Estado:</strong> {user?.isActive ? 'Activo' : 'Inactivo'}</p>
             </div>
 
             <button
