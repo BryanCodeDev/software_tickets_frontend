@@ -23,12 +23,14 @@ const Login = () => {
       if (response.requires2FA) {
         setRequires2FA(true);
         setError('');
-      } else {
-        navigate('/dashboard');
+        setLoading(false);
+        return;
       }
+
+      // Login successful
+      navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.error || 'Error al iniciar sesión');
-    } finally {
       setLoading(false);
     }
   };

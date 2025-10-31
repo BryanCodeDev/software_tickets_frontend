@@ -69,14 +69,6 @@ const Register = () => {
     } finally {
       setLoading(false);
     }
-    try {
-      await register(formData.name, formData.username, formData.email, formData.password);
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.response?.data?.error || 'Error al registrarse');
-    } finally {
-      setLoading(false);
-    }
   };
 
   const getStrengthColor = () => {

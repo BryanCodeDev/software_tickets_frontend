@@ -24,9 +24,16 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (email, password, twoFactorToken = null) => {
     try {
-      const res = await authAPI.login(email, password);
+      const res = await authAPI.login(email, password, twoFactorToken);
+
+      // If 2FA is required, don't set user/token yet
+      if (res.requires2FA) {
+        return res;
+      }
+
+      // Normal login flow
       localStorage.setItem('token', res.token);
       localStorage.setItem('user', JSON.stringify(res.user));
       setUser(res.user);
