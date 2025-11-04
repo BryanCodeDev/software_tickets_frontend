@@ -117,7 +117,7 @@ const Settings = () => {
         window.location.href = '/login';
       }, 2000);
     } catch (error) {
-      showNotification(error || 'Error al cambiar la contraseña. Por favor, inténtalo de nuevo.', 'error');
+      showNotification(error.response?.data?.error || error || 'Error al cambiar la contraseña. Por favor, inténtalo de nuevo.', 'error');
       console.error(error);
     } finally {
       setPasswordLoading(false);
