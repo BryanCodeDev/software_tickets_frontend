@@ -89,7 +89,33 @@ function App() {
                 </div>
               </ProtectedRoute>
             } />
+            <Route path="/inventory/:id" element={
+              <ProtectedRoute>
+                <div className="flex">
+                  <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+                  <div className="flex-1 lg:ml-0 transition-all duration-300">
+                    <Navbar toggleSidebar={toggleSidebar} />
+                    <main className="p-0 sm:p-1 lg:p-2">
+                      <Inventory />
+                    </main>
+                  </div>
+                </div>
+              </ProtectedRoute>
+            } />
             <Route path="/documents" element={
+              <ProtectedRoute>
+                <div className="flex">
+                  <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+                  <div className="flex-1 lg:ml-0 transition-all duration-300">
+                    <Navbar toggleSidebar={toggleSidebar} />
+                    <main className="p-0 sm:p-1 lg:p-2">
+                      <Documents />
+                    </main>
+                  </div>
+                </div>
+              </ProtectedRoute>
+            } />
+            <Route path="/documents/:id" element={
               <ProtectedRoute>
                 <div className="flex">
                   <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />

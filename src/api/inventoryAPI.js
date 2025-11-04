@@ -11,6 +11,16 @@ const inventoryAPI = {
     }
   },
 
+  searchInventory: async (query) => {
+    try {
+      const response = await api.get(`/inventory/search?q=${encodeURIComponent(query)}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error searching inventory:', error);
+      throw error;
+    }
+  },
+
   fetchInventoryById: async (id) => {
     try {
       const response = await api.get(`/inventory/${id}`);

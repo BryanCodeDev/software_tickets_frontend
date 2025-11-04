@@ -11,6 +11,16 @@ const ticketsAPI = {
     }
   },
 
+  searchTickets: async (query) => {
+    try {
+      const response = await api.get(`/tickets/search?q=${encodeURIComponent(query)}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error searching tickets:', error);
+      throw error;
+    }
+  },
+
   fetchTicketById: async (id) => {
     try {
       const response = await api.get(`/tickets/${id}`);

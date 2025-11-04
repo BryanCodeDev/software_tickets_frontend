@@ -11,6 +11,16 @@ const documentsAPI = {
     }
   },
 
+  searchDocuments: async (query) => {
+    try {
+      const response = await api.get(`/documents/search?q=${encodeURIComponent(query)}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error searching documents:', error);
+      throw error;
+    }
+  },
+
   fetchDocumentById: async (id) => {
     try {
       const response = await api.get(`/documents/${id}`);
