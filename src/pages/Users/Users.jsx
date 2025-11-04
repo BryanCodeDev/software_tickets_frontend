@@ -74,14 +74,30 @@ const Users = () => {
   };
 
   const handleDelete = async (id) => {
-    showConfirmDialog('¿Estás seguro de que deseas eliminar este usuario?', async () => {
+    const userToDelete = users.find(u => u.id === id);
+    const actionText = userToDelete?.isActive ? 'eliminar' : 'desactivar';
+
+    showConfirmDialog(`¿Estás seguro de que deseas ${actionText} este usuario?`, async () => {
       try {
-        await usersAPI.deleteUser(id);
+        const response = await usersAPI.deleteUser(id);
         fetchUsers();
-        showNotification('Usuario eliminado exitosamente', 'success');
+
+        // Check if user was deactivated instead of deleted
+        if (response.deactivated) {
+          showNotification('Usuario desactivado exitosamente (tenía registros relacionados)', 'success');
+        } else {
+          showNotification('Usuario eliminado exitosamente', 'success');
+        }
       } catch (err) {
         console.error(err);
-        showNotification('Error al eliminar el usuario. Por favor, inténtalo de nuevo.', 'error');
+        // Check if the error is about related records
+        if (err.response?.data?.error?.includes('registros relacionados')) {
+          showNotification(err.response.data.error, 'error');
+        } else if (err.response?.data?.error?.includes('propio usuario')) {
+          showNotification(err.response.data.error, 'error');
+        } else {
+          showNotification('Error al eliminar el usuario. Por favor, inténtalo de nuevo.', 'error');
+        }
       }
     });
   };
@@ -249,6 +265,7 @@ const Users = () => {
                       <p><strong>Nombre:</strong> {usr.name || usr.username}</p>
                       <p><strong>Email:</strong> {usr.email}</p>
                       <p><strong>Rol:</strong> {usr.Role?.name}</p>
+                      <p><strong>Estado:</strong> <span className={usr.isActive ? 'text-green-600' : 'text-red-600'}>{usr.isActive ? 'Activo' : 'Inactivo'}</span></p>
                       <p><strong>IT:</strong> {usr.it ? `${usr.it} (${inventoryItems.find(item => item.it === usr.it)?.area || 'Sin área'})` : 'No asignado'}</p>
                     </div>
                     <div className="flex space-x-2">
@@ -261,10 +278,15 @@ const Users = () => {
                       </button>
                       <button
                         onClick={() => handleDelete(usr.id)}
-                        className="flex items-center space-x-1 px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors"
+                        className={`flex items-center space-x-1 px-3 py-1 text-xs font-medium rounded-lg transition-colors ${
+                          usr.isActive
+                            ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                            : 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                        }`}
+                        disabled={!usr.isActive && usr.id === user?.id}
                       >
-                        <FaTrash />
-                        <span>Eliminar</span>
+                        {usr.isActive ? <FaTrash /> : <FaTimes />}
+                        <span>{usr.isActive ? 'Eliminar' : 'Inactivo'}</span>
                       </button>
                     </div>
                   </div>

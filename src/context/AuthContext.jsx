@@ -11,14 +11,30 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
-    if (token && storedUser) {
+    const tokenTimestamp = localStorage.getItem('token_timestamp');
+
+    if (token && storedUser && tokenTimestamp) {
       try {
         const decoded = jwtDecode(token);
         const userData = JSON.parse(storedUser);
-        setUser(userData);
+
+        // Check if token is expired (JWT tokens have expiration)
+        const currentTime = Date.now() / 1000;
+        if (decoded.exp < currentTime) {
+          // Token expired, clear storage
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          localStorage.removeItem('token_timestamp');
+          setUser(null);
+        } else {
+          setUser(userData);
+        }
       } catch (err) {
+        // Invalid token, clear storage
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('token_timestamp');
+        setUser(null);
       }
     }
     setLoading(false);
@@ -37,6 +53,10 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', res.token);
       localStorage.setItem('user', JSON.stringify(res.user));
       setUser(res.user);
+
+      // Set token timestamp for session validation
+      localStorage.setItem('token_timestamp', Date.now().toString());
+
       return res;
     } catch (err) {
       throw err;
@@ -58,6 +78,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('token_timestamp');
     setUser(null);
   };
 

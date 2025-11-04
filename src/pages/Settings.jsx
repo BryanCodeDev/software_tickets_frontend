@@ -1,19 +1,14 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import AuthContext from '../context/AuthContext.jsx';
 import { usersAPI } from '../api';
-import { FaCheck, FaTimes } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Settings = () => {
-  const { t, i18n } = useTranslation();
   const { user } = useContext(AuthContext);
   const [settings, setSettings] = useState(() => {
-    return {
-      language: 'es'
-    };
+    return {};
   });
   const [loading, setLoading] = useState(false);
-  const [loadingSettings, setLoadingSettings] = useState(true);
   const [notification, setNotification] = useState(null);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordData, setPasswordData] = useState({
@@ -22,6 +17,11 @@ const Settings = () => {
     confirmPassword: ''
   });
   const [passwordLoading, setPasswordLoading] = useState(false);
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false
+  });
   const [show2FAModal, setShow2FAModal] = useState(false);
   const [twoFactorData, setTwoFactorData] = useState({
     secret: '',
@@ -32,25 +32,8 @@ const Settings = () => {
   const [twoFactorLoading, setTwoFactorLoading] = useState(false);
 
   useEffect(() => {
-    loadSettings();
     load2FAStatus();
   }, []);
-
-  const loadSettings = async () => {
-    try {
-      const userSettings = await usersAPI.getSettings();
-      setSettings(prev => ({
-        ...prev,
-        language: userSettings.language || 'es'
-      }));
-      i18n.changeLanguage(userSettings.language || 'es');
-    } catch (error) {
-      console.error('Error loading settings:', error);
-      i18n.changeLanguage(settings.language);
-    } finally {
-      setLoadingSettings(false);
-    }
-  };
 
   const load2FAStatus = async () => {
     try {
@@ -61,6 +44,7 @@ const Settings = () => {
       }));
     } catch (error) {
       console.error('Error loading 2FA status:', error);
+      // If token is invalid, don't show error to user, just keep default state
     }
   };
 
@@ -78,10 +62,9 @@ const Settings = () => {
 
     try {
       await usersAPI.updateSettings(settings);
-      i18n.changeLanguage(settings.language);
-      showNotification(t('Configuración guardada exitosamente'), 'success');
+      showNotification('Configuración guardada exitosamente', 'success');
     } catch (error) {
-      showNotification(t('Error al guardar la configuración. Por favor, inténtalo de nuevo.'), 'error');
+      showNotification('Error al guardar la configuración. Por favor, inténtalo de nuevo.', 'error');
       console.error(error);
     } finally {
       setLoading(false);
@@ -100,6 +83,13 @@ const Settings = () => {
     });
   };
 
+  const togglePasswordVisibility = (field) => {
+    setShowPasswords(prev => ({
+      ...prev,
+      [field]: !prev[field]
+    }));
+  };
+
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     setPasswordLoading(true);
@@ -115,9 +105,17 @@ const Settings = () => {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       });
-      showNotification('Contraseña cambiada exitosamente', 'success');
+      showNotification('Contraseña cambiada exitosamente. Serás redirigido al login.', 'success');
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-      setTimeout(() => setShowPasswordModal(false), 2000);
+      setShowPasswords({ current: false, new: false, confirm: false }); // Reset visibility
+
+      // Clear local storage and redirect to login after successful password change
+      setTimeout(() => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('token_timestamp');
+        window.location.href = '/login';
+      }, 2000);
     } catch (error) {
       showNotification(error || 'Error al cambiar la contraseña. Por favor, inténtalo de nuevo.', 'error');
       console.error(error);
@@ -216,55 +214,30 @@ const Settings = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-            {t('Configuración')}
+            Configuración
           </h1>
           <p className="text-base sm:text-lg text-gray-600">
-            {t('Personaliza tu experiencia en la plataforma')}
+            Personaliza tu experiencia en la plataforma
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* Apariencia */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">
-                {t('Apariencia')}
-              </h2>
-            </div>
-            <div className="p-6 space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">
-                  {t('Idioma')}
-                </label>
-                <select
-                  name="language"
-                  value={settings.language}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
-                >
-                  <option value="es">Español</option>
-                  <option value="en">English</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
           {/* Seguridad */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
             <div className="px-6 py-5 border-b border-gray-200">
               <h2 className="text-xl font-semibold text-gray-900">
-                {t('Seguridad')}
+                Seguridad
               </h2>
             </div>
             <div className="p-6 space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-gray-900 mb-1">
-                    {t('Cambiar Contraseña')}
+                    Cambiar Contraseña
                   </label>
                   <p className="text-sm text-gray-600">
-                    {t('Actualiza tu contraseña de acceso')}
+                    Actualiza tu contraseña de acceso
                   </p>
                 </div>
                 <button
@@ -279,7 +252,7 @@ const Settings = () => {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-gray-900 mb-1">
-                    {t('Autenticación de Dos Factores')}
+                    Autenticación de Dos Factores
                   </label>
                   <p className="text-sm text-gray-600">
                     {twoFactorData.isEnabled ? 'Habilitada - Añade una capa extra de seguridad' : 'Deshabilitada - Añade una capa extra de seguridad'}
@@ -308,7 +281,7 @@ const Settings = () => {
               disabled={loading}
               className="px-6 py-3 bg-purple-600 text-white font-semibold rounded-xl hover:bg-purple-700 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
             >
-              {loading ? t('Guardando...') : t('Guardar Cambios')}
+              {loading ? 'Guardando...' : 'Guardar Cambios'}
             </button>
           </div>
         </form>
@@ -321,7 +294,7 @@ const Settings = () => {
               <div className="p-6 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-bold text-gray-900">
-                    {t('Configurar Autenticación de Dos Factores')}
+                    Configurar Autenticación de Dos Factores
                   </h2>
                   <button
                     onClick={() => {
@@ -382,7 +355,7 @@ const Settings = () => {
                     className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors"
                     disabled={twoFactorLoading}
                   >
-                    {t('Cancelar')}
+                    Cancelar
                   </button>
                   <button
                     type="submit"
@@ -395,10 +368,10 @@ const Settings = () => {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        {t('Verificando...')}
+                        Verificando...
                       </>
                     ) : (
-                      t('Verificar y Habilitar')
+                      'Verificar y Habilitar'
                     )}
                   </button>
                 </div>
@@ -414,7 +387,7 @@ const Settings = () => {
               <div className="p-6 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-bold text-gray-900">
-                    {t('Cambiar Contraseña')}
+                    Cambiar Contraseña
                   </h2>
                   <button
                     onClick={() => setShowPasswordModal(false)}
@@ -431,44 +404,71 @@ const Settings = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">
-                    {t('Contraseña Actual')} *
+                    Contraseña Actual *
                   </label>
-                  <input
-                    type="password"
-                    name="currentPassword"
-                    value={passwordData.currentPassword}
-                    onChange={handlePasswordChange}
-                    className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPasswords.current ? "text" : "password"}
+                      name="currentPassword"
+                      value={passwordData.currentPassword}
+                      onChange={handlePasswordChange}
+                      className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => togglePasswordVisibility('current')}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                    >
+                      {showPasswords.current ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
+                    </button>
+                  </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">
-                    {t('Nueva Contraseña')} *
+                    Nueva Contraseña *
                   </label>
-                  <input
-                    type="password"
-                    name="newPassword"
-                    value={passwordData.newPassword}
-                    onChange={handlePasswordChange}
-                    className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPasswords.new ? "text" : "password"}
+                      name="newPassword"
+                      value={passwordData.newPassword}
+                      onChange={handlePasswordChange}
+                      className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => togglePasswordVisibility('new')}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                    >
+                      {showPasswords.new ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
+                    </button>
+                  </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">
-                    {t('Confirmar Nueva Contraseña')} *
+                    Confirmar Nueva Contraseña *
                   </label>
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    value={passwordData.confirmPassword}
-                    onChange={handlePasswordChange}
-                    className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPasswords.confirm ? "text" : "password"}
+                      name="confirmPassword"
+                      value={passwordData.confirmPassword}
+                      onChange={handlePasswordChange}
+                      className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => togglePasswordVisibility('confirm')}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                    >
+                      {showPasswords.confirm ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 pt-4">
@@ -478,7 +478,7 @@ const Settings = () => {
                     className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors"
                     disabled={passwordLoading}
                   >
-                    {t('Cancelar')}
+                    Cancelar
                   </button>
                   <button
                     type="submit"
@@ -491,10 +491,10 @@ const Settings = () => {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        {t('Cambiando...')}
+                        Cambiando...
                       </>
                     ) : (
-                      t('Cambiar Contraseña')
+                      'Cambiar Contraseña'
                     )}
                   </button>
                 </div>
