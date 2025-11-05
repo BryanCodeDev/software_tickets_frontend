@@ -5,8 +5,10 @@ import { FaTicketAlt, FaBox, FaFolder, FaFile, FaLock, FaChartLine, FaClock, FaE
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
-  const [stats, setStats] = useState({ tickets: 0, inventory: 0, documents: 0 });
+  const [stats, setStats] = useState({ tickets: 0, inventory: 0, documents: 0, credentials: 0, users: 0 });
   const [ticketStats, setTicketStats] = useState({ pending: 0, inProgress: 0, resolved: 0 });
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [systemHealth, setSystemHealth] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,17 +17,26 @@ const Dashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const stats = await dashboardAPI.fetchStats();
-      setStats(stats);
-      
-      // Si la API devuelve estadísticas de tickets desglosadas
-      if (stats.ticketsByStatus) {
+      const data = await dashboardAPI.fetchStats();
+      setStats({
+        tickets: data.tickets,
+        inventory: data.inventory,
+        documents: data.documents,
+        credentials: data.credentials,
+        users: data.users
+      });
+
+      // Estadísticas de tickets desglosadas
+      if (data.ticketsByStatus) {
         setTicketStats({
-          pending: stats.ticketsByStatus.pending || 0,
-          inProgress: stats.ticketsByStatus.inProgress || 0,
-          resolved: stats.ticketsByStatus.resolved || 0
+          pending: data.ticketsByStatus.abierto || 0,
+          inProgress: data.ticketsByStatus['en progreso'] || 0,
+          resolved: data.ticketsByStatus.resuelto || 0
         });
       }
+
+      setRecentActivity(data.recentActivity || []);
+      setSystemHealth(data.systemHealth || {});
       setLoading(false);
     } catch (err) {
       console.error(err);
@@ -34,16 +45,16 @@ const Dashboard = () => {
   };
 
   const StatCard = ({ title, value, description, icon: Icon, gradient, textColor }) => (
-    <div className={`p-6 rounded-xl shadow-lg text-white hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 ${gradient}`}>
-      <div className="flex items-center justify-between mb-4">
+    <div className={`p-4 sm:p-5 lg:p-6 rounded-xl shadow-lg text-white hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 ${gradient}`}>
+      <div className="flex items-center justify-between mb-3 lg:mb-4">
         <div className="flex-1 min-w-0">
-          <h2 className="text-lg font-semibold mb-1 truncate">{title}</h2>
-          <p className={`text-4xl font-bold mb-2 ${loading ? 'animate-pulse' : ''}`}>
+          <h2 className="text-base sm:text-lg font-semibold mb-1 truncate">{title}</h2>
+          <p className={`text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 ${loading ? 'animate-pulse' : ''}`}>
             {loading ? '...' : value}
           </p>
-          <p className={`${textColor} text-sm font-medium`}>{description}</p>
+          <p className={`${textColor} text-xs sm:text-sm font-medium`}>{description}</p>
         </div>
-        <div className="text-5xl opacity-20 ml-4">
+        <div className="text-3xl sm:text-4xl lg:text-5xl opacity-20 ml-2 sm:ml-4 shrink-0">
           <Icon />
         </div>
       </div>
@@ -51,43 +62,44 @@ const Dashboard = () => {
   );
 
   const QuickStatCard = ({ icon: Icon, label, value, color }) => (
-    <div className="flex items-center space-x-3 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-      <div className={`p-3 rounded-lg ${color}`}>
-        <Icon className="text-white text-xl" />
+    <div className="flex items-center space-x-2 sm:space-x-3 p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div className={`p-2 sm:p-3 rounded-lg ${color} shrink-0`}>
+        <Icon className="text-white text-lg sm:text-xl" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-gray-600 font-medium">{label}</p>
-        <p className="text-2xl font-bold text-gray-900">{loading ? '...' : value}</p>
+        <p className="text-xs sm:text-sm text-gray-600 font-medium truncate">{label}</p>
+        <p className="text-xl sm:text-2xl font-bold text-gray-900">{loading ? '...' : value}</p>
       </div>
     </div>
   );
 
-  const totalResources = stats.tickets + stats.inventory + stats.documents;
-  const completionRate = stats.tickets > 0 ? Math.round((ticketStats.resolved / stats.tickets) * 100) : 0;
+  const totalResources = stats.tickets + stats.inventory + stats.documents + stats.credentials;
+  const completionRate = stats.tickets > 0 ? Math.round(((ticketStats.resolved + ticketStats.pending + ticketStats.inProgress) > 0 ? (ticketStats.resolved / (ticketStats.resolved + ticketStats.pending + ticketStats.inProgress)) * 100 : 0)) : 0;
 
   return (
-    <div className="space-y-6 pb-6">
-      {/* Header Section */}
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl p-6 sm:p-8 text-white shadow-lg">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div className="mb-4 sm:mb-0">
-            <h1 className="text-3xl sm:text-4xl font-bold mb-2">Panel Principal</h1>
-            <p className="text-lg sm:text-xl text-purple-100">
-              Bienvenido, <span className="font-semibold">{user?.name || 'Usuario'}</span>
-            </p>
-            <p className="text-sm text-purple-200 mt-1">
-              Rol: {user?.role?.name || 'Empleado'} • Sistema DuvyClass
-            </p>
-          </div>
-          <div className="flex items-center space-x-2 text-sm bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm">
-            <FaClock className="text-purple-200" />
-            <span>{new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        {/* Header Section */}
+        <div className="bg-linear-to-r from-purple-600 to-indigo-600 rounded-xl p-4 sm:p-6 lg:p-8 text-white shadow-lg">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">Panel Principal</h1>
+              <p className="text-base sm:text-lg lg:text-xl text-purple-100">
+                Bienvenido, <span className="font-semibold">{user?.name || 'Usuario'}</span>
+              </p>
+              <p className="text-xs sm:text-sm text-purple-200 mt-1">
+                Rol: {user?.role?.name || 'Empleado'} • Sistema DuvyClass
+              </p>
+            </div>
+            <div className="flex items-center space-x-2 text-xs sm:text-sm bg-white/20 px-3 py-2 lg:px-4 lg:py-2 rounded-lg backdrop-blur-sm w-fit">
+              <FaClock className="text-purple-200 shrink-0" />
+              <span className="truncate">{new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        {/* Main Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         <StatCard
           title="Tickets"
           value={stats.tickets}
@@ -107,28 +119,37 @@ const Dashboard = () => {
         />
         
         <StatCard
-          title="Documentos"
-          value={stats.documents}
-          description="Documentación oficial"
-          icon={FaFile}
-          gradient="bg-gradient-to-br from-purple-400 to-purple-500"
-          textColor="text-purple-100"
-        />
+           title="Documentos"
+           value={stats.documents}
+           description="Documentación oficial"
+           icon={FaFile}
+           gradient="bg-gradient-to-br from-purple-400 to-purple-500"
+           textColor="text-purple-100"
+         />
+
+         <StatCard
+           title="Credenciales"
+           value={stats.credentials}
+           description="Cuentas de acceso"
+           icon={FaLock}
+           gradient="bg-gradient-to-br from-indigo-500 to-indigo-600"
+           textColor="text-indigo-100"
+         />
       </div>
 
-      {/* Secondary Stats - Ticket Status */}
-      <div className="bg-white rounded-xl shadow-lg p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center">
-            <FaChartLine className="mr-2 text-purple-600" />
-            Estado de Tickets
-          </h2>
-          <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-            Actualizado hace instantes
-          </span>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Secondary Stats - Ticket Status */}
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-2">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center">
+              <FaChartLine className="mr-2 text-purple-600 shrink-0" />
+              <span className="truncate">Estado de Tickets</span>
+            </h2>
+            <span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 sm:px-3 sm:py-1 rounded-full w-fit">
+              Actualizado hace instantes
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           <QuickStatCard
             icon={FaExclamationTriangle}
             label="Pendientes"
@@ -149,135 +170,166 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Progress Bar */}
-        <div className="mt-6">
-          <div className="flex justify-between text-sm text-gray-600 mb-2">
-            <span>Progreso del día</span>
-            <span>{completionRate}% completado</span>
+          {/* Progress Bar */}
+          <div className="mt-4 sm:mt-6">
+            <div className="flex justify-between text-xs sm:text-sm text-gray-600 mb-2">
+              <span>Progreso del día</span>
+              <span>{completionRate}% completado</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2 sm:h-3 overflow-hidden">
+              <div
+                className="bg-linear-to-r from-purple-500 to-indigo-600 h-2 sm:h-3 rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${completionRate}%` }}
+              ></div>
+            </div>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-            <div 
-              className="bg-gradient-to-r from-purple-500 to-indigo-600 h-3 rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${completionRate}%` }}
-            ></div>
-          </div>
-        </div>
       </div>
 
-      {/* System Overview Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* System Info */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-            <FaServer className="mr-2 text-purple-600" />
-            Resumen del Sistema
-          </h2>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center p-3 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border border-purple-100">
-              <span className="text-gray-700 font-medium">Total de Recursos</span>
-              <span className="text-purple-600 font-bold text-lg">
-                {loading ? '...' : totalResources}
-              </span>
-            </div>
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="text-gray-700 font-medium">Activos en Inventario</span>
-              <span className="text-purple-600 font-bold text-lg">{loading ? '...' : stats.inventory}</span>
-            </div>
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="text-gray-700 font-medium">Documentos Oficiales</span>
-              <span className="text-purple-500 font-bold text-lg">{loading ? '...' : stats.documents}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Performance Metrics */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-            <FaChartLine className="mr-2 text-green-600" />
-            Métricas de Rendimiento
-          </h2>
-          <div className="space-y-4">
-            <div className="p-4 bg-green-50 rounded-lg border border-green-100">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-700">Tasa de Resolución</span>
-                <span className="text-2xl font-bold text-green-600">{completionRate}%</span>
-              </div>
-              <div className="w-full bg-green-200 rounded-full h-2">
-                <div 
-                  className="bg-green-600 h-2 rounded-full transition-all duration-500"
-                  style={{ width: `${completionRate}%` }}
-                ></div>
-              </div>
-            </div>
-            
-            <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-700">Tickets Activos</span>
-                <span className="text-2xl font-bold text-blue-600">
-                  {loading ? '...' : ticketStats.pending + ticketStats.inProgress}
+        {/* System Overview Grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
+          {/* System Info */}
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 flex items-center">
+              <FaServer className="mr-2 text-purple-600 shrink-0" />
+              <span className="truncate">Resumen del Sistema</span>
+            </h2>
+            <div className="space-y-2 sm:space-y-3">
+              <div className="flex justify-between items-center p-2 sm:p-3 bg-linear-to-r from-purple-50 to-indigo-50 rounded-lg border border-purple-100">
+                <span className="text-xs sm:text-sm text-gray-700 font-medium truncate">Total de Recursos</span>
+                <span className="text-purple-600 font-bold text-base sm:text-lg shrink-0">
+                  {loading ? '...' : totalResources}
                 </span>
               </div>
-              <p className="text-xs text-gray-600">Pendientes y en progreso</p>
-            </div>
-
-            <div className="p-4 bg-purple-50 rounded-lg border border-purple-100">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-700">Eficiencia</span>
-                <span className="text-2xl font-bold text-purple-600">
-                  {stats.tickets > 0 ? Math.round((ticketStats.resolved / stats.tickets) * 100) : 0}%
-                </span>
+              <div className="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg">
+                <span className="text-xs sm:text-sm text-gray-700 font-medium truncate">Activos en Inventario</span>
+                <span className="text-purple-600 font-bold text-base sm:text-lg shrink-0">{loading ? '...' : stats.inventory}</span>
               </div>
-              <p className="text-xs text-gray-600">Basado en tickets resueltos</p>
+              <div className="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg">
+                <span className="text-xs sm:text-sm text-gray-700 font-medium truncate">Documentos Oficiales</span>
+                <span className="text-purple-500 font-bold text-base sm:text-lg shrink-0">{loading ? '...' : stats.documents}</span>
+              </div>
+              <div className="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg">
+                <span className="text-xs sm:text-sm text-gray-700 font-medium truncate">Credenciales Seguras</span>
+                <span className="text-indigo-500 font-bold text-base sm:text-lg shrink-0">{loading ? '...' : stats.credentials}</span>
+              </div>
             </div>
+          </div>
+
+          {/* Performance Metrics */}
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 flex items-center">
+              <FaChartLine className="mr-2 text-green-600 shrink-0" />
+              <span className="truncate">Métricas de Rendimiento</span>
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+              <div className="p-3 sm:p-4 bg-green-50 rounded-lg border border-green-100">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Tasa de Resolución</span>
+                  <span className="text-xl sm:text-2xl font-bold text-green-600 shrink-0">{completionRate}%</span>
+                </div>
+                <div className="w-full bg-green-200 rounded-full h-2">
+                  <div
+                    className="bg-green-600 h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${completionRate}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              <div className="p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-100">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Tickets Activos</span>
+                  <span className="text-xl sm:text-2xl font-bold text-blue-600 shrink-0">
+                    {loading ? '...' : ticketStats.pending + ticketStats.inProgress}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-600">Pendientes y en progreso</p>
+              </div>
+
+              <div className="p-3 sm:p-4 bg-purple-50 rounded-lg border border-purple-100">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Eficiencia</span>
+                  <span className="text-xl sm:text-2xl font-bold text-purple-600 shrink-0">
+                    {completionRate}%
+                  </span>
+                </div>
+                <p className="text-xs text-gray-600">Basado en tickets resueltos</p>
+              </div>
+
+              <div className="p-3 sm:p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Usuarios Activos</span>
+                  <span className="text-xl sm:text-2xl font-bold text-indigo-600 shrink-0">
+                    {loading ? '...' : stats.users}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-600">Total de usuarios registrados</p>
+              </div>
+
+              <div className="p-3 sm:p-4 bg-pink-50 rounded-lg border border-pink-100">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Cobertura</span>
+                  <span className="text-xl sm:text-2xl font-bold text-pink-600 shrink-0">
+                    {stats.inventory > 0 ? Math.round((stats.inventory / stats.users) * 100) : 0}%
+                  </span>
+                </div>
+                <p className="text-xs text-gray-600">Equipos por usuario</p>
+              </div>
           </div>
         </div>
 
-        {/* System Status */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-            <FaShieldAlt className="mr-2 text-blue-600" />
-            Estado del Sistema
-          </h2>
-          <div className="space-y-4">
-            <div className="p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-semibold text-gray-900">Sistema Operativo</p>
-                  <p className="text-sm text-gray-600">Todos los servicios activos</p>
+          {/* System Status */}
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 flex items-center">
+              <FaShieldAlt className="mr-2 text-blue-600 shrink-0" />
+              <span className="truncate">Estado del Sistema</span>
+            </h2>
+            <div className="space-y-3 sm:space-y-4">
+              <div className="p-3 sm:p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 text-sm sm:text-base truncate">Base de Datos</p>
+                    <p className="text-xs sm:text-sm text-gray-600 truncate">
+                      {systemHealth.database === 'online' ? 'Conexión estable' : 'Problemas de conexión'}
+                    </p>
+                  </div>
+                  <div className={`w-3 h-3 rounded-full animate-pulse shrink-0 ${systemHealth.database === 'online' ? 'bg-green-500' : 'bg-red-500'}`}></div>
                 </div>
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
               </div>
-            </div>
 
-            <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-semibold text-gray-900">Base de Datos</p>
-                  <p className="text-sm text-gray-600">Conexión estable</p>
+              <div className="p-3 sm:p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 text-sm sm:text-base truncate">API REST</p>
+                    <p className="text-xs sm:text-sm text-gray-600 truncate">
+                      {systemHealth.api === 'online' ? 'Funcionando correctamente' : 'Servicios interrumpidos'}
+                    </p>
+                  </div>
+                  <div className={`w-3 h-3 rounded-full animate-pulse shrink-0 ${systemHealth.api === 'online' ? 'bg-blue-500' : 'bg-red-500'}`}></div>
                 </div>
-                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
               </div>
-            </div>
 
-            <div className="p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-semibold text-gray-900">API REST</p>
-                  <p className="text-sm text-gray-600">Funcionando correctamente</p>
+              <div className="p-3 sm:p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 text-sm sm:text-base truncate">Uptime del Sistema</p>
+                    <p className="text-xs sm:text-sm text-gray-600 truncate">
+                      {systemHealth.uptime ? `${Math.floor(systemHealth.uptime / 3600)}h ${Math.floor((systemHealth.uptime % 3600) / 60)}m` : 'Calculando...'}
+                    </p>
+                  </div>
+                  <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse shrink-0"></div>
                 </div>
-                <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
               </div>
-            </div>
 
-            {user?.role?.name === 'Administrador' && (
-              <div className="mt-4 p-3 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg text-white text-center">
-                <FaLock className="inline-block mr-2" />
-                <span className="text-sm font-semibold">Acceso Administrativo Activo</span>
-              </div>
-            )}
+              {user?.role?.name === 'Administrador' && (
+                <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg text-white text-center">
+                  <FaLock className="inline-block mr-2 shrink-0" />
+                  <span className="text-xs sm:text-sm font-semibold">Acceso Administrativo Activo</span>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
       </div>
+    </div>
     </div>
   );
 };

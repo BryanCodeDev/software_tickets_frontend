@@ -11,6 +11,7 @@ const Navbar = ({ toggleSidebar }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -215,7 +216,10 @@ const Navbar = ({ toggleSidebar }) => {
           {/* Right side - Notifications and User menu */}
           <div className="flex items-center space-x-2 sm:space-x-3">
             {/* Search button for mobile */}
-            <button className="md:hidden p-2 rounded-xl text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-all duration-200">
+            <button
+              onClick={() => setShowMobileSearch(!showMobileSearch)}
+              className="md:hidden p-2 rounded-xl text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-all duration-200"
+            >
               <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
@@ -305,13 +309,111 @@ const Navbar = ({ toggleSidebar }) => {
         </div>
       </div>
 
+      {/* Mobile Search Modal */}
+      {showMobileSearch && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-gray-200">
+            <div className="p-4 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-bold text-gray-900">Buscar</h2>
+                <button
+                  onClick={() => setShowMobileSearch(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <svg className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div className="p-4">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Buscar tickets, archivos, documentos..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent focus:bg-white transition-all duration-200"
+                  autoFocus
+                />
+              </div>
+            </div>
+            {/* Mobile Search Results */}
+            {showSearchResults && searchResults.length > 0 && (
+              <div className="max-h-96 overflow-y-auto border-t border-gray-200">
+                <div className="p-2">
+                  {isSearching ? (
+                    <div className="flex items-center justify-center py-4">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+                      <span className="ml-2 text-gray-600">Buscando...</span>
+                    </div>
+                  ) : (
+                    <>
+                      {searchResults.map((result, index) => (
+                        <div
+                          key={`${result.type}-${result.id}-${index}`}
+                          onClick={() => {
+                            handleResultClick(result.url);
+                            setShowMobileSearch(false);
+                          }}
+                          className="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                        >
+                          <div className="shrink-0 mr-3">
+                            {result.type === 'ticket' && (
+                              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                              </div>
+                            )}
+                            {result.type === 'document' && (
+                              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                              </div>
+                            )}
+                            {result.type === 'inventory' && (
+                              <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <svg className="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center">
+                              <span className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-md mr-2">
+                                {result.displayType}
+                              </span>
+                              <p className="text-sm font-medium text-gray-900 truncate">{result.title}</p>
+                            </div>
+                            <p className="text-xs text-gray-500 truncate">{result.subtitle}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Close dropdown when clicking outside */}
-      {(showUserMenu || showSearchResults) && (
+      {(showUserMenu || showSearchResults || showMobileSearch) && (
         <div
           className="fixed inset-0 z-40"
           onClick={() => {
             setShowUserMenu(false);
             setShowSearchResults(false);
+            setShowMobileSearch(false);
           }}
         />
       )}

@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { documentsAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
-import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes, FaFileAlt, FaCalendarAlt, FaTag, FaInfoCircle } from 'react-icons/fa';
 
 const Documents = () => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploadLoading, setUploadLoading] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingDocument, setEditingDocument] = useState(null);
   const [formData, setFormData] = useState({ title: '', description: '', type: '', category: '', expiryDate: '', file: null });
@@ -45,6 +46,7 @@ const Documents = () => {
       await documentsAPI.uploadDocument(data);
       fetchDocuments();
       setFormData({ title: '', description: '', type: '', category: '', expiryDate: '', file: null });
+      setShowUploadModal(false);
       showNotification('Documento subido exitosamente', 'success');
     } catch (err) {
       console.error(err);
@@ -114,64 +116,75 @@ const Documents = () => {
     setConfirmDialog(null);
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 font-medium">Cargando documentos...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50">
       {/* Notification */}
       {notification && (
-        <div className="fixed top-4 right-4 z-50 max-w-sm">
-          <div className={`flex items-center p-4 rounded-lg shadow-lg transition-all duration-300 ${
+        <div className="fixed top-4 right-4 z-50 max-w-md animate-in slide-in-from-right">
+          <div className={`flex items-center p-4 rounded-xl shadow-2xl transition-all duration-300 backdrop-blur-sm ${
             notification.type === 'success'
-              ? 'bg-green-50 border border-green-200 text-green-800'
-              : 'bg-red-50 border border-red-200 text-red-800'
+              ? 'bg-white border-l-4 border-green-500'
+              : 'bg-white border-l-4 border-red-500'
           }`}>
             <div className="shrink-0">
               {notification.type === 'success' ? (
-                <FaCheck className="w-5 h-5 text-green-400" />
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <FaCheck className="w-5 h-5 text-green-600" />
+                </div>
               ) : (
-                <FaTimes className="w-5 h-5 text-red-400" />
+                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                  <FaTimes className="w-5 h-5 text-red-600" />
+                </div>
               )}
             </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium">{notification.message}</p>
+            <div className="ml-4 flex-1">
+              <p className="text-sm font-semibold text-gray-900">{notification.message}</p>
             </div>
-            <div className="ml-auto pl-3">
-              <button
-                onClick={() => setNotification(null)}
-                className="inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 hover:bg-gray-50"
-              >
-                <FaTimes className="w-4 h-4" />
-              </button>
-            </div>
+            <button
+              onClick={() => setNotification(null)}
+              className="ml-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <FaTimes className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}
 
-      {/* Custom Confirmation Dialog */}
+      {/* Confirmation Dialog */}
       {confirmDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full border border-gray-200">
-            <div className="p-4 sm:p-6">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all animate-in zoom-in-95">
+            <div className="p-6">
               <div className="flex items-center justify-center mb-4">
-                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                  <FaTimes className="w-6 h-6 text-red-600" />
+                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                  <FaTrash className="w-8 h-8 text-red-600" />
                 </div>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">Confirmar Acción</h3>
-              <p className="text-sm text-gray-600 text-center mb-6">{confirmDialog.message}</p>
-              <div className="flex flex-col sm:flex-row gap-3">
+              <h3 className="text-xl font-bold text-gray-900 text-center mb-2">Confirmar Eliminación</h3>
+              <p className="text-gray-600 text-center mb-6">{confirmDialog.message}</p>
+              <div className="flex gap-3">
                 <button
                   onClick={handleCancelConfirm}
-                  className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors"
+                  className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleConfirm}
-                  className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                  className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
                 >
-                  Confirmar
+                  Eliminar
                 </button>
               </div>
             </div>
@@ -179,263 +192,351 @@ const Documents = () => {
         </div>
       )}
 
-      <div>
-        <div className="mb-6 sm:mb-8">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-r from-purple-600 to-violet-600 rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg">
-                  <FaFile className="text-white text-base sm:text-lg" />
-                </div>
-                Documentos
-              </h1>
-              <p className="mt-2 text-sm sm:text-base text-gray-600">Gestiona y comparte documentos oficiales</p>
+            <div className="flex items-center space-x-4">
+              <div className="w-14 h-14 bg-linear-to-br from-purple-600 to-violet-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <FaFileAlt className="text-white text-2xl" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Gestión de Documentos</h1>
+                <p className="text-gray-600 mt-1">Administra y organiza documentos corporativos</p>
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-          {/* Upload Section */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Subir Documento</h2>
-            </div>
-            <form onSubmit={handleUpload} className="p-4 sm:p-6 space-y-4 sm:space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Título</label>
-                <input
-                  type="text"
-                  placeholder="Ingresa el título del documento"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm sm:text-base"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
-                <textarea
-                  placeholder="Describe el contenido del documento"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm sm:text-base"
-                  rows="3"
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
-                  <input
-                    type="text"
-                    placeholder="Ej: Manual, Política"
-                    value={formData.type}
-                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm sm:text-base"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
-                  <input
-                    type="text"
-                    placeholder="Ej: Recursos Humanos"
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm sm:text-base"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Fecha de Expiración</label>
-                <input
-                  type="date"
-                  value={formData.expiryDate}
-                  onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
-                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm sm:text-base"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Archivo</label>
-                <input
-                  type="file"
-                  onChange={(e) => setFormData({ ...formData, file: e.target.files[0] })}
-                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
-                  required
-                />
+            <div className="flex items-center gap-3">
+              <div className="flex items-center space-x-2 bg-purple-50 px-4 py-2 rounded-xl">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium text-gray-700">{documents.length} documentos</span>
               </div>
               <button
-                type="submit"
-                className="w-full py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={uploadLoading}
+                onClick={() => setShowUploadModal(true)}
+                className="inline-flex items-center px-5 py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
               >
-                {uploadLoading ? (
-                  <>
-                    <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Subiendo...
-                  </>
-                ) : (
-                  <>
-                    <FaUpload className="mr-2" />
-                    Subir Documento
-                  </>
-                )}
+                <FaUpload className="mr-2" />
+                Nuevo Documento
               </button>
-            </form>
-          </div>
-
-          {/* Documents List */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Todos los Documentos</h2>
-            </div>
-            <div className="p-4 sm:p-6">
-              {documents.length === 0 ? (
-                <div className="text-center py-8 sm:py-12">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FaFile className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
-                  </div>
-                  <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">No hay documentos disponibles</h3>
-                  <p className="text-sm sm:text-base text-gray-600">Comienza subiendo tu primer documento</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {documents.map((doc) => (
-                    <div key={doc.id} className="bg-gray-50 rounded-xl p-3 sm:p-4 border border-gray-200 hover:shadow-md transition-shadow">
-                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-gray-900 mb-2 text-sm sm:text-base truncate">{doc.title}</h3>
-                          <div className="text-xs sm:text-sm text-gray-600 space-y-1">
-                            <p><strong>Versión:</strong> {doc.version}</p>
-                            <p><strong>Tipo:</strong> {doc.type}</p>
-                            <p><strong>Categoría:</strong> {doc.category}</p>
-                          </div>
-                        </div>
-                        <div className="flex flex-col sm:flex-row gap-2">
-                          <a
-                            href={`http://localhost:5000/${doc.filePath}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white text-xs sm:text-sm font-medium rounded-lg transition-colors"
-                          >
-                            <FaDownload className="w-3 h-3 sm:w-4 sm:h-4" />
-                            <span>Descargar</span>
-                          </a>
-                          {canEdit && (
-                            <>
-                              <button
-                                onClick={() => handleEdit(doc)}
-                                className="flex items-center justify-center space-x-1 px-3 py-2 bg-blue-100 text-blue-700 text-xs sm:text-sm font-medium rounded-lg hover:bg-blue-200 transition-colors"
-                              >
-                                <FaEdit className="w-3 h-3 sm:w-4 sm:h-4" />
-                                <span>Editar</span>
-                              </button>
-                              <button
-                                onClick={() => handleDelete(doc.id)}
-                                className="flex items-center justify-center space-x-1 px-3 py-2 bg-red-100 text-red-700 text-xs sm:text-sm font-medium rounded-lg hover:bg-red-200 transition-colors"
-                              >
-                                <FaTrash className="w-3 h-3 sm:w-4 sm:h-4" />
-                                <span>Eliminar</span>
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Edit Modal */}
-      {showEditModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-gray-200">
-            <div className="p-4 sm:p-6 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg sm:text-2xl font-bold text-gray-900">Editar Documento</h2>
-                <button
-                  onClick={() => setShowEditModal(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200 bg-linear-to-r from-purple-50 to-violet-50">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <FaFile className="text-purple-600 text-lg" />
+                <h2 className="text-lg font-bold text-gray-900">Repositorio de Documentos</h2>
               </div>
+              <span className="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-semibold rounded-full">
+                {documents.length} total
+              </span>
+            </div>
+          </div>
+
+          <div className="p-6">
+            {documents.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FaFileAlt className="w-10 h-10 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Sin documentos disponibles</h3>
+                <p className="text-gray-600 max-w-sm mx-auto">
+                  Comienza agregando tu primer documento utilizando el formulario de carga
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {documents.map((doc) => (
+                  <div
+                    key={doc.id}
+                    className="group bg-linear-to-r from-gray-50 to-white rounded-xl p-5 border border-gray-200 hover:border-purple-300 hover:shadow-md transition-all duration-200"
+                  >
+                    {/* Document Header with Icon and Info */}
+                    <div className="flex items-start space-x-4 mb-4">
+                      <div className="w-12 h-12 bg-linear-to-br from-purple-100 to-violet-100 rounded-xl flex items-center justify-center shrink-0">
+                        <FaFileAlt className="text-purple-600 text-xl" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-gray-900 mb-2 text-lg">{doc.title}</h3>
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          <span className="inline-flex items-center px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg">
+                            <FaTag className="mr-1.5 text-xs" />
+                            {doc.type}
+                          </span>
+                          <span className="inline-flex items-center px-2.5 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-lg">
+                            {doc.category}
+                          </span>
+                          <span className="inline-flex items-center px-2.5 py-1 bg-purple-50 text-purple-700 text-xs font-medium rounded-lg">
+                            v{doc.version}
+                          </span>
+                        </div>
+                        {doc.description && (
+                          <p className="text-sm text-gray-600">{doc.description}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Actions - Full Width Below */}
+                    <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+                      <a
+                        href={`http://localhost:5000/${doc.filePath}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center px-4 py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all"
+                      >
+                        <FaDownload className="mr-2" />
+                        Descargar
+                      </a>
+                      {canEdit && (
+                        <>
+                          <button
+                            onClick={() => handleEdit(doc)}
+                            className="inline-flex items-center px-4 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-semibold rounded-lg transition-all"
+                          >
+                            <FaEdit className="mr-2" />
+                            Editar
+                          </button>
+                          <button
+                            onClick={() => handleDelete(doc.id)}
+                            className="inline-flex items-center px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-semibold rounded-lg transition-all"
+                          >
+                            <FaTrash className="mr-2" />
+                            Eliminar
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Upload Modal */}
+      {showUploadModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transform transition-all animate-in zoom-in-95">
+            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10 flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-linear-to-br from-purple-600 to-violet-600 rounded-xl flex items-center justify-center">
+                  <FaUpload className="text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">Nuevo Documento</h2>
+              </div>
+              <button
+                onClick={() => setShowUploadModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+              >
+                <FaTimes className="w-5 h-5 text-gray-500" />
+              </button>
             </div>
 
-            <form onSubmit={handleUpdate} className="p-4 sm:p-6 space-y-4 sm:space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Título</label>
-                <input
-                  type="text"
-                  placeholder="Ingresa el título del documento"
-                  value={editFormData.title}
-                  onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm sm:text-base"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
-                <textarea
-                  placeholder="Describe el contenido del documento"
-                  value={editFormData.description}
-                  onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
-                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm sm:text-base"
-                  rows="3"
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form onSubmit={handleUpload} className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-5rem)]">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Título <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Nombre del documento"
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    required
+                  />
+                </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Tipo</label>
                   <input
                     type="text"
                     placeholder="Ej: Manual, Política"
-                    value={editFormData.type}
-                    onChange={(e) => setEditFormData({ ...editFormData, type: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm sm:text-base"
+                    value={formData.type}
+                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   />
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
                   <input
                     type="text"
                     placeholder="Ej: Recursos Humanos"
-                    value={editFormData.category}
-                    onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm sm:text-base"
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha de Expiración</label>
+                  <input
+                    type="date"
+                    value={formData.expiryDate}
+                    onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                  <textarea
+                    placeholder="Descripción del contenido del documento"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                    rows="3"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Archivo <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="file"
+                    onChange={(e) => setFormData({ ...formData, file: e.target.files[0] })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-100 file:text-purple-700 hover:file:bg-purple-200 file:cursor-pointer"
+                    required
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Fecha de Expiración</label>
-                <input
-                  type="date"
-                  value={editFormData.expiryDate}
-                  onChange={(e) => setEditFormData({ ...editFormData, expiryDate: e.target.value })}
-                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm sm:text-base"
-                />
-              </div>
 
-              <div className="flex space-x-3 pt-4">
+              <div className="flex gap-3 pt-4 border-t border-gray-200">
                 <button
                   type="button"
-                  onClick={() => setShowEditModal(false)}
-                  className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
+                  onClick={() => setShowUploadModal(false)}
+                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2.5 sm:py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+                  className="flex-1 px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  disabled={uploadLoading}
                 >
-                  Actualizar
+                  {uploadLoading ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Subiendo...
+                    </>
+                  ) : (
+                    <>
+                      <FaUpload className="mr-2" />
+                      Subir Documento
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto transform transition-all animate-in zoom-in-95">
+            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-linear-to-br from-purple-600 to-violet-600 rounded-xl flex items-center justify-center">
+                    <FaEdit className="text-white" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Editar Documento</h2>
+                </div>
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                >
+                  <FaTimes className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+            </div>
+
+            <form onSubmit={handleUpdate} className="p-6 space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Título <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Nombre del documento"
+                    value={editFormData.title}
+                    onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Tipo</label>
+                  <input
+                    type="text"
+                    placeholder="Ej: Manual, Política"
+                    value={editFormData.type}
+                    onChange={(e) => setEditFormData({ ...editFormData, type: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
+                  <input
+                    type="text"
+                    placeholder="Ej: Recursos Humanos"
+                    value={editFormData.category}
+                    onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha de Expiración</label>
+                  <input
+                    type="date"
+                    value={editFormData.expiryDate}
+                    onChange={(e) => setEditFormData({ ...editFormData, expiryDate: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                  <textarea
+                    placeholder="Descripción del contenido del documento"
+                    value={editFormData.description}
+                    onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                    rows="4"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                >
+                  Actualizar Documento
                 </button>
               </div>
             </form>

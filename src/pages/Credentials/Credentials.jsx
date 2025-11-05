@@ -10,7 +10,7 @@ const Credentials = () => {
   const [editingCredential, setEditingCredential] = useState(null);
   const [showPassword, setShowPassword] = useState({});
   const [showFormPassword, setShowFormPassword] = useState(false);
-  const [formData, setFormData] = useState({ service: '', username: '', password: '', area: '', showPassword: false });
+  const [formData, setFormData] = useState({ service: '', username: '', password: '', area: '' });
   const [formLoading, setFormLoading] = useState(false);
   const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
@@ -37,7 +37,7 @@ const Credentials = () => {
 
   const handleCreate = () => {
     setEditingCredential(null);
-    setFormData({ service: '', username: '', password: '', area: '', showPassword: false });
+    setFormData({ service: '', username: '', password: '', area: '' });
     setShowModal(true);
   };
 
@@ -47,8 +47,7 @@ const Credentials = () => {
       service: cred.service,
       username: cred.username,
       password: cred.password,
-      area: cred.area,
-      showPassword: cred.showPassword || false
+      area: cred.area || ''
     });
     setShowModal(true);
   };
@@ -91,9 +90,6 @@ const Credentials = () => {
     setShowPassword(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const toggleShowPasswordOption = () => {
-    setFormData(prev => ({ ...prev, showPassword: !prev.showPassword }));
-  };
 
   const toggleFormPasswordVisibility = () => {
     setShowFormPassword(prev => !prev);
@@ -238,13 +234,13 @@ const Credentials = () => {
                       <div className="flex items-center space-x-2">
                         <p className="text-xs sm:text-sm"><strong>Contraseña:</strong></p>
                         <span className="flex-1 text-xs sm:text-sm font-mono">
-                          {(showPassword[cred.id] || cred.showPassword) ? cred.password : '••••••••'}
+                          {showPassword[cred.id] ? cred.password : '••••••••'}
                         </span>
                         <button
                           onClick={() => togglePasswordVisibility(cred.id)}
                           className="text-gray-400 hover:text-gray-600 p-1"
                         >
-                          {(showPassword[cred.id] || cred.showPassword) ? <FaEyeSlash className="w-3 h-3 sm:w-4 sm:h-4" /> : <FaEye className="w-3 h-3 sm:w-4 sm:h-4" />}
+                          {showPassword[cred.id] ? <FaEyeSlash className="w-3 h-3 sm:w-4 sm:h-4" /> : <FaEye className="w-3 h-3 sm:w-4 sm:h-4" />}
                         </button>
                       </div>
                     </div>
@@ -368,18 +364,6 @@ const Credentials = () => {
                   </select>
                 </div>
 
-                <div className="col-span-1 md:col-span-2 lg:col-span-3 flex items-center">
-                  <input
-                    type="checkbox"
-                    id="showPassword"
-                    checked={formData.showPassword}
-                    onChange={toggleShowPasswordOption}
-                    className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="showPassword" className="ml-2 block text-xs sm:text-sm text-gray-700">
-                    Mostrar contraseña por defecto
-                  </label>
-                </div>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 pt-4">

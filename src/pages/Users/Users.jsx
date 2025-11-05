@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { usersAPI } from '../../api';
 import { inventoryAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
-import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -10,6 +10,7 @@ const Users = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [formData, setFormData] = useState({ username: '', name: '', email: '', password: '', roleId: 1, it: '' });
+  const [showPassword, setShowPassword] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [uniqueITs, setUniqueITs] = useState([]);
   const [inventoryItems, setInventoryItems] = useState([]);
@@ -369,14 +370,23 @@ const Users = () => {
                     <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                       Contraseña *
                     </label>
-                    <input
-                      type="password"
-                      placeholder="Contraseña"
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                      required
-                    />
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Contraseña"
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 pr-10 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? <FaEyeSlash className="h-5 w-5" /> : <FaEye className="h-5 w-5" />}
+                      </button>
+                    </div>
                   </div>
                 )}
 
