@@ -164,8 +164,10 @@ PORT=5000
 DB_HOST=localhost
 DB_NAME=duvy_class
 DB_USER=root
-DB_PASSWORD=tu_password
-JWT_SECRET=duvyclass_jwt_secret_key_2025_secure_token
+DB_PASSWORD=tu_password_aqui
+JWT_SECRET=tu_jwt_secret_muy_seguro_de_al_menos_32_caracteres_para_produccion_123456789
+FRONTEND_URL=http://localhost:5173
+NODE_ENV=development
 ```
 
 ### 4. Configurar Frontend
@@ -175,7 +177,27 @@ cd ../frontend
 npm install
 ```
 
-### 5. Iniciar el Sistema
+### 5. Corregir Contraseñas (Importante)
+
+Después de configurar la base de datos, ejecuta el script para corregir las contraseñas:
+
+```bash
+cd backend
+node fix-passwords.js
+```
+
+Este script mostrará las contraseñas correctas para todos los usuarios de prueba.
+
+### 6. Agregar Columnas Nuevas (Refresh Tokens)
+
+Si actualizaste desde una versión anterior, ejecuta la migración:
+
+```bash
+cd backend
+node migrate-add-tokens.js
+```
+
+### 7. Iniciar el Sistema
 
 ```bash
 # Terminal 1 - Backend
@@ -187,18 +209,46 @@ cd frontend
 npm run dev
 ```
 
-### 6. Acceder al Sistema
+### 8. Acceder al Sistema
 
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:5000
 
 ## 👥 Usuarios de Prueba
 
-| Usuario | Contraseña | Rol |
-|---------|------------|-----|
-| admin | password | Administrador |
-| tecnico | password | Técnico |
-| empleado | password | Empleado |
+### 👑 Administradores (4 usuarios)
+| Usuario | Email | Contraseña | Rol |
+|---------|-------|------------|-----|
+| admin | admin@duvyclass.com | [Ver script fix-passwords.js] | Administrador |
+| ana.lopez | ana.lopez@duvyclass.com | [Ver script fix-passwords.js] | Administrador |
+| gabriela.ruiz | gabriela.ruiz@duvyclass.com | [Ver script fix-passwords.js] | Administrador |
+| fernando.castro | fernando.castro@duvyclass.com | [Ver script fix-passwords.js] | Administrador |
+
+### 🔧 Técnicos (3 usuarios)
+| Usuario | Email | Contraseña | Rol |
+|---------|-------|------------|-----|
+| tecnico | tecnico@duvyclass.com | [Ver script fix-passwords.js] | Técnico |
+| pedro.martinez | pedro.martinez@duvyclass.com | [Ver script fix-passwords.js] | Técnico |
+| soporte | soporte@duvyclass.com | [Ver script fix-passwords.js] | Técnico |
+
+### 👥 Empleados (8 usuarios)
+| Usuario | Email | Contraseña | Rol |
+|---------|-------|------------|-----|
+| empleado | empleado@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
+| laura.sanchez | laura.sanchez@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
+| roberto.diaz | roberto.diaz@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
+| sofia.ramirez | sofia.ramirez@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
+| miguel.torres | miguel.torres@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
+| elena.vargas | elena.vargas@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
+| diego.morales | diego.morales@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
+| isabel.torres | isabel.torres@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
+
+### 📊 Usuarios Adicionales (3 usuarios)
+| Usuario | Email | Contraseña | Rol |
+|---------|-------|------------|-----|
+| hector.morales | hector.morales@duvyclass.com | [Ver script fix-passwords.js] | Auditor |
+| javier.ruiz | javier.ruiz@duvyclass.com | [Ver script fix-passwords.js] | Desarrollador |
+| luis.garcia | luis.garcia@duvyclass.com | [Ver script fix-passwords.js] | Analista |
 
 ## 📖 Uso del Sistema
 
@@ -357,8 +407,14 @@ Roles (1) ──── (N) Users
 ## 🎯 Funcionalidades
 
 ### ✅ Implementadas
-- [x] Autenticación JWT completa
-- [x] Sistema de roles y permisos
+- [x] Autenticación JWT completa con refresh tokens
+- [x] Sistema de roles y permisos avanzado
+- [x] Validación de sesiones concurrentes
+- [x] Rate limiting para protección DDoS
+- [x] Headers de seguridad (HSTS, CSP, X-Frame-Options)
+- [x] Compresión gzip automática
+- [x] Logging completo con Winston
+- [x] Code splitting para optimización de bundle
 - [x] CRUD completo para todos los módulos
 - [x] Búsqueda global inteligente
 - [x] Reportes CSV descargables
@@ -368,6 +424,8 @@ Roles (1) ──── (N) Users
 - [x] Tema oscuro configurable
 - [x] Notificaciones en tiempo real
 - [x] Historial de auditoría completo
+- [x] Autenticación de dos factores (2FA)
+- [x] Encriptación bcrypt para contraseñas
 
 ### 🚀 Características Avanzadas
 - **WebSocket**: Comunicación en tiempo real para tickets
@@ -377,6 +435,13 @@ Roles (1) ──── (N) Users
 - **Responsive Design**: Optimizado para desktop y móvil
 - **Audit Trail**: Registro completo de todas las acciones
 - **Security**: Encriptación, validación y sanitización
+- **Refresh Tokens**: Sistema de tokens renovables automáticamente
+- **Session Management**: Control de sesiones concurrentes
+- **Rate Limiting**: Protección contra ataques DDoS
+- **Security Headers**: Headers de seguridad avanzados
+- **Gzip Compression**: Compresión automática de respuestas
+- **Production Logging**: Sistema de logging completo para producción
+- **Code Splitting**: Optimización de carga de JavaScript
 
 ## 📊 Reportes y Búsqueda
 
@@ -392,6 +457,39 @@ Roles (1) ──── (N) Users
 - **Documentos**: Metadatos y información de archivos
 - **Repositorio**: Archivos con categorías y etiquetas
 - **Credenciales**: Información administrativa (sin contraseñas)
+
+## 🔒 Seguridad y Producción
+
+### Características de Seguridad Implementadas
+- **JWT con Refresh Tokens**: Tokens de acceso cortos (15min) con renovación automática
+- **Validación de Sesiones**: Control de sesiones concurrentes por usuario
+- **Rate Limiting**: Protección DDoS (200 req/15min general, 20 req/15min auth)
+- **Headers de Seguridad**:
+  - HSTS (HTTP Strict Transport Security)
+  - CSP (Content Security Policy)
+  - X-Frame-Options (Anti-clickjacking)
+  - X-Content-Type-Options (Anti-MIME sniffing)
+  - X-XSS-Protection
+  - Referrer-Policy
+- **Encriptación**: bcryptjs para contraseñas (salt rounds: 10)
+- **Logging**: Winston con rotación diaria y niveles configurables
+- **Compresión**: Gzip automática para todas las respuestas
+- **Code Splitting**: Optimización de carga de JavaScript
+
+### Configuración de Producción
+Para producción, actualiza las variables de entorno:
+
+```env
+NODE_ENV=production
+FRONTEND_URL=https://tu-dominio-produccion.com
+JWT_SECRET=tu_jwt_secret_muy_seguro_de_al_menos_32_caracteres_para_produccion_123456789
+```
+
+### Rate Limiting Ajustable
+Los límites de rate limiting están configurados para desarrollo. Para producción, considera:
+- General: 100-500 req/15min
+- Auth: 5-10 req/15min
+- Ajusta según tus necesidades de seguridad vs usabilidad
 
 ## 💻 Desarrollo
 

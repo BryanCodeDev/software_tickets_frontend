@@ -4,6 +4,19 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          ui: ['axios', 'socket.io-client', 'jwt-decode'],
+          utils: ['zustand', 'i18next', 'i18next-browser-languagedetector', 'react-i18next']
+        }
+      }
+    },
+    chunkSizeWarningLimit: 600
+  },
   server: {
     proxy: {
       '/api': {
