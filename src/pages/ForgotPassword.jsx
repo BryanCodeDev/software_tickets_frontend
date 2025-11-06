@@ -31,7 +31,96 @@ const ForgotPassword = () => {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 flex">
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-slate-50 ml-auto">
+      {/* Left Panel - Branding */}
+      <div className="hidden lg:flex lg:w-1/2 bg-linear-to-br from-purple-600 via-violet-600 to-indigo-600 p-12 flex-col justify-between relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-48 -mt-48"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-white opacity-5 rounded-full -ml-40 -mb-40"></div>
+        
+        <div className="relative z-10">
+          <div className="flex items-center space-x-3 mb-8">
+            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-xl">
+              <svg className="w-7 h-7 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+              </svg>
+            </div>
+            <span className="text-3xl font-bold text-white">DuvyClass</span>
+          </div>
+          
+          <div className="space-y-6">
+            <h1 className="text-5xl font-bold text-white leading-tight">
+              Recupera el Acceso<br />a tu Cuenta
+            </h1>
+            <p className="text-xl text-purple-100 leading-relaxed">
+              No te preocupes, es normal olvidar contraseñas. Te ayudaremos a recuperar el acceso a tu cuenta de forma segura en minutos.
+            </p>
+          </div>
+        </div>
+
+        <div className="relative z-10 space-y-6">
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-white font-semibold">Email Seguro</p>
+                  <p className="text-purple-100 text-sm">Enlace cifrado</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-white font-semibold">Proceso Rápido</p>
+                  <p className="text-purple-100 text-sm">En minutos</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+            <h3 className="text-white font-semibold text-lg mb-4">¿Cómo funciona?</h3>
+            <ul className="space-y-3">
+              <li className="flex items-start space-x-3">
+                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-white text-xs font-bold">1</span>
+                </div>
+                <span className="text-purple-100">Ingresa tu correo electrónico registrado</span>
+              </li>
+              <li className="flex items-start space-x-3">
+                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-white text-xs font-bold">2</span>
+                </div>
+                <span className="text-purple-100">Recibirás un enlace seguro en tu bandeja</span>
+              </li>
+              <li className="flex items-start space-x-3">
+                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-white text-xs font-bold">3</span>
+                </div>
+                <span className="text-purple-100">Haz clic y crea tu nueva contraseña</span>
+              </li>
+              <li className="flex items-start space-x-3">
+                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-white text-xs font-bold">4</span>
+                </div>
+                <span className="text-purple-100">¡Listo! Accede nuevamente a tu cuenta</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Panel - Forgot Password Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-slate-50">
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center space-x-3 mb-8">
@@ -44,8 +133,13 @@ const ForgotPassword = () => {
           </div>
 
           <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
+              <svg className="w-8 h-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">¿Olvidaste tu contraseña?</h2>
-            <p className="text-gray-600">Ingresa tu correo electrónico y te enviaremos un enlace para restablecerla</p>
+            <p className="text-gray-600">Te enviaremos un enlace para restablecerla</p>
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
@@ -98,6 +192,9 @@ const ForgotPassword = () => {
                     placeholder="correo@empresa.com"
                   />
                 </div>
+                <p className="mt-2 text-xs text-gray-500">
+                  Ingresa el correo con el que te registraste
+                </p>
               </div>
 
               <button
@@ -118,7 +215,7 @@ const ForgotPassword = () => {
                     <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
-                    Enviar Enlace de Restablecimiento
+                    Enviar Enlace de Recuperación
                   </>
                 )}
               </button>
