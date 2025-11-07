@@ -94,7 +94,9 @@ const Documents = () => {
     });
   };
 
-  const canEdit = user?.role?.name === 'Administrador';
+  const canEdit = (doc) => {
+    return user?.role?.name === 'Administrador' || (user?.role?.name === 'Empleado' && doc.createdBy === user.id);
+  };
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
@@ -291,7 +293,7 @@ const Documents = () => {
                         <FaDownload className="mr-2" />
                         Descargar
                       </a>
-                      {canEdit && (
+                      {canEdit(doc) && (
                         <>
                           <button
                             onClick={() => handleEdit(doc)}
