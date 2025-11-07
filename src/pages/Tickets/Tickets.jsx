@@ -174,6 +174,7 @@ const Tickets = () => {
         title: ticket.title,
         description: ticket.description,
         priority: ticket.priority,
+        status: ticket.status,
         assignedTo: ticket.assignedTo || ''
       });
     } else {
