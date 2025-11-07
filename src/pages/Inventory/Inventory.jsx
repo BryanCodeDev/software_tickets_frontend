@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { inventoryAPI } from '../../api';
-import AuthContext from '../../context/AuthContext.jsx';
-import { FaBox, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch } from 'react-icons/fa';
+import { FaBox, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaFileExport, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory } from 'react-icons/fa';
+import AuthContext from '../../context/AuthContext';
+import inventoryAPI from '../../api/inventoryAPI';
 
 const Inventory = () => {
   const [inventory, setInventory] = useState([]);
+  const [filteredInventory, setFilteredInventory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
@@ -19,17 +20,32 @@ const Inventory = () => {
     marca: '',
     status: 'disponible',
     location: '',
-    warrantyExpiry: ''
+    warrantyExpiry: '',
+    purchaseDate: '',
+    lastMaintenance: '',
+    cost: ''
   });
   const [formLoading, setFormLoading] = useState(false);
   const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [detectingHardware, setDetectingHardware] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterArea, setFilterArea] = useState('all');
+  const [sortBy, setSortBy] = useState('it');
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [showFilters, setShowFilters] = useState(false);
+  const [showStats, setShowStats] = useState(false);
+  const [viewMode, setViewMode] = useState('cards'); // 'cards' or 'table'
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
     fetchInventory();
   }, []);
+
+  useEffect(() => {
+    filterAndSortInventory();
+  }, [inventory, searchTerm, filterStatus, filterArea, sortBy, sortOrder]);
 
   const fetchInventory = async () => {
     try {
@@ -42,6 +58,77 @@ const Inventory = () => {
       setLoading(false);
     }
   };
+
+  const filterAndSortInventory = () => {
+    let filtered = [...inventory];
+
+    // Búsqueda
+    if (searchTerm) {
+      filtered = filtered.filter(item =>
+        Object.values(item).some(val =>
+          val?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
+
+    // Filtro por estado
+    if (filterStatus !== 'all') {
+      filtered = filtered.filter(item => item.status === filterStatus);
+    }
+
+    // Filtro por área
+    if (filterArea !== 'all') {
+      filtered = filtered.filter(item => item.area === filterArea);
+    }
+
+    // Ordenamiento
+    filtered.sort((a, b) => {
+      let aVal = a[sortBy];
+      let bVal = b[sortBy];
+      
+      if (typeof aVal === 'string') aVal = aVal.toLowerCase();
+      if (typeof bVal === 'string') bVal = bVal.toLowerCase();
+      
+      if (sortOrder === 'asc') {
+        return aVal > bVal ? 1 : -1;
+      } else {
+        return aVal < bVal ? 1 : -1;
+      }
+    });
+
+    setFilteredInventory(filtered);
+  };
+
+  const calculateStats = () => {
+    const total = inventory.length;
+    const disponible = inventory.filter(i => i.status === 'disponible').length;
+    const enUso = inventory.filter(i => i.status === 'en uso').length;
+    const mantenimiento = inventory.filter(i => i.status === 'mantenimiento').length;
+    const fueraServicio = inventory.filter(i => i.status === 'fuera de servicio').length;
+    
+    const warrantyExpiring = inventory.filter(item => {
+      if (!item.warrantyExpiry) return false;
+      const expiry = new Date(item.warrantyExpiry);
+      const now = new Date();
+      const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
+      return diffDays <= 90 && diffDays > 0;
+    }).length;
+
+    const totalValue = inventory.reduce((sum, item) => sum + (item.cost || 0), 0);
+
+    return {
+      total,
+      disponible,
+      enUso,
+      mantenimiento,
+      fueraServicio,
+      warrantyExpiring,
+      totalValue,
+      utilizationRate: total > 0 ? ((enUso / total) * 100).toFixed(1) : 0
+    };
+  };
+
+  const stats = calculateStats();
 
   const handleCreate = () => {
     setEditingItem(null);
@@ -56,7 +143,10 @@ const Inventory = () => {
       marca: '',
       status: 'disponible',
       location: '',
-      warrantyExpiry: ''
+      warrantyExpiry: '',
+      purchaseDate: '',
+      lastMaintenance: '',
+      cost: ''
     });
     setShowModal(true);
   };
@@ -74,20 +164,23 @@ const Inventory = () => {
       marca: item.marca,
       status: item.status,
       location: item.location || '',
-      warrantyExpiry: item.warrantyExpiry ? item.warrantyExpiry.split('T')[0] : ''
+      warrantyExpiry: item.warrantyExpiry ? item.warrantyExpiry.split('T')[0] : '',
+      purchaseDate: item.purchaseDate ? item.purchaseDate.split('T')[0] : '',
+      lastMaintenance: item.lastMaintenance ? item.lastMaintenance.split('T')[0] : '',
+      cost: item.cost || ''
     });
     setShowModal(true);
   };
 
   const handleDelete = async (id) => {
-    showConfirmDialog('¿Estás seguro de que deseas eliminar este artículo? Esta acción no se puede deshacer.', async () => {
+    showConfirmDialog('¿Estás seguro de que deseas eliminar este equipo? Esta acción no se puede deshacer.', async () => {
       try {
         await inventoryAPI.deleteInventoryItem(id);
         fetchInventory();
-        showNotification('Artículo eliminado exitosamente', 'success');
+        showNotification('Equipo eliminado exitosamente', 'success');
       } catch (err) {
         console.error('Error al eliminar:', err);
-        showNotification('Error al eliminar el artículo. Por favor, inténtalo de nuevo.', 'error');
+        showNotification('Error al eliminar el equipo. Por favor, inténtalo de nuevo.', 'error');
       }
     });
   };
@@ -98,19 +191,67 @@ const Inventory = () => {
     try {
       if (editingItem) {
         await inventoryAPI.updateInventoryItem(editingItem.id, formData);
-        showNotification('Artículo actualizado exitosamente', 'success');
+        showNotification('Equipo actualizado exitosamente', 'success');
       } else {
         await inventoryAPI.createInventoryItem(formData);
-        showNotification('Artículo creado exitosamente', 'success');
+        showNotification('Equipo creado exitosamente', 'success');
       }
       fetchInventory();
       setShowModal(false);
     } catch (err) {
       console.error('Error al guardar:', err);
-      showNotification('Error al guardar el artículo. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
+      showNotification('Error al guardar el equipo. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
     } finally {
       setFormLoading(false);
     }
+  };
+
+  const handleDetectHardware = async () => {
+    setDetectingHardware(true);
+    try {
+      const hardwareData = await inventoryAPI.detectHardware();
+      setFormData(prev => ({
+        ...prev,
+        serial: hardwareData.serial !== 'No detectado' ? hardwareData.serial : prev.serial,
+        capacidad: hardwareData.capacidad !== 'No detectado' ? hardwareData.capacidad : prev.capacidad,
+        ram: hardwareData.ram !== 'No detectado' ? hardwareData.ram : prev.ram,
+        marca: hardwareData.marca !== 'No detectado' ? hardwareData.marca : prev.marca,
+      }));
+      showNotification('Hardware detectado automáticamente', 'success');
+    } catch (err) {
+      console.error('Error detecting hardware:', err);
+      showNotification('Error al detectar hardware. Verifica la conexión.', 'error');
+    } finally {
+      setDetectingHardware(false);
+    }
+  };
+
+  const exportToCSV = () => {
+    const headers = ['Propiedad', 'IT', 'Área', 'Responsable', 'Serial', 'Capacidad', 'RAM', 'Marca', 'Estado', 'Ubicación', 'Garantía', 'Compra', 'Mantenimiento', 'Costo'];
+    const rows = filteredInventory.map(item => [
+      item.propiedad,
+      item.it,
+      item.area,
+      item.responsable,
+      item.serial,
+      item.capacidad,
+      item.ram,
+      item.marca,
+      item.status,
+      item.location || '-',
+      item.warrantyExpiry ? new Date(item.warrantyExpiry).toLocaleDateString('es-ES') : '-',
+      item.purchaseDate ? new Date(item.purchaseDate).toLocaleDateString('es-ES') : '-',
+      item.lastMaintenance ? new Date(item.lastMaintenance).toLocaleDateString('es-ES') : '-',
+      item.cost ? `$${item.cost.toLocaleString('es-CO')}` : '-'
+    ]);
+
+    const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `inventario_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    showNotification('Inventario exportado exitosamente', 'success');
   };
 
   const canEdit = user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico';
@@ -131,95 +272,85 @@ const Inventory = () => {
     setConfirmDialog(null);
   };
 
-  const handleCancelConfirm = () => {
-    setConfirmDialog(null);
-  };
-
-  const handleDetectHardware = async () => {
-    setDetectingHardware(true);
-    try {
-      const hardwareData = await inventoryAPI.detectHardware();
-      setFormData(prev => ({
-        ...prev,
-        serial: hardwareData.serial !== 'No detectado' ? hardwareData.serial : prev.serial,
-        capacidad: hardwareData.capacidad !== 'No detectado' ? hardwareData.capacidad : prev.capacidad,
-        ram: hardwareData.ram !== 'No detectado' ? hardwareData.ram : prev.ram,
-        marca: hardwareData.marca !== 'No detectado' ? hardwareData.marca : prev.marca,
-      }));
-      showNotification('Componentes del PC detectados automáticamente', 'success');
-    } catch (err) {
-      console.error('Error detecting hardware:', err);
-      showNotification('Error al detectar componentes del PC. Verifica que estés ejecutando desde un PC Windows.', 'error');
-    } finally {
-      setDetectingHardware(false);
-    }
+  const getWarrantyStatus = (warrantyExpiry) => {
+    if (!warrantyExpiry) return { status: 'unknown', days: null };
+    const expiry = new Date(warrantyExpiry);
+    const now = new Date();
+    const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) return { status: 'expired', days: diffDays };
+    if (diffDays <= 30) return { status: 'critical', days: diffDays };
+    if (diffDays <= 90) return { status: 'warning', days: diffDays };
+    return { status: 'good', days: diffDays };
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-6 lg:px-8">
-      <div className="flex items-center justify-center min-h-[50vh] sm:min-h-[60vh]">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-8 px-4">
+      <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 border-b-2 border-purple-600 mx-auto mb-3 sm:mb-4"></div>
-          <p className="text-sm sm:text-base text-gray-600">Cargando inventario...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-lg text-gray-600 font-medium">Cargando inventario...</p>
         </div>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-6 px-4 lg:px-8">
       {/* Notification */}
       {notification && (
-        <div className="fixed top-2 right-2 sm:top-4 sm:right-4 z-50 max-w-[calc(100vw-1rem)] sm:max-w-sm">
-          <div className={`flex items-center p-3 sm:p-4 rounded-lg shadow-lg transition-all duration-300 ${
+        <div className="fixed top-4 right-4 z-50 max-w-sm animate-slide-in-right">
+          <div className={`flex items-center p-4 rounded-xl shadow-2xl border-2 transition-all duration-300 ${
             notification.type === 'success'
-              ? 'bg-green-50 border border-green-200 text-green-800'
-              : 'bg-red-50 border border-red-200 text-red-800'
+              ? 'bg-white border-green-400 text-green-800'
+              : 'bg-white border-red-400 text-red-800'
           }`}>
             <div className="shrink-0">
               {notification.type === 'success' ? (
-                <FaCheck className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <FaCheck className="w-5 h-5 text-green-600" />
+                </div>
               ) : (
-                <FaTimes className="w-4 h-4 sm:w-5 sm:h-5 text-red-400" />
+                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                  <FaTimes className="w-5 h-5 text-red-600" />
+                </div>
               )}
             </div>
-            <div className="ml-2 sm:ml-3 flex-1 min-w-0">
-              <p className="text-xs sm:text-sm font-medium wrap-break-word">{notification.message}</p>
+            <div className="ml-4 flex-1">
+              <p className="text-sm font-semibold">{notification.message}</p>
             </div>
-            <div className="ml-2 sm:ml-auto sm:pl-3">
-              <button
-                onClick={() => setNotification(null)}
-                className="inline-flex rounded-md p-1 sm:p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 hover:bg-gray-50"
-              >
-                <FaTimes className="w-3 h-3 sm:w-4 sm:h-4" />
-              </button>
-            </div>
+            <button
+              onClick={() => setNotification(null)}
+              className="ml-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <FaTimes className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}
 
-      {/* Custom Confirmation Dialog */}
+      {/* Confirm Dialog */}
       {confirmDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-sm w-full border border-gray-200">
-            <div className="p-4 sm:p-6">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 transform animate-scale-in">
+            <div className="p-6">
               <div className="flex items-center justify-center mb-4">
-                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                  <FaTimes className="w-6 h-6 text-red-600" />
+                <div className="w-16 h-16 bg-linear-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
+                  <FaExclamationTriangle className="w-8 h-8 text-white" />
                 </div>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">Confirmar Acción</h3>
-              <p className="text-sm text-gray-600 text-center mb-6">{confirmDialog.message}</p>
-              <div className="flex flex-col sm:flex-row gap-3">
+              <h3 className="text-xl font-bold text-gray-900 text-center mb-3">Confirmar Acción</h3>
+              <p className="text-sm text-gray-600 text-center mb-6 leading-relaxed">{confirmDialog.message}</p>
+              <div className="flex gap-3">
                 <button
-                  onClick={handleCancelConfirm}
-                  className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors"
+                  onClick={() => setConfirmDialog(null)}
+                  className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all duration-200 hover:shadow-md"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleConfirm}
-                  className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                  className="flex-1 px-4 py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                 >
                   Confirmar
                 </button>
@@ -229,446 +360,773 @@ const Inventory = () => {
         </div>
       )}
 
-      <div className="max-w-full mx-auto">
-        {/* Header Section */}
-        <div className="mb-4 sm:mb-6 md:mb-8">
-          <div className="flex flex-col gap-3 sm:gap-4">
-            <div className="flex items-start sm:items-center justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-linear-to-r from-purple-600 to-violet-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg shrink-0">
-                    <FaBox className="text-white text-sm sm:text-base md:text-lg" />
-                  </div>
-                  <span className="wrap-break-word leading-tight">
-                    <span className="hidden md:inline">Inventario de Equipos de Cómputo</span>
-                    <span className="hidden sm:inline md:hidden">Inventario de Equipos</span>
-                    <span className="sm:hidden">Inventario</span>
-                  </span>
-                </h1>
-                <p className="mt-1 sm:mt-2 text-xs sm:text-sm md:text-base text-gray-600 wrap-break-word">
-                  Control y seguimiento de equipos informáticos 2025
-                </p>
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="flex-1">
+              <div className="flex items-center gap-4 mb-3">
+                <div className="w-14 h-14 bg-linear-to-br from-purple-600 to-violet-600 rounded-2xl flex items-center justify-center shadow-xl">
+                  <FaBox className="text-white text-2xl" />
+                </div>
+                <div>
+                  <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+                    Sistema de Inventario
+                  </h1>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Gestión integral de equipos de cómputo · 2025
+                  </p>
+                </div>
               </div>
-              <button
-                onClick={handleCreate}
-                className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-4 sm:py-2.5 md:px-6 md:py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white text-xs sm:text-sm md:text-base font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 shrink-0"
-              >
-                <FaPlus className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden xs:inline sm:hidden md:inline">Nuevo</span>
-                <span className="hidden sm:inline md:hidden">Agregar</span>
-              </button>
             </div>
+            
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setShowStats(!showStats)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg"
+              >
+                <FaChartBar className="w-4 h-4" />
+                <span className="hidden sm:inline">Estadísticas</span>
+              </button>
+              <button
+                onClick={exportToCSV}
+                className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg"
+              >
+                <FaDownload className="w-4 h-4" />
+                <span className="hidden sm:inline">Exportar</span>
+              </button>
+              {canEdit && (
+                <button
+                  onClick={handleCreate}
+                  className="flex items-center gap-2 px-6 py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                >
+                  <FaPlus className="w-4 h-4" />
+                  <span>Nuevo Equipo</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Cards */}
+        {showStats && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 animate-fade-in">
+            <div className="bg-linear-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg">
+              <div className="flex items-center justify-between mb-2">
+                <FaBox className="w-8 h-8 opacity-80" />
+                <span className="text-3xl font-bold">{stats.total}</span>
+              </div>
+              <p className="text-sm font-medium opacity-90">Total Equipos</p>
+              <p className="text-xs opacity-75 mt-1">Inventario completo</p>
+            </div>
+            
+            <div className="bg-linear-to-br from-green-500 to-green-600 rounded-2xl p-5 text-white shadow-lg">
+              <div className="flex items-center justify-between mb-2">
+                <FaCheck className="w-8 h-8 opacity-80" />
+                <span className="text-3xl font-bold">{stats.disponible}</span>
+              </div>
+              <p className="text-sm font-medium opacity-90">Disponibles</p>
+              <p className="text-xs opacity-75 mt-1">Listos para asignar</p>
+            </div>
+            
+            <div className="bg-linear-to-br from-purple-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg">
+              <div className="flex items-center justify-between mb-2">
+                <FaChartBar className="w-8 h-8 opacity-80" />
+                <span className="text-3xl font-bold">{stats.utilizationRate}%</span>
+              </div>
+              <p className="text-sm font-medium opacity-90">Tasa de Uso</p>
+              <p className="text-xs opacity-75 mt-1">{stats.enUso} equipos activos</p>
+            </div>
+            
+            <div className="bg-linear-to-br from-amber-500 to-orange-600 rounded-2xl p-5 text-white shadow-lg">
+              <div className="flex items-center justify-between mb-2">
+                <FaExclamationTriangle className="w-8 h-8 opacity-80" />
+                <span className="text-3xl font-bold">{stats.warrantyExpiring}</span>
+              </div>
+              <p className="text-sm font-medium opacity-90">Garantías por Vencer</p>
+              <p className="text-xs opacity-75 mt-1">Próximos 90 días</p>
+            </div>
+          </div>
+        )}
+
+        {/* Search and Filters */}
+        <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6 mb-6">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="flex-1 relative">
+              <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Buscar por IT, responsable, serial, marca..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-gray-700 font-medium"
+              />
+            </div>
+            
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+                showFilters 
+                  ? 'bg-purple-600 text-white shadow-lg' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              <FaFilter className="w-4 h-4" />
+              <span>Filtros</span>
+            </button>
+          </div>
+
+          {showFilters && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-6 border-t-2 border-gray-100 animate-fade-in">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Estado</label>
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                >
+                  <option value="all">Todos los estados</option>
+                  <option value="disponible">Disponible</option>
+                  <option value="en uso">En Uso</option>
+                  <option value="mantenimiento">Mantenimiento</option>
+                  <option value="fuera de servicio">Fuera de Servicio</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Área</label>
+                <select
+                  value={filterArea}
+                  onChange={(e) => setFilterArea(e.target.value)}
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                >
+                  <option value="all">Todas las áreas</option>
+                  <option value="Alta Dirección">Alta Dirección</option>
+                  <option value="Ventas">Ventas</option>
+                  <option value="Dirección Técnica">Dirección Técnica</option>
+                  <option value="Cadena de abastecimiento">Cadena de abastecimiento</option>
+                  <option value="Gestión de Operaciones">Gestión de Operaciones</option>
+                  <option value="Mercadeo">Mercadeo</option>
+                  <option value="Gestión de Calidad">Gestión de Calidad</option>
+                  <option value="Gestión de Talento Humano">Gestión de Talento Humano</option>
+                  <option value="Gestión Administrativa">Gestión Administrativa</option>
+                  <option value="Gestión Financiera">Gestión Financiera</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Ordenar por</label>
+                <div className="flex gap-2">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="flex-1 px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                  >
+                    <option value="it">IT</option>
+                    <option value="responsable">Responsable</option>
+                    <option value="area">Área</option>
+                    <option value="marca">Marca</option>
+                    <option value="status">Estado</option>
+                  </select>
+                  <button
+                    onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                    className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all"
+                  >
+                    {sortOrder === 'asc' ? <FaSortAmountDown className="w-5 h-5" /> : <FaSortAmountUp className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Results Summary */}
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-sm text-gray-600 font-medium">
+            Mostrando <span className="font-bold text-purple-600">{filteredInventory.length}</span> de <span className="font-bold">{inventory.length}</span> equipos
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setViewMode('cards')}
+              className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                viewMode === 'cards' 
+                  ? 'bg-purple-600 text-white shadow-md' 
+                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+              }`}
+            >
+              <FaBox className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('table')}
+              className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                viewMode === 'table' 
+                  ? 'bg-purple-600 text-white shadow-md' 
+                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+              }`}
+            >
+              <FaChartBar className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl border border-gray-200 overflow-hidden">
-          <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 border-b border-gray-200 bg-gray-50">
-            <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-gray-900">
-              Todos los Artículos
-            </h2>
+        {filteredInventory.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-12 text-center">
+            <div className="w-20 h-20 bg-linear-to-br from-purple-100 to-violet-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaBox className="w-10 h-10 text-purple-600" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              {searchTerm || filterStatus !== 'all' || filterArea !== 'all' 
+                ? 'No se encontraron equipos' 
+                : 'No hay equipos disponibles'}
+            </h3>
+            <p className="text-gray-600 max-w-md mx-auto mb-6">
+              {searchTerm || filterStatus !== 'all' || filterArea !== 'all'
+                ? 'Intenta ajustar los filtros de búsqueda'
+                : 'Comienza agregando un nuevo equipo al inventario'}
+            </p>
+            {canEdit && !searchTerm && filterStatus === 'all' && filterArea === 'all' && (
+              <button
+                onClick={handleCreate}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+              >
+                <FaPlus className="w-4 h-4" />
+                Agregar Primer Equipo
+              </button>
+            )}
           </div>
-          
-          <div className="p-3 sm:p-4 md:p-6">
-            {inventory.length === 0 ? (
-              <div className="text-center py-8 sm:py-10 md:py-12">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                  <FaBox className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-gray-400" />
-                </div>
-                <h3 className="text-sm sm:text-base md:text-lg font-medium text-gray-900 mb-1.5 sm:mb-2">
-                  No hay equipos disponibles
-                </h3>
-                <p className="text-xs sm:text-sm md:text-base text-gray-600 max-w-md mx-auto px-4">
-                  Comienza agregando un nuevo equipo al inventario de cómputo
-                </p>
-              </div>
-            ) : (
-              <>
-                {/* Mobile/Tablet Card Layout (< 1280px) */}
-                <div className="block xl:hidden space-y-3 sm:space-y-4">
-                  {inventory.map((item) => (
-                    <div key={item.id} className="bg-linear-to-br from-gray-50 to-gray-100 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200 hover:shadow-md hover:border-purple-300 transition-all duration-200">
-                      <div className="flex items-start justify-between gap-2 mb-3">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-wrap items-center gap-2 mb-2">
-                            <h3 className="text-sm sm:text-base font-semibold text-gray-900 wrap-break-word">{item.propiedad}</h3>
-                            <span className={`px-2 py-0.5 sm:py-1 text-xs font-medium rounded-full whitespace-nowrap ${
-                              item.status === 'disponible' ? 'bg-green-100 text-green-700' :
-                              item.status === 'en uso' ? 'bg-blue-100 text-blue-700' :
-                              item.status === 'mantenimiento' ? 'bg-yellow-100 text-yellow-700' :
-                              'bg-red-100 text-red-700'
-                            }`}>
-                              {item.status}
-                            </span>
+        ) : (
+          <>
+            {/* Cards View */}
+            {viewMode === 'cards' && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredInventory.map((item) => {
+                  const warranty = getWarrantyStatus(item.warrantyExpiry);
+                  return (
+                    <div 
+                      key={item.id} 
+                      className="bg-white rounded-2xl border-2 border-gray-200 hover:border-purple-300 hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                    >
+                      {/* Card Header */}
+                      <div className="bg-linear-to-r from-purple-600 to-violet-600 p-4 text-white">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="text-lg font-bold">{item.it}</h3>
+                              <span className={`px-2 py-1 text-xs font-bold rounded-full ${
+                                item.status === 'disponible' ? 'bg-green-400 text-green-900' :
+                                item.status === 'en uso' ? 'bg-blue-400 text-blue-900' :
+                                item.status === 'mantenimiento' ? 'bg-yellow-400 text-yellow-900' :
+                                'bg-red-400 text-red-900'
+                              }`}>
+                                {item.status}
+                              </span>
+                            </div>
+                            <p className="text-sm opacity-90">{item.marca} · {item.propiedad}</p>
                           </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 sm:gap-y-2 text-xs sm:text-sm text-gray-600">
-                            <div className="flex flex-wrap items-baseline gap-1">
-                              <strong className="font-medium text-gray-700">IT:</strong>
-                              <span className="break-all">{item.it}</span>
+                          {canEdit && (
+                            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button
+                                onClick={() => handleEdit(item)}
+                                className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all"
+                                title="Editar"
+                              >
+                                <FaEdit className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(item.id)}
+                                className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all"
+                                title="Eliminar"
+                              >
+                                <FaTrash className="w-4 h-4" />
+                              </button>
                             </div>
-                            <div className="flex flex-wrap items-baseline gap-1">
-                              <strong className="font-medium text-gray-700">Serial:</strong>
-                              <span className="break-all">{item.serial}</span>
-                            </div>
-                            <div className="flex flex-wrap items-baseline gap-1">
-                              <strong className="font-medium text-gray-700">Área:</strong>
-                              <span className="break-all">{item.area}</span>
-                            </div>
-                            <div className="flex flex-wrap items-baseline gap-1">
-                              <strong className="font-medium text-gray-700">Marca:</strong>
-                              <span className="break-all">{item.marca}</span>
-                            </div>
-                            <div className="flex flex-wrap items-baseline gap-1">
-                              <strong className="font-medium text-gray-700">Responsable:</strong>
-                              <span className="break-all">{item.responsable}</span>
-                            </div>
-                            <div className="flex flex-wrap items-baseline gap-1">
-                              <strong className="font-medium text-gray-700">RAM:</strong>
-                              <span className="break-all">{item.ram}</span>
-                            </div>
-                            <div className="flex flex-wrap items-baseline gap-1">
-                              <strong className="font-medium text-gray-700">Ubicación:</strong>
-                              <span className="break-all">{item.location || '-'}</span>
-                            </div>
-                            <div className="flex flex-wrap items-baseline gap-1">
-                              <strong className="font-medium text-gray-700">Garantía:</strong>
-                              <span className="break-all">{item.warrantyExpiry ? new Date(item.warrantyExpiry).toLocaleDateString('es-ES') : '-'}</span>
-                            </div>
-                            <div className="col-span-1 sm:col-span-2 flex flex-wrap items-baseline gap-1">
-                              <strong className="font-medium text-gray-700">Capacidad:</strong>
-                              <span className="break-all">{item.capacidad}</span>
-                            </div>
-                          </div>
+                          )}
                         </div>
-                        {canEdit && (
-                          <div className="flex flex-col gap-1.5 sm:gap-2 shrink-0">
-                            <button
-                              onClick={() => handleEdit(item)}
-                              className="p-1.5 sm:p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors"
-                              title="Editar"
-                            >
-                              <FaEdit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(item.id)}
-                              className="p-1.5 sm:p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors"
-                              title="Eliminar"
-                            >
-                              <FaTrash className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                            </button>
+                      </div>
+
+                      {/* Card Body */}
+                      <div className="p-5">
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
+                            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
+                              <FaBox className="w-5 h-5 text-purple-600" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs text-gray-500 font-medium">Responsable</p>
+                              <p className="text-sm font-bold text-gray-900 truncate">{item.responsable}</p>
+                            </div>
                           </div>
-                        )}
+
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <p className="text-xs text-gray-500 font-medium mb-1">Área</p>
+                              <p className="text-sm font-semibold text-gray-900">{item.area}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-500 font-medium mb-1">Ubicación</p>
+                              <p className="text-sm font-semibold text-gray-900">{item.location || '-'}</p>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-100">
+                            <div>
+                              <p className="text-xs text-gray-500 font-medium mb-1">Capacidad</p>
+                              <p className="text-sm font-semibold text-gray-900">{item.capacidad}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-500 font-medium mb-1">RAM</p>
+                              <p className="text-sm font-semibold text-gray-900">{item.ram}</p>
+                            </div>
+                          </div>
+
+                          <div className="pt-3 border-t border-gray-100">
+                            <p className="text-xs text-gray-500 font-medium mb-1">Serial</p>
+                            <p className="text-xs font-mono bg-gray-50 px-3 py-2 rounded-lg text-gray-700">{item.serial}</p>
+                          </div>
+
+                          {/* Warranty Alert */}
+                          {warranty.status !== 'unknown' && warranty.status !== 'good' && (
+                            <div className={`flex items-center gap-2 p-3 rounded-lg ${
+                              warranty.status === 'expired' ? 'bg-red-50 text-red-700' :
+                              warranty.status === 'critical' ? 'bg-orange-50 text-orange-700' :
+                              'bg-yellow-50 text-yellow-700'
+                            }`}>
+                              <FaExclamationTriangle className="w-4 h-4 shrink-0" />
+                              <p className="text-xs font-semibold">
+                                {warranty.status === 'expired' 
+                                  ? 'Garantía vencida' 
+                                  : `Garantía vence en ${warranty.days} días`}
+                              </p>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
+              </div>
+            )}
 
-                {/* Desktop Table Layout (>= 1280px) */}
-                <div className="hidden xl:block">
-                  <table className="w-full table-fixed divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+            {/* Table View */}
+            {viewMode === 'table' && (
+              <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-linear-to-r from-purple-600 to-violet-600 text-white">
                       <tr>
-                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Propiedad</th>
-                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">IT</th>
-                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Área</th>
-                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Responsable</th>
-                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Serial</th>
-                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Capacidad</th>
-                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">RAM</th>
-                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Marca</th>
-                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Ubicación</th>
-                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Garantía</th>
-                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Estado</th>
+                        <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">IT</th>
+                        <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Responsable</th>
+                        <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Área</th>
+                        <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Marca</th>
+                        <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Serial</th>
+                        <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Specs</th>
+                        <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Estado</th>
+                        <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Garantía</th>
                         {canEdit && (
-                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Acciones</th>
+                          <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Acciones</th>
                         )}
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {inventory.map((item) => (
-                        <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                          <td className="px-2 py-2 text-sm font-medium text-gray-900 truncate" title={item.propiedad}>{item.propiedad}</td>
-                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.it}>{item.it}</td>
-                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.area}>{item.area}</td>
-                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.responsable}>{item.responsable}</td>
-                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.serial}>{item.serial}</td>
-                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.capacidad}>{item.capacidad}</td>
-                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.ram}>{item.ram}</td>
-                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.marca}>{item.marca}</td>
-                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.location || '-'}>{item.location || '-'}</td>
-                          <td className="px-2 py-2 text-sm text-gray-500 truncate" title={item.warrantyExpiry ? new Date(item.warrantyExpiry).toLocaleDateString('es-ES') : '-'}>{item.warrantyExpiry ? new Date(item.warrantyExpiry).toLocaleDateString('es-ES') : '-'}</td>
-                          <td className="px-2 py-2">
-                            <span className={`px-1.5 py-0.5 text-xs font-medium rounded-full ${
-                              item.status === 'disponible' ? 'bg-green-100 text-green-700' :
-                              item.status === 'en uso' ? 'bg-blue-100 text-blue-700' :
-                              item.status === 'mantenimiento' ? 'bg-yellow-100 text-yellow-700' :
-                              'bg-red-100 text-red-700'
-                            }`}>
-                              {item.status}
-                            </span>
-                          </td>
-                          {canEdit && (
-                            <td className="px-2 py-2">
-                              <div className="flex gap-1">
-                                <button
-                                  onClick={() => handleEdit(item)}
-                                  className="text-blue-600 hover:text-blue-900 hover:bg-blue-50 p-1 rounded-lg transition-colors"
-                                  title="Editar"
-                                >
-                                  <FaEdit className="w-3.5 h-3.5" />
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(item.id)}
-                                  className="text-red-600 hover:text-red-900 hover:bg-red-50 p-1 rounded-lg transition-colors"
-                                  title="Eliminar"
-                                >
-                                  <FaTrash className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
+                    <tbody className="divide-y divide-gray-200">
+                      {filteredInventory.map((item) => {
+                        const warranty = getWarrantyStatus(item.warrantyExpiry);
+                        return (
+                          <tr key={item.id} className="hover:bg-purple-50 transition-colors">
+                            <td className="px-4 py-4">
+                              <span className="font-bold text-purple-600">{item.it}</span>
                             </td>
-                          )}
-                        </tr>
-                      ))}
+                            <td className="px-4 py-4">
+                              <div className="font-semibold text-gray-900">{item.responsable}</div>
+                              <div className="text-xs text-gray-500">{item.location || '-'}</div>
+                            </td>
+                            <td className="px-4 py-4 text-sm text-gray-700">{item.area}</td>
+                            <td className="px-4 py-4">
+                              <div className="font-semibold text-gray-900">{item.marca}</div>
+                              <div className="text-xs text-gray-500">{item.propiedad}</div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <span className="text-xs font-mono bg-gray-100 px-2 py-1 rounded">{item.serial}</span>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-900">{item.capacidad}</div>
+                              <div className="text-xs text-gray-500">{item.ram}</div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <span className={`px-3 py-1 text-xs font-bold rounded-full ${
+                                item.status === 'disponible' ? 'bg-green-100 text-green-700' :
+                                item.status === 'en uso' ? 'bg-blue-100 text-blue-700' :
+                                item.status === 'mantenimiento' ? 'bg-yellow-100 text-yellow-700' :
+                                'bg-red-100 text-red-700'
+                              }`}>
+                                {item.status}
+                              </span>
+                            </td>
+                            <td className="px-4 py-4">
+                              {warranty.status !== 'unknown' && (
+                                <div className={`flex items-center gap-1 ${
+                                  warranty.status === 'expired' ? 'text-red-600' :
+                                  warranty.status === 'critical' ? 'text-orange-600' :
+                                  warranty.status === 'warning' ? 'text-yellow-600' :
+                                  'text-green-600'
+                                }`}>
+                                  {warranty.status !== 'good' && <FaExclamationTriangle className="w-3 h-3" />}
+                                  <span className="text-xs font-semibold">
+                                    {warranty.status === 'expired' ? 'Vencida' : `${warranty.days}d`}
+                                  </span>
+                                </div>
+                              )}
+                            </td>
+                            {canEdit && (
+                              <td className="px-4 py-4">
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleEdit(item)}
+                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                    title="Editar"
+                                  >
+                                    <FaEdit className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDelete(item.id)}
+                                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                    title="Eliminar"
+                                  >
+                                    <FaTrash className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </td>
+                            )}
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
-              </>
+              </div>
             )}
-          </div>
-        </div>
+          </>
+        )}
       </div>
 
       {/* Modal for Create/Edit */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-[95vw] sm:max-w-md md:max-w-lg lg:max-w-4xl xl:max-w-5xl max-h-[95vh] overflow-y-auto border border-gray-200">
-            <div className="sticky top-0 bg-white p-3 sm:p-4 md:p-6 border-b border-gray-200 z-10">
-              <div className="flex items-center justify-between gap-3">
-                <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 wrap-break-word flex-1">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-6 z-10">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-white">
                   {editingItem ? 'Editar Equipo' : 'Nuevo Equipo de Cómputo'}
                 </h2>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors shrink-0"
+                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
                 >
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <FaTimes className="w-6 h-6" />
                 </button>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4 md:space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                    Propiedad *
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: PROPIO"
-                    value={formData.propiedad}
-                    onChange={(e) => setFormData({ ...formData, propiedad: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                    required
-                  />
-                </div>
+            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+              {/* Información Básica */}
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <FaBox className="w-4 h-4 text-purple-600" />
+                  </div>
+                  Información Básica
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Código IT *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej: IT070"
+                      value={formData.it}
+                      onChange={(e) => setFormData({ ...formData, it: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      required
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                    IT *
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: IT070"
-                    value={formData.it}
-                    onChange={(e) => setFormData({ ...formData, it: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                    required
-                  />
-                </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Propiedad *
+                    </label>
+                    <select
+                      value={formData.propiedad}
+                      onChange={(e) => setFormData({ ...formData, propiedad: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      required
+                    >
+                      <option value="">Seleccionar</option>
+                      <option value="PROPIO">PROPIO</option>
+                      <option value="ARRENDADO">ARRENDADO</option>
+                      <option value="COMODATO">COMODATO</option>
+                    </select>
+                  </div>
 
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                    Área *
-                  </label>
-                  <select
-                    value={formData.area}
-                    onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                    required
-                  >
-                    <option value="">Selecciona un área</option>
-                    <option value="Alta Dirección">Alta Dirección</option>
-                    <option value="Ventas">Ventas</option>
-                    <option value="Dirección Técnica">Dirección Técnica</option>
-                    <option value="Cadena de abastecimiento">Cadena de abastecimiento</option>
-                    <option value="Gestión de Operaciones">Gestión de Operaciones</option>
-                    <option value="Mercadeo">Mercadeo</option>
-                    <option value="Gestión de Calidad">Gestión de Calidad</option>
-                    <option value="Gestión de Talento Humano">Gestión de Talento Humano</option>
-                    <option value="Gestión Administrativa">Gestión Administrativa</option>
-                    <option value="Gestión Financiera">Gestión Financiera</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                    Responsable *
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: Oscar"
-                    value={formData.responsable}
-                    onChange={(e) => setFormData({ ...formData, responsable: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                    Serial *
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: MP1AP4S"
-                    value={formData.serial}
-                    onChange={(e) => setFormData({ ...formData, serial: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                    Capacidad *
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: 512GB"
-                    value={formData.capacidad}
-                    onChange={(e) => setFormData({ ...formData, capacidad: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                    RAM *
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: 4GB"
-                    value={formData.ram}
-                    onChange={(e) => setFormData({ ...formData, ram: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                    Marca *
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: Lenovo"
-                    value={formData.marca}
-                    onChange={(e) => setFormData({ ...formData, marca: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                    Ubicación
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: Oficina 101"
-                    value={formData.location}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                    Fecha de Garantía
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.warrantyExpiry}
-                    onChange={(e) => setFormData({ ...formData, warrantyExpiry: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                    Estado
-                  </label>
-                  <select
-                    value={formData.status}
-                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                  >
-                    <option value="disponible">Disponible</option>
-                    <option value="en uso">En Uso</option>
-                    <option value="mantenimiento">Mantenimiento</option>
-                    <option value="fuera de servicio">Fuera de Servicio</option>
-                  </select>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Estado *
+                    </label>
+                    <select
+                      value={formData.status}
+                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      required
+                    >
+                      <option value="disponible">Disponible</option>
+                      <option value="en uso">En Uso</option>
+                      <option value="mantenimiento">Mantenimiento</option>
+                      <option value="fuera de servicio">Fuera de Servicio</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-gray-200">
+              {/* Asignación */}
+              <div className="pt-6 border-t-2 border-gray-100">
+                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <FaCog className="w-4 h-4 text-blue-600" />
+                  </div>
+                  Asignación y Ubicación
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Responsable *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Nombre completo"
+                      value={formData.responsable}
+                      onChange={(e) => setFormData({ ...formData, responsable: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Área *
+                    </label>
+                    <select
+                      value={formData.area}
+                      onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      required
+                    >
+                      <option value="">Seleccionar área</option>
+                      <option value="Alta Dirección">Alta Dirección</option>
+                      <option value="Ventas">Ventas</option>
+                      <option value="Dirección Técnica">Dirección Técnica</option>
+                      <option value="Cadena de abastecimiento">Cadena de abastecimiento</option>
+                      <option value="Gestión de Operaciones">Gestión de Operaciones</option>
+                      <option value="Mercadeo">Mercadeo</option>
+                      <option value="Gestión de Calidad">Gestión de Calidad</option>
+                      <option value="Gestión de Talento Humano">Gestión de Talento Humano</option>
+                      <option value="Gestión Administrativa">Gestión Administrativa</option>
+                      <option value="Gestión Financiera">Gestión Financiera</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Ubicación Física
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej: Oficina 101"
+                      value={formData.location}
+                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Especificaciones Técnicas */}
+              <div className="pt-6 border-t-2 border-gray-100">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                      <FaCog className="w-4 h-4 text-green-600" />
+                    </div>
+                    Especificaciones Técnicas
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={handleDetectHardware}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all disabled:opacity-50"
+                    disabled={formLoading || detectingHardware}
+                  >
+                    {detectingHardware ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Detectando...
+                      </>
+                    ) : (
+                      <>
+                        <FaSearch className="w-4 h-4" />
+                        Auto-detectar
+                      </>
+                    )}
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Marca *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej: Lenovo"
+                      value={formData.marca}
+                      onChange={(e) => setFormData({ ...formData, marca: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Serial *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Número de serie"
+                      value={formData.serial}
+                      onChange={(e) => setFormData({ ...formData, serial: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-mono"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Capacidad *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej: 512GB SSD"
+                      value={formData.capacidad}
+                      onChange={(e) => setFormData({ ...formData, capacidad: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      RAM *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej: 16GB DDR4"
+                      value={formData.ram}
+                      onChange={(e) => setFormData({ ...formData, ram: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Información Administrativa */}
+              <div className="pt-6 border-t-2 border-gray-100">
+                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                    <FaCalendarAlt className="w-4 h-4 text-amber-600" />
+                  </div>
+                  Información Administrativa
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Fecha de Compra
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.purchaseDate}
+                      onChange={(e) => setFormData({ ...formData, purchaseDate: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Vencimiento Garantía
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.warrantyExpiry}
+                      onChange={(e) => setFormData({ ...formData, warrantyExpiry: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Último Mantenimiento
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.lastMaintenance}
+                      onChange={(e) => setFormData({ ...formData, lastMaintenance: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Costo (COP)
+                    </label>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={formData.cost}
+                      onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t-2 border-gray-100">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="order-3 sm:order-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm sm:text-base font-medium rounded-lg sm:rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all disabled:opacity-50"
                   disabled={formLoading || detectingHardware}
                 >
                   Cancelar
                 </button>
                 <button
-                  type="button"
-                  onClick={handleDetectHardware}
-                  className="order-2 sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base font-medium rounded-lg sm:rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={formLoading || detectingHardware}
-                >
-                  {detectingHardware ? (
-                    <>
-                      <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Detectando...
-                    </>
-                  ) : (
-                    <>
-                      <FaSearch className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      <span>Detectar PC</span>
-                    </>
-                  )}
-                </button>
-                <button
                   type="submit"
-                  className="order-1 sm:order-3 sm:flex-1 px-3 sm:px-4 py-2.5 sm:py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white text-sm sm:text-base font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
                   disabled={formLoading || detectingHardware}
                 >
                   {formLoading ? (
                     <>
-                      <svg className="animate-spin h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24">
+                      <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      <span>{editingItem ? 'Actualizando...' : 'Creando...'}</span>
+                      {editingItem ? 'Actualizando...' : 'Creando...'}
                     </>
                   ) : (
-                    <span>{editingItem ? 'Actualizar Equipo' : 'Crear Equipo'}</span>
+                    <>
+                      <FaCheck className="w-5 h-5" />
+                      {editingItem ? 'Actualizar Equipo' : 'Crear Equipo'}
+                    </>
                   )}
                 </button>
               </div>
@@ -676,6 +1134,51 @@ const Inventory = () => {
           </div>
         </div>
       )}
+
+      <style>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes scale-in {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        @keyframes slide-in-right {
+          from {
+            opacity: 0;
+            transform: translateX(100%);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out;
+        }
+
+        .animate-scale-in {
+          animation: scale-in 0.3s ease-out;
+        }
+
+        .animate-slide-in-right {
+          animation: slide-in-right 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 };
