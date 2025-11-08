@@ -73,7 +73,7 @@ export default {
           900: '#14532d',
         },
         background: {
-          white: '#ffffff',
+          white: '#f3f4f6',
         }
       }
     },
