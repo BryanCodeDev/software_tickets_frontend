@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { FaBox, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaFileExport, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory } from 'react-icons/fa';
+import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
 import inventoryAPI from '../../api/inventoryAPI';
 
@@ -226,7 +227,7 @@ const Inventory = () => {
     }
   };
 
-  const exportToCSV = () => {
+  const exportToExcel = () => {
     const headers = ['Propiedad', 'IT', 'Área', 'Responsable', 'Serial', 'Capacidad', 'RAM', 'Marca', 'Estado', 'Ubicación', 'Garantía', 'Compra', 'Mantenimiento', 'Costo'];
     const rows = filteredInventory.map(item => [
       item.propiedad,
@@ -245,12 +246,58 @@ const Inventory = () => {
       item.cost ? `$${item.cost.toLocaleString('es-CO')}` : '-'
     ]);
 
-    const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `inventario_${new Date().toISOString().split('T')[0]}.csv`;
-    link.click();
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Inventario');
+
+    // Estilos para la tabla
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    for (let row = range.s.r; row <= range.e.r; row++) {
+      for (let col = range.s.c; col <= range.e.c; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+        if (!ws[cellAddress]) continue;
+
+        // Estilo para el header
+        if (row === 0) {
+          ws[cellAddress].s = {
+            font: { bold: true, color: { rgb: 'FFFFFF' } },
+            fill: { fgColor: { rgb: '6B46C1' } }, // Color púrpura
+            alignment: { horizontal: 'center' }
+          };
+        } else {
+          // Estilo para las filas de datos
+          ws[cellAddress].s = {
+            alignment: { horizontal: 'left' },
+            border: {
+              top: { style: 'thin', color: { rgb: 'CCCCCC' } },
+              bottom: { style: 'thin', color: { rgb: 'CCCCCC' } },
+              left: { style: 'thin', color: { rgb: 'CCCCCC' } },
+              right: { style: 'thin', color: { rgb: 'CCCCCC' } }
+            }
+          };
+        }
+      }
+    }
+
+    // Ajustar ancho de columnas
+    ws['!cols'] = [
+      { wch: 12 }, // Propiedad
+      { wch: 10 }, // IT
+      { wch: 15 }, // Área
+      { wch: 15 }, // Responsable
+      { wch: 20 }, // Serial
+      { wch: 15 }, // Capacidad
+      { wch: 10 }, // RAM
+      { wch: 12 }, // Marca
+      { wch: 12 }, // Estado
+      { wch: 15 }, // Ubicación
+      { wch: 12 }, // Garantía
+      { wch: 12 }, // Compra
+      { wch: 12 }, // Mantenimiento
+      { wch: 12 }  // Costo
+    ];
+
+    XLSX.writeFile(wb, `inventario_${new Date().toISOString().split('T')[0]}.xlsx`);
     showNotification('Inventario exportado exitosamente', 'success');
   };
 
@@ -296,34 +343,34 @@ const Inventory = () => {
   );
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-6 px-4 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-4 px-3 sm:py-6 sm:px-4 lg:px-8">
       {/* Notification */}
       {notification && (
-        <div className="fixed top-4 right-4 z-50 max-w-sm animate-slide-in-right">
-          <div className={`flex items-center p-4 rounded-xl shadow-2xl border-2 transition-all duration-300 ${
+        <div className="fixed top-3 right-3 left-3 sm:top-4 sm:right-4 sm:left-auto z-50 max-w-sm animate-slide-in-right">
+          <div className={`flex items-center p-3 sm:p-4 rounded-xl shadow-2xl border-2 transition-all duration-300 ${
             notification.type === 'success'
               ? 'bg-white border-green-400 text-green-800'
               : 'bg-white border-red-400 text-red-800'
           }`}>
             <div className="shrink-0">
               {notification.type === 'success' ? (
-                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <FaCheck className="w-5 h-5 text-green-600" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <FaCheck className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                 </div>
               ) : (
-                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                  <FaTimes className="w-5 h-5 text-red-600" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 rounded-full flex items-center justify-center">
+                  <FaTimes className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
                 </div>
               )}
             </div>
-            <div className="ml-4 flex-1">
-              <p className="text-sm font-semibold">{notification.message}</p>
+            <div className="ml-3 sm:ml-4 flex-1">
+              <p className="text-xs sm:text-sm font-semibold">{notification.message}</p>
             </div>
             <button
               onClick={() => setNotification(null)}
-              className="ml-4 text-gray-400 hover:text-gray-600 transition-colors"
+              className="ml-3 sm:ml-4 text-gray-400 hover:text-gray-600 transition-colors"
             >
-              <FaTimes className="w-4 h-4" />
+              <FaTimes className="w-3 h-3 sm:w-4 sm:h-4" />
             </button>
           </div>
         </div>
@@ -331,26 +378,26 @@ const Inventory = () => {
 
       {/* Confirm Dialog */}
       {confirmDialog && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 transform animate-scale-in">
-            <div className="p-6">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4 animate-fade-in">
+          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 transform animate-scale-in">
+            <div className="p-4 lg:p-6">
               <div className="flex items-center justify-center mb-4">
-                <div className="w-16 h-16 bg-linear-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
-                  <FaExclamationTriangle className="w-8 h-8 text-white" />
+                <div className="w-12 h-12 lg:w-16 lg:h-16 bg-linear-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
+                  <FaExclamationTriangle className="w-6 h-6 lg:w-8 lg:h-8 text-white" />
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 text-center mb-3">Confirmar Acción</h3>
-              <p className="text-sm text-gray-600 text-center mb-6 leading-relaxed">{confirmDialog.message}</p>
-              <div className="flex gap-3">
+              <h3 className="text-lg lg:text-xl font-bold text-gray-900 text-center mb-3">Confirmar Acción</h3>
+              <p className="text-xs sm:text-sm text-gray-600 text-center mb-4 lg:mb-6 leading-relaxed">{confirmDialog.message}</p>
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={() => setConfirmDialog(null)}
-                  className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all duration-200 hover:shadow-md"
+                  className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all duration-200 hover:shadow-md text-sm lg:text-base touch-manipulation"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleConfirm}
-                  className="flex-1 px-4 py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                  className="flex-1 px-4 py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base touch-manipulation"
                 >
                   Confirmar
                 </button>
@@ -362,35 +409,35 @@ const Inventory = () => {
 
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-            <div className="flex-1">
-              <div className="flex items-center gap-4 mb-3">
-                <div className="w-14 h-14 bg-linear-to-br from-purple-600 to-violet-600 rounded-2xl flex items-center justify-center shadow-xl">
-                  <FaBox className="text-white text-2xl" />
+        <div className="mb-6 lg:mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-3 lg:gap-4 mb-3">
+                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-linear-to-br from-purple-600 to-violet-600 rounded-2xl flex items-center justify-center shadow-xl shrink-0">
+                  <FaBox className="text-white text-xl lg:text-2xl" />
                 </div>
-                <div>
-                  <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight truncate">
                     Sistema de Inventario
                   </h1>
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-xs sm:text-sm text-gray-600 mt-1">
                     Gestión integral de equipos de cómputo · 2025
                   </p>
                 </div>
               </div>
             </div>
-            
-            <div className="flex flex-wrap gap-3">
+
+            <div className="flex flex-wrap gap-2 lg:gap-3">
               <button
                 onClick={() => setShowStats(!showStats)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg"
+                className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
               >
                 <FaChartBar className="w-4 h-4" />
                 <span className="hidden sm:inline">Estadísticas</span>
               </button>
               <button
-                onClick={exportToCSV}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg"
+                onClick={exportToExcel}
+                className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
               >
                 <FaDownload className="w-4 h-4" />
                 <span className="hidden sm:inline">Exportar</span>
@@ -398,7 +445,7 @@ const Inventory = () => {
               {canEdit && (
                 <button
                   onClick={handleCreate}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                  className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
                 >
                   <FaPlus className="w-4 h-4" />
                   <span>Nuevo Equipo</span>
@@ -410,177 +457,181 @@ const Inventory = () => {
 
         {/* Stats Cards */}
         {showStats && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 animate-fade-in">
-            <div className="bg-linear-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-2">
-                <FaBox className="w-8 h-8 opacity-80" />
-                <span className="text-3xl font-bold">{stats.total}</span>
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 animate-fade-in">
+            <div className="bg-linear-to-br from-blue-500 to-blue-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg">
+              <div className="flex items-center justify-between mb-1 lg:mb-2">
+                <FaBox className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
+                <span className="text-xl lg:text-3xl font-bold">{stats.total}</span>
               </div>
-              <p className="text-sm font-medium opacity-90">Total Equipos</p>
-              <p className="text-xs opacity-75 mt-1">Inventario completo</p>
+              <p className="text-xs lg:text-sm font-medium opacity-90">Total Equipos</p>
+              <p className="text-xs opacity-75 mt-1 hidden sm:block">Inventario completo</p>
             </div>
-            
-            <div className="bg-linear-to-br from-green-500 to-green-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-2">
-                <FaCheck className="w-8 h-8 opacity-80" />
-                <span className="text-3xl font-bold">{stats.disponible}</span>
+
+            <div className="bg-linear-to-br from-green-500 to-green-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg">
+              <div className="flex items-center justify-between mb-1 lg:mb-2">
+                <FaCheck className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
+                <span className="text-xl lg:text-3xl font-bold">{stats.disponible}</span>
               </div>
-              <p className="text-sm font-medium opacity-90">Disponibles</p>
-              <p className="text-xs opacity-75 mt-1">Listos para asignar</p>
+              <p className="text-xs lg:text-sm font-medium opacity-90">Disponibles</p>
+              <p className="text-xs opacity-75 mt-1 hidden sm:block">Listos para asignar</p>
             </div>
-            
-            <div className="bg-linear-to-br from-purple-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-2">
-                <FaChartBar className="w-8 h-8 opacity-80" />
-                <span className="text-3xl font-bold">{stats.utilizationRate}%</span>
+
+            <div className="bg-linear-to-br from-purple-500 to-purple-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg">
+              <div className="flex items-center justify-between mb-1 lg:mb-2">
+                <FaChartBar className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
+                <span className="text-xl lg:text-3xl font-bold">{stats.utilizationRate}%</span>
               </div>
-              <p className="text-sm font-medium opacity-90">Tasa de Uso</p>
-              <p className="text-xs opacity-75 mt-1">{stats.enUso} equipos activos</p>
+              <p className="text-xs lg:text-sm font-medium opacity-90">Tasa de Uso</p>
+              <p className="text-xs opacity-75 mt-1 hidden sm:block">{stats.enUso} equipos activos</p>
             </div>
-            
-            <div className="bg-linear-to-br from-amber-500 to-orange-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-2">
-                <FaExclamationTriangle className="w-8 h-8 opacity-80" />
-                <span className="text-3xl font-bold">{stats.warrantyExpiring}</span>
+
+            <div className="bg-linear-to-br from-amber-500 to-orange-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg col-span-2 sm:col-span-2 lg:col-span-1">
+              <div className="flex items-center justify-between mb-1 lg:mb-2">
+                <FaExclamationTriangle className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
+                <span className="text-xl lg:text-3xl font-bold">{stats.warrantyExpiring}</span>
               </div>
-              <p className="text-sm font-medium opacity-90">Garantías por Vencer</p>
-              <p className="text-xs opacity-75 mt-1">Próximos 90 días</p>
+              <p className="text-xs lg:text-sm font-medium opacity-90">Garantías por Vencer</p>
+              <p className="text-xs opacity-75 mt-1 hidden sm:block">Próximos 90 días</p>
             </div>
           </div>
         )}
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6 mb-6">
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1 relative">
-              <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Buscar por IT, responsable, serial, marca..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-gray-700 font-medium"
-              />
-            </div>
-            
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
-                showFilters 
-                  ? 'bg-purple-600 text-white shadow-lg' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <FaFilter className="w-4 h-4" />
-              <span>Filtros</span>
-            </button>
-          </div>
+        <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 mb-6">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1 relative">
+                <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Buscar por IT, responsable, serial, marca..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-gray-700 font-medium text-sm lg:text-base"
+                />
+              </div>
 
-          {showFilters && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-6 border-t-2 border-gray-100 animate-fade-in">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Estado</label>
-                <select
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
-                >
-                  <option value="all">Todos los estados</option>
-                  <option value="disponible">Disponible</option>
-                  <option value="en uso">En Uso</option>
-                  <option value="mantenimiento">Mantenimiento</option>
-                  <option value="fuera de servicio">Fuera de Servicio</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Área</label>
-                <select
-                  value={filterArea}
-                  onChange={(e) => setFilterArea(e.target.value)}
-                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
-                >
-                  <option value="all">Todas las áreas</option>
-                  <option value="Alta Dirección">Alta Dirección</option>
-                  <option value="Ventas">Ventas</option>
-                  <option value="Dirección Técnica">Dirección Técnica</option>
-                  <option value="Cadena de abastecimiento">Cadena de abastecimiento</option>
-                  <option value="Gestión de Operaciones">Gestión de Operaciones</option>
-                  <option value="Mercadeo">Mercadeo</option>
-                  <option value="Gestión de Calidad">Gestión de Calidad</option>
-                  <option value="Gestión de Talento Humano">Gestión de Talento Humano</option>
-                  <option value="Gestión Administrativa">Gestión Administrativa</option>
-                  <option value="Gestión Financiera">Gestión Financiera</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Ordenar por</label>
-                <div className="flex gap-2">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${
+                  showFilters
+                    ? 'bg-purple-600 text-white shadow-lg'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                <FaFilter className="w-4 h-4" />
+                <span>Filtros</span>
+              </button>
+            </div>
+
+            {showFilters && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-6 border-t-2 border-gray-100 animate-fade-in">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Estado</label>
                   <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="flex-1 px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm"
                   >
-                    <option value="it">IT</option>
-                    <option value="responsable">Responsable</option>
-                    <option value="area">Área</option>
-                    <option value="marca">Marca</option>
-                    <option value="status">Estado</option>
+                    <option value="all">Todos los estados</option>
+                    <option value="disponible">Disponible</option>
+                    <option value="en uso">En Uso</option>
+                    <option value="mantenimiento">Mantenimiento</option>
+                    <option value="fuera de servicio">Fuera de Servicio</option>
                   </select>
-                  <button
-                    onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                    className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all"
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Área</label>
+                  <select
+                    value={filterArea}
+                    onChange={(e) => setFilterArea(e.target.value)}
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm"
                   >
-                    {sortOrder === 'asc' ? <FaSortAmountDown className="w-5 h-5" /> : <FaSortAmountUp className="w-5 h-5" />}
-                  </button>
+                    <option value="all">Todas las áreas</option>
+                    <option value="Alta Dirección">Alta Dirección</option>
+                    <option value="Ventas">Ventas</option>
+                    <option value="Dirección Técnica">Dirección Técnica</option>
+                    <option value="Cadena de abastecimiento">Cadena de abastecimiento</option>
+                    <option value="Gestión de Operaciones">Gestión de Operaciones</option>
+                    <option value="Mercadeo">Mercadeo</option>
+                    <option value="Gestión de Calidad">Gestión de Calidad</option>
+                    <option value="Gestión de Talento Humano">Gestión de Talento Humano</option>
+                    <option value="Gestión Administrativa">Gestión Administrativa</option>
+                    <option value="Gestión Financiera">Gestión Financiera</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Ordenar por</label>
+                  <div className="flex gap-2">
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="flex-1 px-3 lg:px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm"
+                    >
+                      <option value="it">IT</option>
+                      <option value="responsable">Responsable</option>
+                      <option value="area">Área</option>
+                      <option value="marca">Marca</option>
+                      <option value="status">Estado</option>
+                    </select>
+                    <button
+                      onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                      className="px-3 lg:px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all"
+                    >
+                      {sortOrder === 'asc' ? <FaSortAmountDown className="w-4 h-4 lg:w-5 lg:h-5" /> : <FaSortAmountUp className="w-4 h-4 lg:w-5 lg:h-5" />}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Results Summary */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <p className="text-sm text-gray-600 font-medium">
             Mostrando <span className="font-bold text-purple-600">{filteredInventory.length}</span> de <span className="font-bold">{inventory.length}</span> equipos
           </p>
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode('cards')}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                viewMode === 'cards' 
-                  ? 'bg-purple-600 text-white shadow-md' 
+              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
+                viewMode === 'cards'
+                  ? 'bg-purple-600 text-white shadow-md'
                   : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >
               <FaBox className="w-4 h-4" />
+              <span className="hidden sm:inline ml-2">Tarjetas</span>
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                viewMode === 'table' 
-                  ? 'bg-purple-600 text-white shadow-md' 
+              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
+                viewMode === 'table'
+                  ? 'bg-purple-600 text-white shadow-md'
                   : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >
               <FaChartBar className="w-4 h-4" />
+              <span className="hidden sm:inline ml-2">Tabla</span>
             </button>
           </div>
         </div>
 
         {/* Main Content */}
         {filteredInventory.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-12 text-center">
-            <div className="w-20 h-20 bg-linear-to-br from-purple-100 to-violet-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FaBox className="w-10 h-10 text-purple-600" />
+          <div className="bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center">
+            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-purple-100 to-violet-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaBox className="w-8 h-8 lg:w-10 lg:h-10 text-purple-600" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
-              {searchTerm || filterStatus !== 'all' || filterArea !== 'all' 
-                ? 'No se encontraron equipos' 
+            <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2">
+              {searchTerm || filterStatus !== 'all' || filterArea !== 'all'
+                ? 'No se encontraron equipos'
                 : 'No hay equipos disponibles'}
             </h3>
-            <p className="text-gray-600 max-w-md mx-auto mb-6">
+            <p className="text-sm lg:text-base text-gray-600 max-w-md mx-auto mb-4 lg:mb-6">
               {searchTerm || filterStatus !== 'all' || filterArea !== 'all'
                 ? 'Intenta ajustar los filtros de búsqueda'
                 : 'Comienza agregando un nuevo equipo al inventario'}
@@ -588,7 +639,7 @@ const Inventory = () => {
             {canEdit && !searchTerm && filterStatus === 'all' && filterArea === 'all' && (
               <button
                 onClick={handleCreate}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
               >
                 <FaPlus className="w-4 h-4" />
                 Agregar Primer Equipo
@@ -599,20 +650,20 @@ const Inventory = () => {
           <>
             {/* Cards View */}
             {viewMode === 'cards' && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
                 {filteredInventory.map((item) => {
                   const warranty = getWarrantyStatus(item.warrantyExpiry);
                   return (
-                    <div 
-                      key={item.id} 
-                      className="bg-white rounded-2xl border-2 border-gray-200 hover:border-purple-300 hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                    <div
+                      key={item.id}
+                      className="bg-white rounded-xl lg:rounded-2xl border-2 border-gray-200 hover:border-purple-300 hover:shadow-xl transition-all duration-300 overflow-hidden group"
                     >
                       {/* Card Header */}
-                      <div className="bg-linear-to-r from-purple-600 to-violet-600 p-4 text-white">
+                      <div className="bg-linear-to-r from-purple-600 to-violet-600 p-3 lg:p-4 text-white">
                         <div className="flex items-start justify-between">
-                          <div className="flex-1">
+                          <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="text-lg font-bold">{item.it}</h3>
+                              <h3 className="text-base lg:text-lg font-bold truncate">{item.it}</h3>
                               <span className={`px-2 py-1 text-xs font-bold rounded-full ${
                                 item.status === 'disponible' ? 'bg-green-400 text-green-900' :
                                 item.status === 'en uso' ? 'bg-blue-400 text-blue-900' :
@@ -622,23 +673,23 @@ const Inventory = () => {
                                 {item.status}
                               </span>
                             </div>
-                            <p className="text-sm opacity-90">{item.marca} · {item.propiedad}</p>
+                            <p className="text-xs lg:text-sm opacity-90 truncate">{item.marca} · {item.propiedad}</p>
                           </div>
                           {canEdit && (
-                            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex gap-1 lg:gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                               <button
                                 onClick={() => handleEdit(item)}
-                                className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all"
+                                className="p-1.5 lg:p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all touch-manipulation"
                                 title="Editar"
                               >
-                                <FaEdit className="w-4 h-4" />
+                                <FaEdit className="w-3 h-3 lg:w-4 lg:h-4" />
                               </button>
                               <button
                                 onClick={() => handleDelete(item.id)}
-                                className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all"
+                                className="p-1.5 lg:p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all touch-manipulation"
                                 title="Eliminar"
                               >
-                                <FaTrash className="w-4 h-4" />
+                                <FaTrash className="w-3 h-3 lg:w-4 lg:h-4" />
                               </button>
                             </div>
                           )}
@@ -646,11 +697,11 @@ const Inventory = () => {
                       </div>
 
                       {/* Card Body */}
-                      <div className="p-5">
+                      <div className="p-4 lg:p-5">
                         <div className="space-y-3">
                           <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
-                            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
-                              <FaBox className="w-5 h-5 text-purple-600" />
+                            <div className="w-8 h-8 lg:w-10 lg:h-10 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
+                              <FaBox className="w-4 h-4 lg:w-5 lg:h-5 text-purple-600" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-xs text-gray-500 font-medium">Responsable</p>
@@ -661,28 +712,28 @@ const Inventory = () => {
                           <div className="grid grid-cols-2 gap-3">
                             <div>
                               <p className="text-xs text-gray-500 font-medium mb-1">Área</p>
-                              <p className="text-sm font-semibold text-gray-900">{item.area}</p>
+                              <p className="text-sm font-semibold text-gray-900 truncate">{item.area}</p>
                             </div>
                             <div>
                               <p className="text-xs text-gray-500 font-medium mb-1">Ubicación</p>
-                              <p className="text-sm font-semibold text-gray-900">{item.location || '-'}</p>
+                              <p className="text-sm font-semibold text-gray-900 truncate">{item.location || '-'}</p>
                             </div>
                           </div>
 
                           <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-100">
                             <div>
                               <p className="text-xs text-gray-500 font-medium mb-1">Capacidad</p>
-                              <p className="text-sm font-semibold text-gray-900">{item.capacidad}</p>
+                              <p className="text-sm font-semibold text-gray-900 truncate">{item.capacidad}</p>
                             </div>
                             <div>
                               <p className="text-xs text-gray-500 font-medium mb-1">RAM</p>
-                              <p className="text-sm font-semibold text-gray-900">{item.ram}</p>
+                              <p className="text-sm font-semibold text-gray-900 truncate">{item.ram}</p>
                             </div>
                           </div>
 
                           <div className="pt-3 border-t border-gray-100">
                             <p className="text-xs text-gray-500 font-medium mb-1">Serial</p>
-                            <p className="text-xs font-mono bg-gray-50 px-3 py-2 rounded-lg text-gray-700">{item.serial}</p>
+                            <p className="text-xs font-mono bg-gray-50 px-3 py-2 rounded-lg text-gray-700 break-all">{item.serial}</p>
                           </div>
 
                           {/* Warranty Alert */}
@@ -694,8 +745,8 @@ const Inventory = () => {
                             }`}>
                               <FaExclamationTriangle className="w-4 h-4 shrink-0" />
                               <p className="text-xs font-semibold">
-                                {warranty.status === 'expired' 
-                                  ? 'Garantía vencida' 
+                                {warranty.status === 'expired'
+                                  ? 'Garantía vencida'
                                   : `Garantía vence en ${warranty.days} días`}
                               </p>
                             </div>
@@ -711,7 +762,91 @@ const Inventory = () => {
             {/* Table View */}
             {viewMode === 'table' && (
               <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden">
-                <div className="overflow-x-auto">
+                {/* Mobile Card View for Table Mode */}
+                <div className="block md:hidden">
+                  <div className="divide-y divide-gray-200">
+                    {filteredInventory.map((item) => {
+                      const warranty = getWarrantyStatus(item.warrantyExpiry);
+                      return (
+                        <div key={item.id} className="p-4 hover:bg-purple-50 transition-colors">
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="font-bold text-purple-600">{item.it}</span>
+                                <span className={`px-2 py-1 text-xs font-bold rounded-full ${
+                                  item.status === 'disponible' ? 'bg-green-100 text-green-700' :
+                                  item.status === 'en uso' ? 'bg-blue-100 text-blue-700' :
+                                  item.status === 'mantenimiento' ? 'bg-yellow-100 text-yellow-700' :
+                                  'bg-red-100 text-red-700'
+                                }`}>
+                                  {item.status}
+                                </span>
+                              </div>
+                              <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">{item.responsable}</h3>
+                              <p className="text-xs text-gray-500 truncate">{item.marca} · {item.propiedad}</p>
+                            </div>
+                            {canEdit && (
+                              <div className="flex gap-1 ml-2">
+                                <button
+                                  onClick={() => handleEdit(item)}
+                                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation"
+                                  title="Editar"
+                                >
+                                  <FaEdit className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(item.id)}
+                                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all touch-manipulation"
+                                  title="Eliminar"
+                                >
+                                  <FaTrash className="w-4 h-4" />
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          <div className="grid grid-cols-2 gap-4 text-xs text-gray-600">
+                            <div>
+                              <span className="font-medium">Área:</span>
+                              <p className="truncate">{item.area}</p>
+                            </div>
+                            <div>
+                              <span className="font-medium">Ubicación:</span>
+                              <p className="truncate">{item.location || '-'}</p>
+                            </div>
+                            <div>
+                              <span className="font-medium">Capacidad:</span>
+                              <p className="truncate">{item.capacidad}</p>
+                            </div>
+                            <div>
+                              <span className="font-medium">RAM:</span>
+                              <p className="truncate">{item.ram}</p>
+                            </div>
+                            <div className="col-span-2">
+                              <span className="font-medium">Serial:</span>
+                              <p className="font-mono bg-gray-50 px-2 py-1 rounded text-xs break-all">{item.serial}</p>
+                            </div>
+                            {warranty.status !== 'unknown' && (
+                              <div className="col-span-2">
+                                <span className="font-medium">Garantía:</span>
+                                <p className={`font-semibold ${
+                                  warranty.status === 'expired' ? 'text-red-600' :
+                                  warranty.status === 'critical' ? 'text-orange-600' :
+                                  warranty.status === 'warning' ? 'text-yellow-600' :
+                                  'text-green-600'
+                                }`}>
+                                  {warranty.status === 'expired' ? 'Vencida' : `${warranty.days} días`}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
                   <table className="w-full">
                     <thead className="bg-linear-to-r from-purple-600 to-violet-600 text-white">
                       <tr>
@@ -811,28 +946,28 @@ const Inventory = () => {
 
       {/* Modal for Create/Edit */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-6 z-10">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-xl lg:text-2xl font-bold text-white">
                   {editingItem ? 'Editar Equipo' : 'Nuevo Equipo de Cómputo'}
                 </h2>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white shrink-0"
                 >
-                  <FaTimes className="w-6 h-6" />
+                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
                 </button>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6">
               {/* Información Básica */}
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <FaBox className="w-4 h-4 text-purple-600" />
+                <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <div className="w-6 h-6 lg:w-8 lg:h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <FaBox className="w-3 h-3 lg:w-4 lg:h-4 text-purple-600" />
                   </div>
                   Información Básica
                 </h3>
@@ -846,7 +981,7 @@ const Inventory = () => {
                       placeholder="Ej: IT070"
                       value={formData.it}
                       onChange={(e) => setFormData({ ...formData, it: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     />
                   </div>
@@ -858,7 +993,7 @@ const Inventory = () => {
                     <select
                       value={formData.propiedad}
                       onChange={(e) => setFormData({ ...formData, propiedad: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     >
                       <option value="">Seleccionar</option>
@@ -875,7 +1010,7 @@ const Inventory = () => {
                     <select
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     >
                       <option value="disponible">Disponible</option>
@@ -888,10 +1023,10 @@ const Inventory = () => {
               </div>
 
               {/* Asignación */}
-              <div className="pt-6 border-t-2 border-gray-100">
-                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <FaCog className="w-4 h-4 text-blue-600" />
+              <div className="pt-4 lg:pt-6 border-t-2 border-gray-100">
+                <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <div className="w-6 h-6 lg:w-8 lg:h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <FaCog className="w-3 h-3 lg:w-4 lg:h-4 text-blue-600" />
                   </div>
                   Asignación y Ubicación
                 </h3>
@@ -905,7 +1040,7 @@ const Inventory = () => {
                       placeholder="Nombre completo"
                       value={formData.responsable}
                       onChange={(e) => setFormData({ ...formData, responsable: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     />
                   </div>
@@ -917,7 +1052,7 @@ const Inventory = () => {
                     <select
                       value={formData.area}
                       onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     >
                       <option value="">Seleccionar área</option>
@@ -943,30 +1078,30 @@ const Inventory = () => {
                       placeholder="Ej: Oficina 101"
                       value={formData.location}
                       onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Especificaciones Técnicas */}
-              <div className="pt-6 border-t-2 border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                      <FaCog className="w-4 h-4 text-green-600" />
+              <div className="pt-4 lg:pt-6 border-t-2 border-gray-100">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+                  <h3 className="text-base lg:text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <div className="w-6 h-6 lg:w-8 lg:h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                      <FaCog className="w-3 h-3 lg:w-4 lg:h-4 text-green-600" />
                     </div>
                     Especificaciones Técnicas
                   </h3>
                   <button
                     type="button"
                     onClick={handleDetectHardware}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 px-3 lg:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all disabled:opacity-50 text-sm lg:text-base min-w-[140px]"
                     disabled={formLoading || detectingHardware}
                   >
                     {detectingHardware ? (
                       <>
-                        <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin h-3 w-3 lg:h-4 lg:w-4" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
@@ -974,7 +1109,7 @@ const Inventory = () => {
                       </>
                     ) : (
                       <>
-                        <FaSearch className="w-4 h-4" />
+                        <FaSearch className="w-3 h-3 lg:w-4 lg:h-4" />
                         Auto-detectar
                       </>
                     )}
@@ -990,7 +1125,7 @@ const Inventory = () => {
                       placeholder="Ej: Lenovo"
                       value={formData.marca}
                       onChange={(e) => setFormData({ ...formData, marca: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     />
                   </div>
@@ -1004,7 +1139,7 @@ const Inventory = () => {
                       placeholder="Número de serie"
                       value={formData.serial}
                       onChange={(e) => setFormData({ ...formData, serial: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-mono"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-mono text-sm lg:text-base"
                       required
                     />
                   </div>
@@ -1018,7 +1153,7 @@ const Inventory = () => {
                       placeholder="Ej: 512GB SSD"
                       value={formData.capacidad}
                       onChange={(e) => setFormData({ ...formData, capacidad: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     />
                   </div>
@@ -1032,7 +1167,7 @@ const Inventory = () => {
                       placeholder="Ej: 16GB DDR4"
                       value={formData.ram}
                       onChange={(e) => setFormData({ ...formData, ram: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     />
                   </div>
@@ -1040,10 +1175,10 @@ const Inventory = () => {
               </div>
 
               {/* Información Administrativa */}
-              <div className="pt-6 border-t-2 border-gray-100">
-                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
-                    <FaCalendarAlt className="w-4 h-4 text-amber-600" />
+              <div className="pt-4 lg:pt-6 border-t-2 border-gray-100">
+                <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <div className="w-6 h-6 lg:w-8 lg:h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                    <FaCalendarAlt className="w-3 h-3 lg:w-4 lg:h-4 text-amber-600" />
                   </div>
                   Información Administrativa
                 </h3>
@@ -1056,7 +1191,7 @@ const Inventory = () => {
                       type="date"
                       value={formData.purchaseDate}
                       onChange={(e) => setFormData({ ...formData, purchaseDate: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
 
@@ -1068,7 +1203,7 @@ const Inventory = () => {
                       type="date"
                       value={formData.warrantyExpiry}
                       onChange={(e) => setFormData({ ...formData, warrantyExpiry: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
 
@@ -1080,7 +1215,7 @@ const Inventory = () => {
                       type="date"
                       value={formData.lastMaintenance}
                       onChange={(e) => setFormData({ ...formData, lastMaintenance: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
 
@@ -1093,30 +1228,30 @@ const Inventory = () => {
                       placeholder="0"
                       value={formData.cost}
                       onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t-2 border-gray-100">
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 lg:pt-6 border-t-2 border-gray-100">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all disabled:opacity-50"
+                  className="px-4 lg:px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all disabled:opacity-50 text-sm lg:text-base"
                   disabled={formLoading || detectingHardware}
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 px-4 lg:px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-sm lg:text-base"
                   disabled={formLoading || detectingHardware}
                 >
                   {formLoading ? (
                     <>
-                      <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                      <svg className="animate-spin h-4 w-4 lg:h-5 lg:w-5" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
@@ -1124,7 +1259,7 @@ const Inventory = () => {
                     </>
                   ) : (
                     <>
-                      <FaCheck className="w-5 h-5" />
+                      <FaCheck className="w-4 h-4 lg:w-5 lg:h-5" />
                       {editingItem ? 'Actualizar Equipo' : 'Crear Equipo'}
                     </>
                   )}

@@ -15,13 +15,17 @@ export default defineConfig({
         }
       }
     },
-    chunkSizeWarningLimit: 600
+    chunkSizeWarningLimit: 600,
+    minify: 'terser',
+    sourcemap: false, // Deshabilitar en producción para mejor rendimiento
+    assetsInlineLimit: 4096
   },
   server: {
     proxy: {
       '/api': {
         target: 'http://localhost:5000',
         changeOrigin: true,
+        secure: false,
       },
     },
   },

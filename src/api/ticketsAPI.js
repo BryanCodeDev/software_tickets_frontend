@@ -32,14 +32,28 @@ const ticketsAPI = {
   },
 
   createTicket: async (ticketData) => {
-    try {
-      const response = await api.post('/tickets', ticketData);
-      return response.data;
-    } catch (error) {
-      console.error('Error creating ticket:', error);
-      throw error;
-    }
-  },
+   try {
+     const response = await api.post('/tickets', ticketData);
+     return response.data;
+   } catch (error) {
+     console.error('Error creating ticket:', error);
+     throw error;
+   }
+ },
+
+  createTicketWithAttachment: async (formData) => {
+   try {
+     const response = await api.post('/tickets', formData, {
+       headers: {
+         'Content-Type': 'multipart/form-data'
+       }
+     });
+     return response.data;
+   } catch (error) {
+     console.error('Error creating ticket with attachment:', error);
+     throw error;
+   }
+ },
 
   updateTicket: async (id, ticketData) => {
     try {
