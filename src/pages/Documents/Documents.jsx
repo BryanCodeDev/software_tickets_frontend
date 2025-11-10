@@ -24,7 +24,6 @@ const Documents = () => {
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
   const [showStats, setShowStats] = useState(false);
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' o 'list'
 
   useEffect(() => {
     fetchDocuments();
@@ -500,35 +499,11 @@ const Documents = () => {
           )}
         </div>
 
-        {/* NUEVA FUNCIONALIDAD: Resumen de resultados y vista */}
+        {/* NUEVA FUNCIONALIDAD: Resumen de resultados */}
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm text-gray-600 font-medium">
             Mostrando <span className="font-bold text-purple-600">{filteredDocuments.length}</span> de <span className="font-bold">{documents.length}</span> documentos
           </p>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                viewMode === 'grid' 
-                  ? 'bg-purple-600 text-white shadow-md' 
-                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
-              }`}
-              title="Vista de cuadrícula"
-            >
-              <FaFileAlt className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                viewMode === 'list' 
-                  ? 'bg-purple-600 text-white shadow-md' 
-                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
-              }`}
-              title="Vista de lista"
-            >
-              <FaChartBar className="w-4 h-4" />
-            </button>
-          </div>
         </div>
       </div>
 
@@ -567,8 +542,7 @@ const Documents = () => {
             ) : (
               <>
                 {/* NUEVA FUNCIONALIDAD: Vista de cuadrícula */}
-                {viewMode === 'grid' && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {filteredDocuments.map((doc) => {
                       const expiryStatus = getExpiryStatus(doc.expiryDate);
                       return (
@@ -671,111 +645,6 @@ const Documents = () => {
                       );
                     })}
                   </div>
-                )}
-
-                {/* NUEVA FUNCIONALIDAD: Vista de lista */}
-                {viewMode === 'list' && (
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead className="bg-linear-to-r from-purple-600 to-violet-600 text-white">
-                        <tr>
-                          <th className="px-4 py-4 text-left text-xs font-bold uppercase">Documento</th>
-                          <th className="px-4 py-4 text-left text-xs font-bold uppercase">Tipo</th>
-                          <th className="px-4 py-4 text-left text-xs font-bold uppercase">Categoría</th>
-                          <th className="px-4 py-4 text-left text-xs font-bold uppercase">Versión</th>
-                          <th className="px-4 py-4 text-left text-xs font-bold uppercase">Creado</th>
-                          <th className="px-4 py-4 text-left text-xs font-bold uppercase">Estado</th>
-                          <th className="px-4 py-4 text-left text-xs font-bold uppercase">Acciones</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-200">
-                        {filteredDocuments.map((doc) => {
-                          const expiryStatus = getExpiryStatus(doc.expiryDate);
-                          return (
-                            <tr key={doc.id} className="hover:bg-purple-50 transition-colors">
-                              <td className="px-4 py-4">
-                                <div className="flex items-center gap-3">
-                                  <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
-                                    {getFileIcon(doc.filePath)}
-                                  </div>
-                                  <div>
-                                    <div className="font-semibold text-gray-900">{doc.title}</div>
-                                    {doc.description && (
-                                      <div className="text-xs text-gray-500 truncate max-w-xs">{doc.description}</div>
-                                    )}
-                                  </div>
-                                </div>
-                              </td>
-                              <td className="px-4 py-4 text-sm text-gray-700">{doc.type || '-'}</td>
-                              <td className="px-4 py-4 text-sm text-gray-700">{doc.category || '-'}</td>
-                              <td className="px-4 py-4">
-                                <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full">
-                                  v{doc.version || '1.0'}
-                                </span>
-                              </td>
-                              <td className="px-4 py-4 text-sm text-gray-500">
-                                {getTimeAgo(doc.createdAt)}
-                              </td>
-                              <td className="px-4 py-4">
-                                {expiryStatus ? (
-                                  expiryStatus.status === 'expired' || expiryStatus.status === 'critical' ? (
-                                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
-                                      <FaExclamationTriangle className="w-3 h-3" />
-                                      {expiryStatus.status === 'expired' ? 'Vencido' : 'Crítico'}
-                                    </span>
-                                  ) : expiryStatus.status === 'warning' ? (
-                                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full">
-                                      <FaExclamationTriangle className="w-3 h-3" />
-                                      Por vencer
-                                    </span>
-                                  ) : (
-                                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
-                                      <FaCheck className="w-3 h-3" />
-                                      Vigente
-                                    </span>
-                                  )
-                                ) : (
-                                  <span className="text-xs text-gray-500">-</span>
-                                )}
-                              </td>
-                              <td className="px-4 py-4">
-                                <div className="flex gap-2">
-                                  <a
-                                    href={`http://localhost:5000/${doc.filePath}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-all"
-                                    title="Descargar"
-                                  >
-                                    <FaDownload className="w-4 h-4" />
-                                  </a>
-                                  {canEdit(doc) && (
-                                    <>
-                                      <button
-                                        onClick={() => handleEdit(doc)}
-                                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                                        title="Editar"
-                                      >
-                                        <FaEdit className="w-4 h-4" />
-                                      </button>
-                                      <button
-                                        onClick={() => handleDelete(doc.id)}
-                                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                                        title="Eliminar"
-                                      >
-                                        <FaTrash className="w-4 h-4" />
-                                      </button>
-                                    </>
-                                  )}
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
               </>
             )}
           </div>
