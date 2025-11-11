@@ -48,13 +48,16 @@ const Tickets = () => {
   const [administrators, setAdministrators] = useState([]);
 
   const standardizedTitles = [
-    'Problemas con SAMP',
-    'Problemas con impresoras',
-    'Problemas con contraseña',
+    'Problemas con SAP',
+    'Problemas con Impresoras',
+    'Problemas con Contraseña',
     'Problemas con Heinsohn',
     'Problemas con Excel, Word, PDF',
-    'Problemas con acceso a carpetas',
-    'Problemas con el navegador'
+    'Problemas con Acceso a carpetas',
+    'Problemas con El navegador',
+    'Problemas con Rsales',
+    'Problemas con Envio',
+    'Problemas con Correo',
   ];
 
   const [formLoading, setFormLoading] = useState(false);
