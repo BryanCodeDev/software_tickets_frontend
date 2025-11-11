@@ -128,7 +128,7 @@ const Tickets = () => {
 
   const fetchUsers = async () => {
     try {
-      if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico') {
+      if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Empleado') {
         const users = await usersAPI.fetchUsers();
         const techUsers = users.filter(user => user.Role?.name === 'Técnico');
         const adminUsers = users.filter(user => user.Role?.name === 'Administrador');
@@ -1497,7 +1497,7 @@ const Tickets = () => {
                         <p className="text-xs text-gray-500 mt-1">Puedes subir imágenes o videos (máx. 10MB)</p>
                       </div>
 
-                      {(userRole === 'Administrador' || userRole === 'Técnico') && (
+                      {(userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Empleado') && (
                         <div className="md:col-span-2">
                           <label className="block text-sm font-semibold text-gray-700 mb-2">
                             Asignar a
@@ -1648,7 +1648,7 @@ const Tickets = () => {
                         </select>
                       </div>
 
-                      {(userRole === 'Administrador' || userRole === 'Técnico') && (
+                      {(userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Empleado') && (
                         <div className="md:col-span-2">
                           <label className="block text-sm font-semibold text-gray-700 mb-2">
                             Asignar a
