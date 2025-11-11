@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { FaEdit, FaTrash, FaComment, FaPlus, FaCheck, FaTimes, FaEye, FaImage, FaVideo, FaFile, FaPaperPlane, FaEllipsisV, FaPen, FaTrashAlt, FaSearch, FaFilter, FaDownload, FaChartBar, FaClock, FaExclamationTriangle, FaCheckCircle, FaSpinner, FaUserCircle, FaClipboardList, FaFileExport, FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
@@ -15,7 +15,7 @@ const Tickets = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [editingTicket, setEditingTicket] = useState(null);
   const [selectedTicket, setSelectedTicket] = useState(null);
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState([]); // eslint-disable-line no-unused-vars
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef(null);
@@ -103,7 +103,7 @@ const Tickets = () => {
         offTicketUpdated(handleTicketUpdated);
       };
     }
-  }, [selectedTicket]);
+  }, [selectedTicket, fetchTickets]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -112,9 +112,9 @@ const Tickets = () => {
   useEffect(() => {
     fetchTickets();
     fetchUsers();
-  }, []);
+  }, [fetchTickets, fetchUsers]);
 
-  const fetchTickets = async () => {
+  const fetchTickets = useCallback(async () => {
     try {
       const data = await ticketsAPI.fetchTickets();
       setTickets(data);
@@ -124,9 +124,9 @@ const Tickets = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Empleado') {
         const users = await usersAPI.fetchUsers();
@@ -138,7 +138,7 @@ const Tickets = () => {
     } catch (err) {
       console.error('Error al cargar usuarios:', err);
     }
-  };
+  }, [user?.role?.name]);
 
   const filterAndSortTickets = () => {
     let filtered = [...tickets];
@@ -295,7 +295,7 @@ const Tickets = () => {
        formDataToSend.append('assignedTo', assignedToValue || '');
        formDataToSend.append('attachment', formData.attachment);
 
-       const ticket = await ticketsAPI.createTicketWithAttachment(formDataToSend);
+       await ticketsAPI.createTicketWithAttachment(formDataToSend);
        fetchTickets();
        setShowCreateModal(false);
        showNotification('Ticket creado exitosamente', 'success');
@@ -309,7 +309,7 @@ const Tickets = () => {
          assignedTo: assignedToValue || null
        };
 
-       const ticket = await ticketsAPI.createTicket(ticketData);
+       await ticketsAPI.createTicket(ticketData);
        fetchTickets();
        setShowCreateModal(false);
        showNotification('Ticket creado exitosamente', 'success');

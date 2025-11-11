@@ -1,4 +1,5 @@
-const { Comment, User } = require('./models');
+// Este archivo parece ser del backend, no debería estar en frontend
+// const { Comment, User } = require('./models');
 
 let io;
 
@@ -56,7 +57,7 @@ const emitTicketUpdate = (ticketId, ticket) => {
   }
 };
 
-module.exports = {
+export default {
   initSocket,
   emitNewMessage,
   emitMessageUpdated,

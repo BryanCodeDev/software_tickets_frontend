@@ -8,7 +8,7 @@ const Navbar = ({ toggleSidebar }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleLogout = () => {
-    logout();yy
+    logout();
     navigate('/login');
   };
 

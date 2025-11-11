@@ -7,7 +7,6 @@ const Dashboard = () => {
   const { user } = useContext(AuthContext);
   const [stats, setStats] = useState({ tickets: 0, inventory: 0, documents: 0, credentials: 0, users: 0 });
   const [ticketStats, setTicketStats] = useState({ pending: 0, inProgress: 0, resolved: 0 });
-  const [recentActivity, setRecentActivity] = useState([]);
   const [systemHealth, setSystemHealth] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -35,7 +34,6 @@ const Dashboard = () => {
         });
       }
 
-      setRecentActivity(data.recentActivity || []);
       setSystemHealth(data.systemHealth || {});
       setLoading(false);
     } catch (err) {
@@ -44,7 +42,7 @@ const Dashboard = () => {
     }
   };
 
-  const StatCard = ({ title, value, description, icon: Icon, gradient, textColor }) => (
+  const StatCard = ({ title, value, description, icon, gradient, textColor }) => (
     <div className={`p-4 sm:p-5 lg:p-6 rounded-xl shadow-lg text-white hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 ${gradient}`}>
       <div className="flex items-center justify-between mb-3 lg:mb-4">
         <div className="flex-1 min-w-0">
@@ -55,16 +53,16 @@ const Dashboard = () => {
           <p className={`${textColor} text-xs sm:text-sm font-medium`}>{description}</p>
         </div>
         <div className="text-3xl sm:text-4xl lg:text-5xl opacity-20 ml-2 sm:ml-4 shrink-0">
-          <Icon />
+          {icon}
         </div>
       </div>
     </div>
   );
 
-  const QuickStatCard = ({ icon: Icon, label, value, color }) => (
+  const QuickStatCard = ({ icon, label, value, color }) => (
     <div className="flex items-center space-x-2 sm:space-x-3 p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
       <div className={`p-2 sm:p-3 rounded-lg ${color} shrink-0`}>
-        <Icon className="text-white text-lg sm:text-xl" />
+        {icon}
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-xs sm:text-sm text-gray-600 font-medium truncate">{label}</p>

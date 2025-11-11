@@ -1,25 +1,26 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AuthContext, { AuthProvider } from './context/AuthContext.jsx';
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import ErrorBoundary from './components/ErrorBoundary';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import TermsAndConditions from './pages/TermsAndConditions';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import Dashboard from './pages/Dashboard';
-import Tickets from './pages/Tickets/Tickets';
-import Inventory from './pages/Inventory/Inventory';
-import Documents from './pages/Documents/Documents';
-import Credentials from './pages/Credentials/Credentials';
-import Users from './pages/Users/Users';
-import Profile from './pages/Profile';
-import Settings from './pages/Settings';
-import Help from './pages/Help';
-import Sidebar from './components/Sidebar';
-import Navbar from './components/Navbar';
+import Layout from './components/Layout';
+
+// Lazy load pages
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const TermsAndConditions = lazy(() => import('./pages/TermsAndConditions'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Tickets = lazy(() => import('./pages/Tickets/Tickets'));
+const Inventory = lazy(() => import('./pages/Inventory/Inventory'));
+const Documents = lazy(() => import('./pages/Documents/Documents'));
+const Credentials = lazy(() => import('./pages/Credentials/Credentials'));
+const Users = lazy(() => import('./pages/Users/Users'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Settings = lazy(() => import('./pages/Settings'));
+const Help = lazy(() => import('./pages/Help'));
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -32,12 +33,16 @@ const ProtectedRoute = ({ children }) => {
   return user ? children : <Navigate to="/login" />;
 };
 
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-primary-50 via-primary-50 to-primary-50">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+      <p className="text-secondary-600">Cargando página...</p>
+    </div>
+  </div>
+);
+
 function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
 
   return (
     <ThemeProvider>
@@ -45,7 +50,8 @@ function App() {
         <Router>
           <ErrorBoundary>
             <div className="min-h-screen bg-linear-to-br from-primary-50 via-primary-50 to-primary-50">
-              <Routes>
+              <Suspense fallback={<LoadingFallback />}>
+                <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -54,149 +60,84 @@ function App() {
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/dashboard" element={
               <ProtectedRoute>
-                <div className="flex">
-                  <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-                  <div className="flex-1 lg:ml-0 transition-all duration-300">
-                    <Navbar toggleSidebar={toggleSidebar} />
-                    <main className="p-0 sm:p-1 lg:p-2">
-                      <Dashboard />
-                    </main>
-                  </div>
-                </div>
+                <Layout>
+                  <Dashboard />
+                </Layout>
               </ProtectedRoute>
             } />
             <Route path="/tickets" element={
               <ProtectedRoute>
-                <div className="flex">
-                  <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-                  <div className="flex-1 lg:ml-0 transition-all duration-300">
-                    <Navbar toggleSidebar={toggleSidebar} />
-                    <main className="p-0 sm:p-1 lg:p-2">
-                      <Tickets />
-                    </main>
-                  </div>
-                </div>
+                <Layout>
+                  <Tickets />
+                </Layout>
               </ProtectedRoute>
             } />
             <Route path="/inventory" element={
               <ProtectedRoute>
-                <div className="flex">
-                  <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-                  <div className="flex-1 lg:ml-0 transition-all duration-300">
-                    <Navbar toggleSidebar={toggleSidebar} />
-                    <main className="p-0 sm:p-1 lg:p-2">
-                      <Inventory />
-                    </main>
-                  </div>
-                </div>
+                <Layout>
+                  <Inventory />
+                </Layout>
               </ProtectedRoute>
             } />
             <Route path="/inventory/:id" element={
               <ProtectedRoute>
-                <div className="flex">
-                  <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-                  <div className="flex-1 lg:ml-0 transition-all duration-300">
-                    <Navbar toggleSidebar={toggleSidebar} />
-                    <main className="p-0 sm:p-1 lg:p-2">
-                      <Inventory />
-                    </main>
-                  </div>
-                </div>
+                <Layout>
+                  <Inventory />
+                </Layout>
               </ProtectedRoute>
             } />
             <Route path="/documents" element={
               <ProtectedRoute>
-                <div className="flex">
-                  <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-                  <div className="flex-1 lg:ml-0 transition-all duration-300">
-                    <Navbar toggleSidebar={toggleSidebar} />
-                    <main className="p-0 sm:p-1 lg:p-2">
-                      <Documents />
-                    </main>
-                  </div>
-                </div>
+                <Layout>
+                  <Documents />
+                </Layout>
               </ProtectedRoute>
             } />
             <Route path="/documents/:id" element={
               <ProtectedRoute>
-                <div className="flex">
-                  <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-                  <div className="flex-1 lg:ml-0 transition-all duration-300">
-                    <Navbar toggleSidebar={toggleSidebar} />
-                    <main className="p-0 sm:p-1 lg:p-2">
-                      <Documents />
-                    </main>
-                  </div>
-                </div>
+                <Layout>
+                  <Documents />
+                </Layout>
               </ProtectedRoute>
             } />
             <Route path="/credentials" element={
               <ProtectedRoute>
-                <div className="flex">
-                  <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-                  <div className="flex-1 lg:ml-0 transition-all duration-300">
-                    <Navbar toggleSidebar={toggleSidebar} />
-                    <main className="p-0 sm:p-1 lg:p-2">
-                      <Credentials />
-                    </main>
-                  </div>
-                </div>
+                <Layout>
+                  <Credentials />
+                </Layout>
               </ProtectedRoute>
             } />
             <Route path="/users" element={
               <ProtectedRoute>
-                <div className="flex">
-                  <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-                  <div className="flex-1 lg:ml-0 transition-all duration-300">
-                    <Navbar toggleSidebar={toggleSidebar} />
-                    <main className="p-0 sm:p-1 lg:p-2">
-                      <Users />
-                    </main>
-                  </div>
-                </div>
+                <Layout>
+                  <Users />
+                </Layout>
               </ProtectedRoute>
             } />
             <Route path="/profile" element={
               <ProtectedRoute>
-                <div className="flex">
-                  <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-                  <div className="flex-1 lg:ml-0 transition-all duration-300">
-                    <Navbar toggleSidebar={toggleSidebar} />
-                    <main className="p-0 sm:p-1 lg:p-2">
-                      <Profile />
-                    </main>
-                  </div>
-                </div>
+                <Layout>
+                  <Profile />
+                </Layout>
               </ProtectedRoute>
             } />
             <Route path="/settings" element={
               <ProtectedRoute>
-                <div className="flex">
-                  <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-                  <div className="flex-1 lg:ml-0 transition-all duration-300">
-                    <Navbar toggleSidebar={toggleSidebar} />
-                    <main className="p-0 sm:p-1 lg:p-2">
-                      <Settings />
-                    </main>
-                  </div>
-                </div>
+                <Layout>
+                  <Settings />
+                </Layout>
               </ProtectedRoute>
             } />
             <Route path="/help" element={
               <ProtectedRoute>
-                <div className="flex">
-                  <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-                  <div className="flex-1 lg:ml-0 transition-all duration-300">
-                    <Navbar toggleSidebar={toggleSidebar} />
-                    <main className="p-0 sm:p-1 lg:p-2">
-                      <Help />
-                    </main>
-                  </div>
-                </div>
+                <Layout>
+                  <Help />
+                </Layout>
               </ProtectedRoute>
             } />
                 <Route path="/" element={<Navigate to="/dashboard" />} />
-              </Routes>
+                </Routes>
+              </Suspense>
             </div>
           </ErrorBoundary>
         </Router>
