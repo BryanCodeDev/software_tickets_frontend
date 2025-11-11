@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import AuthContext from '../context/AuthContext.jsx';
 import { usersAPI } from '../api';
 import { FaCheck, FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Settings = () => {
-  const [settings] = useState(() => {
+  const { user } = useContext(AuthContext);
+  const [settings, setSettings] = useState(() => {
     return {};
   });
   const [loading, setLoading] = useState(false);
@@ -46,6 +48,13 @@ const Settings = () => {
     }
   };
 
+  const handleChange = (e) => {
+    const { name, type, checked, value } = e.target;
+    setSettings({
+      ...settings,
+      [name]: type === 'checkbox' ? checked : value
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

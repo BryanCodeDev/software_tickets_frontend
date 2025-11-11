@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
         } else {
           setUser(userData);
         }
-      } catch {
+      } catch (err) {
         // Invalid token, clear storage
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -41,30 +41,38 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password, twoFactorToken = null) => {
-    const res = await authAPI.login(email, password, twoFactorToken);
+    try {
+      const res = await authAPI.login(email, password, twoFactorToken);
 
-    // If 2FA is required, don't set user/token yet
-    if (res.requires2FA) {
+      // If 2FA is required, don't set user/token yet
+      if (res.requires2FA) {
+        return res;
+      }
+
+      // Normal login flow
+      localStorage.setItem('token', res.token);
+      localStorage.setItem('user', JSON.stringify(res.user));
+      setUser(res.user);
+
+      // Set token timestamp for session validation
+      localStorage.setItem('token_timestamp', Date.now().toString());
+
       return res;
+    } catch (err) {
+      throw err;
     }
-
-    // Normal login flow
-    localStorage.setItem('token', res.token);
-    localStorage.setItem('user', JSON.stringify(res.user));
-    setUser(res.user);
-
-    // Set token timestamp for session validation
-    localStorage.setItem('token_timestamp', Date.now().toString());
-
-    return res;
   };
 
   const register = async (name, username, email, password) => {
-    const res = await authAPI.register(name, username, email, password);
-    localStorage.setItem('token', res.token);
-    localStorage.setItem('user', JSON.stringify(res.user));
-    setUser(res.user);
-    return res;
+    try {
+      const res = await authAPI.register(name, username, email, password);
+      localStorage.setItem('token', res.token);
+      localStorage.setItem('user', JSON.stringify(res.user));
+      setUser(res.user);
+      return res;
+    } catch (err) {
+      throw err;
+    }
   };
 
   const logout = () => {
