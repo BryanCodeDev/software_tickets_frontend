@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { FaBox, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaFileExport, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
@@ -42,13 +42,13 @@ const Inventory = () => {
 
   useEffect(() => {
     fetchInventory();
-  }, [fetchInventory]);
+  }, []);
 
   useEffect(() => {
     filterAndSortInventory();
-  }, [filterAndSortInventory]);
+  }, [inventory, searchTerm, filterStatus, filterArea, sortBy, sortOrder]);
 
-  const fetchInventory = useCallback(async () => {
+  const fetchInventory = async () => {
     try {
       const data = await inventoryAPI.fetchInventory();
       setInventory(data);
@@ -58,9 +58,9 @@ const Inventory = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
-  const filterAndSortInventory = useCallback(() => {
+  const filterAndSortInventory = () => {
     let filtered = [...inventory];
 
     // Búsqueda
@@ -86,10 +86,10 @@ const Inventory = () => {
     filtered.sort((a, b) => {
       let aVal = a[sortBy];
       let bVal = b[sortBy];
-
+      
       if (typeof aVal === 'string') aVal = aVal.toLowerCase();
       if (typeof bVal === 'string') bVal = bVal.toLowerCase();
-
+      
       if (sortOrder === 'asc') {
         return aVal > bVal ? 1 : -1;
       } else {
@@ -98,7 +98,7 @@ const Inventory = () => {
     });
 
     setFilteredInventory(filtered);
-  }, [inventory, searchTerm, filterStatus, filterArea, sortBy, sortOrder]);
+  };
 
   const calculateStats = () => {
     const total = inventory.length;
