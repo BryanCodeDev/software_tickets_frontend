@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AuthContext, { AuthProvider } from './context/AuthContext.jsx';
 import { ThemeProvider } from './context/ThemeContext.jsx';
+import ErrorBoundary from './components/ErrorBoundary';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -42,8 +43,9 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <Router>
-        <div className="min-h-screen bg-linear-to-br from-primary-50 via-primary-50 to-primary-50">
-          <Routes>
+          <ErrorBoundary>
+            <div className="min-h-screen bg-linear-to-br from-primary-50 via-primary-50 to-primary-50">
+              <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -193,9 +195,10 @@ function App() {
                 </div>
               </ProtectedRoute>
             } />
-            <Route path="/" element={<Navigate to="/dashboard" />} />
-          </Routes>
-        </div>
+                <Route path="/" element={<Navigate to="/dashboard" />} />
+              </Routes>
+            </div>
+          </ErrorBoundary>
         </Router>
       </AuthProvider>
     </ThemeProvider>
