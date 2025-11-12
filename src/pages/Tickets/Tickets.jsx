@@ -117,7 +117,7 @@ const Tickets = () => {
   const fetchTickets = async () => {
     try {
       const data = await ticketsAPI.fetchTickets();
-      setTickets(data);
+      setTickets(data.tickets || []);
     } catch (err) {
       console.error('Error al cargar tickets:', err);
       showNotification('Error al cargar los tickets. Por favor, recarga la página.', 'error');
@@ -141,6 +141,7 @@ const Tickets = () => {
   };
 
   const filterAndSortTickets = () => {
+    if (!Array.isArray(tickets)) return [];
     let filtered = [...tickets];
 
     if (searchTerm) {
@@ -190,10 +191,11 @@ const Tickets = () => {
   const filteredTickets = filterAndSortTickets();
 
   const calculateStats = () => {
+    if (!Array.isArray(tickets)) return { total: 0, abiertos: 0, enProgreso: 0, resueltos: 0, alta: 0, resolutionRate: 0 };
     const total = tickets.length;
     const abiertos = tickets.filter(t => t.status?.toLowerCase() === 'abierto').length;
     const enProgreso = tickets.filter(t => t.status?.toLowerCase() === 'en progreso').length;
-    const resueltos = tickets.filter(t => 
+    const resueltos = tickets.filter(t =>
       t.status?.toLowerCase() === 'resuelto' || t.status?.toLowerCase() === 'cerrado'
     ).length;
     const alta = tickets.filter(t => t.priority?.toLowerCase() === 'alta').length;
@@ -242,9 +244,7 @@ const Tickets = () => {
       setEditFormData({
         title: ticket.title,
         description: ticket.description,
-        priority: ticket.priority,
-        status: ticket.status,
-        assignedTo: ticket.assignedTo || ''
+        priority: ticket.priority
       });
     }
 
@@ -474,8 +474,11 @@ const Tickets = () => {
   };
 
   const canDeleteTicket = (ticket) => {
-    if (userRole === 'Administrador' || userRole === 'Técnico') {
+    if (userRole === 'Administrador') {
       return true;
+    }
+    if (userRole === 'Técnico') {
+      return (ticket.userId === user?.id || ticket.assignedTo === user?.id) && ticket.status?.toLowerCase() === 'cerrado';
     }
     if (userRole === 'Empleado') {
       return ticket.userId === user?.id;
@@ -989,7 +992,7 @@ const Tickets = () => {
 
             {/* List View */}
             {viewMode === 'list' && (
-              <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden">
+              <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 overflow-hidden">
                 {/* Mobile Card View for List Mode */}
                 <div className="block md:hidden">
                   <div className="divide-y divide-gray-200">
@@ -1057,7 +1060,7 @@ const Tickets = () => {
                 </div>
 
                 {/* Desktop Table View */}
-                <div className="hidden md:block overflow-x-auto">
+                <div className="hidden md:block">
                   <table className="w-full">
                     <thead className="bg-linear-to-r from-purple-600 to-violet-600 text-white">
                       <tr>
@@ -1497,7 +1500,7 @@ const Tickets = () => {
                         <p className="text-xs text-gray-500 mt-1">Puedes subir imágenes o videos (máx. 10MB)</p>
                       </div>
 
-                      {(userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Empleado') && (
+                      {(userRole === 'Administrador' || userRole === 'Técnico') && (
                         <div className="md:col-span-2">
                           <label className="block text-sm font-semibold text-gray-700 mb-2">
                             Asignar a
@@ -1632,21 +1635,23 @@ const Tickets = () => {
                         </select>
                       </div>
 
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Estado *
-                        </label>
-                        <select
-                          value={editFormData.status}
-                          onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                        >
-                          <option value="abierto">Abierto</option>
-                          <option value="en progreso">En Progreso</option>
-                          <option value="resuelto">Resuelto</option>
-                          <option value="cerrado">Cerrado</option>
-                        </select>
-                      </div>
+                      {(userRole === 'Administrador' || userRole === 'Técnico') && (
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            Estado *
+                          </label>
+                          <select
+                            value={editFormData.status}
+                            onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
+                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                          >
+                            <option value="abierto">Abierto</option>
+                            <option value="en progreso">En Progreso</option>
+                            <option value="resuelto">Resuelto</option>
+                            <option value="cerrado">Cerrado</option>
+                          </select>
+                        </div>
+                      )}
 
                       {(userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Empleado') && (
                         <div className="md:col-span-2">

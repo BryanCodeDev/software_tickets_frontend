@@ -24,7 +24,7 @@ const Credentials = () => {
   const [passwordStrength, setPasswordStrength] = useState(null);
 
   useEffect(() => {
-    if (user && user.role?.name === 'Administrador') {
+    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Técnico')) {
       fetchCredentials();
     } else {
       setLoading(false);
@@ -257,7 +257,7 @@ const Credentials = () => {
     setConfirmDialog(null);
   };
 
-  if (!user || user.role?.name !== 'Administrador') {
+  if (!user || (user.role?.name !== 'Administrador' && user.role?.name !== 'Técnico')) {
     return <div className="container mx-auto p-6">Acceso Denegado</div>;
   }
 
@@ -504,13 +504,15 @@ const Credentials = () => {
                               <FaEdit className="w-3 h-3 sm:w-4 sm:h-4" />
                               <span>Editar</span>
                             </button>
-                            <button
-                              onClick={() => handleDelete(cred.id)}
-                              className="flex items-center justify-center space-x-1 px-3 py-2 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors"
-                            >
-                              <FaTrash className="w-3 h-3 sm:w-4 sm:h-4" />
-                              <span>Eliminar</span>
-                            </button>
+                            {user.role?.name === 'Administrador' && (
+                              <button
+                                onClick={() => handleDelete(cred.id)}
+                                className="flex items-center justify-center space-x-1 px-3 py-2 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors"
+                              >
+                                <FaTrash className="w-3 h-3 sm:w-4 sm:h-4" />
+                                <span>Eliminar</span>
+                              </button>
+                            )}
                           </div>
                         </div>
                       );

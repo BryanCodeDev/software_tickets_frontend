@@ -40,12 +40,15 @@ Una plataforma web interna completa para la gestión tecnológica de empresas, q
 - Información técnica completa (procesador, RAM, almacenamiento)
 - Control de garantías y ubicaciones
 
-### 📄 **Repositorio Documental**
-- Almacenamiento centralizado de documentos
-- Clasificación por categorías y etiquetas
-- Control de versiones de documentos
-- Permisos de acceso según roles
-- Búsqueda avanzada de archivos
+### 📄 **Control de Versiones de Documentos**
+- **Sistema de Versionado Completo**: Control semántico de versiones (1.0, 1.1, 2.0)
+- **Gestión Inteligente**: Crear documentos nuevos o actualizar versiones existentes
+- **Historial de Versiones**: Acceso completo al historial de cambios
+- **Versiones Activas**: Interfaz optimizada mostrando solo versiones actuales
+- **Permisos Granulares**: Control de acceso según roles de usuario
+- **Búsqueda Avanzada**: Filtros por tipo, versión, fecha y autor
+- **Descarga Selectiva**: Descargar cualquier versión del historial
+- **Auditoría Completa**: Registro de cambios y versiones
 
 ### 🔐 **Gestión de Credenciales**
 - Almacenamiento seguro de credenciales corporativas
@@ -271,11 +274,14 @@ npm run dev
 2. **Asignar a Usuarios**: Vinculación de equipos con empleados
 3. **Actualizar Estados**: Cambios en el estado de los equipos
 
-### Gestión Documental
+### Gestión de Versiones de Documentos
 
-1. **Subir Documentos**: Archivos de cualquier tipo
-2. **Categorizar**: Etiquetas y categorías para organización
-3. **Control de Acceso**: Permisos según roles
+1. **Subir Documentos**: Crear documentos nuevos con versionado automático
+2. **Nueva Versión**: Actualizar documentos existentes con control de cambios
+3. **Historial Completo**: Acceder a todas las versiones de un documento
+4. **Versiones Activas**: Interfaz optimizada mostrando solo versiones actuales
+5. **Control de Acceso**: Permisos granulares según roles de usuario
+6. **Búsqueda Avanzada**: Filtros por versión, tipo, fecha y autor
 
 ## 🔗 API Documentation
 
@@ -382,27 +388,78 @@ Users (1) ──── (N) Histories
 Roles (1) ──── (N) Users
 ```
 
-## 🔐 Roles y Permisos
+## 🔐 Roles y Permisos Detallados
 
-### Administrador
-- ✅ Acceso completo a todos los módulos
-- ✅ Gestión de usuarios y roles
-- ✅ Consulta y gestión de credenciales
-- ✅ Generación de reportes
-- ✅ Búsqueda global completa
+### 👑 **Administrador** (Acceso Total)
+#### 📄 **Control de Versiones de Documentos**
+- ✅ Ver todos los documentos activos del sistema
+- ✅ Subir documentos nuevos y nuevas versiones
+- ✅ Editar metadatos de cualquier documento
+- ✅ Eliminar cualquier documento o versión específica desde el historial
+- ✅ Acceder al historial completo de versiones
+- ✅ Descargar cualquier versión específica
+- ✅ Gestionar permisos y categorías
+- ✅ Búsqueda y filtros sin restricciones
 
-### Técnico
+#### 🎫 **Tickets**
+- ✅ Ver, crear, editar y eliminar todos los tickets
+- ✅ Asignar tickets a cualquier técnico
+- ✅ Gestionar comentarios y adjuntos
+
+#### 📦 **Inventario**
+- ✅ Gestión completa de equipos y asignaciones
+
+#### 🔐 **Credenciales**
+- ✅ Acceso completo a todas las credenciales
+
+#### 👥 **Usuarios**
+- ✅ Gestión completa de usuarios y roles
+
+### 🔧 **Técnico** (Soporte Especializado)
+#### 📄 **Control de Versiones de Documentos**
+- ✅ Ver todos los documentos activos
+- ✅ Subir documentos nuevos (manuales técnicos, guías)
+- ✅ Subir nuevas versiones de documentos técnicos
+- ✅ Editar documentos creados por sí mismo
+- ✅ Acceder al historial completo de versiones
+- ✅ Descargar cualquier versión
+- ❌ No puede editar documentos de otros usuarios
+- ❌ No puede eliminar documentos
+
+#### 🎫 **Tickets**
 - ✅ Gestión completa de tickets asignados
-- ✅ Consulta y gestión de inventario
-- ✅ Subida y gestión de documentos
-- ✅ Acceso al repositorio
-- ❌ No puede gestionar usuarios ni credenciales
+- ✅ Actualización de estados y comentarios técnicos
 
-### Empleado
-- ✅ Crear y seguir sus propios tickets
-- ✅ Consulta limitada de documentos públicos
-- ✅ Acceso de solo lectura al repositorio
-- ❌ No puede gestionar inventario ni credenciales
+#### 📦 **Inventario**
+- ✅ Consulta y gestión de equipos
+
+### 👤 **Empleado** (Usuario Final)
+#### 📄 **Control de Versiones de Documentos**
+- ✅ Ver documentos activos (solo versiones actuales)
+- ✅ Subir documentos nuevos personales
+- ✅ Descargar versiones activas
+- ✅ Búsqueda básica por título y descripción
+- ❌ No puede subir nuevas versiones
+- ❌ No puede editar ningún documento
+- ❌ No puede ver historial completo
+- ❌ Sin acceso a filtros avanzados
+
+#### 🎫 **Tickets**
+- ✅ Crear tickets propios
+- ✅ Seguir estado de tickets personales
+- ✅ Agregar comentarios públicos
+
+#### 📦 **Inventario**
+- ❌ Sin acceso
+
+#### 🔐 **Credenciales**
+- ✅ Ver todas las credenciales
+- ✅ Crear nuevas credenciales
+- ✅ Editar credenciales existentes
+- ❌ No puede eliminar credenciales
+
+#### 👥 **Usuarios**
+- ❌ Sin acceso
 
 ## 🎯 Funcionalidades
 

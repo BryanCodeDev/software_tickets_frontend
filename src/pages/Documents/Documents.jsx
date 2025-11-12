@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { documentsAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
-import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes, FaFileAlt, FaCalendarAlt, FaTag, FaInfoCircle, FaSearch, FaFilter, FaSortAmountDown, FaSortAmountUp, FaChartBar, FaExclamationTriangle, FaFilePdf, FaFileWord, FaFileExcel, FaFileImage, FaFileArchive, FaEye, FaClock, FaUser } from 'react-icons/fa';
+import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes, FaFileAlt, FaTag, FaSearch, FaSortAmountDown, FaSortAmountUp, FaFilePdf, FaFileWord, FaFileExcel, FaFileImage, FaFileArchive, FaClock, FaUser } from 'react-icons/fa';
 
 const Documents = () => {
   const [documents, setDocuments] = useState([]);
@@ -9,8 +9,10 @@ const Documents = () => {
   const [uploadLoading, setUploadLoading] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState(null);
   const [editingDocument, setEditingDocument] = useState(null);
-  const [formData, setFormData] = useState({ title: '', description: '', type: '', category: '', expiryDate: '', file: null });
+  const [formData, setFormData] = useState({ title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' });
   const [editFormData, setEditFormData] = useState({ title: '', description: '', type: '', category: '', expiryDate: '' });
   const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
@@ -19,11 +21,8 @@ const Documents = () => {
   // NUEVAS FUNCIONALIDADES: Estados para búsqueda, filtros y ordenamiento
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
-  const [filterCategory, setFilterCategory] = useState('all');
-  const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
-  const [showStats, setShowStats] = useState(false);
 
   useEffect(() => {
     fetchDocuments();
@@ -40,9 +39,22 @@ const Documents = () => {
     }
   };
 
-  // NUEVA FUNCIONALIDAD: Filtrado y ordenamiento de documentos
+  // Filtrado y ordenamiento de documentos (solo versiones activas más recientes)
   const filterAndSortDocuments = () => {
-    let filtered = [...documents];
+    // Agrupar documentos por parentDocumentId o id si no tiene parent
+    const grouped = documents.reduce((acc, doc) => {
+      const key = doc.parentDocumentId || doc.id;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(doc);
+      return acc;
+    }, {});
+
+    // Para cada grupo, tomar la versión activa más reciente
+    let filtered = Object.values(grouped).map(group => {
+      const activeVersions = group.filter(doc => doc.isActive !== false); // Asumir true si no definido
+      if (activeVersions.length === 0) return group[0]; // Si ninguno activo, tomar el primero
+      return activeVersions.sort((a, b) => parseFloat(b.version) - parseFloat(a.version))[0];
+    });
 
     // Búsqueda por título, descripción, tipo o categoría
     if (searchTerm) {
@@ -59,24 +71,23 @@ const Documents = () => {
       filtered = filtered.filter(doc => doc.type?.toLowerCase() === filterType.toLowerCase());
     }
 
-    // Filtro por categoría
-    if (filterCategory !== 'all') {
-      filtered = filtered.filter(doc => doc.category?.toLowerCase() === filterCategory.toLowerCase());
-    }
 
     // Ordenamiento
     filtered.sort((a, b) => {
       let aVal = a[sortBy];
       let bVal = b[sortBy];
-      
-      if (sortBy === 'createdAt' || sortBy === 'expiryDate') {
+
+      if (sortBy === 'createdAt') {
         aVal = new Date(aVal || 0);
         bVal = new Date(bVal || 0);
+      } else if (sortBy === 'version') {
+        aVal = parseFloat(aVal || 0);
+        bVal = parseFloat(bVal || 0);
       } else if (typeof aVal === 'string') {
         aVal = aVal.toLowerCase();
         bVal = bVal?.toLowerCase() || '';
       }
-      
+
       if (sortOrder === 'asc') {
         return aVal > bVal ? 1 : -1;
       } else {
@@ -89,37 +100,10 @@ const Documents = () => {
 
   const filteredDocuments = filterAndSortDocuments();
 
-  // NUEVA FUNCIONALIDAD: Obtener tipos y categorías únicos para filtros
+  // Obtener tipos únicos para filtros
   const uniqueTypes = [...new Set(documents.map(doc => doc.type).filter(Boolean))];
-  const uniqueCategories = [...new Set(documents.map(doc => doc.category).filter(Boolean))];
 
-  // NUEVA FUNCIONALIDAD: Calcular estadísticas
-  const calculateStats = () => {
-    const total = documents.length;
-    const expiringSoon = documents.filter(doc => {
-      if (!doc.expiryDate) return false;
-      const expiry = new Date(doc.expiryDate);
-      const now = new Date();
-      const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
-      return diffDays <= 30 && diffDays > 0;
-    }).length;
-    
-    const expired = documents.filter(doc => {
-      if (!doc.expiryDate) return false;
-      return new Date(doc.expiryDate) < new Date();
-    }).length;
-
-    const byType = uniqueTypes.reduce((acc, type) => {
-      acc[type] = documents.filter(doc => doc.type === type).length;
-      return acc;
-    }, {});
-
-    return { total, expiringSoon, expired, byType };
-  };
-
-  const stats = calculateStats();
-
-  // NUEVA FUNCIONALIDAD: Obtener icono según tipo de archivo
+  // Obtener icono según tipo de archivo
   const getFileIcon = (filePath) => {
     const extension = filePath?.split('.').pop().toLowerCase();
     switch(extension) {
@@ -136,19 +120,6 @@ const Documents = () => {
       case 'rar': return <FaFileArchive className="text-yellow-600 text-xl" />;
       default: return <FaFileAlt className="text-purple-600 text-xl" />;
     }
-  };
-
-  // NUEVA FUNCIONALIDAD: Verificar si un documento está por expirar
-  const getExpiryStatus = (expiryDate) => {
-    if (!expiryDate) return null;
-    const expiry = new Date(expiryDate);
-    const now = new Date();
-    const diffDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
-    
-    if (diffDays < 0) return { status: 'expired', days: diffDays, color: 'red' };
-    if (diffDays <= 7) return { status: 'critical', days: diffDays, color: 'red' };
-    if (diffDays <= 30) return { status: 'warning', days: diffDays, color: 'yellow' };
-    return { status: 'good', days: diffDays, color: 'green' };
   };
 
 
@@ -176,13 +147,18 @@ const Documents = () => {
     data.append('description', formData.description);
     data.append('type', formData.type);
     data.append('category', formData.category);
-    data.append('expiryDate', formData.expiryDate);
+    data.append('version', formData.version);
     data.append('file', formData.file);
+    data.append('isNewVersion', formData.isNewVersion);
+    if (formData.isNewVersion) {
+      data.append('parentDocumentId', formData.parentDocumentId);
+      data.append('changeDescription', formData.changeDescription);
+    }
 
     try {
       await documentsAPI.uploadDocument(data);
       fetchDocuments();
-      setFormData({ title: '', description: '', type: '', category: '', expiryDate: '', file: null });
+      setFormData({ title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' });
       setShowUploadModal(false);
       showNotification('Documento subido exitosamente', 'success');
     } catch (err) {
@@ -199,10 +175,16 @@ const Documents = () => {
       title: doc.title,
       description: doc.description,
       type: doc.type,
-      category: doc.category,
-      expiryDate: doc.expiryDate
+      category: doc.category
     });
     setShowEditModal(true);
+  };
+
+  const handleViewHistory = (doc) => {
+    const key = doc.parentDocumentId || doc.id;
+    const versions = documents.filter(d => (d.parentDocumentId || d.id) === key).sort((a, b) => parseFloat(b.version) - parseFloat(a.version));
+    setSelectedDocument({ ...doc, versions });
+    setShowHistoryModal(true);
   };
 
   const handleUpdate = async (e) => {
@@ -227,6 +209,25 @@ const Documents = () => {
       } catch (err) {
         console.error(err);
         showNotification('Error al eliminar el documento. Por favor, inténtalo de nuevo.', 'error');
+      }
+    });
+  };
+
+  const handleDeleteVersion = async (versionId) => {
+    showConfirmDialog('¿Estás seguro de que deseas eliminar esta versión del documento?', async () => {
+      try {
+        await documentsAPI.deleteDocument(versionId);
+        fetchDocuments();
+        // Actualizar el historial si está abierto
+        if (showHistoryModal && selectedDocument) {
+          const key = selectedDocument.parentDocumentId || selectedDocument.id;
+          const updatedVersions = documents.filter(d => (d.parentDocumentId || d.id) === key).sort((a, b) => parseFloat(b.version) - parseFloat(a.version));
+          setSelectedDocument({ ...selectedDocument, versions: updatedVersions });
+        }
+        showNotification('Versión eliminada exitosamente', 'success');
+      } catch (err) {
+        console.error(err);
+        showNotification('Error al eliminar la versión. Por favor, inténtalo de nuevo.', 'error');
       }
     });
   };
@@ -340,23 +341,14 @@ const Documents = () => {
                 <FaFileAlt className="text-white text-2xl" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Gestión de Documentos</h1>
-                <p className="text-gray-600 mt-1">Administra y organiza documentos corporativos</p>
+                <h1 className="text-3xl font-bold text-gray-900">Control de Versiones</h1>
+                <p className="text-gray-600 mt-1">Gestiona versiones de políticas y documentos oficiales</p>
               </div>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
-              {/* NUEVA FUNCIONALIDAD: Botones de estadísticas y exportación */}
-              <button
-                onClick={() => setShowStats(!showStats)}
-                className="inline-flex items-center px-4 py-2.5 bg-white hover:bg-gray-50 border-2 border-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
-                title="Ver estadísticas"
-              >
-                <FaChartBar className="mr-2" />
-                <span className="hidden sm:inline">Estadísticas</span>
-              </button>
               <div className="flex items-center space-x-2 bg-purple-50 px-4 py-2 rounded-xl">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium text-gray-700">{documents.length} documentos</span>
+                <span className="text-sm font-medium text-gray-700">{filteredDocuments.length} documentos</span>
               </div>
               <button
                 onClick={() => setShowUploadModal(true)}
@@ -370,46 +362,8 @@ const Documents = () => {
         </div>
       </div>
 
-      {/* NUEVA FUNCIONALIDAD: Panel de estadísticas */}
-      {showStats && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 animate-in fade-in">
-            <div className="bg-linear-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-2">
-                <FaFileAlt className="w-8 h-8 opacity-80" />
-                <span className="text-3xl font-bold">{stats.total}</span>
-              </div>
-              <p className="text-sm font-medium opacity-90">Total Documentos</p>
-            </div>
-            
-            <div className="bg-linear-to-br from-yellow-500 to-orange-500 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-2">
-                <FaExclamationTriangle className="w-8 h-8 opacity-80" />
-                <span className="text-3xl font-bold">{stats.expiringSoon}</span>
-              </div>
-              <p className="text-sm font-medium opacity-90">Por Vencer (30 días)</p>
-            </div>
-            
-            <div className="bg-linear-to-br from-red-500 to-red-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-2">
-                <FaTimes className="w-8 h-8 opacity-80" />
-                <span className="text-3xl font-bold">{stats.expired}</span>
-              </div>
-              <p className="text-sm font-medium opacity-90">Vencidos</p>
-            </div>
-            
-            <div className="bg-linear-to-br from-purple-500 to-violet-600 rounded-2xl p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-2">
-                <FaTag className="w-8 h-8 opacity-80" />
-                <span className="text-3xl font-bold">{uniqueTypes.length}</span>
-              </div>
-              <p className="text-sm font-medium opacity-90">Tipos Diferentes</p>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* NUEVA FUNCIONALIDAD: Barra de búsqueda y filtros */}
+      {/* Barra de búsqueda y filtros simplificados */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6 mb-6">
           <div className="flex flex-col lg:flex-row gap-4">
@@ -423,23 +377,8 @@ const Documents = () => {
                 className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-gray-700 font-medium"
               />
             </div>
-            
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
-                showFilters 
-                  ? 'bg-purple-600 text-white shadow-lg' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <FaFilter className="w-4 h-4" />
-              <span>Filtros</span>
-            </button>
-          </div>
 
-          {/* NUEVA FUNCIONALIDAD: Panel de filtros expandible */}
-          {showFilters && (
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6 pt-6 border-t-2 border-gray-100 animate-in fade-in">
+            <div className="flex gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Tipo</label>
                 <select
@@ -453,21 +392,7 @@ const Documents = () => {
                   ))}
                 </select>
               </div>
-              
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
-                <select
-                  value={filterCategory}
-                  onChange={(e) => setFilterCategory(e.target.value)}
-                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
-                >
-                  <option value="all">Todas las categorías</option>
-                  {uniqueCategories.map((category, index) => (
-                    <option key={index} value={category}>{category}</option>
-                  ))}
-                </select>
-              </div>
-              
+
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Ordenar por</label>
                 <select
@@ -478,31 +403,27 @@ const Documents = () => {
                   <option value="createdAt">Fecha de creación</option>
                   <option value="title">Título</option>
                   <option value="type">Tipo</option>
-                  <option value="category">Categoría</option>
-                  <option value="expiryDate">Fecha de expiración</option>
+                  <option value="version">Versión</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Orden</label>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                    className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all flex items-center justify-center gap-2"
-                  >
-                    {sortOrder === 'asc' ? <FaSortAmountDown className="w-5 h-5" /> : <FaSortAmountUp className="w-5 h-5" />}
-                    <span className="text-sm font-medium">{sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}</span>
-                  </button>
-                </div>
+                <button
+                  onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                  className="w-full px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all flex items-center justify-center gap-2"
+                >
+                  {sortOrder === 'asc' ? <FaSortAmountDown className="w-5 h-5" /> : <FaSortAmountUp className="w-5 h-5" />}
+                  <span className="text-sm font-medium">{sortOrder === 'asc' ? 'Asc' : 'Desc'}</span>
+                </button>
               </div>
             </div>
-          )}
+          </div>
         </div>
 
-        {/* NUEVA FUNCIONALIDAD: Resumen de resultados */}
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm text-gray-600 font-medium">
-            Mostrando <span className="font-bold text-purple-600">{filteredDocuments.length}</span> de <span className="font-bold">{documents.length}</span> documentos
+            Mostrando <span className="font-bold text-purple-600">{filteredDocuments.length}</span> documentos
           </p>
         </div>
       </div>
@@ -514,7 +435,7 @@ const Documents = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <FaFile className="text-purple-600 text-lg" />
-                <h2 className="text-lg font-bold text-gray-900">Repositorio de Documentos</h2>
+                <h2 className="text-lg font-bold text-gray-900">Repositorio de Versiones de Documentos</h2>
               </div>
               <span className="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-semibold rounded-full">
                 {filteredDocuments.length} total
@@ -529,12 +450,12 @@ const Documents = () => {
                   <FaFileAlt className="w-10 h-10 text-gray-400" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  {searchTerm || filterType !== 'all' || filterCategory !== 'all' 
-                    ? 'No se encontraron documentos' 
+                  {searchTerm || filterType !== 'all'
+                    ? 'No se encontraron documentos'
                     : 'Sin documentos disponibles'}
                 </h3>
                 <p className="text-gray-600 max-w-sm mx-auto">
-                  {searchTerm || filterType !== 'all' || filterCategory !== 'all'
+                  {searchTerm || filterType !== 'all'
                     ? 'Intenta ajustar los filtros de búsqueda'
                     : 'Comienza agregando tu primer documento utilizando el formulario de carga'}
                 </p>
@@ -544,7 +465,6 @@ const Documents = () => {
                 {/* NUEVA FUNCIONALIDAD: Vista de cuadrícula */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {filteredDocuments.map((doc) => {
-                      const expiryStatus = getExpiryStatus(doc.expiryDate);
                       return (
                         <div
                           key={doc.id}
@@ -593,21 +513,6 @@ const Documents = () => {
                                   </span>
                                 )}
                               </div>
-                              {/* NUEVA FUNCIONALIDAD: Alerta de expiración */}
-                              {expiryStatus && expiryStatus.status !== 'good' && (
-                                <div className={`flex items-center gap-2 p-2 rounded-lg ${
-                                  expiryStatus.status === 'expired' ? 'bg-red-50 text-red-700' :
-                                  expiryStatus.status === 'critical' ? 'bg-red-50 text-red-700' :
-                                  'bg-yellow-50 text-yellow-700'
-                                }`}>
-                                  <FaExclamationTriangle className="w-4 h-4 shrink-0" />
-                                  <p className="text-xs font-semibold">
-                                    {expiryStatus.status === 'expired' 
-                                      ? `Documento vencido hace ${Math.abs(expiryStatus.days)} días` 
-                                      : `Vence en ${expiryStatus.days} días`}
-                                  </p>
-                                </div>
-                              )}
                             </div>
                           </div>
 
@@ -622,6 +527,13 @@ const Documents = () => {
                               <FaDownload className="mr-2" />
                               Descargar
                             </a>
+                            <button
+                              onClick={() => handleViewHistory(doc)}
+                              className="inline-flex items-center px-4 py-2.5 bg-green-50 hover:bg-green-100 text-green-700 text-sm font-semibold rounded-lg transition-all"
+                            >
+                              <FaClock className="mr-2" />
+                              Ver Versiones
+                            </button>
                             {canEdit(doc) && (
                               <>
                                 <button
@@ -671,6 +583,58 @@ const Documents = () => {
             </div>
 
             <form onSubmit={handleUpload} className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-5rem)]">
+              <div className="flex items-center space-x-4 mb-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="uploadType"
+                    checked={!formData.isNewVersion}
+                    onChange={() => setFormData({ ...formData, isNewVersion: false, parentDocumentId: null })}
+                    className="mr-2"
+                  />
+                  Nuevo Documento
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="uploadType"
+                    checked={formData.isNewVersion}
+                    onChange={() => setFormData({ ...formData, isNewVersion: true })}
+                    className="mr-2"
+                  />
+                  Nueva Versión
+                </label>
+              </div>
+
+              {formData.isNewVersion && (
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Seleccionar Documento Existente <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={formData.parentDocumentId || ''}
+                    onChange={(e) => {
+                      const selectedDoc = documents.find(doc => doc.id === parseInt(e.target.value));
+                      setFormData({
+                        ...formData,
+                        parentDocumentId: e.target.value,
+                        title: selectedDoc ? selectedDoc.title : '',
+                        type: selectedDoc ? selectedDoc.type : '',
+                        category: selectedDoc ? selectedDoc.category : '',
+                        version: selectedDoc ? (parseFloat(selectedDoc.version) + 0.1).toFixed(1) : '1.0'
+                      });
+                    }}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    required={formData.isNewVersion}
+                  >
+                    <option value="">Seleccionar documento...</option>
+                    {documents.filter(doc => doc.isActive).map((doc) => (
+                      <option key={doc.id} value={doc.id}>{doc.title} (v{doc.version})</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div className="md:col-span-2">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -681,6 +645,19 @@ const Documents = () => {
                     placeholder="Nombre del documento"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    required
+                    disabled={formData.isNewVersion}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Versión</label>
+                  <input
+                    type="text"
+                    placeholder="Ej: 1.0"
+                    value={formData.version}
+                    onChange={(e) => setFormData({ ...formData, version: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                     required
                   />
@@ -694,6 +671,7 @@ const Documents = () => {
                     value={formData.type}
                     onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    disabled={formData.isNewVersion}
                   />
                 </div>
 
@@ -705,16 +683,7 @@ const Documents = () => {
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha de Expiración</label>
-                  <input
-                    type="date"
-                    value={formData.expiryDate}
-                    onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    disabled={formData.isNewVersion}
                   />
                 </div>
 
@@ -728,6 +697,19 @@ const Documents = () => {
                     rows="3"
                   />
                 </div>
+
+                {formData.isNewVersion && (
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción de Cambios</label>
+                    <textarea
+                      placeholder="Describe los cambios en esta versión"
+                      value={formData.changeDescription}
+                      onChange={(e) => setFormData({ ...formData, changeDescription: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                      rows="2"
+                    />
+                  </div>
+                )}
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -836,16 +818,6 @@ const Documents = () => {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha de Expiración</label>
-                  <input
-                    type="date"
-                    value={editFormData.expiryDate}
-                    onChange={(e) => setEditFormData({ ...editFormData, expiryDate: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
                   <textarea
                     placeholder="Descripción del contenido del documento"
@@ -873,6 +845,72 @@ const Documents = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* History Modal */}
+      {showHistoryModal && selectedDocument && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all animate-in zoom-in-95">
+            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-linear-to-br from-purple-600 to-violet-600 rounded-xl flex items-center justify-center">
+                    <FaClock className="text-white" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Historial de Versiones: {selectedDocument.title}</h2>
+                </div>
+                <button
+                  onClick={() => setShowHistoryModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                >
+                  <FaTimes className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <div className="space-y-4">
+                {selectedDocument.versions.map((version, index) => (
+                  <div key={version.id} className={`p-4 rounded-xl border ${version.isActive ? 'border-purple-300 bg-purple-50' : 'border-gray-200 bg-gray-50'}`}>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-3">
+                        <span className="text-lg font-bold text-gray-900">Versión {version.version}</span>
+                        {version.isActive && <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full">Activa</span>}
+                        <span className="text-sm text-gray-500">{getTimeAgo(version.createdAt)}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <a
+                          href={`http://localhost:5000/${version.filePath}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-lg transition-all"
+                        >
+                          <FaDownload className="mr-1" />
+                          Descargar
+                        </a>
+                        {user.role?.name === 'Administrador' && (
+                          <button
+                            onClick={() => handleDeleteVersion(version.id)}
+                            className="inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-all"
+                          >
+                            <FaTrash className="mr-1" />
+                            Eliminar
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    {version.changeDescription && (
+                      <p className="text-sm text-gray-600 mb-2"><strong>Cambios:</strong> {version.changeDescription}</p>
+                    )}
+                    {version.description && (
+                      <p className="text-sm text-gray-600"><strong>Descripción:</strong> {version.description}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}
