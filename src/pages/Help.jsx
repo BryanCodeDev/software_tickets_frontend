@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaQuestionCircle, FaEnvelope, FaPhone, FaBook, FaTicketAlt, FaBox, FaFileAlt, FaKey, FaSearch, FaChartBar, FaSignInAlt, FaTachometerAlt, FaCog, FaUsers, FaShieldAlt, FaExclamationTriangle, FaLightbulb, FaHeadset, FaCrown, FaWrench, FaUser } from 'react-icons/fa';
+import { FaQuestionCircle, FaEnvelope, FaPhone, FaBook, FaTicketAlt, FaBox, FaFileAlt, FaKey, FaSearch, FaChartBar, FaSignInAlt, FaTachometerAlt, FaCog, FaUsers, FaShieldAlt, FaExclamationTriangle, FaLightbulb, FaHeadset, FaCrown, FaWrench, FaUser, FaGlobe, FaTimes, FaRocket, FaBullseye, FaLock, FaChartLine, FaBolt, FaCheck } from 'react-icons/fa';
 
 const Help = () => {
   const [activeTab, setActiveTab] = useState('faq');
@@ -322,7 +322,7 @@ const Help = () => {
                 <h2 className="text-xl font-semibold text-gray-900">Manual de Usuario</h2>
               </div>
               <div className="space-y-4">
-                <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-lg">
+                <div className="bg-linear-to-r from-purple-500 to-purple-600 text-white p-4 rounded-lg">
                   <h3 className="text-lg font-bold">Manual de Usuario - DuvyClass</h3>
                   <p className="text-sm opacity-90">Sistema IT de Gestión Tecnológica</p>
                 </div>
@@ -455,7 +455,7 @@ const Help = () => {
                     <div className="p-4 pt-0 text-gray-700">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <h6 className="font-medium mb-2 text-green-700">✅ Requisitos Mínimos</h6>
+                          <h6 className="font-medium mb-2 text-green-700"><FaCheck className="text-green-600" /> Requisitos Mínimos</h6>
                           <ul className="text-sm space-y-1">
                             <li>• Navegador: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+</li>
                             <li>• Conexión: Internet banda ancha</li>
@@ -475,7 +475,7 @@ const Help = () => {
                         </div>
                       </div>
                       <div className="mt-4">
-                        <h6 className="font-medium mb-2 text-purple-700">🌐 Navegadores Soportados</h6>
+                        <h6 className="font-medium mb-2 text-purple-700 flex items-center"><FaGlobe className="text-purple-700 mr-2" /> Navegadores Soportados</h6>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                           <div className="bg-green-100 p-2 rounded-lg text-center">
                             <div className="font-medium text-green-800">Chrome</div>
@@ -494,8 +494,8 @@ const Help = () => {
                             <div className="text-xs text-blue-600">90+</div>
                           </div>
                         </div>
-                        <div className="mt-2 text-xs text-red-600">
-                          ❌ Internet Explorer no está soportado
+                        <div className="mt-2 text-xs text-red-600 flex items-center">
+                          <FaTimes className="text-red-600 mr-2" /> Internet Explorer no está soportado
                         </div>
                       </div>
                     </div>
@@ -526,14 +526,14 @@ const Help = () => {
                                 Mesa de Ayuda (Tickets)
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>✅ Ver todos los tickets del sistema</li>
-                                <li>✅ Crear tickets en nombre de cualquier usuario</li>
-                                <li>✅ Asignar tickets a cualquier técnico</li>
-                                <li>✅ Actualizar estado de cualquier ticket</li>
-                                <li>✅ Agregar comentarios internos y públicos</li>
-                                <li>✅ Subir adjuntos a cualquier ticket</li>
-                                <li>✅ Eliminar tickets y comentarios</li>
-                                <li>✅ Generar reportes completos de tickets</li>
+                                <li><FaCheck className="text-green-600" /> Ver todos los tickets del sistema</li>
+                                <li><FaCheck className="text-green-600" /> Crear tickets en nombre de cualquier usuario</li>
+                                <li><FaCheck className="text-green-600" /> Asignar tickets a cualquier técnico</li>
+                                <li><FaCheck className="text-green-600" /> Actualizar estado de cualquier ticket</li>
+                                <li><FaCheck className="text-green-600" /> Agregar comentarios internos y públicos</li>
+                                <li><FaCheck className="text-green-600" /> Subir adjuntos a cualquier ticket</li>
+                                <li><FaCheck className="text-green-600" /> Eliminar tickets y comentarios</li>
+                                <li><FaCheck className="text-green-600" /> Generar reportes completos de tickets</li>
                               </ul>
                             </div>
 
@@ -543,13 +543,13 @@ const Help = () => {
                                 Inventario IT
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>✅ Ver todos los equipos del inventario</li>
-                                <li>✅ Registrar nuevos equipos</li>
-                                <li>✅ Editar información de cualquier equipo</li>
-                                <li>✅ Asignar equipos a cualquier usuario</li>
-                                <li>✅ Cambiar estados de equipos</li>
-                                <li>✅ Eliminar equipos del inventario</li>
-                                <li>✅ Generar reportes de inventario</li>
+                                <li><FaCheck className="text-green-600" /> Ver todos los equipos del inventario</li>
+                                <li><FaCheck className="text-green-600" /> Registrar nuevos equipos</li>
+                                <li><FaCheck className="text-green-600" /> Editar información de cualquier equipo</li>
+                                <li><FaCheck className="text-green-600" /> Asignar equipos a cualquier usuario</li>
+                                <li><FaCheck className="text-green-600" /> Cambiar estados de equipos</li>
+                                <li><FaCheck className="text-green-600" /> Eliminar equipos del inventario</li>
+                                <li><FaCheck className="text-green-600" /> Generar reportes de inventario</li>
                               </ul>
                             </div>
 
@@ -559,15 +559,15 @@ const Help = () => {
                                 Control de Versiones de Documentos
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>✅ Ver todos los documentos activos</li>
-                                <li>✅ Subir documentos nuevos y nuevas versiones</li>
-                                <li>✅ Editar metadatos de cualquier documento</li>
-                                <li>✅ Eliminar cualquier documento o versión del historial</li>
-                                <li>✅ Ver historial completo de versiones</li>
-                                <li>✅ Descargar cualquier versión específica</li>
-                                <li>✅ Control total sobre permisos documentales</li>
-                                <li>✅ Búsqueda avanzada completa</li>
-                                <li>✅ Generar reportes de documentos</li>
+                                <li><FaCheck className="text-green-600" /> Ver todos los documentos activos</li>
+                                <li><FaCheck className="text-green-600" /> Subir documentos nuevos y nuevas versiones</li>
+                                <li><FaCheck className="text-green-600" /> Editar metadatos de cualquier documento</li>
+                                <li><FaCheck className="text-green-600" /> Eliminar cualquier documento o versión del historial</li>
+                                <li><FaCheck className="text-green-600" /> Ver historial completo de versiones</li>
+                                <li><FaCheck className="text-green-600" /> Descargar cualquier versión específica</li>
+                                <li><FaCheck className="text-green-600" /> Control total sobre permisos documentales</li>
+                                <li><FaCheck className="text-green-600" /> Búsqueda avanzada completa</li>
+                                <li><FaCheck className="text-green-600" /> Generar reportes de documentos</li>
                               </ul>
                             </div>
 
@@ -577,12 +577,12 @@ const Help = () => {
                                 Gestión de Credenciales
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>✅ Ver todas las credenciales del sistema</li>
-                                <li>✅ Crear nuevas credenciales</li>
-                                <li>✅ Editar cualquier credencial</li>
-                                <li>✅ Eliminar credenciales</li>
-                                <li>✅ Acceso a contraseñas en texto plano</li>
-                                <li>✅ Generar reportes de credenciales</li>
+                                <li><FaCheck className="text-green-600" /> Ver todas las credenciales del sistema</li>
+                                <li><FaCheck className="text-green-600" /> Crear nuevas credenciales</li>
+                                <li><FaCheck className="text-green-600" /> Editar cualquier credencial</li>
+                                <li><FaCheck className="text-green-600" /> Eliminar credenciales</li>
+                                <li><FaCheck className="text-green-600" /> Acceso a contraseñas en texto plano</li>
+                                <li><FaCheck className="text-green-600" /> Generar reportes de credenciales</li>
                               </ul>
                             </div>
 
@@ -592,13 +592,13 @@ const Help = () => {
                                 Gestión de Usuarios
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>✅ Ver todos los usuarios del sistema</li>
-                                <li>✅ Crear nuevos usuarios</li>
-                                <li>✅ Editar información de cualquier usuario</li>
-                                <li>✅ Cambiar roles y permisos</li>
-                                <li>✅ Activar/desactivar cuentas</li>
-                                <li>✅ Resetear contraseñas</li>
-                                <li>✅ Eliminar usuarios</li>
+                                <li><FaCheck className="text-green-600" /> Ver todos los usuarios del sistema</li>
+                                <li><FaCheck className="text-green-600" /> Crear nuevos usuarios</li>
+                                <li><FaCheck className="text-green-600" /> Editar información de cualquier usuario</li>
+                                <li><FaCheck className="text-green-600" /> Cambiar roles y permisos</li>
+                                <li><FaCheck className="text-green-600" /> Activar/desactivar cuentas</li>
+                                <li><FaCheck className="text-green-600" /> Resetear contraseñas</li>
+                                <li><FaCheck className="text-green-600" /> Eliminar usuarios</li>
                               </ul>
                             </div>
 
@@ -608,11 +608,11 @@ const Help = () => {
                                 Búsqueda Global y Reportes
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>✅ Búsqueda en todos los módulos sin restricciones</li>
-                                <li>✅ Acceso a todos los resultados</li>
-                                <li>✅ Generar reportes de todos los módulos</li>
-                                <li>✅ Acceder a configuración del sistema</li>
-                                <li>✅ Ver logs de auditoría completos</li>
+                                <li><FaCheck className="text-green-600" /> Búsqueda en todos los módulos sin restricciones</li>
+                                <li><FaCheck className="text-green-600" /> Acceso a todos los resultados</li>
+                                <li><FaCheck className="text-green-600" /> Generar reportes de todos los módulos</li>
+                                <li><FaCheck className="text-green-600" /> Acceder a configuración del sistema</li>
+                                <li><FaCheck className="text-green-600" /> Ver logs de auditoría completos</li>
                               </ul>
                             </div>
                           </div>
@@ -632,14 +632,14 @@ const Help = () => {
                                 Mesa de Ayuda (Tickets)
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>✅ Ver tickets asignados personalmente</li>
-                                <li>✅ Ver tickets sin asignar para auto-asignación</li>
-                                <li>✅ Actualizar estado de tickets asignados</li>
-                                <li>✅ Agregar comentarios técnicos internos</li>
-                                <li>✅ Subir adjuntos técnicos (capturas, logs)</li>
-                                <li>✅ Comunicar con usuarios finales</li>
-                                <li>❌ No puede asignar tickets a otros técnicos</li>
-                                <li>❌ No puede eliminar tickets</li>
+                                <li><FaCheck className="text-green-600" /> Ver tickets asignados personalmente</li>
+                                <li><FaCheck className="text-green-600" /> Ver tickets sin asignar para auto-asignación</li>
+                                <li><FaCheck className="text-green-600" /> Actualizar estado de tickets asignados</li>
+                                <li><FaCheck className="text-green-600" /> Agregar comentarios técnicos internos</li>
+                                <li><FaCheck className="text-green-600" /> Subir adjuntos técnicos (capturas, logs)</li>
+                                <li><FaCheck className="text-green-600" /> Comunicar con usuarios finales</li>
+                                <li><FaTimes className="text-red-600" /> No puede asignar tickets a otros técnicos</li>
+                                <li><FaTimes className="text-red-600" /> No puede eliminar tickets</li>
                               </ul>
                             </div>
 
@@ -649,12 +649,12 @@ const Help = () => {
                                 Inventario IT
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>✅ Ver todos los equipos del inventario</li>
-                                <li>✅ Registrar nuevos equipos</li>
-                                <li>✅ Editar equipos bajo su responsabilidad</li>
-                                <li>✅ Actualizar estados de equipos</li>
-                                <li>✅ Asignar equipos a usuarios</li>
-                                <li>❌ No puede eliminar equipos del inventario</li>
+                                <li><FaCheck className="text-green-600" /> Ver todos los equipos del inventario</li>
+                                <li><FaCheck className="text-green-600" /> Registrar nuevos equipos</li>
+                                <li><FaCheck className="text-green-600" /> Editar equipos bajo su responsabilidad</li>
+                                <li><FaCheck className="text-green-600" /> Actualizar estados de equipos</li>
+                                <li><FaCheck className="text-green-600" /> Asignar equipos a usuarios</li>
+                                <li><FaTimes className="text-red-600" /> No puede eliminar equipos del inventario</li>
                               </ul>
                             </div>
 
@@ -664,15 +664,15 @@ const Help = () => {
                                 Control de Versiones de Documentos
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>✅ Ver documentos activos</li>
-                                <li>✅ Subir documentos nuevos (manuales, guías técnicas)</li>
-                                <li>✅ Subir nuevas versiones de documentos técnicos</li>
-                                <li>✅ Editar documentos creados por sí mismo</li>
-                                <li>✅ Ver historial completo de versiones</li>
-                                <li>✅ Descargar cualquier versión</li>
-                                <li>✅ Búsqueda avanzada disponible</li>
-                                <li>❌ No puede editar documentos de otros usuarios</li>
-                                <li>❌ No puede eliminar documentos del sistema</li>
+                                <li><FaCheck className="text-green-600" /> Ver documentos activos</li>
+                                <li><FaCheck className="text-green-600" /> Subir documentos nuevos (manuales, guías técnicas)</li>
+                                <li><FaCheck className="text-green-600" /> Subir nuevas versiones de documentos técnicos</li>
+                                <li><FaCheck className="text-green-600" /> Editar documentos creados por sí mismo</li>
+                                <li><FaCheck className="text-green-600" /> Ver historial completo de versiones</li>
+                                <li><FaCheck className="text-green-600" /> Descargar cualquier versión</li>
+                                <li><FaCheck className="text-green-600" /> Búsqueda avanzada disponible</li>
+                                <li><FaTimes className="text-red-600" /> No puede editar documentos de otros usuarios</li>
+                                <li><FaTimes className="text-red-600" /> No puede eliminar documentos del sistema</li>
                               </ul>
                             </div>
 
@@ -682,11 +682,11 @@ const Help = () => {
                                 Gestión de Credenciales
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>✅ Ver todas las credenciales del sistema</li>
-                                <li>✅ Crear nuevas credenciales</li>
-                                <li>✅ Editar credenciales existentes</li>
-                                <li>❌ No puede eliminar credenciales</li>
-                                <li>✅ Acceso a contraseñas en texto plano</li>
+                                <li><FaCheck className="text-green-600" /> Ver todas las credenciales del sistema</li>
+                                <li><FaCheck className="text-green-600" /> Crear nuevas credenciales</li>
+                                <li><FaCheck className="text-green-600" /> Editar credenciales existentes</li>
+                                <li><FaTimes className="text-red-600" /> No puede eliminar credenciales</li>
+                                <li><FaCheck className="text-green-600" /> Acceso a contraseñas en texto plano</li>
                               </ul>
                             </div>
 
@@ -696,7 +696,7 @@ const Help = () => {
                                 Gestión de Usuarios
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>❌ Sin acceso a gestión de usuarios</li>
+                                <li><FaTimes className="text-red-600" /> Sin acceso a gestión de usuarios</li>
                               </ul>
                             </div>
 
@@ -706,10 +706,10 @@ const Help = () => {
                                 Búsqueda Global y Reportes
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>✅ Búsqueda limitada a tickets asignados e inventario</li>
-                                <li>✅ Acceso a resultados de documentos públicos</li>
-                                <li>✅ Generar reportes de tickets asignados</li>
-                                <li>✅ Generar reportes de inventario</li>
+                                <li><FaCheck className="text-green-600" /> Búsqueda limitada a tickets asignados e inventario</li>
+                                <li><FaCheck className="text-green-600" /> Acceso a resultados de documentos públicos</li>
+                                <li><FaCheck className="text-green-600" /> Generar reportes de tickets asignados</li>
+                                <li><FaCheck className="text-green-600" /> Generar reportes de inventario</li>
                               </ul>
                             </div>
                           </div>
@@ -729,14 +729,14 @@ const Help = () => {
                                 Mesa de Ayuda (Tickets)
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>✅ Crear tickets propios</li>
-                                <li>✅ Ver solo tickets creados por sí mismo</li>
-                                <li>✅ Agregar comentarios públicos a sus tickets</li>
-                                <li>✅ Subir adjuntos a sus propios tickets</li>
-                                <li>✅ Seguir estado de sus tickets</li>
-                                <li>❌ No puede ver tickets de otros usuarios</li>
-                                <li>❌ No puede agregar comentarios internos</li>
-                                <li>❌ No puede actualizar estados de tickets</li>
+                                <li><FaCheck className="text-green-600" /> Crear tickets propios</li>
+                                <li><FaCheck className="text-green-600" /> Ver solo tickets creados por sí mismo</li>
+                                <li><FaCheck className="text-green-600" /> Agregar comentarios públicos a sus tickets</li>
+                                <li><FaCheck className="text-green-600" /> Subir adjuntos a sus propios tickets</li>
+                                <li><FaCheck className="text-green-600" /> Seguir estado de sus tickets</li>
+                                <li><FaTimes className="text-red-600" /> No puede ver tickets de otros usuarios</li>
+                                <li><FaTimes className="text-red-600" /> No puede agregar comentarios internos</li>
+                                <li><FaTimes className="text-red-600" /> No puede actualizar estados de tickets</li>
                               </ul>
                             </div>
 
@@ -746,7 +746,7 @@ const Help = () => {
                                 Inventario IT
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>❌ Sin acceso al módulo de inventario</li>
+                                <li><FaTimes className="text-red-600" /> Sin acceso al módulo de inventario</li>
                               </ul>
                             </div>
 
@@ -756,16 +756,16 @@ const Help = () => {
                                 Control de Versiones de Documentos
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>✅ Ver documentos activos (solo lectura)</li>
-                                <li>✅ Subir documentos nuevos (solo personales)</li>
-                                <li>✅ Historial limitado (solo versiones activas)</li>
-                                <li>✅ Descargar versiones activas</li>
-                                <li>✅ Búsqueda básica por título y descripción</li>
-                                <li>❌ No puede subir nuevas versiones de documentos existentes</li>
-                                <li>❌ No puede editar ningún documento</li>
-                                <li>❌ No puede eliminar documentos</li>
-                                <li>❌ No puede ver historial completo de versiones</li>
-                                <li>❌ Sin acceso a filtros avanzados</li>
+                                <li><FaCheck className="text-green-600" /> Ver documentos activos (solo lectura)</li>
+                                <li><FaCheck className="text-green-600" /> Subir documentos nuevos (solo personales)</li>
+                                <li><FaCheck className="text-green-600" /> Historial limitado (solo versiones activas)</li>
+                                <li><FaCheck className="text-green-600" /> Descargar versiones activas</li>
+                                <li><FaCheck className="text-green-600" /> Búsqueda básica por título y descripción</li>
+                                <li><FaTimes className="text-red-600" /> No puede subir nuevas versiones de documentos existentes</li>
+                                <li><FaTimes className="text-red-600" /> No puede editar ningún documento</li>
+                                <li><FaTimes className="text-red-600" /> No puede eliminar documentos</li>
+                                <li><FaTimes className="text-red-600" /> No puede ver historial completo de versiones</li>
+                                <li><FaTimes className="text-red-600" /> Sin acceso a filtros avanzados</li>
                               </ul>
                             </div>
 
@@ -775,7 +775,7 @@ const Help = () => {
                                 Gestión de Credenciales
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>❌ Sin acceso al módulo de credenciales</li>
+                                <li><FaTimes className="text-red-600" /> Sin acceso al módulo de credenciales</li>
                               </ul>
                             </div>
 
@@ -785,7 +785,7 @@ const Help = () => {
                                 Gestión de Usuarios
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>❌ Sin acceso a gestión de usuarios</li>
+                                <li><FaTimes className="text-red-600" /> Sin acceso a gestión de usuarios</li>
                               </ul>
                             </div>
 
@@ -795,16 +795,16 @@ const Help = () => {
                                 Búsqueda Global y Reportes
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
-                                <li>✅ Búsqueda limitada a sus propios tickets</li>
-                                <li>✅ Acceso a documentos públicos únicamente</li>
-                                <li>❌ Sin acceso a generación de reportes</li>
+                                <li><FaCheck className="text-green-600" /> Búsqueda limitada a sus propios tickets</li>
+                                <li><FaCheck className="text-green-600" /> Acceso a documentos públicos únicamente</li>
+                                <li><FaTimes className="text-red-600" /> Sin acceso a generación de reportes</li>
                               </ul>
                             </div>
                           </div>
                         </div>
 
                         <div className="bg-gray-50 p-4 rounded-lg">
-                          <h6 className="font-medium text-gray-900 mb-3">📊 Resumen de Permisos por Módulo</h6>
+                          <h6 className="font-medium text-gray-900 mb-3 flex items-center"><FaChartBar className="text-gray-900 mr-2" /> Resumen de Permisos por Módulo</h6>
                           <div className="overflow-x-auto">
                             <table className="min-w-full text-xs border-collapse border border-gray-300">
                               <thead>
@@ -818,93 +818,93 @@ const Help = () => {
                               <tbody>
                                 <tr>
                                   <td className="border border-gray-300 p-2 font-medium">Ver Todos los Tickets</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr className="bg-gray-50">
                                   <td className="border border-gray-300 p-2 font-medium">Crear Tickets</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                 </tr>
                                 <tr>
                                   <td className="border border-gray-300 p-2 font-medium">Editar Cualquier Ticket</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-yellow-600">⚠️ (asignados)</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr className="bg-gray-50">
                                   <td className="border border-gray-300 p-2 font-medium">Ver Inventario Completo</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr>
                                   <td className="border border-gray-300 p-2 font-medium">Editar Inventario</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr className="bg-gray-50">
                                   <td className="border border-gray-300 p-2 font-medium">Ver Todos los Documentos</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-yellow-600">⚠️ (activos)</td>
                                 </tr>
                                 <tr>
                                   <td className="border border-gray-300 p-2 font-medium">Subir Nuevos Documentos</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                 </tr>
                                 <tr className="bg-gray-50">
                                   <td className="border border-gray-300 p-2 font-medium">Subir Nuevas Versiones</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr>
                                   <td className="border border-gray-300 p-2 font-medium">Editar Cualquier Documento</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-yellow-600">⚠️ (propios)</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr className="bg-gray-50">
                                   <td className="border border-gray-300 p-2 font-medium">Eliminar Documentos</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr>
                                   <td className="border border-gray-300 p-2 font-medium">Ver Historial de Versiones</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr className="bg-gray-50">
                                   <td className="border border-gray-300 p-2 font-medium">Acceso a Credenciales</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅ (sin eliminar)</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /> (sin eliminar)</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr>
                                   <td className="border border-gray-300 p-2 font-medium">Gestión de Usuarios</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr className="bg-gray-50">
                                   <td className="border border-gray-300 p-2 font-medium">Reportes Completos</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-yellow-600">⚠️ (limitados)</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr>
                                   <td className="border border-gray-300 p-2 font-medium">Configuración del Sistema</td>
-                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
-                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                               </tbody>
                             </table>
@@ -922,7 +922,7 @@ const Help = () => {
                     <div className="p-4 pt-0 text-gray-700">
                       <div className="space-y-4">
                         <div className="bg-blue-50 p-4 rounded-lg">
-                          <h6 className="font-medium text-blue-900 mb-2">🚀 Instalación y Configuración</h6>
+                          <h6 className="font-medium text-blue-900 mb-2 flex items-center"><FaRocket className="text-blue-600 mr-2" /> Instalación y Configuración</h6>
                           <p className="text-sm mb-2">DuvyClass es una aplicación web, por lo que no requiere instalación en su dispositivo local. Solo necesita:</p>
                           <ul className="text-sm space-y-1">
                             <li>• Un navegador web moderno</li>
@@ -932,7 +932,7 @@ const Help = () => {
                         </div>
 
                         <div className="bg-green-50 p-4 rounded-lg">
-                          <h6 className="font-medium text-green-900 mb-2">🎯 Acceso Inicial al Sistema</h6>
+                          <h6 className="font-medium text-green-900 mb-2 flex items-center"><FaBullseye className="text-green-600 mr-2" /> Acceso Inicial al Sistema</h6>
                           <ol className="text-sm space-y-1 list-decimal list-inside">
                             <li>Abra su navegador web</li>
                             <li>Navegue a la URL proporcionada por su administrador</li>
@@ -943,7 +943,7 @@ const Help = () => {
                         </div>
 
                         <div className="bg-yellow-50 p-4 rounded-lg">
-                          <h6 className="font-medium text-yellow-900 mb-2">👤 Usuarios de Prueba</h6>
+                          <h6 className="font-medium text-yellow-900 mb-2 flex items-center"><FaUser className="text-yellow-600 mr-2" /> Usuarios de Prueba</h6>
                           <p className="text-sm mb-2">Para fines de demostración, el sistema incluye usuarios de prueba:</p>
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                             <div className="bg-white p-2 rounded border">
@@ -962,7 +962,7 @@ const Help = () => {
                         </div>
 
                         <div className="bg-purple-50 p-4 rounded-lg">
-                          <h6 className="font-medium text-purple-900 mb-2">🔐 Cambio de Contraseña Inicial</h6>
+                          <h6 className="font-medium text-purple-900 mb-2 flex items-center"><FaLock className="text-purple-600 mr-2" /> Cambio de Contraseña Inicial</h6>
                           <p className="text-sm mb-2">Después del primer acceso, se recomienda cambiar la contraseña por defecto:</p>
                           <ol className="text-sm space-y-1 list-decimal list-inside">
                             <li>Vaya a <strong>Perfil</strong> en la barra lateral</li>
@@ -1021,19 +1021,19 @@ const Help = () => {
                           <p className="text-sm mb-2">El dashboard es la página principal que muestra una visión general del sistema.</p>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div className="bg-white p-3 rounded border">
-                              <div className="font-medium text-sm mb-1">📊 Estadísticas Generales</div>
+                              <div className="font-medium text-sm mb-1 flex items-center"><FaChartBar className="text-green-600 mr-2" /> Estadísticas Generales</div>
                               <div className="text-xs">Número total de tickets, equipos, documentos y usuarios</div>
                             </div>
                             <div className="bg-white p-3 rounded border">
-                              <div className="font-medium text-sm mb-1">📈 Estado de Tickets</div>
+                              <div className="font-medium text-sm mb-1 flex items-center"><FaChartLine className="text-green-600 mr-2" /> Estado de Tickets</div>
                               <div className="text-xs">Gráfico de distribución por estados</div>
                             </div>
                             <div className="bg-white p-3 rounded border">
-                              <div className="font-medium text-sm mb-1">⚡ Actividad Reciente</div>
+                              <div className="font-medium text-sm mb-1 flex items-center"><FaBolt className="text-green-600 mr-2" /> Actividad Reciente</div>
                               <div className="text-xs">Últimas acciones realizadas en el sistema</div>
                             </div>
                             <div className="bg-white p-3 rounded border">
-                              <div className="font-medium text-sm mb-1">🚀 Accesos Rápidos</div>
+                              <div className="font-medium text-sm mb-1 flex items-center"><FaRocket className="text-green-600 mr-2" /> Accesos Rápidos</div>
                               <div className="text-xs">Botones para crear tickets o acceder a módulos</div>
                             </div>
                           </div>
@@ -1177,15 +1177,15 @@ const Help = () => {
                               <h7 className="font-medium text-sm">Gestión de Roles</h7>
                               <div className="grid grid-cols-1 md:grid-cols-3 gap-2 ml-4">
                                 <div className="bg-white p-2 rounded border">
-                                  <div className="font-medium text-xs text-red-700">👑 Administrador</div>
+                                  <div className="font-medium text-xs text-red-700 flex items-center"><FaCrown className="text-red-700 mr-2" /> Administrador</div>
                                   <div className="text-xs">Acceso completo a todos los módulos</div>
                                 </div>
                                 <div className="bg-white p-2 rounded border">
-                                  <div className="font-medium text-xs text-blue-700">🔧 Técnico</div>
+                                  <div className="font-medium text-xs text-blue-700 flex items-center"><FaWrench className="text-blue-700 mr-2" /> Técnico</div>
                                   <div className="text-xs">Gestión de tickets e inventario</div>
                                 </div>
                                 <div className="bg-white p-2 rounded border">
-                                  <div className="font-medium text-xs text-green-700">👤 Empleado</div>
+                                  <div className="font-medium text-xs text-green-700 flex items-center"><FaUser className="text-green-700 mr-2" /> Empleado</div>
                                   <div className="text-xs">Creación y seguimiento de tickets propios</div>
                                 </div>
                               </div>
@@ -1264,19 +1264,19 @@ const Help = () => {
                               <h7 className="font-medium text-sm">Tipos de Reportes</h7>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 ml-4">
                                 <div className="bg-white p-2 rounded border">
-                                  <div className="font-medium text-xs">📊 Reporte de Tickets</div>
+                                  <div className="font-medium text-xs flex items-center"><FaChartBar className="text-cyan-600 mr-2" /> Reporte de Tickets</div>
                                   <div className="text-xs">ID, título, estado, prioridad, fechas</div>
                                 </div>
                                 <div className="bg-white p-2 rounded border">
-                                  <div className="font-medium text-xs">📦 Reporte de Inventario</div>
+                                  <div className="font-medium text-xs flex items-center"><FaBox className="text-cyan-600 mr-2" /> Reporte de Inventario</div>
                                   <div className="text-xs">Especificaciones, ubicación, responsable</div>
                                 </div>
                                 <div className="bg-white p-2 rounded border">
-                                  <div className="font-medium text-xs">📄 Reporte de Documentos</div>
+                                  <div className="font-medium text-xs flex items-center"><FaFileAlt className="text-cyan-600 mr-2" /> Reporte de Documentos</div>
                                   <div className="text-xs">Título, versión, tipo, categoría, autor</div>
                                 </div>
                                 <div className="bg-white p-2 rounded border">
-                                  <div className="font-medium text-xs">🔐 Reporte de Credenciales</div>
+                                  <div className="font-medium text-xs flex items-center"><FaLock className="text-cyan-600 mr-2" /> Reporte de Credenciales</div>
                                   <div className="text-xs">Servicios, usuarios (sin contraseñas)</div>
                                 </div>
                               </div>
