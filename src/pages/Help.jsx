@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaQuestionCircle, FaEnvelope, FaPhone } from 'react-icons/fa';
+import { FaQuestionCircle, FaEnvelope, FaPhone, FaBook, FaTicketAlt, FaBox, FaFileAlt, FaKey, FaSearch, FaChartBar, FaSignInAlt, FaTachometerAlt, FaCog, FaUsers, FaShieldAlt, FaExclamationTriangle, FaLightbulb, FaHeadset, FaCrown, FaWrench, FaUser } from 'react-icons/fa';
 
 const Help = () => {
   const [activeTab, setActiveTab] = useState('faq');
@@ -243,6 +243,16 @@ const Help = () => {
             >
               Contacto
             </button>
+            <button
+              onClick={() => setActiveTab('manual')}
+              className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
+                activeTab === 'manual'
+                  ? 'border-purple-500 text-purple-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Manual de Usuario
+            </button>
           </nav>
         </div>
 
@@ -300,6 +310,1049 @@ const Help = () => {
                 >
                   Crear Ticket de Soporte
                 </button>
+              </div>
+            </div>
+          )}
+
+          {/* Manual Tab */}
+          {activeTab === 'manual' && (
+            <div className="space-y-6">
+              <div className="flex items-center mb-6">
+                <FaBook className="text-purple-600 text-2xl mr-3" />
+                <h2 className="text-xl font-semibold text-gray-900">Manual de Usuario</h2>
+              </div>
+              <div className="space-y-4">
+                <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-lg">
+                  <h3 className="text-lg font-bold">Manual de Usuario - DuvyClass</h3>
+                  <p className="text-sm opacity-90">Sistema IT de Gestión Tecnológica</p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
+                      <FaQuestionCircle className="text-purple-600 mr-2" />
+                      Introducción
+                    </summary>
+                    <div className="p-4 pt-0 text-gray-700">
+                      <p className="mb-3">DuvyClass es una plataforma web integral para la gestión tecnológica de empresas, centralizando procesos de soporte técnico, inventario IT, documentación y credenciales en una interfaz moderna, segura y eficiente.</p>
+                      <div className="bg-blue-50 p-3 rounded-lg mb-3">
+                        <h5 className="font-medium text-blue-900 mb-1">¿Qué es DuvyClass?</h5>
+                        <p>Permite gestionar recursos tecnológicos, soporte, documentación y credenciales en un solo lugar, combinando múltiples módulos en una aplicación integrada.</p>
+                      </div>
+                      <h5 className="font-medium mb-2">Beneficios Principales</h5>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div className="flex items-center">
+                          <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                          <span className="text-sm">Centralización completa</span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                          <span className="text-sm">Eficiencia operativa</span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                          <span className="text-sm">Seguridad avanzada</span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                          <span className="text-sm">Trazabilidad total</span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                          <span className="text-sm">Colaboración en tiempo real</span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                          <span className="text-sm">Accesibilidad universal</span>
+                        </div>
+                      </div>
+                    </div>
+                  </details>
+
+                  <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
+                      <FaQuestionCircle className="text-purple-600 mr-2" />
+                      Características Principales
+                    </summary>
+                    <div className="p-4 pt-0 text-gray-700">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="bg-purple-50 p-3 rounded-lg">
+                          <h6 className="font-medium text-purple-900 mb-2 flex items-center">
+                            <FaTicketAlt className="text-purple-600 mr-2" />
+                            Mesa de Ayuda
+                          </h6>
+                          <ul className="text-sm space-y-1">
+                            <li>• Creación y seguimiento de tickets</li>
+                            <li>• Asignación automática por categoría</li>
+                            <li>• Sistema de comentarios y adjuntos</li>
+                            <li>• Historial completo de acciones</li>
+                          </ul>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded-lg">
+                          <h6 className="font-medium text-blue-900 mb-2 flex items-center">
+                            <FaBox className="text-blue-600 mr-2" />
+                            Inventario IT
+                          </h6>
+                          <ul className="text-sm space-y-1">
+                            <li>• Registro de activos tecnológicos</li>
+                            <li>• Asignaciones por usuario y área</li>
+                            <li>• Control de estados y garantías</li>
+                          </ul>
+                        </div>
+                        <div className="bg-green-50 p-3 rounded-lg">
+                          <h6 className="font-medium text-green-900 mb-2 flex items-center">
+                            <FaFileAlt className="text-green-600 mr-2" />
+                            Repositorio Documental
+                          </h6>
+                          <ul className="text-sm space-y-1">
+                            <li>• Almacenamiento centralizado</li>
+                            <li>• Control de versiones</li>
+                            <li>• Clasificación por categorías</li>
+                          </ul>
+                        </div>
+                        <div className="bg-yellow-50 p-3 rounded-lg">
+                          <h6 className="font-medium text-yellow-900 mb-2 flex items-center">
+                            <FaKey className="text-yellow-600 mr-2" />
+                            Gestión de Credenciales
+                          </h6>
+                          <ul className="text-sm space-y-1">
+                            <li>• Almacenamiento seguro</li>
+                            <li>• Acceso restringido por roles</li>
+                            <li>• Registro de auditoría</li>
+                          </ul>
+                        </div>
+                        <div className="bg-indigo-50 p-3 rounded-lg">
+                          <h6 className="font-medium text-indigo-900 mb-2 flex items-center">
+                            <FaSearch className="text-indigo-600 mr-2" />
+                            Búsqueda Global
+                          </h6>
+                          <ul className="text-sm space-y-1">
+                            <li>• Buscador unificado</li>
+                            <li>• Filtros automáticos</li>
+                            <li>• Resultados categorizados</li>
+                          </ul>
+                        </div>
+                        <div className="bg-red-50 p-3 rounded-lg">
+                          <h6 className="font-medium text-red-900 mb-2 flex items-center">
+                            <FaChartBar className="text-red-600 mr-2" />
+                            Reportes
+                          </h6>
+                          <ul className="text-sm space-y-1">
+                            <li>• Exportación CSV</li>
+                            <li>• Filtros por permisos</li>
+                            <li>• Compatible con Excel</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </details>
+
+                  <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
+                      <FaQuestionCircle className="text-purple-600 mr-2" />
+                      Requisitos del Sistema
+                    </summary>
+                    <div className="p-4 pt-0 text-gray-700">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <h6 className="font-medium mb-2 text-green-700">✅ Requisitos Mínimos</h6>
+                          <ul className="text-sm space-y-1">
+                            <li>• Navegador: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+</li>
+                            <li>• Conexión: Internet banda ancha</li>
+                            <li>• Resolución: 1024x768 píxeles mínimo</li>
+                            <li>• SO: Windows 10+, macOS 10.15+, Linux Ubuntu 18.04+</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <h6 className="font-medium mb-2 text-blue-700">⭐ Requisitos Recomendados</h6>
+                          <ul className="text-sm space-y-1">
+                            <li>• Navegador: Chrome 100+ o Firefox 95+</li>
+                            <li>• Conexión: Internet de alta velocidad</li>
+                            <li>• Resolución: 1920x1080 píxeles</li>
+                            <li>• RAM: 4GB mínimo</li>
+                            <li>• Procesador: Dual-core 2.5GHz+</li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div className="mt-4">
+                        <h6 className="font-medium mb-2 text-purple-700">🌐 Navegadores Soportados</h6>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                          <div className="bg-green-100 p-2 rounded-lg text-center">
+                            <div className="font-medium text-green-800">Chrome</div>
+                            <div className="text-xs text-green-600">(Recomendado)</div>
+                          </div>
+                          <div className="bg-blue-100 p-2 rounded-lg text-center">
+                            <div className="font-medium text-blue-800">Firefox</div>
+                            <div className="text-xs text-blue-600">88+</div>
+                          </div>
+                          <div className="bg-gray-100 p-2 rounded-lg text-center">
+                            <div className="font-medium text-gray-800">Safari</div>
+                            <div className="text-xs text-gray-600">14+</div>
+                          </div>
+                          <div className="bg-blue-100 p-2 rounded-lg text-center">
+                            <div className="font-medium text-blue-800">Edge</div>
+                            <div className="text-xs text-blue-600">90+</div>
+                          </div>
+                        </div>
+                        <div className="mt-2 text-xs text-red-600">
+                          ❌ Internet Explorer no está soportado
+                        </div>
+                      </div>
+                    </div>
+                  </details>
+
+                  <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
+                      <FaShieldAlt className="text-purple-600 mr-2" />
+                      Roles y Permisos
+                    </summary>
+                    <div className="p-4 pt-0 text-gray-700">
+                      <div className="mb-4">
+                        <p className="text-sm mb-4">El sistema cuenta con tres roles principales que determinan los permisos y accesos de cada usuario. A continuación se detalla qué puede hacer cada rol en cada módulo del sistema.</p>
+                      </div>
+
+                      <div className="space-y-6">
+                        <div className="bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                          <h6 className="font-bold text-red-900 mb-3 flex items-center">
+                            <FaCrown className="text-red-600 mr-2" />
+                            Administrador (Nivel 4 - Acceso Total)
+                          </h6>
+                          <p className="text-sm mb-3 text-red-800">Los administradores tienen control completo sobre todo el sistema y pueden gestionar usuarios, configuración y todos los módulos sin restricciones.</p>
+
+                          <div className="grid grid-cols-1 gap-4">
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaTicketAlt className="text-red-600 mr-2" />
+                                Mesa de Ayuda (Tickets)
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>✅ Ver todos los tickets del sistema</li>
+                                <li>✅ Crear tickets en nombre de cualquier usuario</li>
+                                <li>✅ Asignar tickets a cualquier técnico</li>
+                                <li>✅ Actualizar estado de cualquier ticket</li>
+                                <li>✅ Agregar comentarios internos y públicos</li>
+                                <li>✅ Subir adjuntos a cualquier ticket</li>
+                                <li>✅ Eliminar tickets y comentarios</li>
+                                <li>✅ Generar reportes completos de tickets</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaBox className="text-red-600 mr-2" />
+                                Inventario IT
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>✅ Ver todos los equipos del inventario</li>
+                                <li>✅ Registrar nuevos equipos</li>
+                                <li>✅ Editar información de cualquier equipo</li>
+                                <li>✅ Asignar equipos a cualquier usuario</li>
+                                <li>✅ Cambiar estados de equipos</li>
+                                <li>✅ Eliminar equipos del inventario</li>
+                                <li>✅ Generar reportes de inventario</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaFileAlt className="text-red-600 mr-2" />
+                                Control de Versiones de Documentos
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>✅ Ver todos los documentos activos</li>
+                                <li>✅ Subir documentos nuevos y nuevas versiones</li>
+                                <li>✅ Editar metadatos de cualquier documento</li>
+                                <li>✅ Eliminar cualquier documento o versión del historial</li>
+                                <li>✅ Ver historial completo de versiones</li>
+                                <li>✅ Descargar cualquier versión específica</li>
+                                <li>✅ Control total sobre permisos documentales</li>
+                                <li>✅ Búsqueda avanzada completa</li>
+                                <li>✅ Generar reportes de documentos</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaKey className="text-red-600 mr-2" />
+                                Gestión de Credenciales
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>✅ Ver todas las credenciales del sistema</li>
+                                <li>✅ Crear nuevas credenciales</li>
+                                <li>✅ Editar cualquier credencial</li>
+                                <li>✅ Eliminar credenciales</li>
+                                <li>✅ Acceso a contraseñas en texto plano</li>
+                                <li>✅ Generar reportes de credenciales</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaUsers className="text-red-600 mr-2" />
+                                Gestión de Usuarios
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>✅ Ver todos los usuarios del sistema</li>
+                                <li>✅ Crear nuevos usuarios</li>
+                                <li>✅ Editar información de cualquier usuario</li>
+                                <li>✅ Cambiar roles y permisos</li>
+                                <li>✅ Activar/desactivar cuentas</li>
+                                <li>✅ Resetear contraseñas</li>
+                                <li>✅ Eliminar usuarios</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaSearch className="text-red-600 mr-2" />
+                                Búsqueda Global y Reportes
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>✅ Búsqueda en todos los módulos sin restricciones</li>
+                                <li>✅ Acceso a todos los resultados</li>
+                                <li>✅ Generar reportes de todos los módulos</li>
+                                <li>✅ Acceder a configuración del sistema</li>
+                                <li>✅ Ver logs de auditoría completos</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                          <h6 className="font-bold text-blue-900 mb-3 flex items-center">
+                            <FaWrench className="text-blue-600 mr-2" />
+                            Técnico (Nivel 2 - Soporte Especializado)
+                          </h6>
+                          <p className="text-sm mb-3 text-blue-800">Los técnicos pueden gestionar tickets asignados, inventario bajo su responsabilidad y documentos técnicos, pero tienen acceso limitado a gestión de usuarios y credenciales.</p>
+
+                          <div className="grid grid-cols-1 gap-4">
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaTicketAlt className="text-blue-600 mr-2" />
+                                Mesa de Ayuda (Tickets)
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>✅ Ver tickets asignados personalmente</li>
+                                <li>✅ Ver tickets sin asignar para auto-asignación</li>
+                                <li>✅ Actualizar estado de tickets asignados</li>
+                                <li>✅ Agregar comentarios técnicos internos</li>
+                                <li>✅ Subir adjuntos técnicos (capturas, logs)</li>
+                                <li>✅ Comunicar con usuarios finales</li>
+                                <li>❌ No puede asignar tickets a otros técnicos</li>
+                                <li>❌ No puede eliminar tickets</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaBox className="text-blue-600 mr-2" />
+                                Inventario IT
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>✅ Ver todos los equipos del inventario</li>
+                                <li>✅ Registrar nuevos equipos</li>
+                                <li>✅ Editar equipos bajo su responsabilidad</li>
+                                <li>✅ Actualizar estados de equipos</li>
+                                <li>✅ Asignar equipos a usuarios</li>
+                                <li>❌ No puede eliminar equipos del inventario</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaFileAlt className="text-blue-600 mr-2" />
+                                Control de Versiones de Documentos
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>✅ Ver documentos activos</li>
+                                <li>✅ Subir documentos nuevos (manuales, guías técnicas)</li>
+                                <li>✅ Subir nuevas versiones de documentos técnicos</li>
+                                <li>✅ Editar documentos creados por sí mismo</li>
+                                <li>✅ Ver historial completo de versiones</li>
+                                <li>✅ Descargar cualquier versión</li>
+                                <li>✅ Búsqueda avanzada disponible</li>
+                                <li>❌ No puede editar documentos de otros usuarios</li>
+                                <li>❌ No puede eliminar documentos del sistema</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaKey className="text-blue-600 mr-2" />
+                                Gestión de Credenciales
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>✅ Ver todas las credenciales del sistema</li>
+                                <li>✅ Crear nuevas credenciales</li>
+                                <li>✅ Editar credenciales existentes</li>
+                                <li>❌ No puede eliminar credenciales</li>
+                                <li>✅ Acceso a contraseñas en texto plano</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaUsers className="text-blue-600 mr-2" />
+                                Gestión de Usuarios
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>❌ Sin acceso a gestión de usuarios</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaSearch className="text-blue-600 mr-2" />
+                                Búsqueda Global y Reportes
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>✅ Búsqueda limitada a tickets asignados e inventario</li>
+                                <li>✅ Acceso a resultados de documentos públicos</li>
+                                <li>✅ Generar reportes de tickets asignados</li>
+                                <li>✅ Generar reportes de inventario</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                          <h6 className="font-bold text-green-900 mb-3 flex items-center">
+                            <FaUser className="text-green-600 mr-2" />
+                            Empleado (Nivel 1 - Usuario Final)
+                          </h6>
+                          <p className="text-sm mb-3 text-green-800">Los empleados tienen acceso limitado principalmente para crear y seguir sus propios tickets, con permisos de solo lectura en la mayoría de módulos.</p>
+
+                          <div className="grid grid-cols-1 gap-4">
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaTicketAlt className="text-green-600 mr-2" />
+                                Mesa de Ayuda (Tickets)
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>✅ Crear tickets propios</li>
+                                <li>✅ Ver solo tickets creados por sí mismo</li>
+                                <li>✅ Agregar comentarios públicos a sus tickets</li>
+                                <li>✅ Subir adjuntos a sus propios tickets</li>
+                                <li>✅ Seguir estado de sus tickets</li>
+                                <li>❌ No puede ver tickets de otros usuarios</li>
+                                <li>❌ No puede agregar comentarios internos</li>
+                                <li>❌ No puede actualizar estados de tickets</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaBox className="text-green-600 mr-2" />
+                                Inventario IT
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>❌ Sin acceso al módulo de inventario</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaFileAlt className="text-green-600 mr-2" />
+                                Control de Versiones de Documentos
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>✅ Ver documentos activos (solo lectura)</li>
+                                <li>✅ Subir documentos nuevos (solo personales)</li>
+                                <li>✅ Historial limitado (solo versiones activas)</li>
+                                <li>✅ Descargar versiones activas</li>
+                                <li>✅ Búsqueda básica por título y descripción</li>
+                                <li>❌ No puede subir nuevas versiones de documentos existentes</li>
+                                <li>❌ No puede editar ningún documento</li>
+                                <li>❌ No puede eliminar documentos</li>
+                                <li>❌ No puede ver historial completo de versiones</li>
+                                <li>❌ Sin acceso a filtros avanzados</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaKey className="text-green-600 mr-2" />
+                                Gestión de Credenciales
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>❌ Sin acceso al módulo de credenciales</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaUsers className="text-green-600 mr-2" />
+                                Gestión de Usuarios
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>❌ Sin acceso a gestión de usuarios</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaSearch className="text-green-600 mr-2" />
+                                Búsqueda Global y Reportes
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li>✅ Búsqueda limitada a sus propios tickets</li>
+                                <li>✅ Acceso a documentos públicos únicamente</li>
+                                <li>❌ Sin acceso a generación de reportes</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-gray-900 mb-3">📊 Resumen de Permisos por Módulo</h6>
+                          <div className="overflow-x-auto">
+                            <table className="min-w-full text-xs border-collapse border border-gray-300">
+                              <thead>
+                                <tr className="bg-gray-100">
+                                  <th className="border border-gray-300 p-2 text-left">Funcionalidad</th>
+                                  <th className="border border-gray-300 p-2 text-center">Administrador</th>
+                                  <th className="border border-gray-300 p-2 text-center">Técnico</th>
+                                  <th className="border border-gray-300 p-2 text-center">Empleado</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Ver Todos los Tickets</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                  <td className="border border-gray-300 p-2 font-medium">Crear Tickets</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                </tr>
+                                <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Editar Cualquier Ticket</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-yellow-600">⚠️ (asignados)</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                  <td className="border border-gray-300 p-2 font-medium">Ver Inventario Completo</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                </tr>
+                                <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Editar Inventario</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                  <td className="border border-gray-300 p-2 font-medium">Ver Todos los Documentos</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-yellow-600">⚠️ (activos)</td>
+                                </tr>
+                                <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Subir Nuevos Documentos</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                  <td className="border border-gray-300 p-2 font-medium">Subir Nuevas Versiones</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                </tr>
+                                <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Editar Cualquier Documento</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-yellow-600">⚠️ (propios)</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                  <td className="border border-gray-300 p-2 font-medium">Eliminar Documentos</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                </tr>
+                                <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Ver Historial de Versiones</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                  <td className="border border-gray-300 p-2 font-medium">Acceso a Credenciales</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅ (sin eliminar)</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                </tr>
+                                <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Gestión de Usuarios</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                  <td className="border border-gray-300 p-2 font-medium">Reportes Completos</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-yellow-600">⚠️ (limitados)</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                </tr>
+                                <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Configuración del Sistema</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600">✅</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600">❌</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </details>
+
+                  <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
+                      <FaLightbulb className="text-purple-600 mr-2" />
+                      Primeros Pasos
+                    </summary>
+                    <div className="p-4 pt-0 text-gray-700">
+                      <div className="space-y-4">
+                        <div className="bg-blue-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-blue-900 mb-2">🚀 Instalación y Configuración</h6>
+                          <p className="text-sm mb-2">DuvyClass es una aplicación web, por lo que no requiere instalación en su dispositivo local. Solo necesita:</p>
+                          <ul className="text-sm space-y-1">
+                            <li>• Un navegador web moderno</li>
+                            <li>• Acceso a internet</li>
+                            <li>• Las credenciales de acceso proporcionadas por su administrador</li>
+                          </ul>
+                        </div>
+
+                        <div className="bg-green-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-green-900 mb-2">🎯 Acceso Inicial al Sistema</h6>
+                          <ol className="text-sm space-y-1 list-decimal list-inside">
+                            <li>Abra su navegador web</li>
+                            <li>Navegue a la URL proporcionada por su administrador</li>
+                            <li>Ingrese sus credenciales de usuario (usuario y contraseña)</li>
+                            <li>Haga clic en "Iniciar Sesión"</li>
+                            <li>Será redirigido al Dashboard principal</li>
+                          </ol>
+                        </div>
+
+                        <div className="bg-yellow-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-yellow-900 mb-2">👤 Usuarios de Prueba</h6>
+                          <p className="text-sm mb-2">Para fines de demostración, el sistema incluye usuarios de prueba:</p>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            <div className="bg-white p-2 rounded border">
+                              <div className="font-medium text-xs">Administradores</div>
+                              <div className="text-xs text-gray-600">admin, ana.lopez</div>
+                            </div>
+                            <div className="bg-white p-2 rounded border">
+                              <div className="font-medium text-xs">Técnicos</div>
+                              <div className="text-xs text-gray-600">tecnico, pedro.martinez</div>
+                            </div>
+                            <div className="bg-white p-2 rounded border">
+                              <div className="font-medium text-xs">Empleados</div>
+                              <div className="text-xs text-gray-600">empleado, laura.sanchez</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-purple-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-purple-900 mb-2">🔐 Cambio de Contraseña Inicial</h6>
+                          <p className="text-sm mb-2">Después del primer acceso, se recomienda cambiar la contraseña por defecto:</p>
+                          <ol className="text-sm space-y-1 list-decimal list-inside">
+                            <li>Vaya a <strong>Perfil</strong> en la barra lateral</li>
+                            <li>Seleccione <strong>Cambiar Contraseña</strong></li>
+                            <li>Ingrese la contraseña actual y la nueva</li>
+                            <li>Confirme el cambio</li>
+                          </ol>
+                        </div>
+                      </div>
+                    </div>
+                  </details>
+
+                  <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
+                      <FaQuestionCircle className="text-purple-600 mr-2" />
+                      Guía de Uso
+                    </summary>
+                    <div className="p-4 pt-0 text-gray-700">
+                      <div className="space-y-6">
+                        <div className="bg-blue-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-blue-900 mb-3 flex items-center">
+                            <FaSignInAlt className="text-blue-600 mr-2" />
+                            Acceso al Sistema
+                          </h6>
+                          <div className="space-y-3">
+                            <div>
+                              <h7 className="font-medium text-sm">Inicio de Sesión</h7>
+                              <ol className="text-sm space-y-1 list-decimal list-inside ml-4">
+                                <li>Navegue a la URL proporcionada por su administrador</li>
+                                <li>Ingrese su nombre de usuario y contraseña</li>
+                                <li>Si está habilitado, ingrese el código del autenticador 2FA</li>
+                                <li>Haga clic en "Iniciar Sesión"</li>
+                              </ol>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Recuperación de Contraseña</h7>
+                              <ol className="text-sm space-y-1 list-decimal list-inside ml-4">
+                                <li>En la pantalla de login, haga clic en "¿Olvidó su contraseña?"</li>
+                                <li>Ingrese su dirección de email</li>
+                                <li>Recibirá un enlace para restablecer la contraseña</li>
+                                <li>Siga las instrucciones del email</li>
+                              </ol>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Cierre de Sesión</h7>
+                              <p className="text-sm ml-4">Haga clic en su nombre en la esquina superior derecha y seleccione "Cerrar Sesión"</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-green-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-green-900 mb-3 flex items-center">
+                            <FaTachometerAlt className="text-green-600 mr-2" />
+                            Dashboard
+                          </h6>
+                          <p className="text-sm mb-2">El dashboard es la página principal que muestra una visión general del sistema.</p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div className="bg-white p-3 rounded border">
+                              <div className="font-medium text-sm mb-1">📊 Estadísticas Generales</div>
+                              <div className="text-xs">Número total de tickets, equipos, documentos y usuarios</div>
+                            </div>
+                            <div className="bg-white p-3 rounded border">
+                              <div className="font-medium text-sm mb-1">📈 Estado de Tickets</div>
+                              <div className="text-xs">Gráfico de distribución por estados</div>
+                            </div>
+                            <div className="bg-white p-3 rounded border">
+                              <div className="font-medium text-sm mb-1">⚡ Actividad Reciente</div>
+                              <div className="text-xs">Últimas acciones realizadas en el sistema</div>
+                            </div>
+                            <div className="bg-white p-3 rounded border">
+                              <div className="font-medium text-sm mb-1">🚀 Accesos Rápidos</div>
+                              <div className="text-xs">Botones para crear tickets o acceder a módulos</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-purple-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-purple-900 mb-3 flex items-center">
+                            <FaTicketAlt className="text-purple-600 mr-2" />
+                            Gestión de Tickets
+                          </h6>
+                          <div className="space-y-3">
+                            <div>
+                              <h7 className="font-medium text-sm">Creación de Tickets</h7>
+                              <ol className="text-sm space-y-1 list-decimal list-inside ml-4">
+                                <li>Haga clic en "Tickets" en la barra lateral</li>
+                                <li>Haga clic en "Nuevo Ticket"</li>
+                                <li>Complete el formulario: título, descripción, categoría, prioridad</li>
+                                <li>Adjunte archivos si es necesario (imágenes, documentos)</li>
+                                <li>Haga clic en "Crear Ticket"</li>
+                              </ol>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Estados de Tickets</h7>
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 ml-4">
+                                <div className="bg-purple-200 p-2 rounded text-xs text-center">Abierto</div>
+                                <div className="bg-blue-200 p-2 rounded text-xs text-center">En Progreso</div>
+                                <div className="bg-gray-200 p-2 rounded text-xs text-center">Cerrado</div>
+                                <div className="bg-indigo-200 p-2 rounded text-xs text-center">Resuelto</div>
+                              </div>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Comunicación en Tickets</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Comentarios: Notas internas visibles solo para técnicos</li>
+                                <li>• Mensajes: Comunicación con el usuario que creó el ticket</li>
+                                <li>• Adjuntos: Archivos relacionados con el ticket</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-yellow-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-yellow-900 mb-3 flex items-center">
+                            <FaBox className="text-yellow-600 mr-2" />
+                            Inventario IT
+                          </h6>
+                          <div className="space-y-3">
+                            <div>
+                              <h7 className="font-medium text-sm">Visualización del Inventario</h7>
+                              <ol className="text-sm space-y-1 list-decimal list-inside ml-4">
+                                <li>Haga clic en "Inventario" en la barra lateral</li>
+                                <li>Verá todos los equipos registrados en tarjetas o tabla</li>
+                                <li>Use filtros por estado, ubicación, responsable</li>
+                              </ol>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Registro de Equipos</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Haga clic en "Agregar Equipo"</li>
+                                <li>• Complete información básica: propiedad, IT, área, responsable</li>
+                                <li>• Especificaciones técnicas: serial, marca, capacidad, RAM</li>
+                                <li>• Estado: Operativo, Mantenimiento, Fuera de uso</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Asignación de Equipos</h7>
+                              <p className="text-sm ml-4">Seleccione un equipo, haga clic en "Editar" y cambie el campo "Responsable"</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-indigo-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-indigo-900 mb-3 flex items-center">
+                            <FaFileAlt className="text-indigo-600 mr-2" />
+                            Repositorio Documental
+                          </h6>
+                          <div className="space-y-3">
+                            <div>
+                              <h7 className="font-medium text-sm">Subida de Documentos</h7>
+                              <ol className="text-sm space-y-1 list-decimal list-inside ml-4">
+                                <li>Haga clic en "Documentos" en la barra lateral</li>
+                                <li>Elija "Nuevo Documento" o "Nueva Versión"</li>
+                                <li>Complete: archivo, título, versión, tipo, categoría, descripción</li>
+                                <li>Haga clic en "Subir Documento"</li>
+                              </ol>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Control de Versiones</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Versiones Activas: Solo se muestran las más recientes</li>
+                                <li>• Historial Completo: Acceso a todas las versiones</li>
+                                <li>• Descarga Selectiva: Descargar cualquier versión específica</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-red-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-red-900 mb-3 flex items-center">
+                            <FaKey className="text-red-600 mr-2" />
+                            Gestión de Credenciales
+                          </h6>
+                          <p className="text-sm mb-2"><strong>Nota:</strong> Este módulo está disponible únicamente para usuarios con rol de Administrador.</p>
+                          <div className="space-y-3">
+                            <div>
+                              <h7 className="font-medium text-sm">Registro de Credenciales</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Haga clic en "Agregar Credencial"</li>
+                                <li>• Complete: servicio, usuario, contraseña, descripción</li>
+                                <li>• Las contraseñas se almacenan encriptadas</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Seguridad</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Encriptación completa de contraseñas</li>
+                                <li>• Auditoría de todas las consultas</li>
+                                <li>• Acceso restringido solo a administradores</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-teal-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-teal-900 mb-3 flex items-center">
+                            <FaUsers className="text-teal-600 mr-2" />
+                            Gestión de Usuarios
+                          </h6>
+                          <p className="text-sm mb-2"><strong>Nota:</strong> Este módulo está disponible únicamente para usuarios con rol de Administrador.</p>
+                          <div className="space-y-3">
+                            <div>
+                              <h7 className="font-medium text-sm">Creación de Usuarios</h7>
+                              <ol className="text-sm space-y-1 list-decimal list-inside ml-4">
+                                <li>Haga clic en "Agregar Usuario"</li>
+                                <li>Complete: nombre de usuario, email, nombre completo</li>
+                                <li>Asigne un rol: Administrador, Técnico, Empleado</li>
+                                <li>Establezca una contraseña inicial</li>
+                              </ol>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Gestión de Roles</h7>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 ml-4">
+                                <div className="bg-white p-2 rounded border">
+                                  <div className="font-medium text-xs text-red-700">👑 Administrador</div>
+                                  <div className="text-xs">Acceso completo a todos los módulos</div>
+                                </div>
+                                <div className="bg-white p-2 rounded border">
+                                  <div className="font-medium text-xs text-blue-700">🔧 Técnico</div>
+                                  <div className="text-xs">Gestión de tickets e inventario</div>
+                                </div>
+                                <div className="bg-white p-2 rounded border">
+                                  <div className="font-medium text-xs text-green-700">👤 Empleado</div>
+                                  <div className="text-xs">Creación y seguimiento de tickets propios</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-orange-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-orange-900 mb-3 flex items-center">
+                            <FaCog className="text-orange-600 mr-2" />
+                            Configuración Personal
+                          </h6>
+                          <div className="space-y-3">
+                            <div>
+                              <h7 className="font-medium text-sm">Perfil de Usuario</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Modificar nombre, email, información personal</li>
+                                <li>• Cambiar contraseña de acceso</li>
+                                <li>• Actualizar preferencias personales</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Configuración del Sistema</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Tema: Modo oscuro o claro</li>
+                                <li>• Notificaciones: Configurar alertas</li>
+                                <li>• Idioma: Seleccionar idioma de la interfaz</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Autenticación de Dos Factores (2FA)</h7>
+                              <ol className="text-sm space-y-1 list-decimal list-inside ml-4">
+                                <li>Vaya a Configuración {'>'} Seguridad {'>'} Autenticación de Dos Factores</li>
+                                <li>Active la autenticación de dos factores</li>
+                                <li>Escanee el código QR con su aplicación autenticadora</li>
+                                <li>Ingrese el código generado para confirmar</li>
+                              </ol>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-pink-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-pink-900 mb-3 flex items-center">
+                            <FaSearch className="text-pink-600 mr-2" />
+                            Búsqueda Global
+                          </h6>
+                          <div className="space-y-3">
+                            <div>
+                              <h7 className="font-medium text-sm">Funcionamiento</h7>
+                              <ol className="text-sm space-y-1 list-decimal list-inside ml-4">
+                                <li>Ingrese términos de búsqueda en la barra superior</li>
+                                <li>El sistema busca en todos los módulos permitidos</li>
+                                <li>Resultados se muestran categorizados por módulo</li>
+                                <li>Haga clic en cualquier resultado para ir directamente</li>
+                              </ol>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Tipos de Búsqueda</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Tickets: Por título, descripción, ID, usuario asignado</li>
+                                <li>• Inventario: Por propiedad, serial, responsable, ubicación</li>
+                                <li>• Documentos: Por título, descripción, etiquetas</li>
+                                <li>• Usuarios: Por nombre, email, nombre de usuario</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-cyan-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-cyan-900 mb-3 flex items-center">
+                            <FaChartBar className="text-cyan-600 mr-2" />
+                            Reportes
+                          </h6>
+                          <div className="space-y-3">
+                            <div>
+                              <h7 className="font-medium text-sm">Tipos de Reportes</h7>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 ml-4">
+                                <div className="bg-white p-2 rounded border">
+                                  <div className="font-medium text-xs">📊 Reporte de Tickets</div>
+                                  <div className="text-xs">ID, título, estado, prioridad, fechas</div>
+                                </div>
+                                <div className="bg-white p-2 rounded border">
+                                  <div className="font-medium text-xs">📦 Reporte de Inventario</div>
+                                  <div className="text-xs">Especificaciones, ubicación, responsable</div>
+                                </div>
+                                <div className="bg-white p-2 rounded border">
+                                  <div className="font-medium text-xs">📄 Reporte de Documentos</div>
+                                  <div className="text-xs">Título, versión, tipo, categoría, autor</div>
+                                </div>
+                                <div className="bg-white p-2 rounded border">
+                                  <div className="font-medium text-xs">🔐 Reporte de Credenciales</div>
+                                  <div className="text-xs">Servicios, usuarios (sin contraseñas)</div>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Generación</h7>
+                              <ol className="text-sm space-y-1 list-decimal list-inside ml-4">
+                                <li>Acceda al módulo correspondiente</li>
+                                <li>Haga clic en "Exportar CSV"</li>
+                                <li>El archivo se descarga automáticamente</li>
+                                <li>Abra con Excel, Google Sheets u otro editor CSV</li>
+                              </ol>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </details>
+
+                  <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
+                      <FaQuestionCircle className="text-purple-600 mr-2" />
+                      Solución de Problemas
+                    </summary>
+                    <div className="p-4 pt-0 text-gray-700">
+                      <div className="space-y-3">
+                        <div className="border-l-4 border-red-500 pl-3">
+                          <strong>No puedo acceder:</strong> Verificar URL, credenciales o conexión.
+                        </div>
+                        <div className="border-l-4 border-orange-500 pl-3">
+                          <strong>Error al subir archivos:</strong> Revisar tamaño y formato permitido.
+                        </div>
+                        <div className="border-l-4 border-yellow-500 pl-3">
+                          <strong>Bajo rendimiento:</strong> Limpiar caché del navegador o actualizarlo.
+                        </div>
+                        <div className="border-l-4 border-blue-500 pl-3">
+                          <strong>Notificaciones fallan:</strong> Verificar permisos del navegador.
+                        </div>
+                      </div>
+                    </div>
+                  </details>
+
+
+                  <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
+                      <FaBook className="text-purple-600 mr-2" />
+                      Glosario
+                    </summary>
+                    <div className="p-4 pt-0 text-gray-700">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Ticket:</strong> Solicitud de soporte técnico
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Inventario:</strong> Lista de activos tecnológicos
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Repositorio:</strong> Documentos del sistema
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Credenciales:</strong> Usuarios y contraseñas cifradas
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Dashboard:</strong> Panel principal de estadísticas
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Auditoría:</strong> Historial de todas las acciones
+                        </div>
+                      </div>
+                      <div className="mt-4 text-center text-xs text-gray-500">
+                        <p>DuvyClass – Transformando la gestión tecnológica empresarial</p>
+                        <p>Manual actualizado: noviembre 2025 | Versión del Sistema: 1.0.0</p>
+                      </div>
+                    </div>
+                  </details>
+                </div>
               </div>
             </div>
           )}
