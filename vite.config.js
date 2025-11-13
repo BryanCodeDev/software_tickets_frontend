@@ -21,6 +21,7 @@ export default defineConfig({
     assetsInlineLimit: 4096
   },
   server: {
+    host: '0.0.0.0',
     proxy: {
       '/api': {
         target: process.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000',
