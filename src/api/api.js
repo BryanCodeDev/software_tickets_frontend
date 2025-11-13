@@ -4,6 +4,8 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:5000/api`,
 });
 
+console.log('API Base URL:', api.defaults.baseURL);
+
 api.interceptors.request.use((config) => {
   // Don't add token for login and register requests
   if (!config.url.includes('/auth/login') && !config.url.includes('/auth/register')) {
