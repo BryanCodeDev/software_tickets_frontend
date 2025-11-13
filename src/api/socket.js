@@ -1,6 +1,24 @@
 import io from 'socket.io-client';
 
-const socket = io(import.meta.env.VITE_SOCKET_URL || `${window.location.protocol}//${window.location.hostname}:5000`);
+// Configuración dinámica del Socket.IO
+const getSocketURL = () => {
+  // Si estás en desarrollo (Vite dev server)
+  if (import.meta.env.DEV) {
+    return import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+  }
+
+  // Si estás en producción (Nginx)
+  // Usar la misma URL base pero con proxy a través de Nginx
+  return `${window.location.protocol}//${window.location.host}`;
+};
+
+const socket = io(getSocketURL(), {
+  path: '/socket.io/',
+  transports: ['websocket', 'polling'],
+  reconnection: true,
+  reconnectionDelay: 1000,
+  reconnectionAttempts: 5
+});
 
 export const joinTicketRoom = (ticketId) => {
   socket.emit('join-ticket', ticketId);
