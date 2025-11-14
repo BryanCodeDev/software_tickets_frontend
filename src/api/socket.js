@@ -17,7 +17,6 @@ const getSocketURL = () => {
 };
 
 const socket = io(getSocketURL(), {
-  path: '/socket.io/',
   transports: ['polling'],
   reconnection: true,
   reconnectionDelay: 1000,
