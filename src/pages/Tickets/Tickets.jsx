@@ -279,6 +279,7 @@ const Tickets = () => {
 
   const handleCreateSubmit = async (e) => {
    e.preventDefault();
+   console.log('handleCreateSubmit llamado');
    setFormLoading(true);
    try {
      console.log('Iniciando creación de ticket...');
@@ -1449,6 +1450,7 @@ const Tickets = () => {
             {/* Create Modal */}
             {showCreateModal && (
               <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+                {console.log('Modal de crear renderizado')}
                 <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
                   <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
                     <div className="flex items-center justify-between">
