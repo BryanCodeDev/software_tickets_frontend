@@ -8,62 +8,7 @@ import usersAPI from '../../api/usersAPI';
 import { getServerBaseURL } from '../../api/api';
 
 const Tickets = () => {
-  const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  const [editingTicket, setEditingTicket] = useState(null);
-  const [selectedTicket, setSelectedTicket] = useState(null);
-  const [comments, setComments] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
-  const messagesEndRef = useRef(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [filterPriority, setFilterPriority] = useState('all');
-  const [showFilters, setShowFilters] = useState(false);
-  const [showStats, setShowStats] = useState(false);
-  const [sortBy, setSortBy] = useState('createdAt');
-  const [sortOrder, setSortOrder] = useState('desc');
-  const [viewMode, setViewMode] = useState('cards');
-  
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    priority: 'media',
-    status: 'abierto',
-    assignedTo: '',
-    attachment: null
-  });
-  const [editFormData, setEditFormData] = useState({ 
-    title: '', 
-    description: '', 
-    priority: 'media', 
-    status: 'abierto', 
-    assignedTo: '' 
-  });
-  const [titleFilter, setTitleFilter] = useState('');
-  const [technicians, setTechnicians] = useState([]);
-  const [administrators, setAdministrators] = useState([]);
-
-  const standardizedTitles = [
-    'Problemas con SAP',
-    'Problemas con Impresoras',
-    'Problemas con Contraseña',
-    'Problemas con Heinsohn',
-    'Problemas con Excel, Word, PDF',
-    'Problemas con Acceso a carpetas',
-    'Problemas con El navegador',
-    'Problemas con Rsales',
-    'Problemas con Envio',
-    'Problemas con Correo',
-  ];
-
-  const [formLoading, setFormLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
-  const [confirmDialog, setConfirmDialog] = useState(null);
-  const { user } = useContext(AuthContext);
+  return <div>Nuevo Ticket</div>;
 
 
   const scrollToBottom = () => {
