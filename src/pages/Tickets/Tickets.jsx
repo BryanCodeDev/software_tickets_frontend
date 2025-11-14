@@ -6,7 +6,6 @@ import ticketsAPI from '../../api/ticketsAPI';
 import messagesAPI from '../../api/messagesAPI';
 import usersAPI from '../../api/usersAPI';
 import { getServerBaseURL } from '../../api/api';
-import { joinTicketRoom, leaveTicketRoom, onNewMessage, onMessageUpdated, onMessageDeleted, onTicketUpdated, offNewMessage, offMessageUpdated, offMessageDeleted, offTicketUpdated } from '../../api/socket';
 
 const Tickets = () => {
   const [tickets, setTickets] = useState([]);
@@ -66,45 +65,6 @@ const Tickets = () => {
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
 
-  // Socket listeners
-  useEffect(() => {
-    if (selectedTicket) {
-      joinTicketRoom(selectedTicket.id);
-
-      const handleNewMessage = (message) => {
-        setMessages(prev => [...prev, message]);
-        scrollToBottom();
-      };
-
-      const handleMessageUpdated = (updatedMessage) => {
-        setMessages(prev => prev.map(msg =>
-          msg.id === updatedMessage.id ? updatedMessage : msg
-        ));
-      };
-
-      const handleMessageDeleted = (deletedMessageId) => {
-        setMessages(prev => prev.filter(msg => msg.id !== deletedMessageId));
-      };
-
-      const handleTicketUpdated = (updatedTicket) => {
-        setSelectedTicket(updatedTicket);
-        fetchTickets(); // Refresh the list
-      };
-
-      onNewMessage(handleNewMessage);
-      onMessageUpdated(handleMessageUpdated);
-      onMessageDeleted(handleMessageDeleted);
-      onTicketUpdated(handleTicketUpdated);
-
-      return () => {
-        leaveTicketRoom(selectedTicket.id);
-        offNewMessage(handleNewMessage);
-        offMessageUpdated(handleMessageUpdated);
-        offMessageDeleted(handleMessageDeleted);
-        offTicketUpdated(handleTicketUpdated);
-      };
-    }
-  }, [selectedTicket]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
