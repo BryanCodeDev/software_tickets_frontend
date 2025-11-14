@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: 'frontend',
-      script: 'npx',
-      args: 'serve dist -p 8080 -s',
+      script: 'npm',
+      args: 'run preview',
       cwd: './software_tickets_frontend',
       instances: 1,
       exec_mode: 'fork',
