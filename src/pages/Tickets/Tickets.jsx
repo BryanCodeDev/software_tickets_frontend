@@ -217,6 +217,7 @@ const Tickets = () => {
       attachment: null
     });
     setShowCreateModal(true);
+    console.log('showCreateModal set to true');
   };
 
   const handleEdit = (ticket) => {
@@ -277,6 +278,7 @@ const Tickets = () => {
 
   const handleCreateSubmit = async (e) => {
    e.preventDefault();
+   console.log('handleCreateSubmit called with formData:', formData);
    setFormLoading(true);
    try {
      let assignedToValue = formData.assignedTo;
@@ -288,6 +290,7 @@ const Tickets = () => {
 
      // Si hay un archivo adjunto, enviar como FormData
      if (formData.attachment) {
+       console.log('Creating ticket with attachment');
        const formDataToSend = new FormData();
        formDataToSend.append('title', formData.title);
        formDataToSend.append('description', formData.description);
@@ -297,11 +300,13 @@ const Tickets = () => {
        formDataToSend.append('attachment', formData.attachment);
 
        const ticket = await ticketsAPI.createTicketWithAttachment(formDataToSend);
+       console.log('Ticket created with attachment:', ticket);
        fetchTickets();
        setShowCreateModal(false);
        showNotification('Ticket creado exitosamente', 'success');
      } else {
        // Si no hay archivo, enviar como JSON normal
+       console.log('Creating ticket without attachment');
        const ticketData = {
          title: formData.title,
          description: formData.description,
@@ -311,6 +316,7 @@ const Tickets = () => {
        };
 
        const ticket = await ticketsAPI.createTicket(ticketData);
+       console.log('Ticket created without attachment:', ticket);
        fetchTickets();
        setShowCreateModal(false);
        showNotification('Ticket creado exitosamente', 'success');
