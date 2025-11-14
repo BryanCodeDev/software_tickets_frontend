@@ -207,6 +207,7 @@ const Tickets = () => {
   const stats = calculateStats();
 
   const handleCreate = () => {
+    console.log('handleCreate called');
     setFormData({
       title: '',
       description: '',
