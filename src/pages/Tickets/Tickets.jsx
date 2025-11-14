@@ -6,6 +6,7 @@ import ticketsAPI from '../../api/ticketsAPI';
 import messagesAPI from '../../api/messagesAPI';
 import usersAPI from '../../api/usersAPI';
 import { getServerBaseURL } from '../../api/api';
+import { joinTicketRoom, leaveTicketRoom, onNewMessage, onMessageUpdated, onMessageDeleted, onTicketUpdated, offNewMessage, offMessageUpdated, offMessageDeleted, offTicketUpdated } from '../../api/socket';
 
 const Tickets = () => {
   const [tickets, setTickets] = useState([]);
@@ -27,7 +28,7 @@ const Tickets = () => {
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
   const [viewMode, setViewMode] = useState('cards');
-
+  
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -36,12 +37,12 @@ const Tickets = () => {
     assignedTo: '',
     attachment: null
   });
-  const [editFormData, setEditFormData] = useState({
-    title: '',
-    description: '',
-    priority: 'media',
-    status: 'abierto',
-    assignedTo: ''
+  const [editFormData, setEditFormData] = useState({ 
+    title: '', 
+    description: '', 
+    priority: 'media', 
+    status: 'abierto', 
+    assignedTo: '' 
   });
   const [titleFilter, setTitleFilter] = useState('');
   const [technicians, setTechnicians] = useState([]);
@@ -65,6 +66,45 @@ const Tickets = () => {
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
 
+  // Socket listeners
+  useEffect(() => {
+    if (selectedTicket) {
+      joinTicketRoom(selectedTicket.id);
+
+      const handleNewMessage = (message) => {
+        setMessages(prev => [...prev, message]);
+        scrollToBottom();
+      };
+
+      const handleMessageUpdated = (updatedMessage) => {
+        setMessages(prev => prev.map(msg =>
+          msg.id === updatedMessage.id ? updatedMessage : msg
+        ));
+      };
+
+      const handleMessageDeleted = (deletedMessageId) => {
+        setMessages(prev => prev.filter(msg => msg.id !== deletedMessageId));
+      };
+
+      const handleTicketUpdated = (updatedTicket) => {
+        setSelectedTicket(updatedTicket);
+        fetchTickets(); // Refresh the list
+      };
+
+      onNewMessage(handleNewMessage);
+      onMessageUpdated(handleMessageUpdated);
+      onMessageDeleted(handleMessageDeleted);
+      onTicketUpdated(handleTicketUpdated);
+
+      return () => {
+        leaveTicketRoom(selectedTicket.id);
+        offNewMessage(handleNewMessage);
+        offMessageUpdated(handleMessageUpdated);
+        offMessageDeleted(handleMessageDeleted);
+        offTicketUpdated(handleTicketUpdated);
+      };
+    }
+  }, [selectedTicket]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -80,6 +120,7 @@ const Tickets = () => {
       const data = await ticketsAPI.fetchTickets();
       setTickets(data.tickets || []);
     } catch (err) {
+      console.error('Error al cargar tickets:', err);
       showNotification('Error al cargar los tickets. Por favor, recarga la página.', 'error');
     } finally {
       setLoading(false);
@@ -96,6 +137,7 @@ const Tickets = () => {
         setAdministrators(adminUsers);
       }
     } catch (err) {
+      console.error('Error al cargar usuarios:', err);
     }
   };
 
@@ -166,6 +208,7 @@ const Tickets = () => {
   const stats = calculateStats();
 
   const handleCreate = () => {
+    console.log('handleCreate ejecutado');
     setFormData({
       title: '',
       description: '',
@@ -175,6 +218,7 @@ const Tickets = () => {
       attachment: null
     });
     setShowCreateModal(true);
+    console.log('Modal de crear debería abrirse');
   };
 
   const handleEdit = (ticket) => {
@@ -223,6 +267,7 @@ const Tickets = () => {
         fetchTickets();
         showNotification('Ticket eliminado exitosamente', 'success');
       } catch (err) {
+        console.error('Error al eliminar:', err);
         if (err.response?.status === 403) {
           showNotification('No tienes permisos para eliminar este ticket', 'error');
         } else {
@@ -236,6 +281,11 @@ const Tickets = () => {
    e.preventDefault();
    setFormLoading(true);
    try {
+     console.log('Iniciando creación de ticket...');
+     console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
+     console.log('window.location:', window.location);
+     console.log('Base URL calculada:', import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:5000/api`);
+
      let assignedToValue = formData.assignedTo;
      if (formData.assignedTo === 'all-technicians') {
        assignedToValue = technicians.length > 0 ? technicians[0].id : null;
@@ -245,6 +295,7 @@ const Tickets = () => {
 
      // Si hay un archivo adjunto, enviar como FormData
      if (formData.attachment) {
+       console.log('Creando ticket con archivo adjunto...');
        const formDataToSend = new FormData();
        formDataToSend.append('title', formData.title);
        formDataToSend.append('description', formData.description);
@@ -254,11 +305,13 @@ const Tickets = () => {
        formDataToSend.append('attachment', formData.attachment);
 
        const ticket = await ticketsAPI.createTicketWithAttachment(formDataToSend);
+       console.log('Ticket creado exitosamente con archivo:', ticket);
        fetchTickets();
        setShowCreateModal(false);
        showNotification('Ticket creado exitosamente', 'success');
      } else {
        // Si no hay archivo, enviar como JSON normal
+       console.log('Creando ticket sin archivo...');
        const ticketData = {
          title: formData.title,
          description: formData.description,
@@ -266,13 +319,24 @@ const Tickets = () => {
          status: formData.status,
          assignedTo: assignedToValue || null
        };
+       console.log('Datos del ticket:', ticketData);
 
        const ticket = await ticketsAPI.createTicket(ticketData);
+       console.log('Ticket creado exitosamente:', ticket);
        fetchTickets();
        setShowCreateModal(false);
        showNotification('Ticket creado exitosamente', 'success');
      }
    } catch (err) {
+     console.error('Error al crear ticket:', err);
+     console.error('Detalles del error:', {
+       message: err.message,
+       status: err.response?.status,
+       statusText: err.response?.statusText,
+       data: err.response?.data,
+       headers: err.response?.headers,
+       config: err.config
+     });
      if (err.response?.status === 403) {
        showNotification('No tienes permisos para crear tickets', 'error');
      } else if (err.response?.status === 401) {
@@ -300,6 +364,7 @@ const Tickets = () => {
       setShowEditModal(false);
       showNotification('Ticket actualizado exitosamente', 'success');
     } catch (err) {
+      console.error('Error al actualizar ticket:', err);
       if (err.response?.status === 403) {
         showNotification('No tienes permisos para editar este ticket', 'error');
       } else {
@@ -322,6 +387,7 @@ const Tickets = () => {
      const messagesData = await messagesAPI.fetchMessages(ticket.id);
      setMessages(messagesData);
    } catch (err) {
+     console.error('Error al cargar detalles del ticket:', err);
      if (err.response?.status === 403) {
        showNotification('No tienes permisos para ver los detalles de este ticket', 'error');
        return;
@@ -349,6 +415,7 @@ const Tickets = () => {
       setNewMessage('');
       showNotification('Mensaje enviado exitosamente', 'success');
     } catch (err) {
+      console.error('Error al enviar mensaje:', err);
       if (err.response?.status === 403) {
         showNotification('No tienes permisos para enviar mensajes en este ticket', 'error');
       } else {
@@ -422,6 +489,13 @@ const Tickets = () => {
   const userRole = user?.role?.name;
   const canCreate = true;
 
+  // Debug logs para verificar estado del componente
+  console.log('Tickets component render:', {
+    canCreate,
+    userRole,
+    user: user ? { id: user.id, role: user.role } : null,
+    showCreateModal
+  });
 
   // Funciones helper para verificar permisos por ticket específico
   const canEditTicket = (ticket) => {
@@ -622,7 +696,10 @@ const Tickets = () => {
               </button>
               {canCreate && (
                 <button
-                  onClick={handleCreate}
+                  onClick={() => {
+                    console.log('Botón Nuevo Ticket clickeado');
+                    handleCreate();
+                  }}
                   className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
                 >
                   <FaPlus className="w-4 h-4" />
@@ -1161,6 +1238,7 @@ const Tickets = () => {
                                        className="w-full h-32 object-cover rounded-lg mb-2 cursor-pointer"
                                        onClick={() => window.open(import.meta.env.DEV ? `http://localhost:5000/uploads/tickets/${attachment.filename}` : `${getServerBaseURL()}/uploads/tickets/${attachment.filename}`, '_blank')}
                                        onError={(e) => {
+                                         console.error('Error loading image:', e);
                                          e.target.style.display = 'none';
                                        }}
                                      />

@@ -16,66 +16,60 @@ const getSocketURL = () => {
   return `${window.location.protocol}//${window.location.hostname}:5000`;
 };
 
-let socket = null;
-
-const getSocket = () => {
-  if (!socket) {
-    socket = io(getSocketURL(), {
-      transports: ['polling'],
-      reconnection: true,
-      reconnectionDelay: 1000,
-      reconnectionAttempts: 5
-    });
-  }
-  return socket;
-};
+const socket = io(getSocketURL(), {
+  path: '/socket.io/',
+  transports: ['websocket', 'polling'],
+  reconnection: true,
+  reconnectionDelay: 1000,
+  reconnectionAttempts: 5
+});
 
 export const joinTicketRoom = (ticketId) => {
-  getSocket().emit('join-ticket', ticketId);
+  socket.emit('join-ticket', ticketId);
 };
 
 export const leaveTicketRoom = (ticketId) => {
-  getSocket().emit('leave-ticket', ticketId);
+  socket.emit('leave-ticket', ticketId);
 };
 
 export const onNewMessage = (callback) => {
-  getSocket().on('new-message', callback);
+  socket.on('new-message', callback);
 };
 
 export const onMessageUpdated = (callback) => {
-  getSocket().on('message-updated', callback);
+  socket.on('message-updated', callback);
 };
 
 export const onMessageDeleted = (callback) => {
-  getSocket().on('message-deleted', callback);
+  socket.on('message-deleted', callback);
 };
 
 export const onNewComment = (callback) => {
-  getSocket().on('new-comment', callback);
+  socket.on('new-comment', callback);
 };
 
 export const onTicketUpdated = (callback) => {
-  getSocket().on('ticket-updated', callback);
+  socket.on('ticket-updated', callback);
 };
 
 export const offNewMessage = (callback) => {
-  getSocket().off('new-message', callback);
+  socket.off('new-message', callback);
 };
 
 export const offMessageUpdated = (callback) => {
-  getSocket().off('message-updated', callback);
+  socket.off('message-updated', callback);
 };
 
 export const offMessageDeleted = (callback) => {
-  getSocket().off('message-deleted', callback);
+  socket.off('message-deleted', callback);
 };
 
 export const offNewComment = (callback) => {
-  getSocket().off('new-comment', callback);
+  socket.off('new-comment', callback);
 };
 
 export const offTicketUpdated = (callback) => {
-  getSocket().off('ticket-updated', callback);
+  socket.off('ticket-updated', callback);
 };
 
-export default getSocket;
+export default socket;
