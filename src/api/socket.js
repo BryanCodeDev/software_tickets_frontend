@@ -2,13 +2,17 @@ import io from 'socket.io-client';
 
 // Configuración dinámica del Socket.IO
 const getSocketURL = () => {
-  // Si estás en desarrollo (Vite dev server)
-  if (import.meta.env.DEV) {
-    return import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+  // Primero intentar usar VITE_SOCKET_URL si está definido
+  if (import.meta.env.VITE_SOCKET_URL) {
+    return import.meta.env.VITE_SOCKET_URL;
   }
 
-  // Si estás en producción
-  // Conectar directamente al backend en el puerto 5000
+  // Si no, derivar de VITE_API_URL (removiendo /api)
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL.replace('/api', '');
+  }
+
+  // Fallback para desarrollo local
   return `${window.location.protocol}//${window.location.hostname}:5000`;
 };
 

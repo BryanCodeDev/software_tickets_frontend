@@ -1,8 +1,22 @@
 import axios from 'axios';
 
+const getApiBaseURL = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  // Fallback para desarrollo local
+  return `${window.location.protocol}//${window.location.hostname}:5000/api`;
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:5000/api`,
+  baseURL: getApiBaseURL(),
 });
+
+// Función para obtener la URL base del servidor (sin /api)
+export const getServerBaseURL = () => {
+  const apiURL = getApiBaseURL();
+  return apiURL.replace('/api', '');
+};
 
 
 api.interceptors.request.use((config) => {
