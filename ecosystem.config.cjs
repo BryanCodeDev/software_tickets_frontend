@@ -2,12 +2,11 @@ module.exports = {
   apps: [
     {
       name: 'frontend',
-      script: 'npm',
-      args: 'run preview',
+      script: 'npx',
+      args: 'vite preview --port 8080 --host 0.0.0.0',
       cwd: '.',
       instances: 1,
       exec_mode: 'fork',
-      interpreter: 'cmd',
       env: {
         NODE_ENV: 'production',
         PORT: 8080
