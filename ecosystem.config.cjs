@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: 'frontend',
-      script: 'C:\\Program Files\\nodejs\\npx.cmd',
-      args: 'vite preview --port 8080 --host 0.0.0.0',
+      script: 'cmd',
+      args: '/c "npm run preview"',
       cwd: '.',
       instances: 1,
       exec_mode: 'fork',
