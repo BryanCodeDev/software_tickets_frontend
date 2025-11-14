@@ -7,9 +7,9 @@ const getSocketURL = () => {
     return import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
   }
 
-  // Si estás en producción (Nginx)
-  // Usar la misma URL base pero con proxy a través de Nginx
-  return `${window.location.protocol}//${window.location.host}`;
+  // Si estás en producción
+  // Conectar directamente al backend en el puerto 5000
+  return `${window.location.protocol}//${window.location.hostname}:5000`;
 };
 
 const socket = io(getSocketURL(), {
