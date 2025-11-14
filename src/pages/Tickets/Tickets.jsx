@@ -208,6 +208,7 @@ const Tickets = () => {
   const stats = calculateStats();
 
   const handleCreate = () => {
+    console.log('handleCreate ejecutado');
     setFormData({
       title: '',
       description: '',
@@ -217,6 +218,7 @@ const Tickets = () => {
       attachment: null
     });
     setShowCreateModal(true);
+    console.log('Modal de crear debería abrirse');
   };
 
   const handleEdit = (ticket) => {
@@ -487,6 +489,14 @@ const Tickets = () => {
   const userRole = user?.role?.name;
   const canCreate = true;
 
+  // Debug logs para verificar estado del componente
+  console.log('Tickets component render:', {
+    canCreate,
+    userRole,
+    user: user ? { id: user.id, role: user.role } : null,
+    showCreateModal
+  });
+
   // Funciones helper para verificar permisos por ticket específico
   const canEditTicket = (ticket) => {
     if (userRole === 'Administrador' || userRole === 'Técnico') {
@@ -686,7 +696,10 @@ const Tickets = () => {
               </button>
               {canCreate && (
                 <button
-                  onClick={handleCreate}
+                  onClick={() => {
+                    console.log('Botón Nuevo Ticket clickeado');
+                    handleCreate();
+                  }}
                   className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
                 >
                   <FaPlus className="w-4 h-4" />
