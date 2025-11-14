@@ -7,7 +7,6 @@ module.exports = {
       cwd: '.',
       instances: 1,
       exec_mode: 'fork',
-      interpreter: 'none',  // Important: tells PM2 not to use Node.js to run npm
       env: {
         NODE_ENV: 'production',
         PORT: 8080
