@@ -5,7 +5,6 @@ import AuthContext from '../../context/AuthContext';
 import ticketsAPI from '../../api/ticketsAPI';
 import messagesAPI from '../../api/messagesAPI';
 import usersAPI from '../../api/usersAPI';
-import { getServerBaseURL } from '../../api/api';
 import { joinTicketRoom, leaveTicketRoom, onNewMessage, onMessageUpdated, onMessageDeleted, onTicketUpdated, offNewMessage, offMessageUpdated, offMessageDeleted, offTicketUpdated } from '../../api/socket';
 
 const Tickets = () => {
@@ -208,7 +207,6 @@ const Tickets = () => {
   const stats = calculateStats();
 
   const handleCreate = () => {
-    console.log('handleCreate ejecutado');
     setFormData({
       title: '',
       description: '',
@@ -218,7 +216,6 @@ const Tickets = () => {
       attachment: null
     });
     setShowCreateModal(true);
-    console.log('Modal de crear debería abrirse');
   };
 
   const handleEdit = (ticket) => {
@@ -281,11 +278,6 @@ const Tickets = () => {
    e.preventDefault();
    setFormLoading(true);
    try {
-     console.log('Iniciando creación de ticket...');
-     console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
-     console.log('window.location:', window.location);
-     console.log('Base URL calculada:', import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:5000/api`);
-
      let assignedToValue = formData.assignedTo;
      if (formData.assignedTo === 'all-technicians') {
        assignedToValue = technicians.length > 0 ? technicians[0].id : null;
@@ -295,7 +287,6 @@ const Tickets = () => {
 
      // Si hay un archivo adjunto, enviar como FormData
      if (formData.attachment) {
-       console.log('Creando ticket con archivo adjunto...');
        const formDataToSend = new FormData();
        formDataToSend.append('title', formData.title);
        formDataToSend.append('description', formData.description);
@@ -305,13 +296,11 @@ const Tickets = () => {
        formDataToSend.append('attachment', formData.attachment);
 
        const ticket = await ticketsAPI.createTicketWithAttachment(formDataToSend);
-       console.log('Ticket creado exitosamente con archivo:', ticket);
        fetchTickets();
        setShowCreateModal(false);
        showNotification('Ticket creado exitosamente', 'success');
      } else {
        // Si no hay archivo, enviar como JSON normal
-       console.log('Creando ticket sin archivo...');
        const ticketData = {
          title: formData.title,
          description: formData.description,
@@ -319,34 +308,18 @@ const Tickets = () => {
          status: formData.status,
          assignedTo: assignedToValue || null
        };
-       console.log('Datos del ticket:', ticketData);
 
        const ticket = await ticketsAPI.createTicket(ticketData);
-       console.log('Ticket creado exitosamente:', ticket);
        fetchTickets();
        setShowCreateModal(false);
        showNotification('Ticket creado exitosamente', 'success');
      }
    } catch (err) {
      console.error('Error al crear ticket:', err);
-     console.error('Detalles del error:', {
-       message: err.message,
-       status: err.response?.status,
-       statusText: err.response?.statusText,
-       data: err.response?.data,
-       headers: err.response?.headers,
-       config: err.config
-     });
      if (err.response?.status === 403) {
        showNotification('No tienes permisos para crear tickets', 'error');
-     } else if (err.response?.status === 401) {
-       showNotification('Sesión expirada. Por favor, inicia sesión nuevamente.', 'error');
-     } else if (err.response?.status === 404) {
-       showNotification('Endpoint no encontrado. Verifica la configuración del API.', 'error');
-     } else if (err.response?.status >= 500) {
-       showNotification('Error del servidor. Inténtalo más tarde.', 'error');
      } else {
-       showNotification(`Error al crear el ticket: ${err.message || 'Error desconocido'}`, 'error');
+       showNotification('Error al crear el ticket.', 'error');
      }
    } finally {
      setFormLoading(false);
@@ -488,14 +461,6 @@ const Tickets = () => {
 
   const userRole = user?.role?.name;
   const canCreate = true;
-
-  // Debug logs para verificar estado del componente
-  console.log('Tickets component render:', {
-    canCreate,
-    userRole,
-    user: user ? { id: user.id, role: user.role } : null,
-    showCreateModal
-  });
 
   // Funciones helper para verificar permisos por ticket específico
   const canEditTicket = (ticket) => {
@@ -696,10 +661,7 @@ const Tickets = () => {
               </button>
               {canCreate && (
                 <button
-                  onClick={() => {
-                    console.log('Botón Nuevo Ticket clickeado');
-                    handleCreate();
-                  }}
+                  onClick={handleCreate}
                   className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
                 >
                   <FaPlus className="w-4 h-4" />
@@ -1233,10 +1195,10 @@ const Tickets = () => {
                                  <div key={attachment.id} className="bg-white rounded-lg p-3 border border-gray-200">
                                    {attachment.type.startsWith('image/') ? (
                                      <img
-                                       src={import.meta.env.DEV ? `http://localhost:5000/uploads/tickets/${attachment.filename}` : `${getServerBaseURL()}/uploads/tickets/${attachment.filename}`}
+                                       src={`http://localhost:5000/uploads/tickets/${attachment.filename}`}
                                        alt={attachment.originalName}
                                        className="w-full h-32 object-cover rounded-lg mb-2 cursor-pointer"
-                                       onClick={() => window.open(import.meta.env.DEV ? `http://localhost:5000/uploads/tickets/${attachment.filename}` : `${getServerBaseURL()}/uploads/tickets/${attachment.filename}`, '_blank')}
+                                       onClick={() => window.open(`http://localhost:5000/uploads/tickets/${attachment.filename}`, '_blank')}
                                        onError={(e) => {
                                          console.error('Error loading image:', e);
                                          e.target.style.display = 'none';
@@ -1247,7 +1209,7 @@ const Tickets = () => {
                                        controls
                                        className="w-full h-32 object-cover rounded-lg mb-2"
                                      >
-                                       <source src={import.meta.env.DEV ? `http://localhost:5000/uploads/tickets/${attachment.filename}` : `${getServerBaseURL()}/uploads/tickets/${attachment.filename}`} type={attachment.type} />
+                                       <source src={`http://localhost:5000/uploads/tickets/${attachment.filename}`} type={attachment.type} />
                                        Tu navegador no soporta el elemento de video.
                                      </video>
                                    ) : (
@@ -1261,7 +1223,7 @@ const Tickets = () => {
                                    </p>
                                    {attachment.type.startsWith('image/') && (
                                      <button
-                                       onClick={() => window.open(import.meta.env.DEV ? `http://localhost:5000/uploads/tickets/${attachment.filename}` : `${getServerBaseURL()}/uploads/tickets/${attachment.filename}`, '_blank')}
+                                       onClick={() => window.open(`http://localhost:5000/uploads/tickets/${attachment.filename}`, '_blank')}
                                        className="text-xs text-purple-600 hover:text-purple-700 mt-1"
                                      >
                                        Ver imagen completa
