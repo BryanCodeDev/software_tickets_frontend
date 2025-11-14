@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { FaEdit, FaTrash, FaComment, FaPlus, FaCheck, FaTimes, FaEye, FaImage, FaVideo, FaFile, FaPaperPlane, FaEllipsisV, FaPen, FaTrashAlt, FaSearch, FaFilter, FaDownload, FaChartBar, FaClock, FaExclamationTriangle, FaCheckCircle, FaSpinner, FaUserCircle, FaClipboardList, FaFileExport, FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
@@ -206,7 +206,7 @@ const Tickets = () => {
 
   const stats = calculateStats();
 
-  const handleCreate = () => {
+  const handleCreate = useCallback(() => {
     setFormData({
       title: '',
       description: '',
@@ -216,7 +216,7 @@ const Tickets = () => {
       attachment: null
     });
     setShowCreateModal(true);
-  };
+  }, []);
 
   const handleEdit = (ticket) => {
     if (!canEditTicket(ticket)) {
@@ -871,13 +871,13 @@ const Tickets = () => {
                 ? 'Intenta ajustar los filtros de búsqueda'
                 : 'Comienza creando un nuevo ticket para dar seguimiento a incidencias'}
             </p>
-            {canCreate && !searchTerm && filterStatus === 'all' && filterPriority === 'all' && !titleFilter && (
+            {canCreate && (
               <button
                 onClick={handleCreate}
                 className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
               >
                 <FaPlus className="w-4 h-4" />
-                Crear Primer Ticket
+                Nuevo Ticket
               </button>
             )}
           </div>
