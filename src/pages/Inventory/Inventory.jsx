@@ -20,7 +20,6 @@ const Inventory = () => {
     ram: '',
     marca: '',
     status: 'disponible',
-    location: '',
     warrantyExpiry: '',
     purchaseDate: '',
     lastMaintenance: '',
@@ -143,7 +142,6 @@ const Inventory = () => {
       ram: '',
       marca: '',
       status: 'disponible',
-      location: '',
       warrantyExpiry: '',
       purchaseDate: '',
       lastMaintenance: '',
@@ -164,7 +162,6 @@ const Inventory = () => {
       ram: item.ram,
       marca: item.marca,
       status: item.status,
-      location: item.location || '',
       warrantyExpiry: item.warrantyExpiry ? item.warrantyExpiry.split('T')[0] : '',
       purchaseDate: item.purchaseDate ? item.purchaseDate.split('T')[0] : '',
       lastMaintenance: item.lastMaintenance ? item.lastMaintenance.split('T')[0] : '',
@@ -228,7 +225,7 @@ const Inventory = () => {
   };
 
   const exportToExcel = () => {
-    const headers = ['Propiedad', 'IT', 'Área', 'Responsable', 'Serial', 'Capacidad', 'RAM', 'Marca', 'Estado', 'Ubicación', 'Garantía', 'Compra', 'Mantenimiento', 'Costo'];
+    const headers = ['Propiedad', 'IT', 'Área', 'Responsable', 'Serial', 'Capacidad', 'RAM', 'Marca', 'Estado', 'Garantía', 'Compra', 'Mantenimiento', 'Costo'];
     const rows = filteredInventory.map(item => [
       item.propiedad,
       item.it,
@@ -239,7 +236,6 @@ const Inventory = () => {
       item.ram,
       item.marca,
       item.status,
-      item.location || '-',
       item.warrantyExpiry ? new Date(item.warrantyExpiry).toLocaleDateString('es-ES') : '-',
       item.purchaseDate ? new Date(item.purchaseDate).toLocaleDateString('es-ES') : '-',
       item.lastMaintenance ? new Date(item.lastMaintenance).toLocaleDateString('es-ES') : '-',
@@ -290,7 +286,6 @@ const Inventory = () => {
       { wch: 10 }, // RAM
       { wch: 12 }, // Marca
       { wch: 12 }, // Estado
-      { wch: 15 }, // Ubicación
       { wch: 12 }, // Garantía
       { wch: 12 }, // Compra
       { wch: 12 }, // Mantenimiento
@@ -709,15 +704,9 @@ const Inventory = () => {
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-3">
-                            <div>
-                              <p className="text-xs text-gray-500 font-medium mb-1">Área</p>
-                              <p className="text-sm font-semibold text-gray-900 truncate">{item.area}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-500 font-medium mb-1">Ubicación</p>
-                              <p className="text-sm font-semibold text-gray-900 truncate">{item.location || '-'}</p>
-                            </div>
+                          <div>
+                            <p className="text-xs text-gray-500 font-medium mb-1">Área</p>
+                            <p className="text-sm font-semibold text-gray-900 truncate">{item.area}</p>
                           </div>
 
                           <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-100">
@@ -804,15 +793,9 @@ const Inventory = () => {
                               </div>
                             )}
                           </div>
-                          <div className="grid grid-cols-2 gap-4 text-xs text-gray-600">
-                            <div>
-                              <span className="font-medium">Área:</span>
-                              <p className="truncate">{item.area}</p>
-                            </div>
-                            <div>
-                              <span className="font-medium">Ubicación:</span>
-                              <p className="truncate">{item.location || '-'}</p>
-                            </div>
+                          <div className="text-xs text-gray-600">
+                            <span className="font-medium">Área:</span>
+                            <p className="truncate">{item.area}</p>
                             <div>
                               <span className="font-medium">Capacidad:</span>
                               <p className="truncate">{item.capacidad}</p>
@@ -871,10 +854,7 @@ const Inventory = () => {
                             <td className="px-4 py-4">
                               <span className="font-bold text-purple-600">{item.it}</span>
                             </td>
-                            <td className="px-4 py-4">
-                              <div className="font-semibold text-gray-900">{item.responsable}</div>
-                              <div className="text-xs text-gray-500">{item.location || '-'}</div>
-                            </td>
+                            <td className="px-4 py-4 text-sm text-gray-700">{item.responsable}</td>
                             <td className="px-4 py-4 text-sm text-gray-700">{item.area}</td>
                             <td className="px-4 py-4">
                               <div className="font-semibold text-gray-900">{item.marca}</div>
@@ -1069,18 +1049,6 @@ const Inventory = () => {
                     </select>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Ubicación Física
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Ej: Oficina 101"
-                      value={formData.location}
-                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                    />
-                  </div>
                 </div>
               </div>
 

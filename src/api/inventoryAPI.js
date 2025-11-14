@@ -33,7 +33,7 @@ const inventoryAPI = {
 
   createInventoryItem: async (itemData) => {
     try {
-      const { propiedad, it, area, responsable, serial, capacidad, ram, marca, status, location, warrantyExpiry, purchaseDate, lastMaintenance, cost } = itemData;
+      const { propiedad, it, area, responsable, serial, capacidad, ram, marca, status, warrantyExpiry, purchaseDate, lastMaintenance, cost } = itemData;
       const response = await api.post('/inventory', {
         propiedad,
         it,
@@ -44,7 +44,6 @@ const inventoryAPI = {
         ram,
         marca,
         status,
-        location,
         warrantyExpiry,
         purchaseDate,
         lastMaintenance,
@@ -59,7 +58,7 @@ const inventoryAPI = {
 
   updateInventoryItem: async (id, itemData) => {
     try {
-      const { propiedad, it, area, responsable, serial, capacidad, ram, marca, status, location, warrantyExpiry, purchaseDate, lastMaintenance, cost } = itemData;
+      const { propiedad, it, area, responsable, serial, capacidad, ram, marca, status, warrantyExpiry, purchaseDate, lastMaintenance, cost } = itemData;
       const response = await api.put(`/inventory/${id}`, {
         propiedad,
         it,
@@ -70,7 +69,6 @@ const inventoryAPI = {
         ram,
         marca,
         status,
-        location,
         warrantyExpiry,
         purchaseDate,
         lastMaintenance,

@@ -58,6 +58,10 @@ const Tickets = () => {
     'Problemas con Rsales',
     'Problemas con Envio',
     'Problemas con Correo',
+    'Problemas con Hardware',
+    'Problemas con Red',
+    'Problemas con Instalacion',
+    'Problemas con Software',
   ];
 
   const [formLoading, setFormLoading] = useState(false);
