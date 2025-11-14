@@ -2,9 +2,9 @@ module.exports = {
   apps: [
     {
       name: 'frontend',
-      script: 'npm',
-      args: 'run preview',
-      cwd: './software_tickets_frontend',
+      script: 'cmd',
+      args: '/c "npm run preview"',
+      cwd: '.',
       instances: 1,
       exec_mode: 'fork',
       env: {
@@ -14,9 +14,7 @@ module.exports = {
       error_file: './logs/frontend-error.log',
       out_file: './logs/frontend-out.log',
       log_file: './logs/frontend.log',
-      time: true,
-      max_restarts: 10,
-      min_uptime: '10s'
+      time: true
     }
   ]
 };
