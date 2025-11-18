@@ -1,6 +1,6 @@
 import React from 'react';
 
-const StatsPanel = ({ stats, showStats, onToggleStats, title, statsConfig }) => {
+const StatsPanel = React.memo(({ stats, showStats, onToggleStats, title, statsConfig }) => {
   if (!showStats) return null;
 
   return (
@@ -30,6 +30,8 @@ const StatsPanel = ({ stats, showStats, onToggleStats, title, statsConfig }) => 
       })}
     </div>
   );
-};
+});
+
+StatsPanel.displayName = 'StatsPanel';
 
 export default StatsPanel;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaExclamationTriangle, FaTimes } from 'react-icons/fa';
 
-const ConfirmDialog = ({ confirmDialog, onClose, onConfirm }) => {
+const ConfirmDialog = React.memo(({ confirmDialog, onClose, onConfirm }) => {
   if (!confirmDialog) return null;
 
   return (
@@ -33,6 +33,8 @@ const ConfirmDialog = ({ confirmDialog, onClose, onConfirm }) => {
       </div>
     </div>
   );
-};
+});
+
+ConfirmDialog.displayName = 'ConfirmDialog';
 
 export default ConfirmDialog;

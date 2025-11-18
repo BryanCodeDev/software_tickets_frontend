@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaCheck, FaTimes, FaExclamationTriangle } from 'react-icons/fa';
 
-const NotificationSystem = ({ notification, onClose }) => {
+const NotificationSystem = React.memo(({ notification, onClose }) => {
   if (!notification) return null;
 
   return (
@@ -34,6 +34,8 @@ const NotificationSystem = ({ notification, onClose }) => {
       </div>
     </div>
   );
-};
+});
+
+NotificationSystem.displayName = 'NotificationSystem';
 
 export default NotificationSystem;

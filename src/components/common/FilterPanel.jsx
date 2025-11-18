@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaSearch, FaFilter, FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
 
-const FilterPanel = ({
+const FilterPanel = React.memo(({
   searchTerm,
   onSearchChange,
   showFilters,
@@ -111,6 +111,8 @@ const FilterPanel = ({
       </div>
     </div>
   );
-};
+});
+
+FilterPanel.displayName = 'FilterPanel';
 
 export default FilterPanel;

@@ -14,6 +14,7 @@ import {
   TicketStats,
   TicketPagination
 } from '../../components/Tickets';
+import { getTimeAgo } from '../../utils';
 
 const Tickets = () => {
   const [tickets, setTickets] = useState([]);
@@ -540,6 +541,35 @@ const Tickets = () => {
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });
+  };
+
+  const getStatusColor = (status) => {
+    const colors = {
+      'abierto': 'bg-purple-100 text-purple-700 border-purple-200',
+      'en progreso': 'bg-blue-100 text-blue-700 border-blue-200',
+      'cerrado': 'bg-gray-200 text-gray-700 border-gray-300',
+      'resuelto': 'bg-green-100 text-green-700 border-green-200'
+    };
+    return colors[status?.toLowerCase()] || 'bg-gray-100 text-gray-600 border-gray-200';
+  };
+
+  const getPriorityColor = (priority) => {
+    const colors = {
+      'alta': 'bg-red-100 text-red-700 border-red-200',
+      'media': 'bg-yellow-100 text-yellow-700 border-yellow-200',
+      'baja': 'bg-green-100 text-green-700 border-green-200'
+    };
+    return colors[priority?.toLowerCase()] || 'bg-gray-100 text-gray-600 border-gray-200';
+  };
+
+  const getStatusIcon = (status) => {
+    switch(status?.toLowerCase()) {
+      case 'abierto': return <FaExclamationTriangle />;
+      case 'en progreso': return <FaSpinner className="animate-spin" />;
+      case 'resuelto': return <FaCheckCircle />;
+      case 'cerrado': return <FaCheck />;
+      default: return <FaClock />;
+    }
   };
 
 

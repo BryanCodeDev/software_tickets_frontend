@@ -2,8 +2,10 @@ import React, { useContext, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AuthContext, { AuthProvider } from './context/AuthContext.jsx';
 import { ThemeProvider } from './context/ThemeContext.jsx';
+import { NotificationProvider } from './context/NotificationContext.jsx';
 import ErrorBoundary from './components/ErrorBoundary';
 import Layout from './components/Layout';
+import { LoadingSpinner } from './components/base';
 
 // Lazy load pages
 const Login = lazy(() => import('./pages/Login'));
@@ -34,11 +36,8 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const LoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-primary-50 via-primary-50 to-primary-50">
-    <div className="text-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-      <p className="text-secondary-600">Cargando página...</p>
-    </div>
+  <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900">
+    <LoadingSpinner size="lg" color="purple" text="Cargando página..." />
   </div>
 );
 
@@ -47,7 +46,8 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Router>
+        <NotificationProvider>
+          <Router>
           <ErrorBoundary>
             <div className="min-h-screen bg-linear-to-br from-primary-50 via-primary-50 to-primary-50">
               <Suspense fallback={<LoadingFallback />}>
@@ -141,6 +141,7 @@ function App() {
             </div>
           </ErrorBoundary>
         </Router>
+        </NotificationProvider>
       </AuthProvider>
     </ThemeProvider>
   );
