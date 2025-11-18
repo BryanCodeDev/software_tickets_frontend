@@ -52,6 +52,18 @@ export const onTicketUpdated = (callback) => {
   socket.on('ticket-updated', callback);
 };
 
+export const onTicketCreated = (callback) => {
+  socket.on('ticket-created', callback);
+};
+
+export const onTicketDeleted = (callback) => {
+  socket.on('ticket-deleted', callback);
+};
+
+export const onTicketsListUpdated = (callback) => {
+  socket.on('tickets-list-updated', callback);
+};
+
 export const offNewMessage = (callback) => {
   socket.off('new-message', callback);
 };
@@ -70,6 +82,18 @@ export const offNewComment = (callback) => {
 
 export const offTicketUpdated = (callback) => {
   socket.off('ticket-updated', callback);
+};
+
+export const offTicketCreated = (callback) => {
+  socket.off('ticket-created', callback);
+};
+
+export const offTicketDeleted = (callback) => {
+  socket.off('ticket-deleted', callback);
+};
+
+export const offTicketsListUpdated = (callback) => {
+  socket.off('tickets-list-updated', callback);
 };
 
 export default socket;

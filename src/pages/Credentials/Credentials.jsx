@@ -36,7 +36,6 @@ const Credentials = () => {
       const data = await credentialsAPI.fetchCredentials();
       setCredentials(data);
     } catch (err) {
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -120,7 +119,6 @@ const Credentials = () => {
       await navigator.clipboard.writeText(text);
       showNotification(`${label} copiado al portapapeles`, 'success');
     } catch (err) {
-      console.error('Error al copiar:', err);
       showNotification('Error al copiar al portapapeles', 'error');
     }
   };
@@ -193,7 +191,6 @@ const Credentials = () => {
         fetchCredentials();
         showNotification('Credencial eliminada exitosamente', 'success');
       } catch (err) {
-        console.error(err);
         showNotification('Error al eliminar la credencial. Por favor, inténtalo de nuevo.', 'error');
       }
     });
@@ -213,7 +210,6 @@ const Credentials = () => {
       fetchCredentials();
       setShowModal(false);
     } catch (err) {
-      console.error(err);
       showNotification('Error al guardar la credencial. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
     } finally {
       setFormLoading(false);
@@ -691,3 +687,4 @@ const Credentials = () => {
 };
 
 export default Credentials;
+

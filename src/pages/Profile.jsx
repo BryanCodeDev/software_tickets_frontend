@@ -32,7 +32,6 @@ const Profile = () => {
       const data = await inventoryAPI.fetchUniqueITs();
       setUniqueITs(data);
     } catch (err) {
-      console.error(err);
     }
   };
 
@@ -53,7 +52,6 @@ const Profile = () => {
       showNotification('Perfil actualizado exitosamente', 'success');
     } catch (error) {
       showNotification('Error al actualizar el perfil. Por favor, inténtalo de nuevo.', 'error');
-      console.error(error);
     } finally {
       setLoading(false);
     }

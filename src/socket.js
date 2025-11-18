@@ -6,22 +6,17 @@ const initSocket = (serverIo) => {
   io = serverIo;
 
   io.on('connection', (socket) => {
-    console.log('Usuario conectado:', socket.id);
-
     // Unirse a una sala de ticket específica
     socket.on('join-ticket', (ticketId) => {
       socket.join(`ticket-${ticketId}`);
-      console.log(`Usuario ${socket.id} se unió al ticket ${ticketId}`);
     });
 
     // Salir de una sala de ticket
     socket.on('leave-ticket', (ticketId) => {
       socket.leave(`ticket-${ticketId}`);
-      console.log(`Usuario ${socket.id} salió del ticket ${ticketId}`);
     });
 
     socket.on('disconnect', () => {
-      console.log('Usuario desconectado:', socket.id);
     });
   });
 };

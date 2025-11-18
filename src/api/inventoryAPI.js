@@ -6,7 +6,6 @@ const inventoryAPI = {
       const response = await api.get('/inventory');
       return response.data;
     } catch (error) {
-      console.error('Error fetching inventory:', error);
       throw error;
     }
   },
@@ -16,7 +15,6 @@ const inventoryAPI = {
       const response = await api.get(`/inventory/search?q=${encodeURIComponent(query)}`);
       return response.data;
     } catch (error) {
-      console.error('Error searching inventory:', error);
       throw error;
     }
   },
@@ -26,7 +24,6 @@ const inventoryAPI = {
       const response = await api.get(`/inventory/${id}`);
       return response.data;
     } catch (error) {
-      console.error('Error fetching inventory item:', error);
       throw error;
     }
   },
@@ -51,7 +48,6 @@ const inventoryAPI = {
       });
       return response.data;
     } catch (error) {
-      console.error('Error creating inventory item:', error);
       throw error;
     }
   },
@@ -76,7 +72,6 @@ const inventoryAPI = {
       });
       return response.data;
     } catch (error) {
-      console.error('Error updating inventory item:', error);
       throw error;
     }
   },
@@ -85,7 +80,6 @@ const inventoryAPI = {
     try {
       await api.delete(`/inventory/${id}`);
     } catch (error) {
-      console.error('Error deleting inventory item:', error);
       throw error;
     }
   },
@@ -95,7 +89,6 @@ const inventoryAPI = {
       const response = await api.get('/inventory/detect/hardware');
       return response.data;
     } catch (error) {
-      console.error('Error detecting hardware:', error);
       throw error;
     }
   },
@@ -105,7 +98,6 @@ const inventoryAPI = {
       const response = await api.get('/inventory/unique/its');
       return response.data;
     } catch (error) {
-      console.error('Error fetching unique ITs:', error);
       throw error;
     }
   },

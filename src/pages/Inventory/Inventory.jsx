@@ -53,7 +53,6 @@ const Inventory = () => {
       const data = await inventoryAPI.fetchInventory();
       setInventory(data);
     } catch (err) {
-      console.error('Error al cargar inventario:', err);
       showNotification('Error al cargar el inventario. Por favor, recarga la página.', 'error');
     } finally {
       setLoading(false);
@@ -183,7 +182,6 @@ const Inventory = () => {
         fetchInventory();
         showNotification('Equipo eliminado exitosamente', 'success');
       } catch (err) {
-        console.error('Error al eliminar:', err);
         showNotification('Error al eliminar el equipo. Por favor, inténtalo de nuevo.', 'error');
       }
     });
@@ -203,7 +201,6 @@ const Inventory = () => {
       fetchInventory();
       setShowModal(false);
     } catch (err) {
-      console.error('Error al guardar:', err);
       showNotification('Error al guardar el equipo. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
     } finally {
       setFormLoading(false);
@@ -223,7 +220,6 @@ const Inventory = () => {
       }));
       showNotification('Hardware detectado automáticamente', 'success');
     } catch (err) {
-      console.error('Error detecting hardware:', err);
       showNotification('Error al detectar hardware. Verifica la conexión.', 'error');
     } finally {
       setDetectingHardware(false);

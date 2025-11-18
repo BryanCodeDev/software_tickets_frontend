@@ -33,7 +33,6 @@ const Documents = () => {
       const data = await documentsAPI.fetchDocuments();
       setDocuments(data);
     } catch (err) {
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -162,7 +161,6 @@ const Documents = () => {
       setShowUploadModal(false);
       showNotification('Documento subido exitosamente', 'success');
     } catch (err) {
-      console.error(err);
       showNotification('Error al subir el documento. Por favor, inténtalo de nuevo.', 'error');
     } finally {
       setUploadLoading(false);
@@ -195,7 +193,6 @@ const Documents = () => {
       setShowEditModal(false);
       showNotification('Documento actualizado exitosamente', 'success');
     } catch (err) {
-      console.error(err);
       showNotification('Error al actualizar el documento. Por favor, inténtalo de nuevo.', 'error');
     }
   };
@@ -207,7 +204,6 @@ const Documents = () => {
         fetchDocuments();
         showNotification('Documento eliminado exitosamente', 'success');
       } catch (err) {
-        console.error(err);
         showNotification('Error al eliminar el documento. Por favor, inténtalo de nuevo.', 'error');
       }
     });
@@ -226,7 +222,6 @@ const Documents = () => {
         }
         showNotification('Versión eliminada exitosamente', 'success');
       } catch (err) {
-        console.error(err);
         showNotification('Error al eliminar la versión. Por favor, inténtalo de nuevo.', 'error');
       }
     });

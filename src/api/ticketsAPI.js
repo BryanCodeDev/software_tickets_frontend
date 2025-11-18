@@ -11,7 +11,6 @@ const ticketsAPI = {
       const response = await api.get(url);
       return response.data;
     } catch (error) {
-      console.error('Error fetching tickets:', error);
       throw error;
     }
   },
@@ -21,7 +20,6 @@ const ticketsAPI = {
       const response = await api.get(`/tickets/search?q=${encodeURIComponent(query)}`);
       return response.data;
     } catch (error) {
-      console.error('Error searching tickets:', error);
       throw error;
     }
   },
@@ -31,7 +29,6 @@ const ticketsAPI = {
       const response = await api.get(`/tickets/${id}`);
       return response.data;
     } catch (error) {
-      console.error('Error fetching ticket:', error);
       throw error;
     }
   },
@@ -41,7 +38,6 @@ const ticketsAPI = {
      const response = await api.post('/tickets', ticketData);
      return response.data;
    } catch (error) {
-     console.error('Error creating ticket:', error);
      throw error;
    }
  },
@@ -55,7 +51,6 @@ const ticketsAPI = {
      });
      return response.data;
    } catch (error) {
-     console.error('Error creating ticket with attachment:', error);
      throw error;
    }
  },
@@ -65,7 +60,6 @@ const ticketsAPI = {
       const response = await api.put(`/tickets/${id}`, ticketData);
       return response.data;
     } catch (error) {
-      console.error('Error updating ticket:', error);
       throw error;
     }
   },
@@ -74,7 +68,6 @@ const ticketsAPI = {
     try {
       await api.delete(`/tickets/${id}`);
     } catch (error) {
-      console.error('Error deleting ticket:', error);
       throw error;
     }
   },
@@ -84,7 +77,6 @@ const ticketsAPI = {
       const response = await api.post(`/tickets/${id}/comments`, commentData);
       return response.data;
     } catch (error) {
-      console.error('Error adding comment:', error);
       throw error;
     }
   },
@@ -98,7 +90,6 @@ const ticketsAPI = {
       });
       return response.data;
     } catch (error) {
-      console.error('Error uploading attachment:', error);
       throw error;
     }
   },

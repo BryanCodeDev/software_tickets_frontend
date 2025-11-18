@@ -40,7 +40,6 @@ const Users = () => {
       const data = await usersAPI.fetchUsers();
       setUsers(data);
     } catch (err) {
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -51,7 +50,6 @@ const Users = () => {
       const data = await inventoryAPI.fetchUniqueITs();
       setUniqueITs(data);
     } catch (err) {
-      console.error(err);
     }
   };
 
@@ -60,7 +58,6 @@ const Users = () => {
       const data = await inventoryAPI.fetchInventory();
       setInventoryItems(data);
     } catch (err) {
-      console.error(err);
     }
   };
 
@@ -257,7 +254,6 @@ const Users = () => {
           showNotification('Usuario eliminado exitosamente', 'success');
         }
       } catch (err) {
-        console.error(err);
         if (err.response?.data?.error?.includes('registros relacionados')) {
           showNotification(err.response.data.error, 'error');
         } else if (err.response?.data?.error?.includes('propio usuario')) {
@@ -289,7 +285,6 @@ const Users = () => {
       fetchUsers();
       setShowModal(false);
     } catch (err) {
-      console.error(err);
       showNotification('Error al guardar el usuario. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
     } finally {
       setFormLoading(false);

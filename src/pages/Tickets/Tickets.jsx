@@ -5,7 +5,7 @@ import AuthContext from '../../context/AuthContext';
 import ticketsAPI from '../../api/ticketsAPI';
 import messagesAPI from '../../api/messagesAPI';
 import usersAPI from '../../api/usersAPI';
-import { joinTicketRoom, leaveTicketRoom, onNewMessage, onMessageUpdated, onMessageDeleted, onTicketUpdated, offNewMessage, offMessageUpdated, offMessageDeleted, offTicketUpdated } from '../../api/socket';
+import { joinTicketRoom, leaveTicketRoom, onNewMessage, onMessageUpdated, onMessageDeleted, onTicketUpdated, onTicketCreated, onTicketDeleted, onTicketsListUpdated, offNewMessage, offMessageUpdated, offMessageDeleted, offTicketUpdated, offTicketCreated, offTicketDeleted, offTicketsListUpdated } from '../../api/socket';
 
 const Tickets = () => {
   const [tickets, setTickets] = useState([]);
@@ -92,7 +92,7 @@ const Tickets = () => {
 
       const handleTicketUpdated = (updatedTicket) => {
         setSelectedTicket(updatedTicket);
-        fetchTickets(); // Refresh the list
+        // WebSocket will handle the list update automatically
       };
 
       onNewMessage(handleNewMessage);
@@ -119,13 +119,42 @@ const Tickets = () => {
     fetchUsers();
   }, []);
 
+  // WebSocket listeners for real-time ticket list updates
+  useEffect(() => {
+    const handleTicketCreated = (newTicket) => {
+      // Refresh the current page to show the new ticket
+      fetchTickets(pagination.currentPage);
+    };
+
+    const handleTicketDeleted = (data) => {
+      // Refresh the current page to remove the deleted ticket
+      fetchTickets(pagination.currentPage);
+    };
+
+    const handleTicketsListUpdated = () => {
+      // Refresh the current page to get updated data
+      fetchTickets(pagination.currentPage);
+    };
+
+    // Register WebSocket listeners
+    onTicketCreated(handleTicketCreated);
+    onTicketDeleted(handleTicketDeleted);
+    onTicketsListUpdated(handleTicketsListUpdated);
+
+    // Cleanup function
+    return () => {
+      offTicketCreated(handleTicketCreated);
+      offTicketDeleted(handleTicketDeleted);
+      offTicketsListUpdated(handleTicketsListUpdated);
+    };
+  }, [pagination.currentPage]);
+
   const fetchTickets = async (page = 1) => {
     try {
       const data = await ticketsAPI.fetchTickets({ page, limit: 50 });
       setTickets(data.tickets || []);
       setPagination(data.pagination || { totalItems: 0, currentPage: 1, totalPages: 1, itemsPerPage: 50 });
     } catch (err) {
-      console.error('Error al cargar tickets:', err);
       showNotification('Error al cargar los tickets. Por favor, recarga la página.', 'error');
     } finally {
       setLoading(false);
@@ -142,7 +171,6 @@ const Tickets = () => {
         setAdministrators(adminUsers);
       }
     } catch (err) {
-      console.error('Error al cargar usuarios:', err);
     }
   };
 
@@ -267,10 +295,9 @@ const Tickets = () => {
     showConfirmDialog('¿Estás seguro de que deseas eliminar este ticket? Esta acción no se puede deshacer.', async () => {
       try {
         await ticketsAPI.deleteTicket(ticket.id);
-        fetchTickets();
         showNotification('Ticket eliminado exitosamente', 'success');
+        // WebSocket will handle the list update automatically
       } catch (err) {
-        console.error('Error al eliminar:', err);
         if (err.response?.status === 403) {
           showNotification('No tienes permisos para eliminar este ticket', 'error');
         } else {
@@ -302,9 +329,9 @@ const Tickets = () => {
        formDataToSend.append('attachment', formData.attachment);
 
        const ticket = await ticketsAPI.createTicketWithAttachment(formDataToSend);
-       fetchTickets();
        setShowCreateModal(false);
        showNotification('Ticket creado exitosamente', 'success');
+       // WebSocket will handle the list update automatically
      } else {
        // Si no hay archivo, enviar como JSON normal
        const ticketData = {
@@ -316,12 +343,11 @@ const Tickets = () => {
        };
 
        const ticket = await ticketsAPI.createTicket(ticketData);
-       fetchTickets();
        setShowCreateModal(false);
        showNotification('Ticket creado exitosamente', 'success');
+       // WebSocket will handle the list update automatically
      }
    } catch (err) {
-     console.error('Error al crear ticket:', err);
      if (err.response?.status === 403) {
        showNotification('No tienes permisos para crear tickets', 'error');
      } else {
@@ -339,11 +365,10 @@ const Tickets = () => {
       let assignedToValue = editFormData.assignedTo;
       const updateData = { ...editFormData, assignedTo: assignedToValue || null };
       await ticketsAPI.updateTicket(editingTicket.id, updateData);
-      fetchTickets();
       setShowEditModal(false);
       showNotification('Ticket actualizado exitosamente', 'success');
+      // WebSocket will handle the list update automatically
     } catch (err) {
-      console.error('Error al actualizar ticket:', err);
       if (err.response?.status === 403) {
         showNotification('No tienes permisos para editar este ticket', 'error');
       } else {
@@ -366,7 +391,6 @@ const Tickets = () => {
      const messagesData = await messagesAPI.fetchMessages(ticket.id);
      setMessages(messagesData);
    } catch (err) {
-     console.error('Error al cargar detalles del ticket:', err);
      if (err.response?.status === 403) {
        showNotification('No tienes permisos para ver los detalles de este ticket', 'error');
        return;
@@ -394,7 +418,6 @@ const Tickets = () => {
       setNewMessage('');
       showNotification('Mensaje enviado exitosamente', 'success');
     } catch (err) {
-      console.error('Error al enviar mensaje:', err);
       if (err.response?.status === 403) {
         showNotification('No tienes permisos para enviar mensajes en este ticket', 'error');
       } else {
@@ -1231,7 +1254,6 @@ const Tickets = () => {
                                        className="w-full h-32 object-cover rounded-lg mb-2 cursor-pointer"
                                        onClick={() => window.open(`http://localhost:5000/uploads/tickets/${attachment.filename}`, '_blank')}
                                        onError={(e) => {
-                                         console.error('Error loading image:', e);
                                          e.target.style.display = 'none';
                                        }}
                                      />

@@ -6,7 +6,6 @@ const documentsAPI = {
       const response = await api.get('/documents');
       return response.data;
     } catch (error) {
-      console.error('Error fetching documents:', error);
       throw error;
     }
   },
@@ -16,7 +15,6 @@ const documentsAPI = {
       const response = await api.get(`/documents/search?q=${encodeURIComponent(query)}`);
       return response.data;
     } catch (error) {
-      console.error('Error searching documents:', error);
       throw error;
     }
   },
@@ -26,7 +24,6 @@ const documentsAPI = {
       const response = await api.get(`/documents/${id}`);
       return response.data;
     } catch (error) {
-      console.error('Error fetching document:', error);
       throw error;
     }
   },
@@ -38,7 +35,6 @@ const documentsAPI = {
       });
       return response.data;
     } catch (error) {
-      console.error('Error uploading document:', error);
       throw error;
     }
   },
@@ -48,7 +44,6 @@ const documentsAPI = {
       const response = await api.put(`/documents/${id}`, documentData);
       return response.data;
     } catch (error) {
-      console.error('Error updating document:', error);
       throw error;
     }
   },
@@ -57,7 +52,6 @@ const documentsAPI = {
     try {
       await api.delete(`/documents/${id}`);
     } catch (error) {
-      console.error('Error deleting document:', error);
       throw error;
     }
   },

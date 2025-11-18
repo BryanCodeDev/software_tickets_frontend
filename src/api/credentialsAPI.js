@@ -6,7 +6,6 @@ const credentialsAPI = {
       const response = await api.get('/credentials');
       return response.data;
     } catch (error) {
-      console.error('Error fetching credentials:', error);
       throw error;
     }
   },
@@ -16,7 +15,6 @@ const credentialsAPI = {
       const response = await api.get(`/credentials/${id}`);
       return response.data;
     } catch (error) {
-      console.error('Error fetching credential:', error);
       throw error;
     }
   },
@@ -26,7 +24,6 @@ const credentialsAPI = {
       const response = await api.post('/credentials', credentialData);
       return response.data;
     } catch (error) {
-      console.error('Error creating credential:', error);
       throw error;
     }
   },
@@ -36,7 +33,6 @@ const credentialsAPI = {
       const response = await api.put(`/credentials/${id}`, credentialData);
       return response.data;
     } catch (error) {
-      console.error('Error updating credential:', error);
       throw error;
     }
   },
@@ -45,7 +41,6 @@ const credentialsAPI = {
     try {
       await api.delete(`/credentials/${id}`);
     } catch (error) {
-      console.error('Error deleting credential:', error);
       throw error;
     }
   },

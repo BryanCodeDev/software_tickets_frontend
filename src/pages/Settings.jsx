@@ -43,7 +43,6 @@ const Settings = () => {
         isEnabled: status.enabled || false
       }));
     } catch (error) {
-      console.error('Error loading 2FA status:', error);
       // If token is invalid, don't show error to user, just keep default state
     }
   };
@@ -65,7 +64,6 @@ const Settings = () => {
       showNotification('Configuración guardada exitosamente', 'success');
     } catch (error) {
       showNotification('Error al guardar la configuración. Por favor, inténtalo de nuevo.', 'error');
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -118,7 +116,6 @@ const Settings = () => {
       }, 2000);
     } catch (error) {
       showNotification(error.response?.data?.error || error || 'Error al cambiar la contraseña. Por favor, inténtalo de nuevo.', 'error');
-      console.error(error);
     } finally {
       setPasswordLoading(false);
     }
@@ -142,7 +139,6 @@ const Settings = () => {
       }
     } catch (error) {
       showNotification(error || 'Error al cambiar configuración 2FA', 'error');
-      console.error(error);
     } finally {
       setTwoFactorLoading(false);
     }
@@ -165,7 +161,6 @@ const Settings = () => {
       showNotification('Autenticación de dos factores habilitada exitosamente', 'success');
     } catch (error) {
       showNotification(error || 'Código de verificación incorrecto', 'error');
-      console.error(error);
     } finally {
       setTwoFactorLoading(false);
     }

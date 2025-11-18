@@ -58,13 +58,10 @@ const Register = () => {
     }
 
     try {
-      console.log('Attempting to register user:', formData.name, formData.username, formData.email);
       await register(formData.name, formData.username, formData.email, formData.password);
-      console.log('Registration successful, navigating to login');
       navigate('/login');
       // Note: User is not automatically logged in after registration
     } catch (err) {
-      console.error('Registration failed:', err);
       setError(err.response?.data?.error || 'Error al registrarse');
     } finally {
       setLoading(false);

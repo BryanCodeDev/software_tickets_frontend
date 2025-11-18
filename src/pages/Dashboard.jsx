@@ -39,7 +39,6 @@ const Dashboard = () => {
       setSystemHealth(data.systemHealth || {});
       setLoading(false);
     } catch (err) {
-      console.error(err);
       setLoading(false);
     }
   };
