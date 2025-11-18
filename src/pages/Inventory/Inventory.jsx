@@ -3,6 +3,7 @@ import { FaBox, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, F
 import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
 import inventoryAPI from '../../api/inventoryAPI';
+import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 
 const Inventory = () => {
   const [inventory, setInventory] = useState([]);
@@ -342,67 +343,17 @@ const Inventory = () => {
   return (
     <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-4 px-3 sm:py-6 sm:px-4 lg:px-8">
       {/* Notification */}
-      {notification && (
-        <div className="fixed top-3 right-3 left-3 sm:top-4 sm:right-4 sm:left-auto z-50 max-w-sm animate-slide-in-right">
-          <div className={`flex items-center p-3 sm:p-4 rounded-xl shadow-2xl border-2 transition-all duration-300 ${
-            notification.type === 'success'
-              ? 'bg-white border-green-400 text-green-800'
-              : 'bg-white border-red-400 text-red-800'
-          }`}>
-            <div className="shrink-0">
-              {notification.type === 'success' ? (
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <FaCheck className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-                </div>
-              ) : (
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 rounded-full flex items-center justify-center">
-                  <FaTimes className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
-                </div>
-              )}
-            </div>
-            <div className="ml-3 sm:ml-4 flex-1">
-              <p className="text-xs sm:text-sm font-semibold">{notification.message}</p>
-            </div>
-            <button
-              onClick={() => setNotification(null)}
-              className="ml-3 sm:ml-4 text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <FaTimes className="w-3 h-3 sm:w-4 sm:h-4" />
-            </button>
-          </div>
-        </div>
-      )}
+      <NotificationSystem
+        notification={notification}
+        onClose={() => setNotification(null)}
+      />
 
       {/* Confirm Dialog */}
-      {confirmDialog && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4 animate-fade-in">
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 transform animate-scale-in">
-            <div className="p-4 lg:p-6">
-              <div className="flex items-center justify-center mb-4">
-                <div className="w-12 h-12 lg:w-16 lg:h-16 bg-linear-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
-                  <FaExclamationTriangle className="w-6 h-6 lg:w-8 lg:h-8 text-white" />
-                </div>
-              </div>
-              <h3 className="text-lg lg:text-xl font-bold text-gray-900 text-center mb-3">Confirmar Acción</h3>
-              <p className="text-xs sm:text-sm text-gray-600 text-center mb-4 lg:mb-6 leading-relaxed">{confirmDialog.message}</p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={() => setConfirmDialog(null)}
-                  className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all duration-200 hover:shadow-md text-sm lg:text-base touch-manipulation"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleConfirm}
-                  className="flex-1 px-4 py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base touch-manipulation"
-                >
-                  Confirmar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        confirmDialog={confirmDialog}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={handleConfirm}
+      />
 
       <div className="max-w-7xl mx-auto">
         {/* Header */}
@@ -454,217 +405,183 @@ const Inventory = () => {
 
         {/* Stats Cards */}
         {showStats && (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 animate-fade-in">
-            <div className="bg-linear-to-br from-blue-500 to-blue-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-1 lg:mb-2">
-                <FaBox className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
-                <span className="text-xl lg:text-3xl font-bold">{stats.total}</span>
-              </div>
-              <p className="text-xs lg:text-sm font-medium opacity-90">Total Equipos</p>
-              <p className="text-xs opacity-75 mt-1 hidden sm:block">Inventario completo</p>
-            </div>
-
-            <div className="bg-linear-to-br from-green-500 to-green-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-1 lg:mb-2">
-                <FaCheck className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
-                <span className="text-xl lg:text-3xl font-bold">{stats.disponible}</span>
-              </div>
-              <p className="text-xs lg:text-sm font-medium opacity-90">Disponibles</p>
-              <p className="text-xs opacity-75 mt-1 hidden sm:block">Listos para asignar</p>
-            </div>
-
-            <div className="bg-linear-to-br from-purple-500 to-purple-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-1 lg:mb-2">
-                <FaChartBar className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
-                <span className="text-xl lg:text-3xl font-bold">{stats.utilizationRate}%</span>
-              </div>
-              <p className="text-xs lg:text-sm font-medium opacity-90">Tasa de Uso</p>
-              <p className="text-xs opacity-75 mt-1 hidden sm:block">{stats.enUso} equipos activos</p>
-            </div>
-
-            <div className="bg-linear-to-br from-amber-500 to-orange-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg col-span-2 sm:col-span-2 lg:col-span-1">
-              <div className="flex items-center justify-between mb-1 lg:mb-2">
-                <FaExclamationTriangle className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
-                <span className="text-xl lg:text-3xl font-bold">{stats.warrantyExpiring}</span>
-              </div>
-              <p className="text-xs lg:text-sm font-medium opacity-90">Garantías por Vencer</p>
-              <p className="text-xs opacity-75 mt-1 hidden sm:block">Próximos 90 días</p>
-            </div>
-          </div>
+          <StatsPanel
+            showStats={showStats}
+            stats={stats}
+            statsConfig={[
+              {
+                key: 'total',
+                label: 'Total Equipos',
+                description: 'Inventario completo',
+                icon: FaBox,
+                gradient: 'from-blue-500 to-blue-600',
+                loading: loading
+              },
+              {
+                key: 'disponible',
+                label: 'Disponibles',
+                description: 'Listos para asignar',
+                icon: FaCheck,
+                gradient: 'from-green-500 to-green-600',
+                loading: loading
+              },
+              {
+                key: 'utilizationRate',
+                label: 'Tasa de Uso',
+                description: `${stats.enUso} equipos activos`,
+                icon: FaChartBar,
+                gradient: 'from-purple-500 to-purple-600',
+                loading: loading,
+                formatter: (value) => `${value}%`
+              },
+              {
+                key: 'warrantyExpiring',
+                label: 'Garantías por Vencer',
+                description: 'Próximos 90 días',
+                icon: FaExclamationTriangle,
+                gradient: 'from-amber-500 to-orange-600',
+                loading: loading
+              }
+            ]}
+          />
         )}
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 mb-6">
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 relative">
-                <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Buscar por IT, responsable, serial, marca..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-gray-700 font-medium text-sm lg:text-base"
-                />
-              </div>
-
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${
-                  showFilters
-                    ? 'bg-purple-600 text-white shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                <FaFilter className="w-4 h-4" />
-                <span>Filtros</span>
-              </button>
-            </div>
-
-            {showFilters && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6 border-t-2 border-gray-100 animate-fade-in">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Propiedad</label>
-                  <select
-                    value={filterPropiedad}
-                    onChange={(e) => setFilterPropiedad(e.target.value)}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm"
-                  >
-                    <option value="all">Todas las propiedades</option>
-                    <option value="PROPIO">Propio</option>
-                    <option value="MILENIO ARQUILER">Milenio Arq.</option>
-                    <option value="ARQUILER MOVISTAR">Arq. Movistar</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Estado</label>
-                  <select
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm"
-                  >
-                    <option value="all">Todos los estados</option>
-                    <option value="disponible">Disponible</option>
-                    <option value="en uso">En Uso</option>
-                    <option value="mantenimiento">Mantenimiento</option>
-                    <option value="fuera de servicio">Fuera de Servicio</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Área</label>
-                  <select
-                    value={filterArea}
-                    onChange={(e) => setFilterArea(e.target.value)}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm bg-white"
-                  >
-                    <option value="all">Todas las áreas</option>
-
-                    {/* Producción y Operaciones */}
-                    <optgroup label="Producción y Operaciones">
-                      <option value="MATERIA PRIMA">Materia Prima</option>
-                      <option value="PRODUCCION">Producción</option>
-                      <option value="PRODUCTO TERMINADO">Producto Terminado</option>
-                      <option value="DESPACHOS">Despachos</option>
-                      <option value="DEVOLUCIONES">Devoluciones</option>
-                      <option value="BODEGA">Bodega</option>
-                      <option value="RECEPCION">Recepción</option>
-                      <option value="ALMACENISTA">Almacenista</option>
-                    </optgroup>
-
-                    {/* Calidad y Laboratorio */}
-                    <optgroup label="Calidad y Laboratorio">
-                      <option value="CALIDAD">Calidad</option>
-                      <option value="CALIDAD OROCCO">Calidad Orocco</option>
-                      <option value="LABORATORIO">Laboratorio</option>
-                      <option value="INVESTIGACION">Investigación</option>
-                    </optgroup>
-
-                    {/* Administración y Finanzas */}
-                    <optgroup label="Administración y Finanzas">
-                      <option value="CONTABILIDAD">Contabilidad</option>
-                      <option value="COSTOS">Costos</option>
-                      <option value="TESORERIA">Tesorería</option>
-                      <option value="CARTERA">Cartera</option>
-                      <option value="FACTURACION">Facturación</option>
-                      <option value="COMPRAS">Compras</option>
-                      <option value="JEFE COMPRAS">Jefe Compras</option>
-                    </optgroup>
-
-                    {/* Ventas y Mercadeo */}
-                    <optgroup label="Ventas y Mercadeo">
-                      <option value="VENTAS">Ventas</option>
-                      <option value="MERCADEO">Mercadeo</option>
-                      <option value="DIRECCION VENTAS">Dirección Ventas</option>
-                      <option value="CALL CENTER">Call Center</option>
-                      <option value="SAC">SAC</option>
-                    </optgroup>
-
-                    {/* Recursos Humanos */}
-                    <optgroup label="Recursos Humanos">
-                      <option value="RH">Recursos Humanos</option>
-                      <option value="ADMINISTRATIVO">Administrativo</option>
-                    </optgroup>
-
-                    {/* Gerencia y Dirección */}
-                    <optgroup label="Gerencia y Dirección">
-                      <option value="GERENCIA">Gerencia</option>
-                      <option value="SUB GERENCIA">Sub Gerencia</option>
-                      <option value="EJECUTIVA">Ejecutiva</option>
-                      <option value="COORDINADOR">Coordinador</option>
-                      <option value="PLANEACION">Planeación</option>
-                    </optgroup>
-
-                    {/* Servicios Generales */}
-                    <optgroup label="Servicios Generales">
-                      <option value="MANTENIMIENTO">Mantenimiento</option>
-                      <option value="REPARACION">Reparación</option>
-                      <option value="SERVICIO GENERAL">Servicio General</option>
-                      <option value="AMBIENTAL Y SST">Ambiental y SST</option>
-                    </optgroup>
-
-                    {/* Sistemas y Tecnología */}
-                    <optgroup label="Sistemas y Tecnología">
-                      <option value="SISTEMAS">Sistemas</option>
-                      <option value="DESARROLLO">Desarrollo</option>
-                    </optgroup>
-
-                    {/* Control y Auditoría */}
-                    <optgroup label="Control y Auditoría">
-                      <option value="AUDITORIA">Auditoría</option>
-                      <option value="ARCHIVO">Archivo</option>
-                    </optgroup>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Ordenar por</label>
-                  <div className="flex gap-2">
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="flex-1 px-3 lg:px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm"
-                    >
-                      <option value="it">IT</option>
-                      <option value="propiedad">Propiedad</option>
-                      <option value="responsable">Responsable</option>
-                      <option value="area">Área</option>
-                      <option value="marca">Marca</option>
-                      <option value="status">Estado</option>
-                    </select>
-                    <button
-                      onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                      className="px-3 lg:px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all"
-                    >
-                      {sortOrder === 'asc' ? <FaSortAmountDown className="w-4 h-4 lg:w-5 lg:h-5" /> : <FaSortAmountUp className="w-4 h-4 lg:w-5 lg:h-5" />}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        <FilterPanel
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          showFilters={showFilters}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+          filters={[
+            {
+              label: 'Propiedad',
+              value: filterPropiedad,
+              onChange: setFilterPropiedad,
+              type: 'select',
+              options: [
+                { value: 'PROPIO', label: 'Propio' },
+                { value: 'MILENIO ARQUILER', label: 'Milenio Arq.' },
+                { value: 'ARQUILER MOVISTAR', label: 'Arq. Movistar' }
+              ]
+            },
+            {
+              label: 'Estado',
+              value: filterStatus,
+              onChange: setFilterStatus,
+              type: 'select',
+              options: [
+                { value: 'disponible', label: 'Disponible' },
+                { value: 'en uso', label: 'En Uso' },
+                { value: 'mantenimiento', label: 'Mantenimiento' },
+                { value: 'fuera de servicio', label: 'Fuera de Servicio' }
+              ]
+            },
+            {
+              label: 'Área',
+              value: filterArea,
+              onChange: setFilterArea,
+              type: 'multiselect',
+              optgroups: [
+                {
+                  label: 'Producción y Operaciones',
+                  options: [
+                    { value: 'MATERIA PRIMA', label: 'Materia Prima' },
+                    { value: 'PRODUCCION', label: 'Producción' },
+                    { value: 'PRODUCTO TERMINADO', label: 'Producto Terminado' },
+                    { value: 'DESPACHOS', label: 'Despachos' },
+                    { value: 'DEVOLUCIONES', label: 'Devoluciones' },
+                    { value: 'BODEGA', label: 'Bodega' },
+                    { value: 'RECEPCION', label: 'Recepción' },
+                    { value: 'ALMACENISTA', label: 'Almacenista' }
+                  ]
+                },
+                {
+                  label: 'Calidad y Laboratorio',
+                  options: [
+                    { value: 'CALIDAD', label: 'Calidad' },
+                    { value: 'CALIDAD OROCCO', label: 'Calidad Orocco' },
+                    { value: 'LABORATORIO', label: 'Laboratorio' },
+                    { value: 'INVESTIGACION', label: 'Investigación' }
+                  ]
+                },
+                {
+                  label: 'Administración y Finanzas',
+                  options: [
+                    { value: 'CONTABILIDAD', label: 'Contabilidad' },
+                    { value: 'COSTOS', label: 'Costos' },
+                    { value: 'TESORERIA', label: 'Tesorería' },
+                    { value: 'CARTERA', label: 'Cartera' },
+                    { value: 'FACTURACION', label: 'Facturación' },
+                    { value: 'COMPRAS', label: 'Compras' },
+                    { value: 'JEFE COMPRAS', label: 'Jefe Compras' }
+                  ]
+                },
+                {
+                  label: 'Ventas y Mercadeo',
+                  options: [
+                    { value: 'VENTAS', label: 'Ventas' },
+                    { value: 'MERCADEO', label: 'Mercadeo' },
+                    { value: 'DIRECCION VENTAS', label: 'Dirección Ventas' },
+                    { value: 'CALL CENTER', label: 'Call Center' },
+                    { value: 'SAC', label: 'SAC' }
+                  ]
+                },
+                {
+                  label: 'Recursos Humanos',
+                  options: [
+                    { value: 'RH', label: 'Recursos Humanos' },
+                    { value: 'ADMINISTRATIVO', label: 'Administrativo' }
+                  ]
+                },
+                {
+                  label: 'Gerencia y Dirección',
+                  options: [
+                    { value: 'GERENCIA', label: 'Gerencia' },
+                    { value: 'SUB GERENCIA', label: 'Sub Gerencia' },
+                    { value: 'EJECUTIVA', label: 'Ejecutiva' },
+                    { value: 'COORDINADOR', label: 'Coordinador' },
+                    { value: 'PLANEACION', label: 'Planeación' }
+                  ]
+                },
+                {
+                  label: 'Servicios Generales',
+                  options: [
+                    { value: 'MANTENIMIENTO', label: 'Mantenimiento' },
+                    { value: 'REPARACION', label: 'Reparación' },
+                    { value: 'SERVICIO GENERAL', label: 'Servicio General' },
+                    { value: 'AMBIENTAL Y SST', label: 'Ambiental y SST' }
+                  ]
+                },
+                {
+                  label: 'Sistemas y Tecnología',
+                  options: [
+                    { value: 'SISTEMAS', label: 'Sistemas' },
+                    { value: 'DESARROLLO', label: 'Desarrollo' }
+                  ]
+                },
+                {
+                  label: 'Control y Auditoría',
+                  options: [
+                    { value: 'AUDITORIA', label: 'Auditoría' },
+                    { value: 'ARCHIVO', label: 'Archivo' }
+                  ]
+                }
+              ]
+            }
+          ]}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onSortChange={setSortBy}
+          onSortOrderChange={(order) => setSortOrder(order)}
+          sortOptions={[
+            { value: 'it', label: 'IT' },
+            { value: 'propiedad', label: 'Propiedad' },
+            { value: 'responsable', label: 'Responsable' },
+            { value: 'area', label: 'Área' },
+            { value: 'marca', label: 'Marca' },
+            { value: 'status', label: 'Estado' }
+          ]}
+        />
 
         {/* Results Summary */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">

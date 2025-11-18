@@ -6,6 +6,14 @@ import ticketsAPI from '../../api/ticketsAPI';
 import messagesAPI from '../../api/messagesAPI';
 import usersAPI from '../../api/usersAPI';
 import { joinTicketRoom, leaveTicketRoom, onNewMessage, onMessageUpdated, onMessageDeleted, onTicketUpdated, onTicketCreated, onTicketDeleted, onTicketsListUpdated, offNewMessage, offMessageUpdated, offMessageDeleted, offTicketUpdated, offTicketCreated, offTicketDeleted, offTicketsListUpdated } from '../../api/socket';
+import {
+  TicketCreateModal,
+  TicketEditModal,
+  TicketDetailModal,
+  TicketCard,
+  TicketStats,
+  TicketPagination
+} from '../../components/Tickets';
 
 const Tickets = () => {
   const [tickets, setTickets] = useState([]);
@@ -534,45 +542,6 @@ const Tickets = () => {
     setConfirmDialog({ message, onConfirm });
   };
 
-  const getStatusColor = (status) => {
-    const colors = {
-      'abierto': 'bg-purple-100 text-purple-700 border-purple-200',
-      'en progreso': 'bg-blue-100 text-blue-700 border-blue-200',
-      'cerrado': 'bg-gray-200 text-gray-700 border-gray-300',
-      'resuelto': 'bg-green-100 text-green-700 border-green-200'
-    };
-    return colors[status?.toLowerCase()] || 'bg-gray-100 text-gray-600 border-gray-200';
-  };
-
-  const getPriorityColor = (priority) => {
-    const colors = {
-      'alta': 'bg-red-100 text-red-700 border-red-200',
-      'media': 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      'baja': 'bg-green-100 text-green-700 border-green-200'
-    };
-    return colors[priority?.toLowerCase()] || 'bg-gray-100 text-gray-600 border-gray-200';
-  };
-
-  const getStatusIcon = (status) => {
-    switch(status?.toLowerCase()) {
-      case 'abierto': return <FaExclamationTriangle />;
-      case 'en progreso': return <FaSpinner className="animate-spin" />;
-      case 'resuelto': return <FaCheckCircle />;
-      case 'cerrado': return <FaCheck />;
-      default: return <FaClock />;
-    }
-  };
-
-  const getTimeAgo = (date) => {
-    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-    if (seconds < 60) return 'Hace un momento';
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `Hace ${minutes}min`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `Hace ${hours}h`;
-    const days = Math.floor(hours / 24);
-    return `Hace ${days}d`;
-  };
 
   if (loading) {
     return (
@@ -702,57 +671,7 @@ const Tickets = () => {
         </div>
 
         {/* Stats Cards */}
-        {showStats && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 lg:gap-4 mb-6 animate-fade-in">
-            <div className="bg-linear-to-br from-blue-500 to-blue-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-1 lg:mb-2">
-                <FaClipboardList className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
-                <span className="text-xl lg:text-3xl font-bold">{stats.total}</span>
-              </div>
-              <p className="text-xs lg:text-sm font-medium opacity-90">Total Tickets</p>
-            </div>
-
-            <div className="bg-linear-to-br from-purple-500 to-purple-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-1 lg:mb-2">
-                <FaExclamationTriangle className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
-                <span className="text-xl lg:text-3xl font-bold">{stats.abiertos}</span>
-              </div>
-              <p className="text-xs lg:text-sm font-medium opacity-90">Abiertos</p>
-            </div>
-
-            <div className="bg-linear-to-br from-blue-500 to-indigo-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-1 lg:mb-2">
-                <FaSpinner className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
-                <span className="text-xl lg:text-3xl font-bold">{stats.enProgreso}</span>
-              </div>
-              <p className="text-xs lg:text-sm font-medium opacity-90">En Progreso</p>
-            </div>
-
-            <div className="bg-linear-to-br from-green-500 to-green-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-1 lg:mb-2">
-                <FaCheckCircle className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
-                <span className="text-xl lg:text-3xl font-bold">{stats.resueltos}</span>
-              </div>
-              <p className="text-xs lg:text-sm font-medium opacity-90">Resueltos</p>
-            </div>
-
-            <div className="bg-linear-to-br from-red-500 to-red-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-1 lg:mb-2">
-                <FaExclamationTriangle className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
-                <span className="text-xl lg:text-3xl font-bold">{stats.alta}</span>
-              </div>
-              <p className="text-xs lg:text-sm font-medium opacity-90">Alta Prioridad</p>
-            </div>
-
-            <div className="bg-linear-to-br from-violet-500 to-purple-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg col-span-2 sm:col-span-3 lg:col-span-1 xl:col-span-1">
-              <div className="flex items-center justify-between mb-1 lg:mb-2">
-                <FaChartBar className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
-                <span className="text-xl lg:text-3xl font-bold">{stats.resolutionRate}%</span>
-              </div>
-              <p className="text-xs lg:text-sm font-medium opacity-90">Tasa Resolución</p>
-            </div>
-          </div>
-        )}
+        {showStats && <TicketStats stats={stats} />}
 
         {/* Search and Filters */}
         <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 mb-6">
@@ -917,103 +836,14 @@ const Tickets = () => {
               <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
                   {filteredTickets.map((ticket) => (
-                    <div
+                    <TicketCard
                       key={ticket.id}
-                      className="bg-gray-50 rounded-xl lg:rounded-2xl border-2 border-gray-200 hover:border-purple-300 hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer"
-                      onClick={() => handleViewDetail(ticket)}
-                    >
-                      {/* Card Header */}
-                      <div className={`p-3 lg:p-4 border-b-2 ${
-                        ticket.priority === 'alta' ? 'bg-linear-to-r from-red-50 to-red-100 border-red-200' :
-                        ticket.priority === 'media' ? 'bg-linear-to-r from-yellow-50 to-yellow-100 border-yellow-200' :
-                        'bg-linear-to-r from-green-50 to-green-100 border-green-200'
-                      }`}>
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className={`p-1.5 lg:p-2 rounded-lg ${getStatusColor(ticket.status)}`}>
-                                {getStatusIcon(ticket.status)}
-                              </span>
-                              <div className="flex flex-wrap gap-1 lg:gap-2">
-                                <span className={`px-2 lg:px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(ticket.status)}`}>
-                                  {ticket.status}
-                                </span>
-                                <span className={`px-2 lg:px-3 py-1 rounded-full text-xs font-bold ${getPriorityColor(ticket.priority)}`}>
-                                  {ticket.priority}
-                                </span>
-                              </div>
-                            </div>
-                            <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-1 truncate">{ticket.title}</h3>
-                            <p className="text-xs text-gray-500">Ticket #{ticket.id}</p>
-                          </div>
-                          {canEditTicket(ticket) && (
-                            <div className="flex gap-1 lg:gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" onClick={(e) => e.stopPropagation()}>
-                              <button
-                                onClick={() => handleEdit(ticket)}
-                                className="p-1.5 lg:p-2 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg transition-all touch-manipulation"
-                                title="Editar"
-                              >
-                                <FaEdit className="w-3 h-3 lg:w-4 lg:h-4" />
-                              </button>
-                              {canDeleteTicket(ticket) && (
-                                <button
-                                  onClick={() => handleDelete(ticket)}
-                                  className="p-1.5 lg:p-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg transition-all touch-manipulation"
-                                  title="Eliminar"
-                                >
-                                  <FaTrash className="w-3 h-3 lg:w-4 lg:h-4" />
-                                </button>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Card Body */}
-                      <div className="p-4 lg:p-5">
-                        <p className="text-sm text-gray-700 mb-4 line-clamp-3">{ticket.description}</p>
-
-                        <div className="space-y-3">
-                          <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
-                            <div className="w-8 h-8 lg:w-10 lg:h-10 bg-purple-100 rounded-full flex items-center justify-center shrink-0">
-                              <FaUserCircle className="w-5 h-5 lg:w-6 lg:h-6 text-purple-600" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-xs text-gray-500 font-medium">Creado por</p>
-                              <p className="text-sm font-bold text-gray-900 truncate">
-                                {ticket.creator?.name || 'Usuario'}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-3">
-                            <div>
-                              <p className="text-xs text-gray-500 font-medium mb-1">Asignado a</p>
-                              <p className="text-sm font-semibold text-gray-900 truncate">
-                                {ticket.assignee?.name || 'Sin asignar'}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-500 font-medium mb-1">Actualizado</p>
-                              <p className="text-sm font-semibold text-gray-900">{getTimeAgo(ticket.updatedAt)}</p>
-                            </div>
-                          </div>
-
-                          <div className="pt-3 border-t border-gray-100">
-                            <div className="flex items-center justify-between text-xs text-gray-500">
-                              <span className="flex items-center gap-1">
-                                <FaClock className="w-3 h-3" />
-                                {new Date(ticket.createdAt).toLocaleDateString('es-ES')}
-                              </span>
-                              <button className="flex items-center gap-1 text-purple-600 hover:text-purple-700 font-semibold touch-manipulation">
-                                <FaEye className="w-3 h-3" />
-                                Ver detalles
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                      ticket={ticket}
+                      onViewDetail={handleViewDetail}
+                      onEdit={handleEdit}
+                      canEditTicket={canEditTicket}
+                      userRole={userRole}
+                    />
                   ))}
                 </div>
               </div>
@@ -1172,605 +1002,60 @@ const Tickets = () => {
 
             {/* Pagination Controls */}
             {pagination.totalPages > 1 && (
-              <div className="flex items-center justify-between bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 mt-6">
-                <div className="text-sm text-gray-600">
-                  Página {pagination.currentPage} de {pagination.totalPages}
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => fetchTickets(pagination.currentPage - 1)}
-                    disabled={pagination.currentPage <= 1}
-                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 disabled:text-gray-400 text-gray-700 font-semibold rounded-xl transition-all disabled:cursor-not-allowed"
-                  >
-                    Anterior
-                  </button>
-                  <button
-                    onClick={() => fetchTickets(pagination.currentPage + 1)}
-                    disabled={pagination.currentPage >= pagination.totalPages}
-                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 disabled:text-purple-100 text-white font-semibold rounded-xl transition-all disabled:cursor-not-allowed"
-                  >
-                    Siguiente
-                  </button>
-                </div>
-              </div>
+              <TicketPagination
+                pagination={pagination}
+                onPageChange={fetchTickets}
+              />
             )}
 
             {/* Detail Modal */}
-            {showDetailModal && selectedTicket && (
-              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-                <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-                  <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
-                    <div className="flex items-center justify-between">
-                      <div className="min-w-0 flex-1">
-                        <h2 className="text-xl lg:text-2xl font-bold text-white mb-2 truncate">{selectedTicket.title}</h2>
-                        <div className="flex flex-wrap gap-2">
-                          <span className={`px-2 lg:px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-white`}>
-                            Ticket #{selectedTicket.id}
-                          </span>
-                          <span className={`px-2 lg:px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(selectedTicket.status)}`}>
-                            {selectedTicket.status}
-                          </span>
-                          <span className={`px-2 lg:px-3 py-1 rounded-full text-xs font-bold ${getPriorityColor(selectedTicket.priority)}`}>
-                            Prioridad {selectedTicket.priority}
-                          </span>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => setShowDetailModal(false)}
-                        className="p-2 hover:bg-white/20 rounded-lg transition-all text-white shrink-0"
-                      >
-                        <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="p-4 lg:p-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
-                      {/* Main Content */}
-                      <div className="lg:col-span-2 space-y-4 lg:space-y-6">
-                        {/* Description */}
-                        <div className="bg-gray-50 rounded-xl p-4 lg:p-5 border-2 border-gray-200">
-                          <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                            <FaClipboardList className="text-purple-600 w-4 h-4 lg:w-5 lg:h-5" />
-                            Descripción del Problema
-                          </h3>
-                          <p className="text-sm lg:text-base text-gray-700 leading-relaxed">{selectedTicket.description}</p>
-                        </div>
-
-                        {/* Attachments */}
-                         {selectedTicket.TicketAttachments && selectedTicket.TicketAttachments.length > 0 && (
-                           <div className="bg-gray-50 rounded-xl p-4 lg:p-5 border-2 border-gray-200">
-                             <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                               <FaImage className="text-purple-600 w-4 h-4 lg:w-5 lg:h-5" />
-                               Archivos Adjuntos
-                             </h3>
-                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                               {selectedTicket.TicketAttachments.map((attachment) => (
-                                 <div key={attachment.id} className="bg-white rounded-lg p-3 border border-gray-200">
-                                   {attachment.type.startsWith('image/') ? (
-                                     <img
-                                       src={`http://localhost:5000/uploads/tickets/${attachment.filename}`}
-                                       alt={attachment.originalName}
-                                       className="w-full h-32 object-cover rounded-lg mb-2 cursor-pointer"
-                                       onClick={() => window.open(`http://localhost:5000/uploads/tickets/${attachment.filename}`, '_blank')}
-                                       onError={(e) => {
-                                         e.target.style.display = 'none';
-                                       }}
-                                     />
-                                   ) : attachment.type.startsWith('video/') ? (
-                                     <video
-                                       controls
-                                       className="w-full h-32 object-cover rounded-lg mb-2"
-                                     >
-                                       <source src={`http://localhost:5000/uploads/tickets/${attachment.filename}`} type={attachment.type} />
-                                       Tu navegador no soporta el elemento de video.
-                                     </video>
-                                   ) : (
-                                     <div className="w-full h-32 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
-                                       <FaFile className="w-8 h-8 text-gray-400" />
-                                     </div>
-                                   )}
-                                   <p className="text-sm font-medium text-gray-900 truncate">{attachment.originalName}</p>
-                                   <p className="text-xs text-gray-500">
-                                     {(attachment.size / 1024 / 1024).toFixed(2)} MB
-                                   </p>
-                                   {attachment.type.startsWith('image/') && (
-                                     <button
-                                       onClick={() => window.open(`http://localhost:5000/uploads/tickets/${attachment.filename}`, '_blank')}
-                                       className="text-xs text-purple-600 hover:text-purple-700 mt-1"
-                                     >
-                                       Ver imagen completa
-                                     </button>
-                                   )}
-                                 </div>
-                               ))}
-                             </div>
-                           </div>
-                         )}
-
-                        {/* Chat Section */}
-                        <div className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden">
-                          <div className="bg-linear-to-r from-purple-100 to-violet-100 px-4 lg:px-5 py-3 border-b-2 border-gray-200">
-                            <h3 className="text-base lg:text-lg font-bold text-gray-900 flex items-center gap-2">
-                              <FaComment className="text-purple-600 w-4 h-4 lg:w-5 lg:h-5" />
-                              Conversación del Ticket ({messages.length})
-                            </h3>
-                          </div>
-
-                          <div className="p-4 lg:p-5">
-                            <div className="space-y-3 lg:space-y-4 max-h-80 lg:max-h-96 overflow-y-auto mb-4">
-                              {messages.length === 0 ? (
-                                <div className="text-center py-6 lg:py-8">
-                                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <FaComment className="w-6 h-6 lg:w-8 lg:h-8 text-gray-400" />
-                                  </div>
-                                  <p className="text-sm text-gray-500">
-                                    No hay mensajes aún. ¡Inicia la conversación!
-                                  </p>
-                                </div>
-                              ) : (
-                                messages.map((message) => (
-                                  <div key={message.id} className={`flex ${message.sender?.id === user?.id ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-xs lg:max-w-md px-3 lg:px-4 py-2 lg:py-3 rounded-2xl ${
-                                      message.sender?.id === user?.id
-                                        ? 'bg-linear-to-r from-purple-600 to-violet-600 text-white'
-                                        : 'bg-gray-100 border-2 border-gray-200 text-gray-900'
-                                    }`}>
-                                      <div className="flex items-center justify-between mb-1 lg:mb-2">
-                                        <span className={`text-xs font-bold ${
-                                          message.sender?.id === user?.id ? 'text-purple-100' : 'text-gray-600'
-                                        }`}>
-                                          {message.sender?.name || 'Usuario'}
-                                        </span>
-                                        <span className={`text-xs ${
-                                          message.sender?.id === user?.id ? 'text-purple-200' : 'text-gray-400'
-                                        }`}>
-                                          {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </span>
-                                      </div>
-                                      <p className="text-sm leading-relaxed">{message.content}</p>
-                                    </div>
-                                  </div>
-                                ))
-                              )}
-                              <div ref={messagesEndRef} />
-                            </div>
-
-                            {/* Send Message Form */}
-                            {canSendMessage(selectedTicket) ? (
-                              <form onSubmit={handleSendMessage} className="flex gap-2 lg:gap-3">
-                                <input
-                                  type="text"
-                                  placeholder="Escribe un mensaje..."
-                                  value={newMessage}
-                                  onChange={(e) => setNewMessage(e.target.value)}
-                                  className="flex-1 px-3 lg:px-4 py-2 lg:py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                                />
-                                <button
-                                  type="submit"
-                                  className="px-4 lg:px-5 py-2 lg:py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl transition-all flex items-center gap-2 disabled:opacity-50"
-                                  disabled={!newMessage.trim()}
-                                >
-                                  <FaPaperPlane className="w-3 h-3 lg:w-4 lg:h-4" />
-                                </button>
-                              </form>
-                            ) : (
-                              <div className="text-center py-3 lg:py-4">
-                                <p className="text-sm text-gray-500">
-                                  No tienes permisos para enviar mensajes en este ticket
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Sidebar */}
-                      <div className="space-y-4 lg:space-y-6">
-                        {/* Ticket Info Card */}
-                        <div className="bg-linear-to-br from-purple-50 to-violet-50 rounded-xl p-4 lg:p-5 border-2 border-purple-200">
-                          <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2 text-sm lg:text-base">
-                            <FaClipboardList className="text-purple-600 w-4 h-4 lg:w-5 lg:h-5" />
-                            Información del Ticket
-                          </h4>
-                          <div className="space-y-3 text-sm">
-                            <div className="bg-white rounded-lg p-3 border border-purple-100">
-                              <p className="text-xs text-gray-500 font-medium mb-1">Creado por</p>
-                              <p className="font-bold text-gray-900 flex items-center gap-2">
-                                <FaUserCircle className="text-purple-600 w-4 h-4 lg:w-5 lg:h-5" />
-                                <span className="truncate">{selectedTicket.creator?.name || 'Usuario'}</span>
-                              </p>
-                            </div>
-
-                            <div className="bg-white rounded-lg p-3 border border-purple-100">
-                              <p className="text-xs text-gray-500 font-medium mb-1">Asignado a</p>
-                              <p className="font-bold text-gray-900 flex items-center gap-2">
-                                <FaUserCircle className="text-blue-600 w-4 h-4 lg:w-5 lg:h-5" />
-                                <span className="truncate">{selectedTicket.assignee?.name || 'Sin asignar'}</span>
-                              </p>
-                            </div>
-
-                            <div className="bg-white rounded-lg p-3 border border-purple-100">
-                              <p className="text-xs text-gray-500 font-medium mb-1">Fecha de creación</p>
-                              <p className="font-bold text-gray-900 flex items-center gap-2">
-                                <FaClock className="text-green-600 w-4 h-4 lg:w-5 lg:h-5" />
-                                <span className="text-xs lg:text-sm">
-                                  {new Date(selectedTicket.createdAt).toLocaleDateString('es-ES', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                  })}
-                                </span>
-                              </p>
-                            </div>
-
-                            <div className="bg-white rounded-lg p-3 border border-purple-100">
-                              <p className="text-xs text-gray-500 font-medium mb-1">Última actualización</p>
-                              <p className="font-bold text-gray-900 flex items-center gap-2">
-                                <FaClock className="text-orange-600 w-4 h-4 lg:w-5 lg:h-5" />
-                                {getTimeAgo(selectedTicket.updatedAt)}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Quick Actions */}
-                        <div className="bg-white rounded-xl p-4 lg:p-5 border-2 border-gray-200">
-                          <h4 className="font-bold text-gray-900 mb-4 text-sm lg:text-base">Acciones Rápidas</h4>
-                          <div className="space-y-2">
-                            {canEditTicket(selectedTicket) && (
-                              <button
-                                onClick={() => {
-                                  setShowDetailModal(false);
-                                  handleEdit(selectedTicket);
-                                }}
-                                className="w-full px-3 lg:px-4 py-2 lg:py-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-xl transition-all flex items-center gap-2 text-sm lg:text-base touch-manipulation"
-                              >
-                                <FaEdit className="w-3 h-3 lg:w-4 lg:h-4" />
-                                Editar Ticket
-                              </button>
-                            )}
-
-                            {canDeleteTicket(selectedTicket) && (
-                              <button
-                                onClick={() => {
-                                  setShowDetailModal(false);
-                                  handleDelete(selectedTicket);
-                                }}
-                                className="w-full px-3 lg:px-4 py-2 lg:py-3 bg-red-50 hover:bg-red-100 text-red-700 font-semibold rounded-xl transition-all flex items-center gap-2 text-sm lg:text-base touch-manipulation"
-                              >
-                                <FaTrash className="w-3 h-3 lg:w-4 lg:h-4" />
-                                Eliminar Ticket
-                              </button>
-                            )}
-
-                            <button
-                              onClick={() => setShowDetailModal(false)}
-                              className="w-full px-3 lg:px-4 py-2 lg:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2 text-sm lg:text-base touch-manipulation"
-                            >
-                              <FaTimes className="w-3 h-3 lg:w-4 lg:h-4" />
-                              Cerrar
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            <TicketDetailModal
+              showDetailModal={showDetailModal}
+              setShowDetailModal={setShowDetailModal}
+              selectedTicket={selectedTicket}
+              comments={comments}
+              messages={messages}
+              newMessage={newMessage}
+              setNewMessage={setNewMessage}
+              handleSendMessage={handleSendMessage}
+              handleViewDetail={handleViewDetail}
+              handleEdit={handleEdit}
+              handleDelete={handleDelete}
+              canEditTicket={canEditTicket}
+              canDeleteTicket={canDeleteTicket}
+              canSendMessage={canSendMessage}
+              user={user}
+            />
      
             {/* Edit Modal */}
             {/* Create Modal */}
-            {showCreateModal && (
-              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-                <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-                  <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-xl lg:text-2xl font-bold text-white">Crear Nuevo Ticket</h2>
-                      <button
-                        onClick={() => setShowCreateModal(false)}
-                        className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
-                      >
-                        <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
-                      </button>
-                    </div>
-                  </div>
-
-                  <form onSubmit={handleCreateSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Categoría del Problema *
-                        </label>
-                        <select
-                          value={formData.title}
-                          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                          required
-                        >
-                          <option value="">Selecciona una categoría</option>
-                          {standardizedTitles.map((title, index) => (
-                            <option key={index} value={title}>{title}</option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Descripción *
-                        </label>
-                        <textarea
-                          value={formData.description}
-                          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium resize-none text-sm lg:text-base"
-                          rows="4 lg:rows-5"
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Prioridad *
-                        </label>
-                        <select
-                          value={formData.priority}
-                          onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                        >
-                          <option value="baja">🟢 Baja</option>
-                          <option value="media">🟡 Media</option>
-                          <option value="alta">🔴 Alta</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Estado *
-                        </label>
-                        <select
-                          value={formData.status}
-                          onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                        >
-                          <option value="abierto">Abierto</option>
-                          <option value="en progreso">En Progreso</option>
-                          <option value="resuelto">Resuelto</option>
-                          <option value="cerrado">Cerrado</option>
-                        </select>
-                      </div>
-
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Archivo adjunto (opcional)
-                        </label>
-                        <input
-                          type="file"
-                          accept="image/*,video/*"
-                          onChange={(e) => setFormData({ ...formData, attachment: e.target.files[0] })}
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">Puedes subir imágenes o videos (máx. 10MB)</p>
-                      </div>
-
-                      {(userRole === 'Administrador' || userRole === 'Técnico') && (
-                        <div className="md:col-span-2">
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            Asignar a
-                          </label>
-                          <select
-                            value={formData.assignedTo}
-                            onChange={(e) => setFormData({ ...formData, assignedTo: e.target.value })}
-                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                          >
-                            <option value="">Sin asignar</option>
-                            {technicians.length > 0 && (
-                              <optgroup label="👨‍💻 Técnicos">
-                                <option value="all-technicians">Todos los técnicos</option>
-                                {technicians.map((tech) => (
-                                  <option key={tech.id} value={tech.id}>
-                                    {tech.name || tech.username}
-                                  </option>
-                                ))}
-                              </optgroup>
-                            )}
-                            {administrators.length > 0 && (
-                              <optgroup label="👨‍💼 Administradores">
-                                <option value="all-administrators">Todos los administradores</option>
-                                {administrators.map((admin) => (
-                                  <option key={admin.id} value={admin.id}>
-                                    {admin.name || admin.username}
-                                  </option>
-                                ))}
-                              </optgroup>
-                            )}
-                          </select>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-3 pt-4 lg:pt-6 border-t-2 border-gray-100">
-                      <button
-                        type="button"
-                        onClick={() => setShowCreateModal(false)}
-                        className="px-4 lg:px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all text-sm lg:text-base"
-                        disabled={formLoading}
-                      >
-                        Cancelar
-                      </button>
-                      <button
-                        type="submit"
-                        className="flex-1 px-4 lg:px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-sm lg:text-base"
-                        disabled={formLoading}
-                      >
-                        {formLoading ? (
-                          <>
-                            <FaSpinner className="w-4 h-4 lg:w-5 lg:h-5 animate-spin" />
-                            Creando...
-                          </>
-                        ) : (
-                          <>
-                            <FaPlus className="w-4 h-4 lg:w-5 lg:h-5" />
-                            Crear Ticket
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
+            <TicketCreateModal
+              showCreateModal={showCreateModal}
+              setShowCreateModal={setShowCreateModal}
+              formData={formData}
+              setFormData={setFormData}
+              handleCreateSubmit={handleCreateSubmit}
+              formLoading={formLoading}
+              userRole={userRole}
+              technicians={technicians}
+              administrators={administrators}
+              standardizedTitles={standardizedTitles}
+            />
 
             {/* Edit Modal */}
-            {showEditModal && editingTicket && (
-              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-                <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-                  <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-xl lg:text-2xl font-bold text-white">Editar Ticket #{editingTicket.id}</h2>
-                      <button
-                        onClick={() => setShowEditModal(false)}
-                        className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
-                      >
-                        <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
-                      </button>
-                    </div>
-                  </div>
-
-                  <form onSubmit={handleEditSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-                      {canEditTicket(editingTicket) && (
-                        <>
-                          <div className="md:col-span-2">
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                              Categoría del Problema *
-                            </label>
-                            <select
-                              value={editFormData.title}
-                              onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                              required
-                            >
-                              <option value="">Selecciona una categoría</option>
-                              {standardizedTitles.map((title, index) => (
-                                <option key={index} value={title}>{title}</option>
-                              ))}
-                            </select>
-                          </div>
-
-                          <div className="md:col-span-2">
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                              Descripción *
-                            </label>
-                            <textarea
-                              value={editFormData.description}
-                              onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
-                              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium resize-none text-sm lg:text-base"
-                              rows="4 lg:rows-5"
-                              required
-                            />
-                          </div>
-                        </>
-                      )}
-
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Prioridad *
-                        </label>
-                        <select
-                          value={editFormData.priority}
-                          onChange={(e) => setEditFormData({ ...editFormData, priority: e.target.value })}
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                        >
-                          <option value="baja">🟢 Baja</option>
-                          <option value="media">🟡 Media</option>
-                          <option value="alta">🔴 Alta</option>
-                        </select>
-                      </div>
-
-                      {(userRole === 'Administrador' || userRole === 'Técnico') && (
-                        <div>
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            Estado *
-                          </label>
-                          <select
-                            value={editFormData.status}
-                            onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
-                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                          >
-                            <option value="abierto">Abierto</option>
-                            <option value="en progreso">En Progreso</option>
-                            <option value="resuelto">Resuelto</option>
-                            <option value="cerrado">Cerrado</option>
-                          </select>
-                        </div>
-                      )}
-
-                      {(userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Empleado') && (
-                        <div className="md:col-span-2">
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            Asignar a
-                          </label>
-                          <select
-                            value={editFormData.assignedTo}
-                            onChange={(e) => setEditFormData({ ...editFormData, assignedTo: e.target.value })}
-                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                          >
-                            <option value="">Sin asignar</option>
-                            {technicians.length > 0 && (
-                              <optgroup label="👨‍💻 Técnicos">
-                                {technicians.map((tech) => (
-                                  <option key={tech.id} value={tech.id}>
-                                    {tech.name || tech.username}
-                                  </option>
-                                ))}
-                              </optgroup>
-                            )}
-                            {administrators.length > 0 && (
-                              <optgroup label="👨‍💼 Administradores">
-                                {administrators.map((admin) => (
-                                  <option key={admin.id} value={admin.id}>
-                                    {admin.name || admin.username}
-                                  </option>
-                                ))}
-                              </optgroup>
-                            )}
-                          </select>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-3 pt-4 lg:pt-6 border-t-2 border-gray-100">
-                      <button
-                        type="button"
-                        onClick={() => setShowEditModal(false)}
-                        className="px-4 lg:px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all text-sm lg:text-base"
-                        disabled={formLoading}
-                      >
-                        Cancelar
-                      </button>
-                      <button
-                        type="submit"
-                        className="flex-1 px-4 lg:px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-sm lg:text-base"
-                        disabled={formLoading}
-                      >
-                        {formLoading ? (
-                          <>
-                            <FaSpinner className="w-4 h-4 lg:w-5 lg:h-5 animate-spin" />
-                            Actualizando...
-                          </>
-                        ) : (
-                          <>
-                            <FaCheck className="w-4 h-4 lg:w-5 lg:h-5" />
-                            Actualizar Ticket
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
+            <TicketEditModal
+              showEditModal={showEditModal}
+              setShowEditModal={setShowEditModal}
+              editingTicket={editingTicket}
+              editFormData={editFormData}
+              setEditFormData={setEditFormData}
+              handleEditSubmit={handleEditSubmit}
+              formLoading={formLoading}
+              userRole={userRole}
+              technicians={technicians}
+              administrators={administrators}
+              standardizedTitles={standardizedTitles}
+            />
 
           </>
         )}

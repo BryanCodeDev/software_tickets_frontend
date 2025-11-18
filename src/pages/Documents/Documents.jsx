@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { documentsAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes, FaFileAlt, FaTag, FaSearch, FaSortAmountDown, FaSortAmountUp, FaFilePdf, FaFileWord, FaFileExcel, FaFileImage, FaFileArchive, FaClock, FaUser } from 'react-icons/fa';
+import { NotificationSystem, ConfirmDialog, FilterPanel } from '../../components/common';
 
 const Documents = () => {
   const [documents, setDocuments] = useState([]);
@@ -265,67 +266,17 @@ const Documents = () => {
   return (
     <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50">
       {/* Notification */}
-      {notification && (
-        <div className="fixed top-4 right-4 z-50 max-w-md animate-in slide-in-from-right">
-          <div className={`flex items-center p-4 rounded-xl shadow-2xl transition-all duration-300 backdrop-blur-sm ${
-            notification.type === 'success'
-              ? 'bg-white border-l-4 border-green-500'
-              : 'bg-white border-l-4 border-red-500'
-          }`}>
-            <div className="shrink-0">
-              {notification.type === 'success' ? (
-                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <FaCheck className="w-5 h-5 text-green-600" />
-                </div>
-              ) : (
-                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                  <FaTimes className="w-5 h-5 text-red-600" />
-                </div>
-              )}
-            </div>
-            <div className="ml-4 flex-1">
-              <p className="text-sm font-semibold text-gray-900">{notification.message}</p>
-            </div>
-            <button
-              onClick={() => setNotification(null)}
-              className="ml-4 text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <FaTimes className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      )}
+      <NotificationSystem
+        notification={notification}
+        onClose={() => setNotification(null)}
+      />
 
-      {/* Confirmation Dialog */}
-      {confirmDialog && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all animate-in zoom-in-95">
-            <div className="p-6">
-              <div className="flex items-center justify-center mb-4">
-                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-                  <FaTrash className="w-8 h-8 text-red-600" />
-                </div>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 text-center mb-2">Confirmar Eliminación</h3>
-              <p className="text-gray-600 text-center mb-6">{confirmDialog.message}</p>
-              <div className="flex gap-3">
-                <button
-                  onClick={handleCancelConfirm}
-                  className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleConfirm}
-                  className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
-                >
-                  Eliminar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        confirmDialog={confirmDialog}
+        onClose={handleCancelConfirm}
+        onConfirm={handleConfirm}
+      />
 
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
@@ -358,63 +309,31 @@ const Documents = () => {
       </div>
 
 
-      {/* Barra de búsqueda y filtros simplificados */}
+      {/* Filter Panel */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6 mb-6">
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1 relative">
-              <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Buscar documentos por título, descripción, tipo o categoría..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-gray-700 font-medium"
-              />
-            </div>
-
-            <div className="flex gap-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Tipo</label>
-                <select
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
-                >
-                  <option value="all">Todos los tipos</option>
-                  {uniqueTypes.map((type, index) => (
-                    <option key={index} value={type}>{type}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Ordenar por</label>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
-                >
-                  <option value="createdAt">Fecha de creación</option>
-                  <option value="title">Título</option>
-                  <option value="type">Tipo</option>
-                  <option value="version">Versión</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Orden</label>
-                <button
-                  onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                  className="w-full px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all flex items-center justify-center gap-2"
-                >
-                  {sortOrder === 'asc' ? <FaSortAmountDown className="w-5 h-5" /> : <FaSortAmountUp className="w-5 h-5" />}
-                  <span className="text-sm font-medium">{sortOrder === 'asc' ? 'Asc' : 'Desc'}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <FilterPanel
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          filters={[
+            {
+              label: 'Tipo',
+              value: filterType,
+              onChange: setFilterType,
+              type: 'select',
+              options: uniqueTypes.map(type => ({ value: type, label: type }))
+            }
+          ]}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onSortChange={setSortBy}
+          onSortOrderChange={(order) => setSortOrder(order)}
+          sortOptions={[
+            { value: 'createdAt', label: 'Fecha de creación' },
+            { value: 'title', label: 'Título' },
+            { value: 'type', label: 'Tipo' },
+            { value: 'version', label: 'Versión' }
+          ]}
+        />
 
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm text-gray-600 font-medium">

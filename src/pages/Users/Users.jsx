@@ -3,6 +3,7 @@ import { usersAPI } from '../../api';
 import { inventoryAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSearch, FaFilter, FaUserShield, FaUserCog, FaUser, FaChartBar, FaDownload, FaSortAmountDown, FaSortAmountUp, FaClock, FaEnvelope, FaKey, FaToggleOn, FaToggleOff, FaBan } from 'react-icons/fa';
+import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -320,65 +321,17 @@ const Users = () => {
   return (
     <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
       {/* Notification */}
-      {notification && (
-        <div className="fixed top-4 right-4 z-50 max-w-sm">
-          <div className={`flex items-center p-4 rounded-lg shadow-lg transition-all duration-300 ${
-            notification.type === 'success'
-              ? 'bg-green-50 border border-green-200 text-green-800'
-              : 'bg-red-50 border border-red-200 text-red-800'
-          }`}>
-            <div className="shrink-0">
-              {notification.type === 'success' ? (
-                <FaCheck className="w-5 h-5 text-green-400" />
-              ) : (
-                <FaTimes className="w-5 h-5 text-red-400" />
-              )}
-            </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium">{notification.message}</p>
-            </div>
-            <div className="ml-auto pl-3">
-              <button
-                onClick={() => setNotification(null)}
-                className="inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 hover:bg-gray-50"
-              >
-                <FaTimes className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <NotificationSystem
+        notification={notification}
+        onClose={() => setNotification(null)}
+      />
 
-      {/* Custom Confirmation Dialog */}
-      {confirmDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full border border-gray-200">
-            <div className="p-4 sm:p-6">
-              <div className="flex items-center justify-center mb-4">
-                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                  <FaTimes className="w-6 h-6 text-red-600" />
-                </div>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">Confirmar Acción</h3>
-              <p className="text-sm text-gray-600 text-center mb-6">{confirmDialog.message}</p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={handleCancelConfirm}
-                  className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleConfirm}
-                  className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  Confirmar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        confirmDialog={confirmDialog}
+        onClose={handleCancelConfirm}
+        onConfirm={handleConfirm}
+      />
 
       <div>
         <div className="mb-8">
@@ -413,126 +366,81 @@ const Users = () => {
           </div>
         </div>
 
-        {/* NUEVA FUNCIONALIDAD: Panel de estadísticas */}
+        {/* Stats Panel */}
         {showStats && (
-          <div className="mb-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 animate-in fade-in">
-              <div className="bg-linear-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <FaUsers className="w-8 h-8 opacity-80" />
-                  <span className="text-3xl font-bold">{stats.total}</span>
-                </div>
-                <p className="text-sm font-medium opacity-90">Total Usuarios</p>
-              </div>
-
-              <div className="bg-linear-to-br from-purple-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <FaUserShield className="w-8 h-8 opacity-80" />
-                  <span className="text-3xl font-bold">{stats.admins}</span>
-                </div>
-                <p className="text-sm font-medium opacity-90">Administradores</p>
-              </div>
-
-              <div className="bg-linear-to-br from-blue-500 to-indigo-600 rounded-2xl p-5 text-white shadow-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <FaUserCog className="w-8 h-8 opacity-80" />
-                  <span className="text-3xl font-bold">{stats.technicians}</span>
-                </div>
-                <p className="text-sm font-medium opacity-90">Técnicos</p>
-              </div>
-
-              <div className="bg-linear-to-br from-green-500 to-teal-600 rounded-2xl p-5 text-white shadow-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <FaUser className="w-8 h-8 opacity-80" />
-                  <span className="text-3xl font-bold">{stats.employees}</span>
-                </div>
-                <p className="text-sm font-medium opacity-90">Empleados</p>
-              </div>
-
-              <div className="bg-linear-to-br from-violet-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <FaCheck className="w-8 h-8 opacity-80" />
-                  <span className="text-3xl font-bold">{stats.withIT}</span>
-                </div>
-                <p className="text-sm font-medium opacity-90">Con IT Asignado</p>
-              </div>
-            </div>
-          </div>
+          <StatsPanel
+            showStats={showStats}
+            stats={stats}
+            statsConfig={[
+              {
+                key: 'total',
+                label: 'Total Usuarios',
+                icon: FaUsers,
+                gradient: 'from-blue-500 to-blue-600',
+                loading: loading
+              },
+              {
+                key: 'admins',
+                label: 'Administradores',
+                icon: FaUserShield,
+                gradient: 'from-purple-500 to-purple-600',
+                loading: loading
+              },
+              {
+                key: 'technicians',
+                label: 'Técnicos',
+                icon: FaUserCog,
+                gradient: 'from-blue-500 to-indigo-600',
+                loading: loading
+              },
+              {
+                key: 'employees',
+                label: 'Empleados',
+                icon: FaUser,
+                gradient: 'from-green-500 to-teal-600',
+                loading: loading
+              },
+              {
+                key: 'withIT',
+                label: 'Con IT Asignado',
+                icon: FaCheck,
+                gradient: 'from-violet-500 to-purple-600',
+                loading: loading
+              }
+            ]}
+          />
         )}
 
-        {/* NUEVA FUNCIONALIDAD: Barra de búsqueda y filtros */}
-        <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6 mb-6">
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1 relative">
-              <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Buscar por username, nombre, email o IT..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-gray-700 font-medium"
-              />
-            </div>
-            
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
-                showFilters 
-                  ? 'bg-purple-600 text-white shadow-lg' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <FaFilter className="w-4 h-4" />
-              <span>Filtros</span>
-            </button>
-          </div>
-
-          {/* NUEVA FUNCIONALIDAD: Panel de filtros expandible */}
-          {showFilters && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-6 border-t-2 border-gray-100 animate-in fade-in">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Rol</label>
-                <select
-                  value={filterRole}
-                  onChange={(e) => setFilterRole(e.target.value)}
-                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
-                >
-                  <option value="all">Todos los roles</option>
-                  <option value="Administrador">Administrador</option>
-                  <option value="Técnico">Técnico</option>
-                  <option value="Empleado">Empleado</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Ordenar por</label>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium"
-                >
-                  <option value="username">Username</option>
-                  <option value="name">Nombre</option>
-                  <option value="email">Email</option>
-                  <option value="Role">Rol</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Orden</label>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                    className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all flex items-center justify-center gap-2"
-                  >
-                    {sortOrder === 'asc' ? <FaSortAmountDown className="w-5 h-5" /> : <FaSortAmountUp className="w-5 h-5" />}
-                    <span className="text-sm font-medium">{sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+        {/* Filter Panel */}
+        <FilterPanel
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          showFilters={showFilters}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+          filters={[
+            {
+              label: 'Rol',
+              value: filterRole,
+              onChange: setFilterRole,
+              type: 'select',
+              options: [
+                { value: 'Administrador', label: 'Administrador' },
+                { value: 'Técnico', label: 'Técnico' },
+                { value: 'Empleado', label: 'Empleado' }
+              ]
+            }
+          ]}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onSortChange={setSortBy}
+          onSortOrderChange={(order) => setSortOrder(order)}
+          sortOptions={[
+            { value: 'username', label: 'Username' },
+            { value: 'name', label: 'Nombre' },
+            { value: 'email', label: 'Email' },
+            { value: 'Role', label: 'Rol' }
+          ]}
+        />
 
         {/* NUEVA FUNCIONALIDAD: Resumen de resultados y vista */}
         <div className="flex items-center justify-between mb-4">
