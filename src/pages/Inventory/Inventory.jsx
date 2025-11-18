@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { FaBox, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaFileExport, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory } from 'react-icons/fa';
+import { FaBox, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaFileExport, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory, FaIndustry, FaFlask, FaCalculator, FaShoppingCart, FaUsers, FaBuilding, FaTools, FaLaptop, FaClipboardCheck } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
 import inventoryAPI from '../../api/inventoryAPI';
@@ -561,48 +561,84 @@ const Inventory = () => {
                   <select
                     value={filterArea}
                     onChange={(e) => setFilterArea(e.target.value)}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm bg-white"
                   >
                     <option value="all">Todas las áreas</option>
-                    <option value="MATERIA PRIMA">Materia Prima</option>
-                    <option value="PRODUCCION">Producción</option>
-                    <option value="AMBIENTAL Y SST">Ambiental y SST</option>
-                    <option value="DEVOLUCIONES">Devoluciones</option>
-                    <option value="DESPACHOS">Despachos</option>
-                    <option value="PRODUCTO TERMINADO">Producto Terminado</option>
-                    <option value="DESARROLLO">Desarrollo</option>
-                    <option value="MERCADEO">Mercadeo</option>
-                    <option value="LABORATORIO">Laboratorio</option>
-                    <option value="RECEPCION">Recepción</option>
-                    <option value="CALL CENTER">Call Center</option>
-                    <option value="CONTABILIDAD">Contabilidad</option>
-                    <option value="ARCHIVO">Archivo</option>
-                    <option value="CALIDAD">Calidad</option>
-                    <option value="FACTURACION">Facturación</option>
-                    <option value="COSTOS">Costos</option>
-                    <option value="MANTENIMIENTO">Mantenimiento</option>
-                    <option value="CARTERA">Cartera</option>
-                    <option value="VENTAS">Ventas</option>
-                    <option value="RH">Recursos Humanos</option>
-                    <option value="COMPRAS">Compras</option>
-                    <option value="SAC">SAC</option>
-                    <option value="GERENCIA">Gerencia</option>
-                    <option value="AUDITORIA">Auditoría</option>
-                    <option value="TESORERIA">Tesorería</option>
-                    <option value="ADMINISTRATIVO">Administrativo</option>
-                    <option value="REPARACION">Reparación</option>
-                    <option value="PLANEACION">Planeación</option>
-                    <option value="SUB GERENCIA">Sub Gerencia</option>
-                    <option value="SISTEMAS">Sistemas</option>
-                    <option value="INVESTIGACION">Investigación</option>
-                    <option value="BODEGA">Bodega</option>
-                    <option value="EJECUTIVA">Ejecutiva</option>
-                    <option value="COORDINADOR">Coordinador</option>
-                    <option value="SERVICIO GENERAL">Servicio General</option>
-                    <option value="ALMACENISTA">Almacenista</option>
-                    <option value="JEFE COMPRAS">Jefe Compras</option>
-                    <option value="DIRECCION VENTAS">Dirección Ventas</option>
-                    <option value="CALIDAD OROCCO">Calidad Orocco</option>
+
+                    {/* Producción y Operaciones */}
+                    <optgroup label="Producción y Operaciones">
+                      <option value="MATERIA PRIMA">Materia Prima</option>
+                      <option value="PRODUCCION">Producción</option>
+                      <option value="PRODUCTO TERMINADO">Producto Terminado</option>
+                      <option value="DESPACHOS">Despachos</option>
+                      <option value="DEVOLUCIONES">Devoluciones</option>
+                      <option value="BODEGA">Bodega</option>
+                      <option value="RECEPCION">Recepción</option>
+                      <option value="ALMACENISTA">Almacenista</option>
+                    </optgroup>
+
+                    {/* Calidad y Laboratorio */}
+                    <optgroup label="Calidad y Laboratorio">
+                      <option value="CALIDAD">Calidad</option>
+                      <option value="CALIDAD OROCCO">Calidad Orocco</option>
+                      <option value="LABORATORIO">Laboratorio</option>
+                      <option value="INVESTIGACION">Investigación</option>
+                    </optgroup>
+
+                    {/* Administración y Finanzas */}
+                    <optgroup label="Administración y Finanzas">
+                      <option value="CONTABILIDAD">Contabilidad</option>
+                      <option value="COSTOS">Costos</option>
+                      <option value="TESORERIA">Tesorería</option>
+                      <option value="CARTERA">Cartera</option>
+                      <option value="FACTURACION">Facturación</option>
+                      <option value="COMPRAS">Compras</option>
+                      <option value="JEFE COMPRAS">Jefe Compras</option>
+                    </optgroup>
+
+                    {/* Ventas y Mercadeo */}
+                    <optgroup label="Ventas y Mercadeo">
+                      <option value="VENTAS">Ventas</option>
+                      <option value="MERCADEO">Mercadeo</option>
+                      <option value="DIRECCION VENTAS">Dirección Ventas</option>
+                      <option value="CALL CENTER">Call Center</option>
+                      <option value="SAC">SAC</option>
+                    </optgroup>
+
+                    {/* Recursos Humanos */}
+                    <optgroup label="Recursos Humanos">
+                      <option value="RH">Recursos Humanos</option>
+                      <option value="ADMINISTRATIVO">Administrativo</option>
+                    </optgroup>
+
+                    {/* Gerencia y Dirección */}
+                    <optgroup label="Gerencia y Dirección">
+                      <option value="GERENCIA">Gerencia</option>
+                      <option value="SUB GERENCIA">Sub Gerencia</option>
+                      <option value="EJECUTIVA">Ejecutiva</option>
+                      <option value="COORDINADOR">Coordinador</option>
+                      <option value="PLANEACION">Planeación</option>
+                    </optgroup>
+
+                    {/* Servicios Generales */}
+                    <optgroup label="Servicios Generales">
+                      <option value="MANTENIMIENTO">Mantenimiento</option>
+                      <option value="REPARACION">Reparación</option>
+                      <option value="SERVICIO GENERAL">Servicio General</option>
+                      <option value="AMBIENTAL Y SST">Ambiental y SST</option>
+                    </optgroup>
+
+                    {/* Sistemas y Tecnología */}
+                    <optgroup label="Sistemas y Tecnología">
+                      <option value="SISTEMAS">Sistemas</option>
+                      <option value="DESARROLLO">Desarrollo</option>
+                    </optgroup>
+
+                    {/* Control y Auditoría */}
+                    <optgroup label="Control y Auditoría">
+                      <option value="AUDITORIA">Auditoría</option>
+                      <option value="ARCHIVO">Archivo</option>
+                    </optgroup>
                   </select>
                 </div>
 
@@ -1093,49 +1129,85 @@ const Inventory = () => {
                     <select
                       value={formData.area}
                       onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white"
                       required
                     >
                       <option value="">Seleccionar área</option>
-                      <option value="MATERIA PRIMA">Materia Prima</option>
-                      <option value="PRODUCCION">Producción</option>
-                      <option value="AMBIENTAL Y SST">Ambiental y SST</option>
-                      <option value="DEVOLUCIONES">Devoluciones</option>
-                      <option value="DESPACHOS">Despachos</option>
-                      <option value="PRODUCTO TERMINADO">Producto Terminado</option>
-                      <option value="DESARROLLO">Desarrollo</option>
-                      <option value="MERCADEO">Mercadeo</option>
-                      <option value="LABORATORIO">Laboratorio</option>
-                      <option value="RECEPCION">Recepción</option>
-                      <option value="CALL CENTER">Call Center</option>
-                      <option value="CONTABILIDAD">Contabilidad</option>
-                      <option value="ARCHIVO">Archivo</option>
-                      <option value="CALIDAD">Calidad</option>
-                      <option value="FACTURACION">Facturación</option>
-                      <option value="COSTOS">Costos</option>
-                      <option value="MANTENIMIENTO">Mantenimiento</option>
-                      <option value="CARTERA">Cartera</option>
-                      <option value="VENTAS">Ventas</option>
-                      <option value="RH">Recursos Humanos</option>
-                      <option value="COMPRAS">Compras</option>
-                      <option value="SAC">SAC</option>
-                      <option value="GERENCIA">Gerencia</option>
-                      <option value="AUDITORIA">Auditoría</option>
-                      <option value="TESORERIA">Tesorería</option>
-                      <option value="ADMINISTRATIVO">Administrativo</option>
-                      <option value="REPARACION">Reparación</option>
-                      <option value="PLANEACION">Planeación</option>
-                      <option value="SUB GERENCIA">Sub Gerencia</option>
-                      <option value="SISTEMAS">Sistemas</option>
-                      <option value="INVESTIGACION">Investigación</option>
-                      <option value="BODEGA">Bodega</option>
-                      <option value="EJECUTIVA">Ejecutiva</option>
-                      <option value="COORDINADOR">Coordinador</option>
-                      <option value="SERVICIO GENERAL">Servicio General</option>
-                      <option value="ALMACENISTA">Almacenista</option>
-                      <option value="JEFE COMPRAS">Jefe Compras</option>
-                      <option value="DIRECCION VENTAS">Dirección Ventas</option>
-                      <option value="CALIDAD OROCCO">Calidad Orocco</option>
+
+                      {/* Producción y Operaciones */}
+                      <optgroup label="Producción y Operaciones">
+                        <option value="MATERIA PRIMA">Materia Prima</option>
+                        <option value="PRODUCCION">Producción</option>
+                        <option value="PRODUCTO TERMINADO">Producto Terminado</option>
+                        <option value="DESPACHOS">Despachos</option>
+                        <option value="DEVOLUCIONES">Devoluciones</option>
+                        <option value="BODEGA">Bodega</option>
+                        <option value="RECEPCION">Recepción</option>
+                        <option value="ALMACENISTA">Almacenista</option>
+                      </optgroup>
+ 
+                      {/* Calidad y Laboratorio */}
+                      <optgroup label="Calidad y Laboratorio">
+                        <option value="CALIDAD">Calidad</option>
+                        <option value="CALIDAD OROCCO">Calidad Orocco</option>
+                        <option value="LABORATORIO">Laboratorio</option>
+                        <option value="INVESTIGACION">Investigación</option>
+                      </optgroup>
+ 
+                      {/* Administración y Finanzas */}
+                      <optgroup label="Administración y Finanzas">
+                        <option value="CONTABILIDAD">Contabilidad</option>
+                        <option value="COSTOS">Costos</option>
+                        <option value="TESORERIA">Tesorería</option>
+                        <option value="CARTERA">Cartera</option>
+                        <option value="FACTURACION">Facturación</option>
+                        <option value="COMPRAS">Compras</option>
+                        <option value="JEFE COMPRAS">Jefe Compras</option>
+                      </optgroup>
+ 
+                      {/* Ventas y Mercadeo */}
+                      <optgroup label="Ventas y Mercadeo">
+                        <option value="VENTAS">Ventas</option>
+                        <option value="MERCADEO">Mercadeo</option>
+                        <option value="DIRECCION VENTAS">Dirección Ventas</option>
+                        <option value="CALL CENTER">Call Center</option>
+                        <option value="SAC">SAC</option>
+                      </optgroup>
+ 
+                      {/* Recursos Humanos */}
+                      <optgroup label="Recursos Humanos">
+                        <option value="RH">Recursos Humanos</option>
+                        <option value="ADMINISTRATIVO">Administrativo</option>
+                      </optgroup>
+ 
+                      {/* Gerencia y Dirección */}
+                      <optgroup label="Gerencia y Dirección">
+                        <option value="GERENCIA">Gerencia</option>
+                        <option value="SUB GERENCIA">Sub Gerencia</option>
+                        <option value="EJECUTIVA">Ejecutiva</option>
+                        <option value="COORDINADOR">Coordinador</option>
+                        <option value="PLANEACION">Planeación</option>
+                      </optgroup>
+ 
+                      {/* Servicios Generales */}
+                      <optgroup label="Servicios Generales">
+                        <option value="MANTENIMIENTO">Mantenimiento</option>
+                        <option value="REPARACION">Reparación</option>
+                        <option value="SERVICIO GENERAL">Servicio General</option>
+                        <option value="AMBIENTAL Y SST">Ambiental y SST</option>
+                      </optgroup>
+ 
+                      {/* Sistemas y Tecnología */}
+                      <optgroup label="Sistemas y Tecnología">
+                        <option value="SISTEMAS">Sistemas</option>
+                        <option value="DESARROLLO">Desarrollo</option>
+                      </optgroup>
+ 
+                      {/* Control y Auditoría */}
+                      <optgroup label="Control y Auditoría">
+                        <option value="AUDITORIA">Auditoría</option>
+                        <option value="ARCHIVO">Archivo</option>
+                      </optgroup>
                     </select>
                   </div>
 
