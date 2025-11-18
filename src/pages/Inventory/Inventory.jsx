@@ -32,6 +32,7 @@ const Inventory = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterArea, setFilterArea] = useState('all');
+  const [filterPropiedad, setFilterPropiedad] = useState('all');
   const [sortBy, setSortBy] = useState('it');
   const [sortOrder, setSortOrder] = useState('asc');
   const [showFilters, setShowFilters] = useState(false);
@@ -45,7 +46,7 @@ const Inventory = () => {
 
   useEffect(() => {
     filterAndSortInventory();
-  }, [inventory, searchTerm, filterStatus, filterArea, sortBy, sortOrder]);
+  }, [inventory, searchTerm, filterStatus, filterArea, filterPropiedad, sortBy, sortOrder]);
 
   const fetchInventory = async () => {
     try {
@@ -79,6 +80,11 @@ const Inventory = () => {
     // Filtro por área
     if (filterArea !== 'all') {
       filtered = filtered.filter(item => item.area === filterArea);
+    }
+
+    // Filtro por propiedad
+    if (filterPropiedad !== 'all') {
+      filtered = filtered.filter(item => item.propiedad === filterPropiedad);
     }
 
     // Ordenamiento
@@ -225,16 +231,16 @@ const Inventory = () => {
   };
 
   const exportToExcel = () => {
-    const headers = ['Propiedad', 'IT', 'Área', 'Responsable', 'Serial', 'Capacidad', 'RAM', 'Marca', 'Estado', 'Garantía', 'Compra', 'Mantenimiento', 'Costo'];
+    const headers = ['IT', 'Propiedad', 'Responsable', 'Área', 'Marca', 'Serial', 'Capacidad', 'RAM', 'Estado', 'Garantía', 'Compra', 'Mantenimiento', 'Costo'];
     const rows = filteredInventory.map(item => [
-      item.propiedad,
       item.it,
-      item.area,
+      item.propiedad,
       item.responsable,
+      item.area,
+      item.marca,
       item.serial,
       item.capacidad,
       item.ram,
-      item.marca,
       item.status,
       item.warrantyExpiry ? new Date(item.warrantyExpiry).toLocaleDateString('es-ES') : '-',
       item.purchaseDate ? new Date(item.purchaseDate).toLocaleDateString('es-ES') : '-',
@@ -277,14 +283,14 @@ const Inventory = () => {
 
     // Ajustar ancho de columnas
     ws['!cols'] = [
-      { wch: 12 }, // Propiedad
       { wch: 10 }, // IT
-      { wch: 15 }, // Área
+      { wch: 12 }, // Propiedad
       { wch: 15 }, // Responsable
+      { wch: 15 }, // Área
+      { wch: 12 }, // Marca
       { wch: 20 }, // Serial
       { wch: 15 }, // Capacidad
       { wch: 10 }, // RAM
-      { wch: 12 }, // Marca
       { wch: 12 }, // Estado
       { wch: 12 }, // Garantía
       { wch: 12 }, // Compra
@@ -520,7 +526,21 @@ const Inventory = () => {
             </div>
 
             {showFilters && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-6 border-t-2 border-gray-100 animate-fade-in">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6 border-t-2 border-gray-100 animate-fade-in">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Propiedad</label>
+                  <select
+                    value={filterPropiedad}
+                    onChange={(e) => setFilterPropiedad(e.target.value)}
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm"
+                  >
+                    <option value="all">Todas las propiedades</option>
+                    <option value="PROPIO">Propio</option>
+                    <option value="MILENIO ARQUILER">Milenio Arq.</option>
+                    <option value="ARQUILER MOVISTAR">Arq. Movistar</option>
+                  </select>
+                </div>
+
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Estado</label>
                   <select
@@ -595,6 +615,7 @@ const Inventory = () => {
                       className="flex-1 px-3 lg:px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm"
                     >
                       <option value="it">IT</option>
+                      <option value="propiedad">Propiedad</option>
                       <option value="responsable">Responsable</option>
                       <option value="area">Área</option>
                       <option value="marca">Marca</option>
@@ -660,7 +681,7 @@ const Inventory = () => {
                 ? 'Intenta ajustar los filtros de búsqueda'
                 : 'Comienza agregando un nuevo equipo al inventario'}
             </p>
-            {canEdit && !searchTerm && filterStatus === 'all' && filterArea === 'all' && (
+            {canEdit && !searchTerm && filterStatus === 'all' && filterArea === 'all' && filterPropiedad === 'all' && (
               <button
                 onClick={handleCreate}
                 className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
@@ -697,7 +718,8 @@ const Inventory = () => {
                                 {item.status}
                               </span>
                             </div>
-                            <p className="text-xs lg:text-sm opacity-90 truncate">{item.marca} · {item.propiedad}</p>
+                            <p className="text-xs lg:text-sm opacity-90 truncate">{item.marca}</p>
+                            <p className="text-xs opacity-75 truncate">{item.propiedad}</p>
                           </div>
                           {canEdit && (
                             <div className="flex gap-1 lg:gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
@@ -801,7 +823,8 @@ const Inventory = () => {
                                 </span>
                               </div>
                               <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">{item.responsable}</h3>
-                              <p className="text-xs text-gray-500 truncate">{item.marca} · {item.propiedad}</p>
+                              <p className="text-xs text-gray-500 truncate">{item.marca}</p>
+                              <p className="text-xs text-purple-600 font-medium truncate">{item.propiedad}</p>
                             </div>
                             {canEdit && (
                               <div className="flex gap-1 ml-2">
@@ -863,6 +886,7 @@ const Inventory = () => {
                     <thead className="bg-linear-to-r from-purple-600 to-violet-600 text-white">
                       <tr>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">IT</th>
+                        <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Propiedad</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Responsable</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Área</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Marca</th>
@@ -883,11 +907,19 @@ const Inventory = () => {
                             <td className="px-4 py-4">
                               <span className="font-bold text-purple-600">{item.it}</span>
                             </td>
+                            <td className="px-4 py-4">
+                              <span className={`px-2 py-1 text-xs font-bold rounded-full ${
+                                item.propiedad === 'PROPIO' ? 'bg-green-100 text-green-700' :
+                                item.propiedad === 'MILENIO ARQUILER' ? 'bg-blue-100 text-blue-700' :
+                                'bg-purple-100 text-purple-700'
+                              }`}>
+                                {item.propiedad}
+                              </span>
+                            </td>
                             <td className="px-4 py-4 text-sm text-gray-700">{item.responsable}</td>
                             <td className="px-4 py-4 text-sm text-gray-700">{item.area}</td>
                             <td className="px-4 py-4">
                               <div className="font-semibold text-gray-900">{item.marca}</div>
-                              <div className="text-xs text-gray-500">{item.propiedad}</div>
                             </td>
                             <td className="px-4 py-4">
                               <span className="text-xs font-mono bg-gray-100 px-2 py-1 rounded">{item.serial}</span>
@@ -1007,8 +1039,8 @@ const Inventory = () => {
                     >
                       <option value="">Seleccionar</option>
                       <option value="PROPIO">PROPIO</option>
-                      <option value="ARRENDADO">ARRENDADO</option>
-                      <option value="COMODATO">COMODATO</option>
+                      <option value="MILENIO ARQUILER">MILENIO ARQUILER</option>
+                      <option value="ARQUILER MOVISTAR">ARQUILER MOVISTAR</option>
                     </select>
                   </div>
 
