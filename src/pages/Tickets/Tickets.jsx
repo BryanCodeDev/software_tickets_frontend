@@ -24,7 +24,7 @@ const Tickets = () => {
   const [filterPriority, setFilterPriority] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [showStats, setShowStats] = useState(false);
-  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortBy, setSortBy] = useState('updatedAt');
   const [sortOrder, setSortOrder] = useState('desc');
   const [viewMode, setViewMode] = useState('cards');
   
@@ -46,6 +46,7 @@ const Tickets = () => {
   const [titleFilter, setTitleFilter] = useState('');
   const [technicians, setTechnicians] = useState([]);
   const [administrators, setAdministrators] = useState([]);
+  const [pagination, setPagination] = useState({ totalItems: 0, currentPage: 1, totalPages: 1, itemsPerPage: 50 });
 
   const standardizedTitles = [
     'Problemas con SAP',
@@ -118,10 +119,11 @@ const Tickets = () => {
     fetchUsers();
   }, []);
 
-  const fetchTickets = async () => {
+  const fetchTickets = async (page = 1) => {
     try {
-      const data = await ticketsAPI.fetchTickets();
+      const data = await ticketsAPI.fetchTickets({ page, limit: 50 });
       setTickets(data.tickets || []);
+      setPagination(data.pagination || { totalItems: 0, currentPage: 1, totalPages: 1, itemsPerPage: 50 });
     } catch (err) {
       console.error('Error al cargar tickets:', err);
       showNotification('Error al cargar los tickets. Por favor, recarga la página.', 'error');
@@ -196,7 +198,7 @@ const Tickets = () => {
 
   const calculateStats = () => {
     if (!Array.isArray(tickets)) return { total: 0, abiertos: 0, enProgreso: 0, resueltos: 0, alta: 0, resolutionRate: 0 };
-    const total = tickets.length;
+    const total = pagination.totalItems || tickets.length;
     const abiertos = tickets.filter(t => t.status?.toLowerCase() === 'abierto').length;
     const enProgreso = tickets.filter(t => t.status?.toLowerCase() === 'en progreso').length;
     const resueltos = tickets.filter(t =>
@@ -831,7 +833,7 @@ const Tickets = () => {
         {/* Results Summary */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <p className="text-sm text-gray-600 font-medium">
-            Mostrando <span className="font-bold text-purple-600">{filteredTickets.length}</span> de <span className="font-bold">{tickets.length}</span> tickets
+            Mostrando <span className="font-bold text-purple-600">{filteredTickets.length}</span> de <span className="font-bold">{pagination.totalItems || tickets.length}</span> tickets
           </p>
           <div className="flex gap-2">
             <button
@@ -1141,6 +1143,31 @@ const Tickets = () => {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              </div>
+            )}
+
+            {/* Pagination Controls */}
+            {pagination.totalPages > 1 && (
+              <div className="flex items-center justify-between bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 mt-6">
+                <div className="text-sm text-gray-600">
+                  Página {pagination.currentPage} de {pagination.totalPages}
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => fetchTickets(pagination.currentPage - 1)}
+                    disabled={pagination.currentPage <= 1}
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 disabled:text-gray-400 text-gray-700 font-semibold rounded-xl transition-all disabled:cursor-not-allowed"
+                  >
+                    Anterior
+                  </button>
+                  <button
+                    onClick={() => fetchTickets(pagination.currentPage + 1)}
+                    disabled={pagination.currentPage >= pagination.totalPages}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 disabled:text-purple-100 text-white font-semibold rounded-xl transition-all disabled:cursor-not-allowed"
+                  >
+                    Siguiente
+                  </button>
                 </div>
               </div>
             )}

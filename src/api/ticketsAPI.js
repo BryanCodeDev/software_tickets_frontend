@@ -1,9 +1,14 @@
 import api from './api';
 
 const ticketsAPI = {
-  fetchTickets: async () => {
+  fetchTickets: async (params = {}) => {
     try {
-      const response = await api.get('/tickets');
+      const queryParams = new URLSearchParams();
+      if (params.page) queryParams.append('page', params.page);
+      if (params.limit) queryParams.append('limit', params.limit);
+
+      const url = `/tickets${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+      const response = await api.get(url);
       return response.data;
     } catch (error) {
       console.error('Error fetching tickets:', error);
