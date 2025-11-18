@@ -544,16 +544,45 @@ const Inventory = () => {
                     className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm"
                   >
                     <option value="all">Todas las áreas</option>
-                    <option value="Alta Dirección">Alta Dirección</option>
-                    <option value="Ventas">Ventas</option>
-                    <option value="Dirección Técnica">Dirección Técnica</option>
-                    <option value="Cadena de abastecimiento">Cadena de abastecimiento</option>
-                    <option value="Gestión de Operaciones">Gestión de Operaciones</option>
-                    <option value="Mercadeo">Mercadeo</option>
-                    <option value="Gestión de Calidad">Gestión de Calidad</option>
-                    <option value="Gestión de Talento Humano">Gestión de Talento Humano</option>
-                    <option value="Gestión Administrativa">Gestión Administrativa</option>
-                    <option value="Gestión Financiera">Gestión Financiera</option>
+                    <option value="MATERIA PRIMA">Materia Prima</option>
+                    <option value="PRODUCCION">Producción</option>
+                    <option value="AMBIENTAL Y SST">Ambiental y SST</option>
+                    <option value="DEVOLUCIONES">Devoluciones</option>
+                    <option value="DESPACHOS">Despachos</option>
+                    <option value="PRODUCTO TERMINADO">Producto Terminado</option>
+                    <option value="DESARROLLO">Desarrollo</option>
+                    <option value="MERCADEO">Mercadeo</option>
+                    <option value="LABORATORIO">Laboratorio</option>
+                    <option value="RECEPCION">Recepción</option>
+                    <option value="CALL CENTER">Call Center</option>
+                    <option value="CONTABILIDAD">Contabilidad</option>
+                    <option value="ARCHIVO">Archivo</option>
+                    <option value="CALIDAD">Calidad</option>
+                    <option value="FACTURACION">Facturación</option>
+                    <option value="COSTOS">Costos</option>
+                    <option value="MANTENIMIENTO">Mantenimiento</option>
+                    <option value="CARTERA">Cartera</option>
+                    <option value="VENTAS">Ventas</option>
+                    <option value="RH">Recursos Humanos</option>
+                    <option value="COMPRAS">Compras</option>
+                    <option value="SAC">SAC</option>
+                    <option value="GERENCIA">Gerencia</option>
+                    <option value="AUDITORIA">Auditoría</option>
+                    <option value="TESORERIA">Tesorería</option>
+                    <option value="ADMINISTRATIVO">Administrativo</option>
+                    <option value="REPARACION">Reparación</option>
+                    <option value="PLANEACION">Planeación</option>
+                    <option value="SUB GERENCIA">Sub Gerencia</option>
+                    <option value="SISTEMAS">Sistemas</option>
+                    <option value="INVESTIGACION">Investigación</option>
+                    <option value="BODEGA">Bodega</option>
+                    <option value="EJECUTIVA">Ejecutiva</option>
+                    <option value="COORDINADOR">Coordinador</option>
+                    <option value="SERVICIO GENERAL">Servicio General</option>
+                    <option value="ALMACENISTA">Almacenista</option>
+                    <option value="JEFE COMPRAS">Jefe Compras</option>
+                    <option value="DIRECCION VENTAS">Dirección Ventas</option>
+                    <option value="CALIDAD OROCCO">Calidad Orocco</option>
                   </select>
                 </div>
 
@@ -1036,16 +1065,45 @@ const Inventory = () => {
                       required
                     >
                       <option value="">Seleccionar área</option>
-                      <option value="Alta Dirección">Alta Dirección</option>
-                      <option value="Ventas">Ventas</option>
-                      <option value="Dirección Técnica">Dirección Técnica</option>
-                      <option value="Cadena de abastecimiento">Cadena de abastecimiento</option>
-                      <option value="Gestión de Operaciones">Gestión de Operaciones</option>
-                      <option value="Mercadeo">Mercadeo</option>
-                      <option value="Gestión de Calidad">Gestión de Calidad</option>
-                      <option value="Gestión de Talento Humano">Gestión de Talento Humano</option>
-                      <option value="Gestión Administrativa">Gestión Administrativa</option>
-                      <option value="Gestión Financiera">Gestión Financiera</option>
+                      <option value="MATERIA PRIMA">Materia Prima</option>
+                      <option value="PRODUCCION">Producción</option>
+                      <option value="AMBIENTAL Y SST">Ambiental y SST</option>
+                      <option value="DEVOLUCIONES">Devoluciones</option>
+                      <option value="DESPACHOS">Despachos</option>
+                      <option value="PRODUCTO TERMINADO">Producto Terminado</option>
+                      <option value="DESARROLLO">Desarrollo</option>
+                      <option value="MERCADEO">Mercadeo</option>
+                      <option value="LABORATORIO">Laboratorio</option>
+                      <option value="RECEPCION">Recepción</option>
+                      <option value="CALL CENTER">Call Center</option>
+                      <option value="CONTABILIDAD">Contabilidad</option>
+                      <option value="ARCHIVO">Archivo</option>
+                      <option value="CALIDAD">Calidad</option>
+                      <option value="FACTURACION">Facturación</option>
+                      <option value="COSTOS">Costos</option>
+                      <option value="MANTENIMIENTO">Mantenimiento</option>
+                      <option value="CARTERA">Cartera</option>
+                      <option value="VENTAS">Ventas</option>
+                      <option value="RH">Recursos Humanos</option>
+                      <option value="COMPRAS">Compras</option>
+                      <option value="SAC">SAC</option>
+                      <option value="GERENCIA">Gerencia</option>
+                      <option value="AUDITORIA">Auditoría</option>
+                      <option value="TESORERIA">Tesorería</option>
+                      <option value="ADMINISTRATIVO">Administrativo</option>
+                      <option value="REPARACION">Reparación</option>
+                      <option value="PLANEACION">Planeación</option>
+                      <option value="SUB GERENCIA">Sub Gerencia</option>
+                      <option value="SISTEMAS">Sistemas</option>
+                      <option value="INVESTIGACION">Investigación</option>
+                      <option value="BODEGA">Bodega</option>
+                      <option value="EJECUTIVA">Ejecutiva</option>
+                      <option value="COORDINADOR">Coordinador</option>
+                      <option value="SERVICIO GENERAL">Servicio General</option>
+                      <option value="ALMACENISTA">Almacenista</option>
+                      <option value="JEFE COMPRAS">Jefe Compras</option>
+                      <option value="DIRECCION VENTAS">Dirección Ventas</option>
+                      <option value="CALIDAD OROCCO">Calidad Orocco</option>
                     </select>
                   </div>
 
