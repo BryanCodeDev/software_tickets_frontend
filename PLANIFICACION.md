@@ -302,19 +302,6 @@ Desarrollar DuvyClass, una plataforma interna centralizada para el área de tecn
 - ✅ **Configuración de producción** preparada
 - ✅ **Docker ready** (estructura preparada)
 
-## Usuarios de Prueba Incluidos
-
-### Ejecutar script para ver contraseñas:
-```bash
-cd backend && node fix-passwords.js
-```
-
-| Usuario | Email | Rol | Descripción |
-|---------|-------|-----|-------------|
-| admin | admin@duvyclass.com | Administrador | Acceso completo al sistema |
-| tecnico | tecnico@duvyclass.com | Técnico | Gestión de tickets e inventario |
-| empleado | empleado@duvyclass.com | Empleado | Creación y seguimiento de tickets |
-| +15 usuarios adicionales | Ver script fix-passwords.js | Varios | Usuarios de prueba completos |
 
 ## Conclusión - PROYECTO COMPLETADO CON ÉXITO ✅
 

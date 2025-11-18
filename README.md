@@ -237,41 +237,6 @@ npm run dev
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:5000
 
-## 👥 Usuarios de Prueba
-
-### 👑 Administradores (4 usuarios)
-| Usuario | Email | Contraseña | Rol |
-|---------|-------|------------|-----|
-| admin | admin@duvyclass.com | [Ver script fix-passwords.js] | Administrador |
-| ana.lopez | ana.lopez@duvyclass.com | [Ver script fix-passwords.js] | Administrador |
-| gabriela.ruiz | gabriela.ruiz@duvyclass.com | [Ver script fix-passwords.js] | Administrador |
-| fernando.castro | fernando.castro@duvyclass.com | [Ver script fix-passwords.js] | Administrador |
-
-### 🔧 Técnicos (3 usuarios)
-| Usuario | Email | Contraseña | Rol |
-|---------|-------|------------|-----|
-| tecnico | tecnico@duvyclass.com | [Ver script fix-passwords.js] | Técnico |
-| pedro.martinez | pedro.martinez@duvyclass.com | [Ver script fix-passwords.js] | Técnico |
-| soporte | soporte@duvyclass.com | [Ver script fix-passwords.js] | Técnico |
-
-### 👥 Empleados (8 usuarios)
-| Usuario | Email | Contraseña | Rol |
-|---------|-------|------------|-----|
-| empleado | empleado@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
-| laura.sanchez | laura.sanchez@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
-| roberto.diaz | roberto.diaz@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
-| sofia.ramirez | sofia.ramirez@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
-| miguel.torres | miguel.torres@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
-| elena.vargas | elena.vargas@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
-| diego.morales | diego.morales@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
-| isabel.torres | isabel.torres@duvyclass.com | [Ver script fix-passwords.js] | Empleado |
-
-### 📊 Usuarios Adicionales (3 usuarios)
-| Usuario | Email | Contraseña | Rol |
-|---------|-------|------------|-----|
-| hector.morales | hector.morales@duvyclass.com | [Ver script fix-passwords.js] | Auditor |
-| javier.ruiz | javier.ruiz@duvyclass.com | [Ver script fix-passwords.js] | Desarrollador |
-| luis.garcia | luis.garcia@duvyclass.com | [Ver script fix-passwords.js] | Analista |
 
 ## 📖 Uso del Sistema
 

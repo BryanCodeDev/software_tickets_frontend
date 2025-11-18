@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { usersAPI } from '../../api';
+import { usersAPI, authAPI } from '../../api';
 import { inventoryAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSearch, FaFilter, FaUserShield, FaUserCog, FaUser, FaChartBar, FaDownload, FaSortAmountDown, FaSortAmountUp, FaClock, FaEnvelope, FaKey, FaToggleOn, FaToggleOff, FaBan } from 'react-icons/fa';
@@ -276,11 +276,14 @@ const Users = () => {
         await usersAPI.updateUser(editingUser.id, updateData);
         showNotification('Usuario actualizado exitosamente', 'success');
       } else {
-        await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
-        });
+        await authAPI.register(
+          formData.name,
+          formData.username,
+          formData.email,
+          formData.password,
+          formData.roleId,
+          formData.it
+        );
         showNotification('Usuario creado exitosamente', 'success');
       }
       fetchUsers();

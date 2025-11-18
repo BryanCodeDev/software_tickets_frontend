@@ -942,24 +942,6 @@ const Help = () => {
                           </ol>
                         </div>
 
-                        <div className="bg-yellow-50 p-4 rounded-lg">
-                          <h6 className="font-medium text-yellow-900 mb-2 flex items-center"><FaUser className="text-yellow-600 mr-2" /> Usuarios de Prueba</h6>
-                          <p className="text-sm mb-2">Para fines de demostración, el sistema incluye usuarios de prueba:</p>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                            <div className="bg-white p-2 rounded border">
-                              <div className="font-medium text-xs">Administradores</div>
-                              <div className="text-xs text-gray-600">admin, ana.lopez</div>
-                            </div>
-                            <div className="bg-white p-2 rounded border">
-                              <div className="font-medium text-xs">Técnicos</div>
-                              <div className="text-xs text-gray-600">tecnico, pedro.martinez</div>
-                            </div>
-                            <div className="bg-white p-2 rounded border">
-                              <div className="font-medium text-xs">Empleados</div>
-                              <div className="text-xs text-gray-600">empleado, laura.sanchez</div>
-                            </div>
-                          </div>
-                        </div>
 
                         <div className="bg-purple-50 p-4 rounded-lg">
                           <h6 className="font-medium text-purple-900 mb-2 flex items-center"><FaLock className="text-purple-600 mr-2" /> Cambio de Contraseña Inicial</h6>
