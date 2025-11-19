@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import AuthContext from '../context/AuthContext.jsx';
 import { usersAPI, inventoryAPI } from '../api';
 import { FaCheck, FaTimes } from 'react-icons/fa';
+import { onUserUpdated, offUserUpdated } from '../api/socket';
 
 const Profile = () => {
   const { user, updateUser } = useContext(AuthContext);
@@ -26,6 +27,29 @@ const Profile = () => {
     }
     fetchUniqueITs();
   }, [user]);
+
+  // Socket listener for real-time updates
+  useEffect(() => {
+    const handleUserUpdated = (data) => {
+      const { userId, user: updatedUser } = data;
+      if (user && userId === user.id) {
+        // Update the form data and context
+        setFormData({
+          name: updatedUser.name || updatedUser.username || '',
+          email: updatedUser.email || '',
+          username: updatedUser.username || '',
+          it: updatedUser.it || ''
+        });
+        updateUser(updatedUser);
+      }
+    };
+
+    onUserUpdated(handleUserUpdated);
+
+    return () => {
+      offUserUpdated(handleUserUpdated);
+    };
+  }, [user, updateUser]);
 
   const fetchUniqueITs = async () => {
     try {

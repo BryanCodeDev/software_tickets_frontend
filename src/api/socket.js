@@ -96,4 +96,20 @@ export const offTicketsListUpdated = (callback) => {
   socket.off('tickets-list-updated', callback);
 };
 
+export const onUserUpdated = (callback) => {
+  socket.on('user-updated', callback);
+};
+
+export const onUsersListUpdated = (callback) => {
+  socket.on('users-list-updated', callback);
+};
+
+export const offUserUpdated = (callback) => {
+  socket.off('user-updated', callback);
+};
+
+export const offUsersListUpdated = (callback) => {
+  socket.off('users-list-updated', callback);
+};
+
 export default socket;

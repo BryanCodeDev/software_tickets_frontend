@@ -4,6 +4,7 @@ import { inventoryAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSearch, FaFilter, FaUserShield, FaUserCog, FaUser, FaChartBar, FaDownload, FaSortAmountDown, FaSortAmountUp, FaClock, FaEnvelope, FaKey, FaToggleOn, FaToggleOff, FaBan } from 'react-icons/fa';
 import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
+import { onUserUpdated, onUsersListUpdated, offUserUpdated, offUsersListUpdated } from '../../api/socket';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -35,6 +36,28 @@ const Users = () => {
       fetchInventoryItems();
     }
   }, [user]);
+
+  // Socket listeners for real-time updates
+  useEffect(() => {
+    const handleUserUpdated = (data) => {
+      const { userId, user: updatedUser } = data;
+      setUsers(prevUsers =>
+        prevUsers.map(u => u.id === userId ? { ...u, ...updatedUser } : u)
+      );
+    };
+
+    const handleUsersListUpdated = () => {
+      fetchUsers();
+    };
+
+    onUserUpdated(handleUserUpdated);
+    onUsersListUpdated(handleUsersListUpdated);
+
+    return () => {
+      offUserUpdated(handleUserUpdated);
+      offUsersListUpdated(handleUsersListUpdated);
+    };
+  }, []);
 
   const fetchUsers = async () => {
     try {
@@ -236,10 +259,11 @@ const Users = () => {
       username: usr.username,
       name: usr.name || '',
       email: usr.email,
-      password: usr.password || '',
+      password: '', // No mostrar contraseña actual (está hasheada)
       roleId: usr.roleId,
       it: usr.it || ''
     });
+    setPasswordStrength(null);
     setShowModal(true);
   };
 
@@ -616,12 +640,12 @@ const Users = () => {
                 {(!editingUser || (user && user.role?.name === 'Administrador')) && (
                   <div>
                     <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-                      Contraseña{!editingUser ? ' *' : ''}
+                      {editingUser ? 'Nueva Contraseña (opcional)' : 'Contraseña *'}
                     </label>
                     <div className="relative">
                       <input
                         type={showPassword ? "text" : "password"}
-                        placeholder="Contraseña"
+                        placeholder={editingUser ? "Dejar vacío para mantener contraseña actual" : "Contraseña"}
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         className="w-full px-3 sm:px-4 py-2 sm:py-2.5 pr-20 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
@@ -647,7 +671,7 @@ const Users = () => {
                       </div>
                     </div>
                     {/* NUEVA FUNCIONALIDAD: Indicador de fortaleza de contraseña */}
-                    {passwordStrength && (
+                    {passwordStrength && formData.password && (
                       <div className="mt-2">
                         <div className="flex items-center gap-2 mb-1">
                           <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
