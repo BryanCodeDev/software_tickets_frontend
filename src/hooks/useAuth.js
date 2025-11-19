@@ -21,7 +21,7 @@ export const useAuth = () => {
     // Lógica de permisos basada en roles
     const rolePermissions = {
       Administrador: ['all'],
-      Tecnico: ['read_tickets', 'update_tickets', 'read_inventory', 'update_inventory', 'read_credentials', 'manage_credentials'],
+      Técnico: ['read_tickets', 'update_tickets', 'read_inventory', 'update_inventory', 'read_credentials', 'manage_credentials'],
       Empleado: ['read_tickets', 'create_tickets', 'read_inventory']
     };
 

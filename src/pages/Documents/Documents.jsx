@@ -346,7 +346,8 @@ const Documents = () => {
   };
 
   const canEdit = (doc) => {
-    return user?.role?.name === 'Administrador' || (user?.role?.name === 'Empleado' && doc.createdBy === user.id);
+    return user?.role?.name === 'Administrador' ||
+           ((user?.role?.name === 'Técnico' || user?.role?.name === 'Empleado') && doc.createdBy === user.id);
   };
 
   const showNotification = (message, type) => {
