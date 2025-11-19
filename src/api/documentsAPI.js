@@ -55,6 +55,41 @@ const documentsAPI = {
       throw error;
     }
   },
+
+  fetchFolders: async () => {
+    try {
+      const response = await api.get('/documents/folders');
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  createFolder: async (folderData) => {
+    try {
+      const response = await api.post('/documents/folders', folderData);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  updateFolder: async (id, folderData) => {
+    try {
+      const response = await api.put(`/documents/folders/${id}`, folderData);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  deleteFolder: async (id) => {
+    try {
+      await api.delete(`/documents/folders/${id}`);
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default documentsAPI;

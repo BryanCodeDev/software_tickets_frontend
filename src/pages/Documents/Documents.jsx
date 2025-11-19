@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { documentsAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
-import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes, FaFileAlt, FaTag, FaSearch, FaSortAmountDown, FaSortAmountUp, FaFilePdf, FaFileWord, FaFileExcel, FaFileImage, FaFileArchive, FaClock, FaUser } from 'react-icons/fa';
+import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes, FaFileAlt, FaTag, FaSearch, FaSortAmountDown, FaSortAmountUp, FaFilePdf, FaFileWord, FaFileExcel, FaFileImage, FaFileArchive, FaClock, FaUser, FaFolder, FaFolderOpen, FaPlus, FaArrowLeft } from 'react-icons/fa';
 import { NotificationSystem, ConfirmDialog, FilterPanel } from '../../components/common';
 
 const Documents = () => {
@@ -25,8 +25,18 @@ const Documents = () => {
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
 
+  // Estados para carpetas
+  const [folders, setFolders] = useState([]);
+  const [currentFolder, setCurrentFolder] = useState(null);
+  const [showCreateFolderModal, setShowCreateFolderModal] = useState(false);
+  const [showEditFolderModal, setShowEditFolderModal] = useState(false);
+  const [editingFolder, setEditingFolder] = useState(null);
+  const [folderFormData, setFolderFormData] = useState({ name: '', description: '', parentFolderId: null });
+  const [editFolderFormData, setEditFolderFormData] = useState({ name: '', description: '' });
+
   useEffect(() => {
     fetchDocuments();
+    fetchFolders();
   }, []);
 
   const fetchDocuments = async () => {
@@ -39,10 +49,28 @@ const Documents = () => {
     }
   };
 
+  const fetchFolders = async () => {
+    try {
+      const data = await documentsAPI.fetchFolders();
+      setFolders(data);
+    } catch (err) {
+      console.error('Error fetching folders:', err);
+    }
+  };
+
   // Filtrado y ordenamiento de documentos (solo versiones activas más recientes)
   const filterAndSortDocuments = () => {
+    // Filtrar documentos por carpeta actual
+    let docsInFolder = documents.filter(doc => {
+      if (currentFolder) {
+        return doc.folderId === currentFolder.id;
+      } else {
+        return !doc.folderId; // Documentos en la raíz
+      }
+    });
+
     // Agrupar documentos por parentDocumentId o id si no tiene parent
-    const grouped = documents.reduce((acc, doc) => {
+    const grouped = docsInFolder.reduce((acc, doc) => {
       const key = doc.parentDocumentId || doc.id;
       if (!acc[key]) acc[key] = [];
       acc[key].push(doc);
@@ -103,6 +131,15 @@ const Documents = () => {
   // Obtener tipos únicos para filtros
   const uniqueTypes = [...new Set(documents.map(doc => doc.type).filter(Boolean))];
 
+  // Filtrar carpetas de la carpeta actual
+  const currentFolders = folders.filter(folder => {
+    if (currentFolder) {
+      return folder.parentFolderId === currentFolder.id;
+    } else {
+      return !folder.parentFolderId;
+    }
+  });
+
   // Obtener icono según tipo de archivo
   const getFileIcon = (filePath) => {
     const extension = filePath?.split('.').pop().toLowerCase();
@@ -120,6 +157,14 @@ const Documents = () => {
       case 'rar': return <FaFileArchive className="text-yellow-600 text-xl" />;
       default: return <FaFileAlt className="text-purple-600 text-xl" />;
     }
+  };
+
+  // Generar nombre de descarga con título y versión
+  const getDownloadName = (doc, version = null) => {
+    const title = doc.title;
+    const ver = version ? version.version : doc.version;
+    const ext = doc.filePath.split('.').pop();
+    return `${title}_v${ver}.${ext}`;
   };
 
 
@@ -150,6 +195,11 @@ const Documents = () => {
     data.append('version', formData.version);
     data.append('file', formData.file);
     data.append('isNewVersion', formData.isNewVersion);
+    // Para nueva versión, folderId se determina del documento padre
+    // Para nuevo documento, usar el folderId seleccionado o vacío
+    if (!formData.isNewVersion) {
+      data.append('folderId', formData.folderId || '');
+    }
     if (formData.isNewVersion) {
       data.append('parentDocumentId', formData.parentDocumentId);
       data.append('changeDescription', formData.changeDescription);
@@ -158,14 +208,81 @@ const Documents = () => {
     try {
       await documentsAPI.uploadDocument(data);
       fetchDocuments();
-      setFormData({ title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' });
+      setFormData({ title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '', selectedFolderForVersion: null });
       setShowUploadModal(false);
       showNotification('Documento subido exitosamente', 'success');
     } catch (err) {
       showNotification('Error al subir el documento. Por favor, inténtalo de nuevo.', 'error');
+      setFormData({ title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' });
     } finally {
       setUploadLoading(false);
     }
+  };
+
+  const handleCreateFolder = async (e) => {
+    e.preventDefault();
+    try {
+      const folderData = {
+        ...folderFormData,
+        parentFolderId: currentFolder ? currentFolder.id : null
+      };
+      await documentsAPI.createFolder(folderData);
+      fetchFolders();
+      setFolderFormData({ name: '', description: '', parentFolderId: null });
+      setShowCreateFolderModal(false);
+      showNotification('Carpeta creada exitosamente', 'success');
+    } catch (err) {
+      showNotification('Error al crear la carpeta. Por favor, inténtalo de nuevo.', 'error');
+    }
+  };
+
+  const handleEnterFolder = (folder) => {
+    setCurrentFolder(folder);
+  };
+
+  const handleGoBack = () => {
+    if (currentFolder && currentFolder.parent) {
+      setCurrentFolder(currentFolder.parent);
+    } else {
+      setCurrentFolder(null);
+    }
+  };
+
+  const handleEditFolder = (folder) => {
+    setEditingFolder(folder);
+    setEditFolderFormData({
+      name: folder.name,
+      description: folder.description || ''
+    });
+    setShowEditFolderModal(true);
+  };
+
+  const handleUpdateFolder = async (e) => {
+    e.preventDefault();
+    try {
+      await documentsAPI.updateFolder(editingFolder.id, editFolderFormData);
+      fetchFolders();
+      setShowEditFolderModal(false);
+      showNotification('Carpeta actualizada exitosamente', 'success');
+    } catch (err) {
+      showNotification('Error al actualizar la carpeta. Por favor, inténtalo de nuevo.', 'error');
+    }
+  };
+
+  const handleDeleteFolder = async (folderId) => {
+    showConfirmDialog('¿Estás seguro de que deseas eliminar esta carpeta y todos sus contenidos?', async () => {
+      try {
+        await documentsAPI.deleteFolder(folderId);
+        fetchFolders();
+        fetchDocuments();
+        if (currentFolder && currentFolder.id === folderId) {
+          setCurrentFolder(null);
+        }
+        showNotification('Carpeta eliminada exitosamente', 'success');
+      } catch (err) {
+        showNotification('Error al eliminar la carpeta. Por favor, inténtalo de nuevo.', 'error');
+      }
+    });
   };
 
   const handleEdit = (doc) => {
@@ -287,8 +404,12 @@ const Documents = () => {
                 <FaFileAlt className="text-white text-2xl" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Control de Versiones</h1>
-                <p className="text-gray-600 mt-1">Gestiona versiones de políticas y documentos oficiales</p>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  {currentFolder ? `Carpeta: ${currentFolder.name}` : 'Control de Versiones'}
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  {currentFolder ? currentFolder.description || 'Gestiona versiones de políticas y documentos oficiales' : 'Gestiona versiones de políticas y documentos oficiales'}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
@@ -296,6 +417,22 @@ const Documents = () => {
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="text-sm font-medium text-gray-700">{filteredDocuments.length} documentos</span>
               </div>
+              {currentFolder && (
+                <button
+                  onClick={handleGoBack}
+                  className="inline-flex items-center px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                >
+                  <FaArrowLeft className="mr-2" />
+                  Atrás
+                </button>
+              )}
+              <button
+                onClick={() => setShowCreateFolderModal(true)}
+                className="inline-flex items-center px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all mr-3"
+              >
+                <FaPlus className="mr-2" />
+                Nueva Carpeta
+              </button>
               <button
                 onClick={() => setShowUploadModal(true)}
                 className="inline-flex items-center px-5 py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
@@ -352,32 +489,96 @@ const Documents = () => {
                 <h2 className="text-lg font-bold text-gray-900">Repositorio de Versiones de Documentos</h2>
               </div>
               <span className="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-semibold rounded-full">
-                {filteredDocuments.length} total
-              </span>
+               {currentFolders.length + filteredDocuments.length} elementos
+             </span>
             </div>
           </div>
 
           <div className="p-6">
-            {filteredDocuments.length === 0 ? (
+            {currentFolders.length === 0 && filteredDocuments.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <FaFileAlt className="w-10 h-10 text-gray-400" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   {searchTerm || filterType !== 'all'
-                    ? 'No se encontraron documentos'
-                    : 'Sin documentos disponibles'}
+                    ? 'No se encontraron elementos'
+                    : 'Sin elementos disponibles'}
                 </h3>
                 <p className="text-gray-600 max-w-sm mx-auto">
                   {searchTerm || filterType !== 'all'
                     ? 'Intenta ajustar los filtros de búsqueda'
-                    : 'Comienza agregando tu primer documento utilizando el formulario de carga'}
+                    : 'Comienza agregando tu primera carpeta o documento'}
                 </p>
               </div>
             ) : (
               <>
-                {/* NUEVA FUNCIONALIDAD: Vista de cuadrícula */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* NUEVA FUNCIONALIDAD: Vista de cuadrícula con carpetas y documentos */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {/* Mostrar carpetas primero */}
+                    {currentFolders.map((folder) => (
+                      <div
+                        key={`folder-${folder.id}`}
+                        onClick={() => handleEnterFolder(folder)}
+                        className="group bg-linear-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 cursor-pointer"
+                      >
+                        <div className="flex items-start space-x-4 mb-4">
+                          <div className="w-12 h-12 bg-linear-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center shrink-0">
+                            <FaFolder className="text-blue-600 text-xl" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-bold text-gray-900 mb-2 text-lg">{folder.name}</h3>
+                            {folder.description && (
+                              <p className="text-sm text-gray-600 mb-2">{folder.description}</p>
+                            )}
+                            <div className="flex items-center gap-3 text-xs text-gray-500">
+                              {folder.createdAt && (
+                                <span className="flex items-center gap-1">
+                                  <FaClock className="w-3 h-3" />
+                                  {getTimeAgo(folder.createdAt)}
+                                </span>
+                              )}
+                              {folder.creator && (
+                                <span className="flex items-center gap-1">
+                                  <FaUser className="w-3 h-3" />
+                                  {folder.creator.name || folder.creator.username}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+                          {canEdit(folder) && (
+                            <>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEditFolder(folder);
+                                }}
+                                className="inline-flex items-center px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-semibold rounded-lg transition-all"
+                              >
+                                <FaEdit className="mr-1" />
+                                Editar
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteFolder(folder.id);
+                                }}
+                                className="inline-flex items-center px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-semibold rounded-lg transition-all"
+                              >
+                                <FaTrash className="mr-1" />
+                                Eliminar
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Mostrar documentos */}
                     {filteredDocuments.map((doc) => {
                       return (
                         <div
@@ -429,11 +630,12 @@ const Documents = () => {
                               </div>
                             </div>
                           </div>
-
+  
                           {/* Actions */}
                           <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
                             <a
                               href={`http://localhost:5000/${doc.filePath}`}
+                              download={getDownloadName(doc)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center px-4 py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all"
@@ -523,7 +725,7 @@ const Documents = () => {
               {formData.isNewVersion && (
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Seleccionar Documento Existente <span className="text-red-500">*</span>
+                    Seleccionar Documento Base <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.parentDocumentId || ''}
@@ -542,9 +744,23 @@ const Documents = () => {
                     required={formData.isNewVersion}
                   >
                     <option value="">Seleccionar documento...</option>
-                    {documents.filter(doc => doc.isActive).map((doc) => (
-                      <option key={doc.id} value={doc.id}>{doc.title} (v{doc.version})</option>
-                    ))}
+                    {documents
+                      .filter(doc => doc.isActive)
+                      .sort((a, b) => {
+                        // Ordenar por carpeta primero, luego por título
+                        const aFolder = folders.find(f => f.id === a.folderId)?.name || 'Raíz';
+                        const bFolder = folders.find(f => f.id === b.folderId)?.name || 'Raíz';
+                        if (aFolder !== bFolder) return aFolder.localeCompare(bFolder);
+                        return a.title.localeCompare(b.title);
+                      })
+                      .map((doc) => {
+                        const folderName = folders.find(f => f.id === doc.folderId)?.name || 'Raíz';
+                        return (
+                          <option key={doc.id} value={doc.id}>
+                            [{folderName}] {doc.title} (v{doc.version})
+                          </option>
+                        );
+                      })}
                   </select>
                 </div>
               )}
@@ -622,6 +838,22 @@ const Documents = () => {
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
                       rows="2"
                     />
+                  </div>
+                )}
+
+                {!formData.isNewVersion && (
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Carpeta</label>
+                    <select
+                      value={formData.folderId || ''}
+                      onChange={(e) => setFormData({ ...formData, folderId: e.target.value || null })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    >
+                      <option value="">Seleccionar carpeta (opcional)</option>
+                      {folders.map((folder) => (
+                        <option key={folder.id} value={folder.id}>{folder.name}</option>
+                      ))}
+                    </select>
                   </div>
                 )}
 
@@ -797,6 +1029,7 @@ const Documents = () => {
                       <div className="flex gap-2">
                         <a
                           href={`http://localhost:5000/${version.filePath}`}
+                          download={getDownloadName(selectedDocument, version)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-lg transition-all"
@@ -825,6 +1058,136 @@ const Documents = () => {
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Folder Modal */}
+      {showCreateFolderModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden transform transition-all animate-in zoom-in-95">
+            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10 flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-linear-to-br from-green-600 to-green-600 rounded-xl flex items-center justify-center">
+                  <FaPlus className="text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">Nueva Carpeta</h2>
+              </div>
+              <button
+                onClick={() => setShowCreateFolderModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+              >
+                <FaTimes className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateFolder} className="p-6 space-y-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Nombre <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Nombre de la carpeta"
+                  value={folderFormData.name}
+                  onChange={(e) => setFolderFormData({ ...folderFormData, name: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                <textarea
+                  placeholder="Descripción de la carpeta (opcional)"
+                  value={folderFormData.description}
+                  onChange={(e) => setFolderFormData({ ...folderFormData, description: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
+                  rows="3"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateFolderModal(false)}
+                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-6 py-3 bg-linear-to-r from-green-600 to-green-600 hover:from-green-700 hover:to-green-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                >
+                  Crear Carpeta
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Folder Modal */}
+      {showEditFolderModal && editingFolder && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden transform transition-all animate-in zoom-in-95">
+            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10 flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-linear-to-br from-blue-600 to-blue-600 rounded-xl flex items-center justify-center">
+                  <FaEdit className="text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">Editar Carpeta</h2>
+              </div>
+              <button
+                onClick={() => setShowEditFolderModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+              >
+                <FaTimes className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateFolder} className="p-6 space-y-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Nombre <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Nombre de la carpeta"
+                  value={editFolderFormData.name}
+                  onChange={(e) => setEditFolderFormData({ ...editFolderFormData, name: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                <textarea
+                  placeholder="Descripción de la carpeta (opcional)"
+                  value={editFolderFormData.description}
+                  onChange={(e) => setEditFolderFormData({ ...editFolderFormData, description: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                  rows="3"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => setShowEditFolderModal(false)}
+                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-6 py-3 bg-linear-to-r from-blue-600 to-blue-600 hover:from-blue-700 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                >
+                  Actualizar Carpeta
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
