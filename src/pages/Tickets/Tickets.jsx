@@ -11,8 +11,7 @@ import {
   TicketEditModal,
   TicketDetailModal,
   TicketCard,
-  TicketStats,
-  TicketPagination
+  TicketStats
 } from '../../components/Tickets';
 import { getTimeAgo } from '../../utils';
 
@@ -55,7 +54,6 @@ const Tickets = () => {
   const [titleFilter, setTitleFilter] = useState('');
   const [technicians, setTechnicians] = useState([]);
   const [administrators, setAdministrators] = useState([]);
-  const [pagination, setPagination] = useState({ totalItems: 0, currentPage: 1, totalPages: 1, itemsPerPage: 50 });
 
   const standardizedTitles = [
     'Problemas con SAP',
@@ -131,18 +129,18 @@ const Tickets = () => {
   // WebSocket listeners for real-time ticket list updates
   useEffect(() => {
     const handleTicketCreated = (newTicket) => {
-      // Refresh the current page to show the new ticket
-      fetchTickets(pagination.currentPage);
+      // Refresh to show the new ticket
+      fetchTickets();
     };
 
     const handleTicketDeleted = (data) => {
-      // Refresh the current page to remove the deleted ticket
-      fetchTickets(pagination.currentPage);
+      // Refresh to remove the deleted ticket
+      fetchTickets();
     };
 
     const handleTicketsListUpdated = () => {
-      // Refresh the current page to get updated data
-      fetchTickets(pagination.currentPage);
+      // Refresh to get updated data
+      fetchTickets();
     };
 
     // Register WebSocket listeners
@@ -156,13 +154,12 @@ const Tickets = () => {
       offTicketDeleted(handleTicketDeleted);
       offTicketsListUpdated(handleTicketsListUpdated);
     };
-  }, [pagination.currentPage]);
+  }, []);
 
-  const fetchTickets = async (page = 1) => {
+  const fetchTickets = async () => {
     try {
-      const data = await ticketsAPI.fetchTickets({ page, limit: 50 });
+      const data = await ticketsAPI.fetchTickets({});
       setTickets(data.tickets || []);
-      setPagination(data.pagination || { totalItems: 0, currentPage: 1, totalPages: 1, itemsPerPage: 50 });
     } catch (err) {
       showNotification('Error al cargar los tickets. Por favor, recarga la página.', 'error');
     } finally {
@@ -235,7 +232,7 @@ const Tickets = () => {
 
   const calculateStats = () => {
     if (!Array.isArray(tickets)) return { total: 0, abiertos: 0, enProgreso: 0, resueltos: 0, alta: 0, resolutionRate: 0 };
-    const total = pagination.totalItems || tickets.length;
+    const total = tickets.length;
     const abiertos = tickets.filter(t => t.status?.toLowerCase() === 'abierto').length;
     const enProgreso = tickets.filter(t => t.status?.toLowerCase() === 'en progreso').length;
     const resueltos = tickets.filter(t =>
@@ -805,7 +802,7 @@ const Tickets = () => {
         {/* Results Summary */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <p className="text-sm text-gray-600 font-medium">
-            Mostrando <span className="font-bold text-purple-600">{filteredTickets.length}</span> de <span className="font-bold">{pagination.totalItems || tickets.length}</span> tickets
+            Mostrando <span className="font-bold text-purple-600">{filteredTickets.length}</span> de <span className="font-bold">{tickets.length}</span> tickets
           </p>
           <div className="flex gap-2">
             <button
@@ -1030,13 +1027,7 @@ const Tickets = () => {
               </div>
             )}
 
-            {/* Pagination Controls */}
-            {pagination.totalPages > 1 && (
-              <TicketPagination
-                pagination={pagination}
-                onPageChange={fetchTickets}
-              />
-            )}
+            {/* Pagination Controls Removed */}
 
             {/* Detail Modal */}
             <TicketDetailModal
