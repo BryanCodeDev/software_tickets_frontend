@@ -16,12 +16,19 @@ const getSocketURL = () => {
   return `${window.location.protocol}//${window.location.hostname}:5000`;
 };
 
+const getAuthToken = () => {
+  return localStorage.getItem('token');
+};
+
 const socket = io(getSocketURL(), {
   path: '/socket.io/',
   transports: ['websocket', 'polling'],
   reconnection: true,
   reconnectionDelay: 1000,
-  reconnectionAttempts: 5
+  reconnectionAttempts: 5,
+  query: {
+    token: getAuthToken()
+  }
 });
 
 export const joinTicketRoom = (ticketId) => {
@@ -110,6 +117,14 @@ export const offUserUpdated = (callback) => {
 
 export const offUsersListUpdated = (callback) => {
   socket.off('users-list-updated', callback);
+};
+
+export const onForceLogout = (callback) => {
+  socket.on('force-logout', callback);
+};
+
+export const offForceLogout = (callback) => {
+  socket.off('force-logout', callback);
 };
 
 export default socket;

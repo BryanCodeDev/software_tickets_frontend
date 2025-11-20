@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { authAPI } from '../api';
+import { onForceLogout, offForceLogout } from '../api/socket';
 
 const AuthContext = createContext();
 
@@ -38,6 +39,21 @@ export const AuthProvider = ({ children }) => {
       }
     }
     setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    const handleForceLogout = () => {
+      console.log('Force logout received');
+      logout();
+      // Opcional: mostrar mensaje al usuario
+      alert('Tu sesión ha sido cerrada desde otro dispositivo.');
+    };
+
+    onForceLogout(handleForceLogout);
+
+    return () => {
+      offForceLogout(handleForceLogout);
+    };
   }, []);
 
   const login = async (email, password, twoFactorToken = null) => {
