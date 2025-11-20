@@ -1,18 +1,30 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { credentialsAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
-import { FaLock, FaPlus, FaEdit, FaTrash, FaEye, FaEyeSlash, FaCheck, FaTimes, FaSearch, FaFilter, FaCopy, FaKey, FaExclamationTriangle, FaSortAmountDown, FaSortAmountUp, FaHistory, FaClock } from 'react-icons/fa';
+import { FaLock, FaPlus, FaEdit, FaTrash, FaEye, FaEyeSlash, FaCheck, FaTimes, FaSearch, FaFilter, FaCopy, FaKey, FaExclamationTriangle, FaSortAmountDown, FaSortAmountUp, FaHistory, FaClock, FaArrowLeft, FaFolder, FaFolderOpen } from 'react-icons/fa';
 import { NotificationSystem, ConfirmDialog, FilterPanel } from '../../components/common';
 
 const Credentials = () => {
   const [credentials, setCredentials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showFolderModal, setShowFolderModal] = useState(false);
+  const [showEditFolderModal, setShowEditFolderModal] = useState(false);
   const [editingCredential, setEditingCredential] = useState(null);
+  const [editingFolder, setEditingFolder] = useState(null);
   const [showPassword, setShowPassword] = useState({});
   const [showFormPassword, setShowFormPassword] = useState(false);
-  const [formData, setFormData] = useState({ service: '', username: '', password: '', notes: '' });
+  const [formData, setFormData] = useState({ service: '', username: '', password: '', area: '', notes: '' });
+  const [folderFormData, setFolderFormData] = useState({ name: '', description: '' });
+  const [editFolderFormData, setEditFolderFormData] = useState({ name: '', description: '' });
   const [formLoading, setFormLoading] = useState(false);
+  const [folderFormLoading, setFolderFormLoading] = useState(false);
+  const [editFolderFormLoading, setEditFolderFormLoading] = useState(false);
+
+  // Estados para navegación de carpetas
+  const [folders, setFolders] = useState([]);
+  const [currentFolder, setCurrentFolder] = useState(null);
+  const [loadingFolders, setLoadingFolders] = useState(true);
   const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
@@ -27,8 +39,10 @@ const Credentials = () => {
   useEffect(() => {
     if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Técnico')) {
       fetchCredentials();
+      fetchFolders();
     } else {
       setLoading(false);
+      setLoadingFolders(false);
     }
   }, [user]);
 
@@ -42,15 +56,33 @@ const Credentials = () => {
     }
   };
 
+  const fetchFolders = async () => {
+    try {
+      const data = await credentialsAPI.fetchFolders();
+      setFolders(data);
+    } catch (err) {
+      console.error('Error fetching folders:', err);
+    } finally {
+      setLoadingFolders(false);
+    }
+  };
+
   // NUEVA FUNCIONALIDAD: Filtrado y ordenamiento
   const filterAndSortCredentials = () => {
     let filtered = [...credentials];
+
+    // Filtrar por carpeta actual
+    if (currentFolder) {
+      filtered = filtered.filter(cred => cred.credentialFolderId === currentFolder.id);
+    }
 
     // Búsqueda
     if (searchTerm) {
       filtered = filtered.filter(cred =>
         cred.service?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cred.username?.toLowerCase().includes(searchTerm.toLowerCase())
+        cred.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cred.area?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cred.description?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -76,6 +108,9 @@ const Credentials = () => {
 
     return filtered;
   };
+
+  // Filtrar carpetas de la raíz (solo cuando no hay carpeta actual)
+  const rootFolders = folders.filter(folder => !folder.parentFolderId);
 
   const filteredCredentials = filterAndSortCredentials();
 
@@ -168,9 +203,22 @@ const Credentials = () => {
 
   const handleCreate = () => {
     setEditingCredential(null);
-    setFormData({ service: '', username: '', password: '', notes: '' });
+    setFormData({ service: '', username: '', password: '', area: '', notes: '' });
     setPasswordStrength(null);
     setShowModal(true);
+  };
+
+  const handleCreateFolder = () => {
+    setFolderFormData({ name: '', description: '' });
+    setShowFolderModal(true);
+  };
+
+  const handleEnterFolder = (folder) => {
+    setCurrentFolder(folder);
+  };
+
+  const handleGoBack = () => {
+    setCurrentFolder(null);
   };
 
   const handleEdit = (cred) => {
@@ -179,7 +227,8 @@ const Credentials = () => {
       service: cred.service,
       username: cred.username,
       password: cred.password,
-      notes: cred.notes || ''
+      area: cred.area || '',
+      notes: cred.description || ''
     });
     setPasswordStrength(checkPasswordStrength(cred.password));
     setShowModal(true);
@@ -201,11 +250,16 @@ const Credentials = () => {
     e.preventDefault();
     setFormLoading(true);
     try {
+      const credentialData = { ...formData };
       if (editingCredential) {
-        await credentialsAPI.updateCredential(editingCredential.id, formData);
+        await credentialsAPI.updateCredential(editingCredential.id, credentialData);
         showNotification('Credencial actualizada exitosamente', 'success');
       } else {
-        await credentialsAPI.createCredential(formData);
+        // Si estamos en una carpeta, asignar la carpeta actual
+        if (currentFolder) {
+          credentialData.credentialFolderId = currentFolder.id;
+        }
+        await credentialsAPI.createCredential(credentialData);
         showNotification('Credencial creada exitosamente', 'success');
       }
       fetchCredentials();
@@ -214,6 +268,55 @@ const Credentials = () => {
       showNotification('Error al guardar la credencial. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
     } finally {
       setFormLoading(false);
+    }
+  };
+
+  const handleFolderSubmit = async (e) => {
+    e.preventDefault();
+    setFolderFormLoading(true);
+    try {
+      await credentialsAPI.createFolder(folderFormData);
+      fetchFolders();
+      showNotification('Carpeta creada exitosamente', 'success');
+      setShowFolderModal(false);
+    } catch (err) {
+      showNotification('Error al crear la carpeta. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
+    } finally {
+      setFolderFormLoading(false);
+    }
+  };
+
+  const handleEditFolder = (folder) => {
+    setEditingFolder(folder);
+    setEditFolderFormData({ name: folder.name, description: folder.description || '' });
+    setShowEditFolderModal(true);
+  };
+
+  const handleDeleteFolder = async (id) => {
+    showConfirmDialog('¿Estás seguro de que deseas eliminar esta carpeta?', async () => {
+      try {
+        await credentialsAPI.deleteFolder(id);
+        fetchFolders();
+        showNotification('Carpeta eliminada exitosamente', 'success');
+      } catch (err) {
+        showNotification('Error al eliminar la carpeta. Por favor, inténtalo de nuevo.', 'error');
+      }
+    });
+  };
+
+  const handleEditFolderSubmit = async (e) => {
+    e.preventDefault();
+    setEditFolderFormLoading(true);
+    try {
+      await credentialsAPI.updateFolder(editingFolder.id, editFolderFormData);
+      fetchFolders();
+      showNotification('Carpeta actualizada exitosamente', 'success');
+      setShowEditFolderModal(false);
+      setEditingFolder(null);
+    } catch (err) {
+      showNotification('Error al actualizar la carpeta. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
+    } finally {
+      setEditFolderFormLoading(false);
     }
   };
 
@@ -283,18 +386,39 @@ const Credentials = () => {
                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-r from-purple-600 to-violet-600 rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg">
                   <FaLock className="text-white text-base sm:text-lg" />
                 </div>
-                Credenciales
+                {currentFolder ? `Carpeta: ${currentFolder.name}` : 'Credenciales'}
               </h1>
-              <p className="mt-2 text-sm sm:text-base text-gray-600">Gestiona las credenciales internas del sistema</p>
+              <p className="mt-2 text-sm sm:text-base text-gray-600">
+                {currentFolder ? (currentFolder.description || 'Gestiona las credenciales de esta carpeta') : 'Gestiona las credenciales internas del sistema'}
+              </p>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
-              <button
-                onClick={handleCreate}
-                className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
-              >
-                <FaPlus className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span>Nueva Credencial</span>
-              </button>
+              {currentFolder && (
+                <button
+                  onClick={handleGoBack}
+                  className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
+                >
+                  <FaArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span>Atrás</span>
+                </button>
+              )}
+              {currentFolder ? (
+                <button
+                  onClick={handleCreate}
+                  className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
+                >
+                  <FaPlus className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span>Nueva Credencial</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleCreateFolder}
+                  className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
+                >
+                  <FaPlus className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span>Nueva Carpeta</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -317,115 +441,188 @@ const Credentials = () => {
           ]}
         />
 
-        {/* NUEVA FUNCIONALIDAD: Resumen de resultados y vista */}
+        {/* Resumen de resultados */}
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm text-gray-600 font-medium">
-            Mostrando <span className="font-bold text-purple-600">{filteredCredentials.length}</span> de <span className="font-bold">{credentials.length}</span> credenciales
+            {currentFolder
+              ? `Mostrando ${filteredCredentials.length} credenciales en esta carpeta`
+              : `Mostrando ${rootFolders.length} carpetas`
+            }
           </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
           <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Todas las Credenciales</h2>
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+              {currentFolder ? 'Credenciales de la Carpeta' : 'Carpetas de Credenciales'}
+            </h2>
           </div>
           <div className="p-4 sm:p-6">
-            {filteredCredentials.length === 0 ? (
-              <div className="text-center py-8 sm:py-12">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FaLock className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
+            {currentFolder ? (
+              // Vista de credenciales dentro de una carpeta
+              filteredCredentials.length === 0 ? (
+                <div className="text-center py-8 sm:py-12">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FaLock className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
+                    {searchTerm
+                      ? 'No se encontraron credenciales'
+                      : 'No hay credenciales en esta carpeta'}
+                  </h3>
+                  <p className="text-sm sm:text-base text-gray-600">
+                    {searchTerm
+                      ? 'Intenta ajustar los filtros de búsqueda'
+                      : 'Comienza creando una nueva credencial'}
+                  </p>
                 </div>
-                <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
-                  {searchTerm
-                    ? 'No se encontraron credenciales'
-                    : 'No hay credenciales disponibles'}
-                </h3>
-                <p className="text-sm sm:text-base text-gray-600">
-                  {searchTerm
-                    ? 'Intenta ajustar los filtros de búsqueda'
-                    : 'Comienza creando una nueva credencial'}
-                </p>
-              </div>
-            ) : (
-              <>
-                {/* NUEVA FUNCIONALIDAD: Vista de cuadrícula */}
+              ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                    {filteredCredentials.map((cred) => {
-                      return (
-                        <div key={cred.id} className="bg-gray-50 rounded-xl p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-shadow">
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
-                            <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">{cred.service}</h3>
+                  {filteredCredentials.map((cred) => (
+                    <div key={cred.id} className="bg-gray-50 rounded-xl p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-shadow">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+                        <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">{cred.service}</h3>
+                      </div>
+                      <div className="space-y-2 text-xs sm:text-sm text-gray-600 mb-4">
+                        <div className="flex items-center justify-between">
+                          <p><strong>Usuario:</strong> {cred.username}</p>
+                          <button
+                            onClick={() => copyToClipboard(cred.username, 'Usuario')}
+                            className="text-gray-400 hover:text-purple-600 p-1 transition-colors"
+                            title="Copiar usuario"
+                          >
+                            <FaCopy className="w-3 h-3 sm:w-4 sm:h-4" />
+                          </button>
+                        </div>
+                        {cred.area && (
+                          <div className="flex items-center justify-between">
+                            <p><strong>Área:</strong> {cred.area}</p>
                           </div>
-                          <div className="space-y-2 text-xs sm:text-sm text-gray-600 mb-4">
-                            <div className="flex items-center justify-between">
-                              <p><strong>Usuario:</strong> {cred.username}</p>
-                              {/* NUEVA FUNCIONALIDAD: Botón para copiar usuario */}
-                              <button
-                                onClick={() => copyToClipboard(cred.username, 'Usuario')}
-                                className="text-gray-400 hover:text-purple-600 p-1 transition-colors"
-                                title="Copiar usuario"
-                              >
-                                <FaCopy className="w-3 h-3 sm:w-4 sm:h-4" />
-                              </button>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <p className="text-xs sm:text-sm"><strong>Contraseña:</strong></p>
-                              <span className="flex-1 text-xs sm:text-sm font-mono">
-                                {showPassword[cred.id] ? cred.password : '••••••••'}
-                              </span>
-                              <button
-                                onClick={() => togglePasswordVisibility(cred.id)}
-                                className="text-gray-400 hover:text-gray-600 p-1"
-                                title={showPassword[cred.id] ? 'Ocultar' : 'Mostrar'}
-                              >
-                                {showPassword[cred.id] ? <FaEyeSlash className="w-3 h-3 sm:w-4 sm:h-4" /> : <FaEye className="w-3 h-3 sm:w-4 sm:h-4" />}
-                              </button>
-                              {/* NUEVA FUNCIONALIDAD: Botón para copiar contraseña */}
-                              <button
-                                onClick={() => copyToClipboard(cred.password, 'Contraseña')}
-                                className="text-gray-400 hover:text-purple-600 p-1 transition-colors"
-                                title="Copiar contraseña"
-                              >
-                                <FaCopy className="w-3 h-3 sm:w-4 sm:h-4" />
-                              </button>
-                            </div>
-                            {/* NUEVA FUNCIONALIDAD: Mostrar notas si existen */}
-                            {cred.notes && (
-                              <div className="pt-2 border-t border-gray-200">
-                                <p className="text-xs text-gray-500 mb-1"><strong>Notas:</strong></p>
-                                <p className="text-xs text-gray-600">{cred.notes}</p>
-                              </div>
-                            )}
-                            {/* NUEVA FUNCIONALIDAD: Información adicional */}
-                            {cred.createdAt && (
-                              <div className="flex items-center gap-2 text-xs text-gray-500 pt-2">
+                        )}
+                        <div className="flex items-center space-x-2">
+                          <p className="text-xs sm:text-sm"><strong>Contraseña:</strong></p>
+                          <span className="flex-1 text-xs sm:text-sm font-mono">
+                            {showPassword[cred.id] ? cred.password : '••••••••'}
+                          </span>
+                          <button
+                            onClick={() => togglePasswordVisibility(cred.id)}
+                            className="text-gray-400 hover:text-gray-600 p-1"
+                            title={showPassword[cred.id] ? 'Ocultar' : 'Mostrar'}
+                          >
+                            {showPassword[cred.id] ? <FaEyeSlash className="w-3 h-3 sm:w-4 sm:h-4" /> : <FaEye className="w-3 h-3 sm:w-4 sm:h-4" />}
+                          </button>
+                          <button
+                            onClick={() => copyToClipboard(cred.password, 'Contraseña')}
+                            className="text-gray-400 hover:text-purple-600 p-1 transition-colors"
+                            title="Copiar contraseña"
+                          >
+                            <FaCopy className="w-3 h-3 sm:w-4 sm:h-4" />
+                          </button>
+                        </div>
+                        {cred.description && (
+                          <div className="pt-2 border-t border-gray-200">
+                            <p className="text-xs text-gray-500 mb-1"><strong>Notas:</strong></p>
+                            <p className="text-xs text-gray-600">{cred.description}</p>
+                          </div>
+                        )}
+                        {cred.createdAt && (
+                          <div className="flex items-center gap-2 text-xs text-gray-500 pt-2">
+                            <FaClock className="w-3 h-3" />
+                            <span>Creada {getTimeAgo(cred.createdAt)}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <button
+                          onClick={() => handleEdit(cred)}
+                          className="flex items-center justify-center space-x-1 px-3 py-2 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors"
+                        >
+                          <FaEdit className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <span>Editar</span>
+                        </button>
+                        {user.role?.name === 'Administrador' && (
+                          <button
+                            onClick={() => handleDelete(cred.id)}
+                            className="flex items-center justify-center space-x-1 px-3 py-2 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors"
+                          >
+                            <FaTrash className="w-3 h-3 sm:w-4 sm:h-4" />
+                            <span>Eliminar</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
+            ) : (
+              // Vista de carpetas en la raíz
+              rootFolders.length === 0 ? (
+                <div className="text-center py-8 sm:py-12">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FaFolder className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
+                    No hay carpetas disponibles
+                  </h3>
+                  <p className="text-sm sm:text-base text-gray-600">
+                    Comienza creando una nueva carpeta
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {rootFolders.map((folder) => (
+                    <div
+                      key={folder.id}
+                      onClick={() => handleEnterFolder(folder)}
+                      className="group bg-linear-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 cursor-pointer"
+                    >
+                      <div className="flex items-start space-x-4 mb-4">
+                        <div className="w-12 h-12 bg-linear-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center shrink-0">
+                          <FaFolder className="text-blue-600 text-xl" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-gray-900 mb-2 text-lg">{folder.name}</h3>
+                          {folder.description && (
+                            <p className="text-sm text-gray-600 mb-2">{folder.description}</p>
+                          )}
+                          <div className="flex items-center gap-3 text-xs text-gray-500">
+                            {folder.createdAt && (
+                              <span className="flex items-center gap-1">
                                 <FaClock className="w-3 h-3" />
-                                <span>Creada {getTimeAgo(cred.createdAt)}</span>
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex flex-col sm:flex-row gap-2">
-                            <button
-                              onClick={() => handleEdit(cred)}
-                              className="flex items-center justify-center space-x-1 px-3 py-2 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors"
-                            >
-                              <FaEdit className="w-3 h-3 sm:w-4 sm:h-4" />
-                              <span>Editar</span>
-                            </button>
-                            {user.role?.name === 'Administrador' && (
-                              <button
-                                onClick={() => handleDelete(cred.id)}
-                                className="flex items-center justify-center space-x-1 px-3 py-2 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors"
-                              >
-                                <FaTrash className="w-3 h-3 sm:w-4 sm:h-4" />
-                                <span>Eliminar</span>
-                              </button>
+                                {getTimeAgo(folder.createdAt)}
+                              </span>
                             )}
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-              </>
+                        <div className="flex flex-col gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditFolder(folder);
+                            }}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            title="Editar carpeta"
+                          >
+                            <FaEdit className="w-4 h-4" />
+                          </button>
+                          {user.role?.name === 'Administrador' && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteFolder(folder.id);
+                              }}
+                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Eliminar carpeta"
+                            >
+                              <FaTrash className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
             )}
           </div>
         </div>
@@ -479,6 +676,94 @@ const Credentials = () => {
                     className="w-full px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-base"
                     required
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2 sm:mb-3">
+                    Área
+                  </label>
+                  <select
+                    value={formData.area}
+                    onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                    className="w-full px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-base bg-white"
+                  >
+                    <option value="">Seleccionar área</option>
+
+                    {/* Producción y Operaciones */}
+                    <optgroup label="Producción y Operaciones">
+                      <option value="MATERIA PRIMA">Materia Prima</option>
+                      <option value="PRODUCCION">Producción</option>
+                      <option value="PRODUCTO TERMINADO">Producto Terminado</option>
+                      <option value="DESPACHOS">Despachos</option>
+                      <option value="DEVOLUCIONES">Devoluciones</option>
+                      <option value="BODEGA">Bodega</option>
+                      <option value="RECEPCION">Recepción</option>
+                      <option value="ALMACENISTA">Almacenista</option>
+                    </optgroup>
+
+                    {/* Calidad y Laboratorio */}
+                    <optgroup label="Calidad y Laboratorio">
+                      <option value="CALIDAD">Calidad</option>
+                      <option value="CALIDAD OROCCO">Calidad Orocco</option>
+                      <option value="LABORATORIO">Laboratorio</option>
+                      <option value="INVESTIGACION">Investigación</option>
+                    </optgroup>
+
+                    {/* Administración y Finanzas */}
+                    <optgroup label="Administración y Finanzas">
+                      <option value="CONTABILIDAD">Contabilidad</option>
+                      <option value="COSTOS">Costos</option>
+                      <option value="TESORERIA">Tesorería</option>
+                      <option value="CARTERA">Cartera</option>
+                      <option value="FACTURACION">Facturación</option>
+                      <option value="COMPRAS">Compras</option>
+                      <option value="JEFE COMPRAS">Jefe Compras</option>
+                    </optgroup>
+
+                    {/* Ventas y Mercadeo */}
+                    <optgroup label="Ventas y Mercadeo">
+                      <option value="VENTAS">Ventas</option>
+                      <option value="MERCADEO">Mercadeo</option>
+                      <option value="DIRECCION VENTAS">Dirección Ventas</option>
+                      <option value="CALL CENTER">Call Center</option>
+                      <option value="SAC">SAC</option>
+                    </optgroup>
+
+                    {/* Recursos Humanos */}
+                    <optgroup label="Recursos Humanos">
+                      <option value="RH">Recursos Humanos</option>
+                      <option value="ADMINISTRATIVO">Administrativo</option>
+                    </optgroup>
+
+                    {/* Gerencia y Dirección */}
+                    <optgroup label="Gerencia y Dirección">
+                      <option value="GERENCIA">Gerencia</option>
+                      <option value="SUB GERENCIA">Sub Gerencia</option>
+                      <option value="EJECUTIVA">Ejecutiva</option>
+                      <option value="COORDINADOR">Coordinador</option>
+                      <option value="PLANEACION">Planeación</option>
+                    </optgroup>
+
+                    {/* Servicios Generales */}
+                    <optgroup label="Servicios Generales">
+                      <option value="MANTENIMIENTO">Mantenimiento</option>
+                      <option value="REPARACION">Reparación</option>
+                      <option value="SERVICIO GENERAL">Servicio General</option>
+                      <option value="AMBIENTAL Y SST">Ambiental y SST</option>
+                    </optgroup>
+
+                    {/* Sistemas y Tecnología */}
+                    <optgroup label="Sistemas y Tecnología">
+                      <option value="SISTEMAS">Sistemas</option>
+                      <option value="DESARROLLO">Desarrollo</option>
+                    </optgroup>
+
+                    {/* Control y Auditoría */}
+                    <optgroup label="Control y Auditoría">
+                      <option value="AUDITORIA">Auditoría</option>
+                      <option value="ARCHIVO">Archivo</option>
+                    </optgroup>
+                  </select>
                 </div>
 
                 <div>
@@ -586,6 +871,160 @@ const Credentials = () => {
                     </>
                   ) : (
                     editingCredential ? 'Actualizar' : 'Crear'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for Create Folder */}
+      {showFolderModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden transform transition-all animate-in zoom-in-95">
+            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10 flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-linear-to-br from-green-600 to-green-600 rounded-xl flex items-center justify-center">
+                  <FaPlus className="text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">Nueva Carpeta</h2>
+              </div>
+              <button
+                onClick={() => setShowFolderModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+              >
+                <FaTimes className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            <form onSubmit={handleFolderSubmit} className="p-6 space-y-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Nombre <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Nombre de la carpeta"
+                  value={folderFormData.name}
+                  onChange={(e) => setFolderFormData({ ...folderFormData, name: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                <textarea
+                  placeholder="Descripción de la carpeta (opcional)"
+                  value={folderFormData.description}
+                  onChange={(e) => setFolderFormData({ ...folderFormData, description: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
+                  rows="3"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => setShowFolderModal(false)}
+                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
+                  disabled={folderFormLoading}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-6 py-3 bg-linear-to-r from-green-600 to-green-600 hover:from-green-700 hover:to-green-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  disabled={folderFormLoading}
+                >
+                  {folderFormLoading ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Creando...
+                    </>
+                  ) : (
+                    'Crear Carpeta'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for Edit Folder */}
+      {showEditFolderModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden transform transition-all animate-in zoom-in-95">
+            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10 flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-linear-to-br from-blue-600 to-blue-600 rounded-xl flex items-center justify-center">
+                  <FaEdit className="text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">Editar Carpeta</h2>
+              </div>
+              <button
+                onClick={() => setShowEditFolderModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+              >
+                <FaTimes className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditFolderSubmit} className="p-6 space-y-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Nombre <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Nombre de la carpeta"
+                  value={editFolderFormData.name}
+                  onChange={(e) => setEditFolderFormData({ ...editFolderFormData, name: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                <textarea
+                  placeholder="Descripción de la carpeta (opcional)"
+                  value={editFolderFormData.description}
+                  onChange={(e) => setEditFolderFormData({ ...editFolderFormData, description: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                  rows="3"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => setShowEditFolderModal(false)}
+                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
+                  disabled={editFolderFormLoading}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-6 py-3 bg-linear-to-r from-blue-600 to-blue-600 hover:from-blue-700 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  disabled={editFolderFormLoading}
+                >
+                  {editFolderFormLoading ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Actualizando...
+                    </>
+                  ) : (
+                    'Actualizar Carpeta'
                   )}
                 </button>
               </div>
