@@ -5,8 +5,9 @@ import { FaTicketAlt, FaBox, FaFolder, FaFile, FaLock, FaChartLine, FaClock, FaE
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
-  const [stats, setStats] = useState({ tickets: 0, inventory: 0, documents: 0, credentials: 0, users: 0 });
+  const [stats, setStats] = useState({ tickets: 0, inventory: 0, documents: 0, credentials: 0, users: 0, qualityTickets: 0, regularTickets: 0 });
   const [ticketStats, setTicketStats] = useState({ pending: 0, inProgress: 0, resolved: 0 });
+  const [qualityTicketStats, setQualityTicketStats] = useState({ pending: 0, inProgress: 0, resolved: 0 });
   const [recentActivity, setRecentActivity] = useState([]);
   const [systemHealth, setSystemHealth] = useState({});
   const [loading, setLoading] = useState(true);
@@ -23,15 +24,26 @@ const Dashboard = () => {
         inventory: data.inventory,
         documents: data.documents,
         credentials: data.credentials,
-        users: data.users
+        users: data.users,
+        qualityTickets: data.qualityTickets || 0,
+        regularTickets: data.regularTickets || 0
       });
 
-      // Estadísticas de tickets desglosadas
+      // Estadísticas de tickets desglosadas (todos los tickets)
       if (data.ticketsByStatus) {
         setTicketStats({
           pending: data.ticketsByStatus.abierto || 0,
           inProgress: data.ticketsByStatus['en progreso'] || 0,
           resolved: data.ticketsByStatus.resuelto || 0
+        });
+      }
+
+      // Estadísticas de tickets de calidad
+      if (data.qualityTicketsByStatus) {
+        setQualityTicketStats({
+          pending: data.qualityTicketsByStatus.abierto || 0,
+          inProgress: data.qualityTicketsByStatus['en progreso'] || 0,
+          resolved: data.qualityTicketsByStatus.resuelto || 0
         });
       }
 
@@ -74,6 +86,7 @@ const Dashboard = () => {
 
   const totalResources = stats.tickets + stats.inventory + stats.documents + stats.credentials;
   const completionRate = stats.tickets > 0 ? Math.round(((ticketStats.resolved + ticketStats.pending + ticketStats.inProgress) > 0 ? (ticketStats.resolved / (ticketStats.resolved + ticketStats.pending + ticketStats.inProgress)) * 100 : 0)) : 0;
+  const qualityCompletionRate = stats.qualityTickets > 0 ? Math.round(((qualityTicketStats.resolved + qualityTicketStats.pending + qualityTicketStats.inProgress) > 0 ? (qualityTicketStats.resolved / (qualityTicketStats.resolved + qualityTicketStats.pending + qualityTicketStats.inProgress)) * 100 : 0)) : 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -107,7 +120,16 @@ const Dashboard = () => {
           gradient="bg-gradient-to-br from-violet-500 to-violet-600"
           textColor="text-violet-100"
         />
-        
+
+        <StatCard
+          title="Calidad"
+          value={stats.qualityTickets}
+          description="Reportes de calidad y documentación"
+          icon={FaShieldAlt}
+          gradient="bg-gradient-to-br from-emerald-500 to-emerald-600"
+          textColor="text-emerald-100"
+        />
+
         <StatCard
           title="Inventario"
           value={stats.inventory}
@@ -117,14 +139,6 @@ const Dashboard = () => {
           textColor="text-purple-100"
         />
         
-        <StatCard
-           title="Documentos"
-           value={stats.documents}
-           description="Documentación oficial"
-           icon={FaFile}
-           gradient="bg-gradient-to-br from-purple-400 to-purple-500"
-           textColor="text-purple-100"
-         />
 
          <StatCard
            title="Credenciales"
@@ -148,26 +162,61 @@ const Dashboard = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-          <QuickStatCard
-            icon={FaExclamationTriangle}
-            label="Pendientes"
-            value={ticketStats.pending}
-            color="bg-amber-500"
-          />
-          <QuickStatCard
-            icon={FaUserClock}
-            label="En Progreso"
-            value={ticketStats.inProgress}
-            color="bg-blue-500"
-          />
-          <QuickStatCard
-            icon={FaCheckCircle}
-            label="Resueltos"
-            value={ticketStats.resolved}
-            color="bg-green-500"
-          />
-        </div>
+          {/* Tickets Normales */}
+          <div className="mb-6">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+              <FaTicketAlt className="mr-2 text-purple-600" />
+              Tickets de Soporte IT
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+              <QuickStatCard
+                icon={FaExclamationTriangle}
+                label="Pendientes"
+                value={ticketStats.pending}
+                color="bg-amber-500"
+              />
+              <QuickStatCard
+                icon={FaUserClock}
+                label="En Progreso"
+                value={ticketStats.inProgress}
+                color="bg-blue-500"
+              />
+              <QuickStatCard
+                icon={FaCheckCircle}
+                label="Resueltos"
+                value={ticketStats.resolved}
+                color="bg-green-500"
+              />
+            </div>
+          </div>
+
+          {/* Tickets de Calidad */}
+          <div>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+              <FaShieldAlt className="mr-2 text-emerald-600" />
+              Tickets de Calidad
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+              <QuickStatCard
+                icon={FaExclamationTriangle}
+                label="Pendientes"
+                value={qualityTicketStats.pending}
+                color="bg-amber-500"
+              />
+              <QuickStatCard
+                icon={FaUserClock}
+                label="En Progreso"
+                value={qualityTicketStats.inProgress}
+                color="bg-blue-500"
+              />
+              <QuickStatCard
+                icon={FaCheckCircle}
+                label="Resueltos"
+                value={qualityTicketStats.resolved}
+                color="bg-green-500"
+              />
+            </div>
+          </div>
 
           {/* Progress Bar */}
           <div className="mt-4 sm:mt-6">
@@ -203,9 +252,9 @@ const Dashboard = () => {
                 <span className="text-xs sm:text-sm text-gray-700 font-medium truncate">Activos en Inventario</span>
                 <span className="text-purple-600 font-bold text-base sm:text-lg shrink-0">{loading ? '...' : stats.inventory}</span>
               </div>
-              <div className="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg">
-                <span className="text-xs sm:text-sm text-gray-700 font-medium truncate">Documentos Oficiales</span>
-                <span className="text-purple-500 font-bold text-base sm:text-lg shrink-0">{loading ? '...' : stats.documents}</span>
+              <div className="flex justify-between items-center p-2 sm:p-3 bg-emerald-50 rounded-lg">
+                <span className="text-xs sm:text-sm text-gray-700 font-medium truncate">Tickets de Calidad</span>
+                <span className="text-emerald-600 font-bold text-base sm:text-lg shrink-0">{loading ? '...' : stats.qualityTickets}</span>
               </div>
               <div className="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg">
                 <span className="text-xs sm:text-sm text-gray-700 font-medium truncate">Credenciales Seguras</span>
@@ -220,60 +269,76 @@ const Dashboard = () => {
               <FaChartLine className="mr-2 text-green-600 shrink-0" />
               <span className="truncate">Métricas de Rendimiento</span>
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-              <div className="p-3 sm:p-4 bg-green-50 rounded-lg border border-green-100">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Tasa de Resolución</span>
-                  <span className="text-xl sm:text-2xl font-bold text-green-600 shrink-0">{completionRate}%</span>
+            <div className="space-y-4">
+              {/* Primera fila: Métricas de Tickets */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="p-3 sm:p-4 bg-green-50 rounded-lg border border-green-100">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Tasa de Resolución</span>
+                    <span className="text-xl sm:text-2xl font-bold text-green-600 shrink-0">{completionRate}%</span>
+                  </div>
+                  <div className="w-full bg-green-200 rounded-full h-2">
+                    <div
+                      className="bg-green-600 h-2 rounded-full transition-all duration-500"
+                      style={{ width: `${completionRate}%` }}
+                    ></div>
+                  </div>
                 </div>
-                <div className="w-full bg-green-200 rounded-full h-2">
-                  <div
-                    className="bg-green-600 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${completionRate}%` }}
-                  ></div>
+
+                <div className="p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-100">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Tickets Activos</span>
+                    <span className="text-xl sm:text-2xl font-bold text-blue-600 shrink-0">
+                      {loading ? '...' : ticketStats.pending + ticketStats.inProgress}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-600">Pendientes y en progreso</p>
+                </div>
+
+                <div className="p-3 sm:p-4 bg-emerald-50 rounded-lg border border-emerald-100">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Calidad</span>
+                    <span className="text-xl sm:text-2xl font-bold text-emerald-600 shrink-0">
+                      {qualityCompletionRate}%
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-600">Tasa resolución calidad</p>
                 </div>
               </div>
 
-              <div className="p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-100">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Tickets Activos</span>
-                  <span className="text-xl sm:text-2xl font-bold text-blue-600 shrink-0">
-                    {loading ? '...' : ticketStats.pending + ticketStats.inProgress}
-                  </span>
+              {/* Segunda fila: Métricas Generales */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="p-3 sm:p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Usuarios Activos</span>
+                    <span className="text-xl sm:text-2xl font-bold text-indigo-600 shrink-0">
+                      {loading ? '...' : stats.users}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-600">Total de usuarios registrados</p>
                 </div>
-                <p className="text-xs text-gray-600">Pendientes y en progreso</p>
-              </div>
 
-              <div className="p-3 sm:p-4 bg-purple-50 rounded-lg border border-purple-100">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Eficiencia</span>
-                  <span className="text-xl sm:text-2xl font-bold text-purple-600 shrink-0">
-                    {completionRate}%
-                  </span>
+                <div className="p-3 sm:p-4 bg-pink-50 rounded-lg border border-pink-100">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Cobertura</span>
+                    <span className="text-xl sm:text-2xl font-bold text-pink-600 shrink-0">
+                      {stats.inventory > 0 ? Math.round((stats.inventory / stats.users) * 100) : 0}%
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-600">Equipos por usuario</p>
                 </div>
-                <p className="text-xs text-gray-600">Basado en tickets resueltos</p>
-              </div>
 
-              <div className="p-3 sm:p-4 bg-indigo-50 rounded-lg border border-indigo-100">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Usuarios Activos</span>
-                  <span className="text-xl sm:text-2xl font-bold text-indigo-600 shrink-0">
-                    {loading ? '...' : stats.users}
-                  </span>
+                <div className="p-3 sm:p-4 bg-purple-50 rounded-lg border border-purple-100">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Eficiencia Global</span>
+                    <span className="text-xl sm:text-2xl font-bold text-purple-600 shrink-0">
+                      {completionRate}%
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-600">Basado en tickets resueltos</p>
                 </div>
-                <p className="text-xs text-gray-600">Total de usuarios registrados</p>
               </div>
-
-              <div className="p-3 sm:p-4 bg-pink-50 rounded-lg border border-pink-100">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Cobertura</span>
-                  <span className="text-xl sm:text-2xl font-bold text-pink-600 shrink-0">
-                    {stats.inventory > 0 ? Math.round((stats.inventory / stats.users) * 100) : 0}%
-                  </span>
-                </div>
-                <p className="text-xs text-gray-600">Equipos por usuario</p>
-              </div>
-          </div>
+            </div>
         </div>
 
           {/* System Status */}

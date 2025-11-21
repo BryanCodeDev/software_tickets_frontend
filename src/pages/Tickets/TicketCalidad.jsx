@@ -2,9 +2,7 @@ import React, { useState, useEffect, useContext, useRef, useCallback } from 'rea
 import { FaEdit, FaTrash, FaComment, FaPlus, FaCheck, FaTimes, FaEye, FaImage, FaVideo, FaFile, FaPaperPlane, FaEllipsisV, FaPen, FaTrashAlt, FaSearch, FaFilter, FaDownload, FaChartBar, FaClock, FaExclamationTriangle, FaCheckCircle, FaSpinner, FaUserCircle, FaClipboardList, FaFileExport, FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
-import ticketsAPI from '../../api/ticketsAPI';
-import messagesAPI from '../../api/messagesAPI';
-import usersAPI from '../../api/usersAPI';
+import { qualityTicketsAPI, qualityMessagesAPI, usersAPI } from '../../api';
 import { joinTicketRoom, leaveTicketRoom, onNewMessage, onMessageUpdated, onMessageDeleted, onTicketUpdated, onTicketCreated, onTicketDeleted, onTicketsListUpdated, offNewMessage, offMessageUpdated, offMessageDeleted, offTicketUpdated, offTicketCreated, offTicketDeleted, offTicketsListUpdated } from '../../api/socket';
 import {
   TicketCreateModal,
@@ -15,7 +13,7 @@ import {
 } from '../../components/Tickets';
 import { getTimeAgo } from '../../utils';
 
-const Tickets = () => {
+const TicketCalidad = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -35,7 +33,7 @@ const Tickets = () => {
   const [sortBy, setSortBy] = useState('updatedAt');
   const [sortOrder, setSortOrder] = useState('desc');
   const [viewMode, setViewMode] = useState('cards');
-  
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -44,32 +42,34 @@ const Tickets = () => {
     assignedTo: '',
     attachment: null
   });
-  const [editFormData, setEditFormData] = useState({ 
-    title: '', 
-    description: '', 
-    priority: 'media', 
-    status: 'abierto', 
-    assignedTo: '' 
+  const [editFormData, setEditFormData] = useState({
+    title: '',
+    description: '',
+    priority: 'media',
+    status: 'abierto',
+    assignedTo: ''
   });
   const [titleFilter, setTitleFilter] = useState('');
   const [technicians, setTechnicians] = useState([]);
   const [administrators, setAdministrators] = useState([]);
+  const [calidadUsers, setCalidadUsers] = useState([]);
 
   const standardizedTitles = [
-    'Problemas con SAP',
-    'Problemas con Impresoras',
-    'Problemas con Contraseña',
-    'Problemas con Heinsohn',
-    'Problemas con Excel, Word, PDF',
-    'Problemas con Acceso a carpetas',
-    'Problemas con El navegador',
-    'Problemas con Rsales',
-    'Problemas con Envio',
-    'Problemas con Correo',
-    'Problemas con Hardware',
-    'Problemas con Red',
-    'Problemas con Instalacion',
-    'Problemas con Software',
+    'Problemas en documentación',
+    'Cambios de versiones documentales',
+    'Errores en procedimientos',
+    'Actualizaciones de calidad',
+    'Reportes de no conformidades',
+    'Mejoras en procesos documentales',
+    'Problemas con versiones de software',
+    'Cambios en políticas de calidad',
+    'Errores en manuales',
+    'Actualizaciones de estándares',
+    'Problemas con certificaciones',
+    'Cambios en documentación técnica',
+    'Errores en formularios',
+    'Actualizaciones de procedimientos',
+    'Problemas con versiones de documentos'
   ];
 
   const [formLoading, setFormLoading] = useState(false);
@@ -158,10 +158,10 @@ const Tickets = () => {
 
   const fetchTickets = async () => {
     try {
-      const data = await ticketsAPI.fetchTickets({});
+      const data = await qualityTicketsAPI.fetchQualityTickets({});
       setTickets(data.tickets || []);
     } catch (err) {
-      showNotification('Error al cargar los tickets. Por favor, recarga la página.', 'error');
+      showNotification('Error al cargar los tickets de calidad. Por favor, recarga la página.', 'error');
     } finally {
       setLoading(false);
     }
@@ -173,10 +173,13 @@ const Tickets = () => {
         const users = await usersAPI.fetchUsers();
         const techUsers = users.filter(user => user.Role?.name === 'Técnico');
         const adminUsers = users.filter(user => user.Role?.name === 'Administrador');
+        const calidadUsersFiltered = users.filter(user => user.Role?.name === 'Calidad');
         setTechnicians(techUsers);
         setAdministrators(adminUsers);
+        setCalidadUsers(calidadUsersFiltered);
       }
     } catch (err) {
+      // Error handling silenciado
     }
   };
 
@@ -201,7 +204,7 @@ const Tickets = () => {
     }
 
     if (titleFilter) {
-      filtered = filtered.filter(ticket => 
+      filtered = filtered.filter(ticket =>
         ticket.title?.toLowerCase().includes(titleFilter.toLowerCase())
       );
     }
@@ -209,7 +212,7 @@ const Tickets = () => {
     filtered.sort((a, b) => {
       let aVal = a[sortBy];
       let bVal = b[sortBy];
-      
+
       if (sortBy === 'createdAt' || sortBy === 'updatedAt') {
         aVal = new Date(aVal);
         bVal = new Date(bVal);
@@ -217,7 +220,7 @@ const Tickets = () => {
         aVal = aVal.toLowerCase();
         bVal = bVal.toLowerCase();
       }
-      
+
       if (sortOrder === 'asc') {
         return aVal > bVal ? 1 : -1;
       } else {
@@ -260,7 +263,7 @@ const Tickets = () => {
 
   const handleEdit = (ticket) => {
     if (!canEditTicket(ticket)) {
-      showNotification('No tienes permisos para editar este ticket', 'error');
+      showNotification('No tienes permisos para editar este ticket de calidad', 'error');
       return;
     }
 
@@ -274,7 +277,7 @@ const Tickets = () => {
         status: ticket.status,
         assignedTo: ticket.assignedTo || ''
       });
-    } else if (userRole === 'Técnico') {
+    } else if (userRole === 'Técnico' || userRole === 'Calidad') {
       setEditFormData({
         priority: ticket.priority,
         status: ticket.status,
@@ -294,75 +297,77 @@ const Tickets = () => {
 
   const handleDelete = async (ticket) => {
     if (!canDeleteTicket(ticket)) {
-      showNotification('No tienes permisos para eliminar este ticket', 'error');
+      showNotification('No tienes permisos para eliminar este ticket de calidad', 'error');
       return;
     }
 
-    showConfirmDialog('¿Estás seguro de que deseas eliminar este ticket? Esta acción no se puede deshacer.', async () => {
+    showConfirmDialog('¿Estás seguro de que deseas eliminar este ticket de calidad? Esta acción no se puede deshacer.', async () => {
       try {
-        await ticketsAPI.deleteTicket(ticket.id);
-        showNotification('Ticket eliminado exitosamente', 'success');
-        // WebSocket will handle the list update automatically
+        await qualityTicketsAPI.deleteQualityTicket(ticket.id);
+        showNotification('Ticket de calidad eliminado exitosamente', 'success');
+        fetchTickets(); // Refresh the list immediately
       } catch (err) {
         if (err.response?.status === 403) {
-          showNotification('No tienes permisos para eliminar este ticket', 'error');
+          showNotification('No tienes permisos para eliminar este ticket de calidad', 'error');
         } else {
-          showNotification('Error al eliminar el ticket.', 'error');
+          showNotification('Error al eliminar el ticket de calidad.', 'error');
         }
       }
     });
   };
 
   const handleCreateSubmit = async (e) => {
-   e.preventDefault();
-   setFormLoading(true);
-   try {
-     let assignedToValue = formData.assignedTo;
-     if (formData.assignedTo === 'all-technicians') {
-       assignedToValue = technicians.length > 0 ? technicians[0].id : null;
-     } else if (formData.assignedTo === 'all-administrators') {
-       assignedToValue = administrators.length > 0 ? administrators[0].id : null;
-     }
+    e.preventDefault();
+    setFormLoading(true);
+    try {
+      let assignedToValue = formData.assignedTo;
+      if (formData.assignedTo === 'all-technicians') {
+        assignedToValue = technicians.length > 0 ? technicians[0].id : null;
+      } else if (formData.assignedTo === 'all-calidad') {
+        assignedToValue = calidadUsers.length > 0 ? calidadUsers[0].id : null;
+      }
 
-     // Si hay un archivo adjunto, enviar como FormData
-     if (formData.attachment) {
-       const formDataToSend = new FormData();
-       formDataToSend.append('title', formData.title);
-       formDataToSend.append('description', formData.description);
-       formDataToSend.append('priority', formData.priority);
-       formDataToSend.append('status', formData.status);
-       formDataToSend.append('assignedTo', assignedToValue || '');
-       formDataToSend.append('attachment', formData.attachment);
+      // Si hay un archivo adjunto, enviar como FormData
+      if (formData.attachment) {
+        const formDataToSend = new FormData();
+        formDataToSend.append('title', formData.title);
+        formDataToSend.append('description', formData.description);
+        formDataToSend.append('priority', formData.priority);
+        formDataToSend.append('status', formData.status);
+        formDataToSend.append('type', 'calidad');
+        formDataToSend.append('assignedTo', assignedToValue || '');
+        formDataToSend.append('attachment', formData.attachment);
 
-       const ticket = await ticketsAPI.createTicketWithAttachment(formDataToSend);
-       setShowCreateModal(false);
-       showNotification('Ticket creado exitosamente', 'success');
-       // WebSocket will handle the list update automatically
-     } else {
-       // Si no hay archivo, enviar como JSON normal
-       const ticketData = {
-         title: formData.title,
-         description: formData.description,
-         priority: formData.priority,
-         status: formData.status,
-         assignedTo: assignedToValue || null
-       };
+        await qualityTicketsAPI.createQualityTicketWithAttachment(formDataToSend);
+        setShowCreateModal(false);
+        showNotification('Ticket de calidad creado exitosamente', 'success');
+        fetchTickets(); // Refresh the list immediately
+      } else {
+        // Si no hay archivo, enviar como JSON normal
+        const ticketData = {
+          title: formData.title,
+          description: formData.description,
+          priority: formData.priority,
+          status: formData.status,
+          type: 'calidad',
+          assignedTo: assignedToValue || null
+        };
 
-       const ticket = await ticketsAPI.createTicket(ticketData);
-       setShowCreateModal(false);
-       showNotification('Ticket creado exitosamente', 'success');
-       // WebSocket will handle the list update automatically
-     }
-   } catch (err) {
-     if (err.response?.status === 403) {
-       showNotification('No tienes permisos para crear tickets', 'error');
-     } else {
-       showNotification('Error al crear el ticket.', 'error');
-     }
-   } finally {
-     setFormLoading(false);
-   }
- };
+        await qualityTicketsAPI.createQualityTicket(ticketData);
+        setShowCreateModal(false);
+        showNotification('Ticket de calidad creado exitosamente', 'success');
+        fetchTickets(); // Refresh the list immediately
+      }
+    } catch (err) {
+      if (err.response?.status === 403) {
+        showNotification('No tienes permisos para crear tickets de calidad', 'error');
+      } else {
+        showNotification('Error al crear el ticket de calidad.', 'error');
+      }
+    } finally {
+      setFormLoading(false);
+    }
+  };
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
@@ -370,15 +375,15 @@ const Tickets = () => {
     try {
       let assignedToValue = editFormData.assignedTo;
       const updateData = { ...editFormData, assignedTo: assignedToValue || null };
-      await ticketsAPI.updateTicket(editingTicket.id, updateData);
+      await qualityTicketsAPI.updateQualityTicket(editingTicket.id, updateData);
       setShowEditModal(false);
-      showNotification('Ticket actualizado exitosamente', 'success');
-      // WebSocket will handle the list update automatically
+      showNotification('Ticket de calidad actualizado exitosamente', 'success');
+      fetchTickets(); // Refresh the list immediately
     } catch (err) {
       if (err.response?.status === 403) {
-        showNotification('No tienes permisos para editar este ticket', 'error');
+        showNotification('No tienes permisos para editar este ticket de calidad', 'error');
       } else {
-        showNotification('Error al actualizar el ticket.', 'error');
+        showNotification('Error al actualizar el ticket de calidad.', 'error');
       }
     } finally {
       setFormLoading(false);
@@ -386,46 +391,49 @@ const Tickets = () => {
   };
 
   const handleViewDetail = async (ticket) => {
-   setSelectedTicket(ticket);
-   try {
-     const data = await ticketsAPI.fetchTicketById(ticket.id);
-     // Actualizar selectedTicket con los datos completos incluyendo attachments
-     setSelectedTicket(data);
-     setComments(data.comments || []);
+    setSelectedTicket(ticket);
+    try {
+      const data = await qualityTicketsAPI.fetchQualityTicketById(ticket.id);
+      // Actualizar selectedTicket con los datos completos incluyendo attachments
+      setSelectedTicket(data);
+      setComments(data.comments || []);
 
-     // Cargar mensajes usando la API de mensajes
-     const messagesData = await messagesAPI.fetchMessages(ticket.id);
-     setMessages(messagesData);
-   } catch (err) {
-     if (err.response?.status === 403) {
-       showNotification('No tienes permisos para ver los detalles de este ticket', 'error');
-       return;
-     }
-     if (err.response?.status === 401) {
-       showNotification('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.', 'error');
-       return;
-     }
-     showNotification('Error al cargar los detalles del ticket.', 'error');
-   }
-   setShowDetailModal(true);
- };
+      // Cargar mensajes usando la API de mensajes de calidad
+      const messagesData = await qualityMessagesAPI.fetchMessages(ticket.id);
+      setMessages(messagesData);
+    } catch (err) {
+      if (err.response?.status === 403) {
+        showNotification('No tienes permisos para ver los detalles de este ticket de calidad', 'error');
+        return;
+      }
+      if (err.response?.status === 401) {
+        showNotification('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.', 'error');
+        return;
+      }
+      showNotification('Error al cargar los detalles del ticket de calidad.', 'error');
+    }
+    setShowDetailModal(true);
+  };
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
 
     if (!canSendMessage(selectedTicket)) {
-      showNotification('No tienes permisos para enviar mensajes en este ticket', 'error');
+      showNotification('No tienes permisos para enviar mensajes en este ticket de calidad', 'error');
       return;
     }
 
     try {
-      await messagesAPI.createMessage(selectedTicket.id, { content: newMessage });
+      await qualityMessagesAPI.createMessage(selectedTicket.id, { content: newMessage });
       setNewMessage('');
       showNotification('Mensaje enviado exitosamente', 'success');
+      // Refresh messages
+      const messagesData = await qualityMessagesAPI.fetchMessages(selectedTicket.id);
+      setMessages(messagesData);
     } catch (err) {
       if (err.response?.status === 403) {
-        showNotification('No tienes permisos para enviar mensajes en este ticket', 'error');
+        showNotification('No tienes permisos para enviar mensajes en este ticket de calidad', 'error');
       } else {
         showNotification('Error al enviar mensaje.', 'error');
       }
@@ -447,7 +455,7 @@ const Tickets = () => {
 
     const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Tickets');
+    XLSX.utils.book_append_sheet(wb, ws, 'Tickets_Calidad');
 
     // Estilos para la tabla
     const range = XLSX.utils.decode_range(ws['!ref']);
@@ -490,42 +498,42 @@ const Tickets = () => {
       { wch: 15 }  // Fecha Creación
     ];
 
-    XLSX.writeFile(wb, `tickets_${new Date().toISOString().split('T')[0]}.xlsx`);
-    showNotification('Tickets exportados exitosamente', 'success');
+    XLSX.writeFile(wb, `tickets_calidad_${new Date().toISOString().split('T')[0]}.xlsx`);
+    showNotification('Tickets de calidad exportados exitosamente', 'success');
   };
 
   const userRole = user?.role?.name;
-  const canCreate = true;
+  const canCreate = userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Empleado';
 
   // Funciones helper para verificar permisos por ticket específico
   const canEditTicket = (ticket) => {
-    if (userRole === 'Administrador' || userRole === 'Técnico') {
+    if (userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad') {
       return true;
     }
-    if (userRole === 'Empleado' || userRole === 'Calidad') {
+    if (userRole === 'Empleado') {
       return ticket.userId === user?.id;
     }
     return false;
   };
 
   const canDeleteTicket = (ticket) => {
-    if (userRole === 'Administrador') {
+    if (userRole === 'Administrador' || userRole === 'Calidad') {
       return true;
     }
     if (userRole === 'Técnico') {
       return (ticket.userId === user?.id || ticket.assignedTo === user?.id) && ticket.status?.toLowerCase() === 'cerrado';
     }
-    if (userRole === 'Empleado' || userRole === 'Calidad') {
+    if (userRole === 'Empleado') {
       return ticket.userId === user?.id;
     }
     return false;
   };
 
   const canSendMessage = (ticket) => {
-    if (userRole === 'Administrador' || userRole === 'Técnico') {
+    if (userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad') {
       return true;
     }
-    if (userRole === 'Empleado' || userRole === 'Calidad') {
+    if (userRole === 'Empleado') {
       return ticket.userId === user?.id;
     }
     return false;
@@ -569,13 +577,12 @@ const Tickets = () => {
     }
   };
 
-
   if (loading) {
     return (
       <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Cargando tickets...</p>
+          <p className="text-lg text-gray-600 font-medium">Cargando tickets de calidad...</p>
         </div>
       </div>
     );
@@ -660,10 +667,10 @@ const Tickets = () => {
                 </div>
                 <div className="min-w-0 flex-1">
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight truncate">
-                    Sistema de Tickets
+                    Sistema de Tickets de Calidad
                   </h1>
                   <p className="text-xs sm:text-sm text-gray-600 mt-1">
-                    Gestión integral de incidencias y soporte técnico
+                    Gestión de reportes de calidad y cambios documentales
                   </p>
                 </div>
               </div>
@@ -694,7 +701,7 @@ const Tickets = () => {
                   className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
                 >
                   <FaPlus className="w-4 h-4" />
-                  <span>Nuevo Ticket</span>
+                  <span>Nuevo Ticket Calidad</span>
                 </button>
               )}
             </div>
@@ -806,7 +813,7 @@ const Tickets = () => {
         {/* Results Summary */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <p className="text-sm text-gray-600 font-medium">
-            Mostrando <span className="font-bold text-purple-600">{filteredTickets.length}</span> de <span className="font-bold">{tickets.length}</span> tickets
+            Mostrando <span className="font-bold text-purple-600">{filteredTickets.length}</span> de <span className="font-bold">{tickets.length}</span> tickets de calidad
           </p>
           <div className="flex gap-2">
             <button
@@ -842,13 +849,13 @@ const Tickets = () => {
             </div>
             <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2">
               {searchTerm || filterStatus !== 'all' || filterPriority !== 'all' || titleFilter
-                ? 'No se encontraron tickets'
-                : 'No hay tickets disponibles'}
+                ? 'No se encontraron tickets de calidad'
+                : 'No hay tickets de calidad disponibles'}
             </h3>
             <p className="text-sm lg:text-base text-gray-600 max-w-md mx-auto mb-4 lg:mb-6">
               {searchTerm || filterStatus !== 'all' || filterPriority !== 'all' || titleFilter
                 ? 'Intenta ajustar los filtros de búsqueda'
-                : 'Comienza creando un nuevo ticket para dar seguimiento a incidencias'}
+                : 'Comienza creando un nuevo ticket de calidad para reportar problemas documentales'}
             </p>
             {canCreate && (
               <button
@@ -856,7 +863,7 @@ const Tickets = () => {
                 className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
               >
                 <FaPlus className="w-4 h-4" />
-                Nuevo Ticket
+                Nuevo Ticket Calidad
               </button>
             )}
           </div>
@@ -930,75 +937,49 @@ const Tickets = () => {
                             )}
                           </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-4 text-xs text-gray-600">
-                          <div>
-                            <span className="font-medium">Creado por:</span>
-                            <p className="truncate">{ticket.creator?.name || 'Usuario'}</p>
-                          </div>
-                          <div>
-                            <span className="font-medium">Asignado a:</span>
-                            <p className="truncate">{ticket.assignee?.name || 'Sin asignar'}</p>
-                          </div>
-                          <div className="col-span-2">
-                            <span className="font-medium">Actualizado:</span>
-                            <p>{getTimeAgo(ticket.updatedAt)}</p>
-                          </div>
-                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
-
-                {/* Desktop Table View */}
+                {/* Desktop Table View for List Mode */}
                 <div className="hidden md:block">
-                  <table className="w-full">
-                    <thead className="bg-linear-to-r from-purple-600 to-violet-600 text-white">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">ID</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Título</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Estado</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Prioridad</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Creado por</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Asignado a</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Fecha</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Acciones</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Título</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prioridad</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Creado por</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asignado a</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-gray-200">
                       {filteredTickets.map((ticket) => (
-                        <tr key={ticket.id} className="hover:bg-purple-50 transition-colors">
-                          <td className="px-4 py-4">
-                            <span className="font-bold text-purple-600">#{ticket.id}</span>
+                        <tr key={ticket.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{ticket.id}</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium text-gray-900">{ticket.title}</div>
+                            <div className="text-sm text-gray-500 truncate max-w-xs">{ticket.description}</div>
                           </td>
-                          <td className="px-4 py-4">
-                            <div className="font-semibold text-gray-900">{ticket.title}</div>
-                            <div className="text-xs text-gray-500 truncate max-w-xs">{ticket.description}</div>
-                          </td>
-                          <td className="px-4 py-4">
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1 ${getStatusColor(ticket.status)}`}>
-                              {getStatusIcon(ticket.status)}
-                              {ticket.status}
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(ticket.status)}`}>
+                              {getStatusIcon(ticket.status)} {ticket.status}
                             </span>
                           </td>
-                          <td className="px-4 py-4">
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${getPriorityColor(ticket.priority)}`}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(ticket.priority)}`}>
                               {ticket.priority}
                             </span>
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-700">
-                            {ticket.creator?.name || 'Usuario'}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-gray-700">
-                            {ticket.assignee?.name || 'Sin asignar'}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-gray-500">
-                            {getTimeAgo(ticket.updatedAt)}
-                          </td>
-                          <td className="px-4 py-4">
-                            <div className="flex gap-2">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{ticket.creator?.name || '-'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{ticket.assignee?.name || 'Sin asignar'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div className="flex items-center space-x-2">
                               <button
                                 onClick={() => handleViewDetail(ticket)}
-                                className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation"
+                                className="text-blue-600 hover:text-blue-900 p-1"
                                 title="Ver detalles"
                               >
                                 <FaEye className="w-4 h-4" />
@@ -1006,7 +987,7 @@ const Tickets = () => {
                               {canEditTicket(ticket) && (
                                 <button
                                   onClick={() => handleEdit(ticket)}
-                                  className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-all touch-manipulation"
+                                  className="text-purple-600 hover:text-purple-900 p-1"
                                   title="Editar"
                                 >
                                   <FaEdit className="w-4 h-4" />
@@ -1015,7 +996,7 @@ const Tickets = () => {
                               {canDeleteTicket(ticket) && (
                                 <button
                                   onClick={() => handleDelete(ticket)}
-                                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all touch-manipulation"
+                                  className="text-red-600 hover:text-red-900 p-1"
                                   title="Eliminar"
                                 >
                                   <FaTrash className="w-4 h-4" />
@@ -1030,111 +1011,61 @@ const Tickets = () => {
                 </div>
               </div>
             )}
-
-            {/* Pagination Controls Removed */}
-
-            {/* Detail Modal */}
-            <TicketDetailModal
-              showDetailModal={showDetailModal}
-              setShowDetailModal={setShowDetailModal}
-              selectedTicket={selectedTicket}
-              comments={comments}
-              messages={messages}
-              newMessage={newMessage}
-              setNewMessage={setNewMessage}
-              handleSendMessage={handleSendMessage}
-              handleViewDetail={handleViewDetail}
-              handleEdit={handleEdit}
-              handleDelete={handleDelete}
-              canEditTicket={canEditTicket}
-              canDeleteTicket={canDeleteTicket}
-              canSendMessage={canSendMessage}
-              user={user}
-            />
-     
-            {/* Edit Modal */}
-            {/* Create Modal */}
-            <TicketCreateModal
-              showCreateModal={showCreateModal}
-              setShowCreateModal={setShowCreateModal}
-              formData={formData}
-              setFormData={setFormData}
-              handleCreateSubmit={handleCreateSubmit}
-              formLoading={formLoading}
-              userRole={userRole}
-              technicians={technicians}
-              administrators={administrators}
-              standardizedTitles={standardizedTitles}
-            />
-
-            {/* Edit Modal */}
-            <TicketEditModal
-              showEditModal={showEditModal}
-              setShowEditModal={setShowEditModal}
-              editingTicket={editingTicket}
-              editFormData={editFormData}
-              setEditFormData={setEditFormData}
-              handleEditSubmit={handleEditSubmit}
-              formLoading={formLoading}
-              userRole={userRole}
-              technicians={technicians}
-              administrators={administrators}
-              standardizedTitles={standardizedTitles}
-            />
-
           </>
         )}
+
+        {/* Detail Modal */}
+        <TicketDetailModal
+          showDetailModal={showDetailModal}
+          setShowDetailModal={setShowDetailModal}
+          selectedTicket={selectedTicket}
+          comments={comments}
+          messages={messages}
+          newMessage={newMessage}
+          setNewMessage={setNewMessage}
+          handleSendMessage={handleSendMessage}
+          handleViewDetail={handleViewDetail}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+          canEditTicket={canEditTicket}
+          canDeleteTicket={canDeleteTicket}
+          canSendMessage={canSendMessage}
+          user={user}
+        />
+
+        {/* Create Modal */}
+        <TicketCreateModal
+          showCreateModal={showCreateModal}
+          setShowCreateModal={setShowCreateModal}
+          formData={formData}
+          setFormData={setFormData}
+          handleCreateSubmit={handleCreateSubmit}
+          formLoading={formLoading}
+          userRole={userRole}
+          technicians={technicians}
+          administrators={calidadUsers}
+          standardizedTitles={standardizedTitles}
+          isCalidad={true}
+        />
+
+        {/* Edit Modal */}
+        <TicketEditModal
+          showEditModal={showEditModal}
+          setShowEditModal={setShowEditModal}
+          editingTicket={editingTicket}
+          editFormData={editFormData}
+          setEditFormData={setEditFormData}
+          handleEditSubmit={handleEditSubmit}
+          formLoading={formLoading}
+          userRole={userRole}
+          technicians={technicians}
+          administrators={calidadUsers}
+          standardizedTitles={standardizedTitles}
+          isCalidad={true}
+        />
       </div>
-
-      <style>{`
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        @keyframes scale-in {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        @keyframes slide-in-right {
-          from {
-            opacity: 0;
-            transform: translateX(100%);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out;
-        }
-
-        .animate-scale-in {
-          animation: scale-in 0.3s ease-out;
-        }
-
-        .animate-slide-in-right {
-          animation: slide-in-right 0.3s ease-out;
-        }
-
-        .line-clamp-3 {
-          display: -webkit-box;
-          -webkit-line-clamp: 3;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-      `}</style>
     </div>
   );
 };
 
-export default Tickets;
+export default TicketCalidad;

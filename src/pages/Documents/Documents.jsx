@@ -1,8 +1,28 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { documentsAPI } from '../../api';
+import { documentsAPI, getServerBaseURL } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes, FaFileAlt, FaTag, FaSearch, FaSortAmountDown, FaSortAmountUp, FaFilePdf, FaFileWord, FaFileExcel, FaFileImage, FaFileArchive, FaClock, FaUser, FaFolder, FaFolderOpen, FaPlus, FaArrowLeft } from 'react-icons/fa';
 import { NotificationSystem, ConfirmDialog, FilterPanel } from '../../components/common';
+import {
+  onDocumentCreated,
+  onDocumentUpdated,
+  onDocumentDeleted,
+  onDocumentsListUpdated,
+  onFolderCreated,
+  onFolderUpdated,
+  onFolderDeleted,
+  onFoldersListUpdated,
+  onDocumentPermissionsUpdated,
+  offDocumentCreated,
+  offDocumentUpdated,
+  offDocumentDeleted,
+  offDocumentsListUpdated,
+  offFolderCreated,
+  offFolderUpdated,
+  offFolderDeleted,
+  offFoldersListUpdated,
+  offDocumentPermissionsUpdated
+} from '../../api/socket';
 
 const Documents = () => {
   const [documents, setDocuments] = useState([]);
@@ -34,10 +54,122 @@ const Documents = () => {
   const [folderFormData, setFolderFormData] = useState({ name: '', description: '', parentFolderId: null });
   const [editFolderFormData, setEditFolderFormData] = useState({ name: '', description: '' });
 
+  // Estados para permisos
+  const [showPermissionsModal, setShowPermissionsModal] = useState(false);
+  const [selectedItemForPermissions, setSelectedItemForPermissions] = useState(null); // {type: 'document'|'folder', id: number}
+  const [permissions, setPermissions] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [permissionType, setPermissionType] = useState('read');
+  const [userSearchTerm, setUserSearchTerm] = useState('');
+
+  // Estado para elementos filtrados por permisos
+  const [filteredItems, setFilteredItems] = useState({ folders: [], documents: [] });
+
+  // Estado para permisos de escritura en la carpeta actual
+  const [canWriteInCurrentFolder, setCanWriteInCurrentFolder] = useState(false);
+
   useEffect(() => {
     fetchDocuments();
     fetchFolders();
+    fetchUsers(); // Cargar usuarios al inicio
   }, []);
+
+  const fetchUsers = async () => {
+    try {
+      console.log('Fetching users...');
+      const usersData = await documentsAPI.fetchUsers();
+      console.log('Users fetched:', usersData);
+      setAllUsers(usersData || []);
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      setAllUsers([]); // Asegurar que esté vacío en caso de error
+      // No mostrar notificación aquí ya que es carga inicial silenciosa
+    }
+  };
+
+  // WebSocket listeners for real-time document updates
+  useEffect(() => {
+    const handleDocumentCreated = (document) => {
+      console.log('Nuevo documento creado:', document);
+      fetchDocuments();
+      showNotification('Nuevo documento agregado', 'success');
+    };
+
+    const handleDocumentUpdated = (data) => {
+      console.log('Documento actualizado:', data);
+      fetchDocuments();
+      showNotification('Documento actualizado', 'success');
+    };
+
+    const handleDocumentDeleted = (documentId) => {
+      console.log('Documento eliminado:', documentId);
+      fetchDocuments();
+      showNotification('Documento eliminado', 'success');
+    };
+
+    const handleDocumentsListUpdated = () => {
+      console.log('Lista de documentos actualizada');
+      fetchDocuments();
+    };
+
+    const handleFolderCreated = (folder) => {
+      console.log('Nueva carpeta creada:', folder);
+      fetchFolders();
+      showNotification('Nueva carpeta agregada', 'success');
+    };
+
+    const handleFolderUpdated = (data) => {
+      console.log('Carpeta actualizada:', data);
+      fetchFolders();
+      showNotification('Carpeta actualizada', 'success');
+    };
+
+    const handleFolderDeleted = (folderId) => {
+      console.log('Carpeta eliminada:', folderId);
+      fetchFolders();
+      fetchDocuments(); // También recargar documentos por si se eliminó una carpeta con documentos
+      showNotification('Carpeta eliminada', 'success');
+    };
+
+    const handleFoldersListUpdated = () => {
+      console.log('Lista de carpetas actualizada');
+      fetchFolders();
+    };
+
+    const handleDocumentPermissionsUpdated = (data) => {
+      console.log('Permisos de documento actualizados:', data);
+      // Si estamos en el modal de permisos, recargar los permisos
+      if (showPermissionsModal && selectedItemForPermissions) {
+        handleOpenPermissionsModal(selectedItemForPermissions, selectedItemForPermissions.type);
+      }
+      showNotification('Permisos actualizados', 'success');
+    };
+
+    // Register WebSocket listeners
+    onDocumentCreated(handleDocumentCreated);
+    onDocumentUpdated(handleDocumentUpdated);
+    onDocumentDeleted(handleDocumentDeleted);
+    onDocumentsListUpdated(handleDocumentsListUpdated);
+    onFolderCreated(handleFolderCreated);
+    onFolderUpdated(handleFolderUpdated);
+    onFolderDeleted(handleFolderDeleted);
+    onFoldersListUpdated(handleFoldersListUpdated);
+    onDocumentPermissionsUpdated(handleDocumentPermissionsUpdated);
+
+    // Cleanup function
+    return () => {
+      offDocumentCreated(handleDocumentCreated);
+      offDocumentUpdated(handleDocumentUpdated);
+      offDocumentDeleted(handleDocumentDeleted);
+      offDocumentsListUpdated(handleDocumentsListUpdated);
+      offFolderCreated(handleFolderCreated);
+      offFolderUpdated(handleFolderUpdated);
+      offFolderDeleted(handleFolderDeleted);
+      offFoldersListUpdated(handleFoldersListUpdated);
+      offDocumentPermissionsUpdated(handleDocumentPermissionsUpdated);
+    };
+  }, [showPermissionsModal, selectedItemForPermissions]);
 
   const fetchDocuments = async () => {
     try {
@@ -126,19 +258,107 @@ const Documents = () => {
     return filtered;
   };
 
-  const filteredDocuments = filterAndSortDocuments();
+  // Calcular el total de documentos únicos (no versiones) en todo el sistema
+  const totalUniqueDocuments = [...new Set(documents.map(doc => doc.parentDocumentId || doc.id))].length;
 
   // Obtener tipos únicos para filtros
   const uniqueTypes = [...new Set(documents.map(doc => doc.type).filter(Boolean))];
 
-  // Filtrar carpetas de la carpeta actual
-  const currentFolders = folders.filter(folder => {
-    if (currentFolder) {
-      return folder.parentFolderId === currentFolder.id;
-    } else {
-      return !folder.parentFolderId;
+  // Función para verificar si el usuario puede ver una carpeta
+  const canViewFolder = async (folder) => {
+    // Administradores, técnicos y calidad ven todo
+    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') return true;
+    // Creadores ven sus carpetas
+    if (folder.createdBy === user?.id) return true;
+    // Empleados no ven carpetas sin permisos específicos
+    if (user?.role?.name === 'Empleado') {
+      const permission = await checkUserPermission(folder, 'folder');
+      return permission.hasAccess;
     }
-  });
+    return false;
+  };
+
+  // Función para verificar si el usuario puede ver un documento
+  const canViewDocument = async (doc) => {
+    // Administradores, técnicos y calidad ven todo
+    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') return true;
+    // Creadores ven sus documentos
+    if (doc.createdBy === user?.id) return true;
+
+    // Para empleados, verificar permisos específicos del documento
+    if (user?.role?.name === 'Empleado') {
+      const docPermission = await checkUserPermission(doc, 'document');
+      if (docPermission.hasAccess) return true;
+
+      // Verificar herencia de permisos de carpeta padre
+      if (doc.folderId) {
+        const parentFolder = folders.find(f => f.id === doc.folderId);
+        if (parentFolder) {
+          const folderPermission = await checkUserPermission(parentFolder, 'folder');
+          if (folderPermission.hasAccess) return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+  // Función para filtrar elementos con permisos
+  const getFilteredItems = async () => {
+    const baseFilteredDocuments = filterAndSortDocuments();
+
+    // Filtrar carpetas basadas en permisos
+    let filteredFolders = folders.filter(folder =>
+      currentFolder ? folder.parentFolderId === currentFolder.id : !folder.parentFolderId
+    );
+
+    // Filtrar documentos basados en permisos
+    let filteredDocuments = [];
+
+    // Para administradores, técnicos y calidad, mostrar todo
+     if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') {
+       filteredDocuments = baseFilteredDocuments;
+     } else if (user?.role?.name === 'Empleado') {
+      // Para empleados, filtrar solo elementos con permisos o creados por ellos
+      for (const doc of baseFilteredDocuments) {
+        const canView = await canViewDocument(doc);
+        if (canView) {
+          filteredDocuments.push(doc);
+        }
+      }
+
+      // Filtrar carpetas para empleados
+      const tempFolders = [];
+      for (const folder of filteredFolders) {
+        const canView = await canViewFolder(folder);
+        if (canView) {
+          tempFolders.push(folder);
+        }
+      }
+      filteredFolders = tempFolders;
+    }
+
+    return {
+      folders: filteredFolders,
+      documents: filteredDocuments
+    };
+  };
+
+  // Cargar elementos filtrados cuando cambian los datos
+  useEffect(() => {
+    const loadFilteredItems = async () => {
+      const items = await getFilteredItems();
+      setFilteredItems(items);
+
+      // También actualizar permisos de escritura en la carpeta actual
+      const canWrite = await canUserWriteInCurrentFolder();
+      setCanWriteInCurrentFolder(canWrite);
+    };
+    loadFilteredItems();
+  }, [documents, folders, currentFolder, user]);
+
+  const currentFolders = filteredItems.folders;
+  const filteredDocuments = filteredItems.documents;
 
   // Obtener icono según tipo de archivo
   const getFileIcon = (filePath) => {
@@ -207,7 +427,7 @@ const Documents = () => {
 
     try {
       await documentsAPI.uploadDocument(data);
-      fetchDocuments();
+      // WebSocket will handle the list update automatically
       setFormData({ title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '', selectedFolderForVersion: null });
       setShowUploadModal(false);
       showNotification('Documento subido exitosamente', 'success');
@@ -227,7 +447,7 @@ const Documents = () => {
         parentFolderId: currentFolder ? currentFolder.id : null
       };
       await documentsAPI.createFolder(folderData);
-      fetchFolders();
+      // WebSocket will handle the list update automatically
       setFolderFormData({ name: '', description: '', parentFolderId: null });
       setShowCreateFolderModal(false);
       showNotification('Carpeta creada exitosamente', 'success');
@@ -261,7 +481,7 @@ const Documents = () => {
     e.preventDefault();
     try {
       await documentsAPI.updateFolder(editingFolder.id, editFolderFormData);
-      fetchFolders();
+      // WebSocket will handle the list update automatically
       setShowEditFolderModal(false);
       showNotification('Carpeta actualizada exitosamente', 'success');
     } catch (err) {
@@ -273,8 +493,7 @@ const Documents = () => {
     showConfirmDialog('¿Estás seguro de que deseas eliminar esta carpeta y todos sus contenidos?', async () => {
       try {
         await documentsAPI.deleteFolder(folderId);
-        fetchFolders();
-        fetchDocuments();
+        // WebSocket will handle the list update automatically
         if (currentFolder && currentFolder.id === folderId) {
           setCurrentFolder(null);
         }
@@ -307,7 +526,7 @@ const Documents = () => {
     e.preventDefault();
     try {
       await documentsAPI.updateDocument(editingDocument.id, editFormData);
-      fetchDocuments();
+      // WebSocket will handle the list update automatically
       setShowEditModal(false);
       showNotification('Documento actualizado exitosamente', 'success');
     } catch (err) {
@@ -319,7 +538,7 @@ const Documents = () => {
     showConfirmDialog('¿Estás seguro de que deseas eliminar este documento?', async () => {
       try {
         await documentsAPI.deleteDocument(id);
-        fetchDocuments();
+        // WebSocket will handle the list update automatically
         showNotification('Documento eliminado exitosamente', 'success');
       } catch (err) {
         showNotification('Error al eliminar el documento. Por favor, inténtalo de nuevo.', 'error');
@@ -331,13 +550,7 @@ const Documents = () => {
     showConfirmDialog('¿Estás seguro de que deseas eliminar esta versión del documento?', async () => {
       try {
         await documentsAPI.deleteDocument(versionId);
-        fetchDocuments();
-        // Actualizar el historial si está abierto
-        if (showHistoryModal && selectedDocument) {
-          const key = selectedDocument.parentDocumentId || selectedDocument.id;
-          const updatedVersions = documents.filter(d => (d.parentDocumentId || d.id) === key).sort((a, b) => parseFloat(b.version) - parseFloat(a.version));
-          setSelectedDocument({ ...selectedDocument, versions: updatedVersions });
-        }
+        // WebSocket will handle the list update automatically
         showNotification('Versión eliminada exitosamente', 'success');
       } catch (err) {
         showNotification('Error al eliminar la versión. Por favor, inténtalo de nuevo.', 'error');
@@ -345,9 +558,30 @@ const Documents = () => {
     });
   };
 
-  const canEdit = (doc) => {
-    return user?.role?.name === 'Administrador' ||
-           ((user?.role?.name === 'Técnico' || user?.role?.name === 'Empleado') && doc.createdBy === user.id);
+  const canEdit = (item, type = 'document') => {
+    // Administradores, técnicos y calidad pueden editar todo
+    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') {
+      return true;
+    }
+    // Empleados solo pueden editar sus propios elementos
+    if (user?.role?.name === 'Empleado') {
+      return item.createdBy === user.id;
+    }
+    return false;
+  };
+
+  // Función adicional para verificar permisos detallados (para casos donde se necesitan permisos específicos)
+  const hasWritePermission = async (item, type = 'document') => {
+    // Administradores, técnicos y calidad siempre tienen permisos
+    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') {
+      return true;
+    }
+    // Empleados necesitan permisos específicos
+    if (user?.role?.name === 'Empleado') {
+      const permission = await checkUserPermission(item, type);
+      return permission.hasAccess && permission.permissionType === 'write';
+    }
+    return false;
   };
 
   const showNotification = (message, type) => {
@@ -368,6 +602,179 @@ const Documents = () => {
 
   const handleCancelConfirm = () => {
     setConfirmDialog(null);
+  };
+
+  // Funciones de permisos
+  const handleOpenPermissionsModal = async (item, type) => {
+    setSelectedItemForPermissions({ type, id: item.id });
+    setShowPermissionsModal(true);
+    setUserSearchTerm(''); // Limpiar búsqueda
+    setSelectedUsers([]); // Limpiar selección
+
+    try {
+      // Cargar permisos existentes
+      const permissionsData = await documentsAPI.getDocumentPermissions(
+        type === 'document' ? item.id : null,
+        type === 'folder' ? item.id : null
+      );
+      setPermissions(permissionsData);
+
+      // Cargar lista de usuarios (siempre intentar cargar para asegurar datos frescos)
+      try {
+        console.log('Loading users in permissions modal...');
+        const usersData = await documentsAPI.fetchUsers();
+        console.log('Users loaded in modal:', usersData);
+        setAllUsers(usersData || []);
+      } catch (usersErr) {
+        console.error('Error loading users in modal:', usersErr);
+        showNotification('Error al cargar la lista de usuarios', 'error');
+        setAllUsers([]); // Asegurar que esté vacío si hay error
+      }
+    } catch (err) {
+      console.error('Error loading permissions:', err);
+      showNotification('Error al cargar permisos', 'error');
+      setPermissions([]);
+    }
+  };
+
+  const handleGrantPermissions = async () => {
+    if (selectedUsers.length === 0) {
+      showNotification('Selecciona al menos un usuario', 'error');
+      return;
+    }
+
+    try {
+      const result = await documentsAPI.grantDocumentPermissions(
+        selectedItemForPermissions.type === 'document' ? selectedItemForPermissions.id : null,
+        selectedItemForPermissions.type === 'folder' ? selectedItemForPermissions.id : null,
+        selectedUsers,
+        permissionType
+      );
+
+      showNotification(result.message, 'success');
+
+      // WebSocket will handle the permissions update automatically
+
+      // Limpiar selección
+      setSelectedUsers([]);
+    } catch (err) {
+      showNotification('Error al otorgar permisos', 'error');
+    }
+  };
+
+  const handleRevokePermission = async (permissionId) => {
+    try {
+      // Asegurar que permissionId sea un número válido
+      const id = parseInt(permissionId, 10);
+      if (isNaN(id)) {
+        showNotification('ID de permiso inválido', 'error');
+        return;
+      }
+
+      await documentsAPI.revokeDocumentPermission(id);
+
+      // WebSocket will handle the permissions update automatically
+
+      showNotification('Permiso revocado exitosamente', 'success');
+    } catch (err) {
+      console.error('Error revoking permission:', err);
+      showNotification('Error al revocar permiso', 'error');
+    }
+  };
+
+  const checkUserPermission = async (item, type) => {
+    try {
+      const permission = await documentsAPI.checkUserDocumentPermission(
+        type === 'document' ? item.id : null,
+        type === 'folder' ? item.id : null
+      );
+      return permission;
+    } catch (err) {
+      return { hasAccess: false };
+    }
+  };
+
+  // Función para determinar si el usuario puede editar un documento/carpeta
+  const canUserEdit = (item, type) => {
+    // Administradores y técnicos pueden editar todo
+    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico') {
+      return true;
+    }
+
+    // Empleados solo pueden editar sus propios elementos
+    if (user?.role?.name === 'Empleado') {
+      return item.createdBy === user.id;
+    }
+
+    return false;
+  };
+
+  // Función para determinar si el usuario puede ver un documento/carpeta
+  const canUserView = async (item, type) => {
+    // Administradores, técnicos y calidad siempre pueden ver todo
+    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') {
+      return true;
+    }
+
+    // Creadores siempre pueden ver sus elementos
+    if (item.createdBy === user.id) {
+      return true;
+    }
+
+    // Empleados solo ven elementos con permisos específicos
+    if (user?.role?.name === 'Empleado') {
+      const permission = await checkUserPermission(item, type);
+      return permission.hasAccess;
+    }
+
+    return false;
+  };
+
+  // Función para determinar si el usuario puede escribir en la carpeta actual
+  const canUserWriteInCurrentFolder = async () => {
+    // Administradores, técnicos y calidad siempre pueden escribir
+    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') {
+      return true;
+    }
+
+    // Si no hay carpeta actual (estamos en raíz), verificar permisos para la raíz
+    if (!currentFolder) {
+      // Para la raíz, no hay permisos específicos de carpeta, así que empleados no pueden crear
+      return false;
+    }
+
+    // Para empleados, verificar permisos de escritura en la carpeta actual
+    if (user?.role?.name === 'Empleado') {
+      const permission = await checkUserPermission(currentFolder, 'folder');
+      return permission.hasAccess && permission.permissionType === 'write';
+    }
+
+    return false;
+  };
+
+  // Funciones para manejo de usuarios en permisos
+  const filteredUsers = allUsers.filter(u =>
+    u.id !== user?.id &&
+    (u.name?.toLowerCase().includes(userSearchTerm.toLowerCase()) ||
+     u.username?.toLowerCase().includes(userSearchTerm.toLowerCase()) ||
+     u.email?.toLowerCase().includes(userSearchTerm.toLowerCase()))
+  );
+
+  const handleSelectAllUsers = () => {
+    const allUserIds = filteredUsers.map(u => u.id);
+    setSelectedUsers(allUserIds);
+  };
+
+  const handleDeselectAllUsers = () => {
+    setSelectedUsers([]);
+  };
+
+  const handleUserToggle = (userId) => {
+    if (selectedUsers.includes(userId)) {
+      setSelectedUsers(selectedUsers.filter(id => id !== userId));
+    } else {
+      setSelectedUsers([...selectedUsers, userId]);
+    }
   };
 
   if (loading) {
@@ -416,7 +823,7 @@ const Documents = () => {
             <div className="flex items-center gap-3 flex-wrap">
               <div className="flex items-center space-x-2 bg-purple-50 px-4 py-2 rounded-xl">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium text-gray-700">{filteredDocuments.length} documentos</span>
+                <span className="text-sm font-medium text-gray-700">{totalUniqueDocuments} documentos</span>
               </div>
               {currentFolder && (
                 <button
@@ -427,20 +834,27 @@ const Documents = () => {
                   Atrás
                 </button>
               )}
-              <button
-                onClick={() => setShowCreateFolderModal(true)}
-                className="inline-flex items-center px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all mr-3"
-              >
-                <FaPlus className="mr-2" />
-                Nueva Carpeta
-              </button>
-              <button
-                onClick={() => setShowUploadModal(true)}
-                className="inline-flex items-center px-5 py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
-              >
-                <FaUpload className="mr-2" />
-                Nuevo Documento
-              </button>
+              {/* Nueva Carpeta - Solo para Administradores y Técnicos */}
+              {(user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico') && (
+                <button
+                  onClick={() => setShowCreateFolderModal(true)}
+                  className="inline-flex items-center px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all mr-3"
+                >
+                  <FaPlus className="mr-2" />
+                  Nueva Carpeta
+                </button>
+              )}
+
+              {/* Nuevo Documento - Para Administradores, Técnicos y empleados con permisos de escritura */}
+              {((user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico') || canWriteInCurrentFolder) && (
+                <button
+                  onClick={() => setShowUploadModal(true)}
+                  className="inline-flex items-center px-5 py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                >
+                  <FaUpload className="mr-2" />
+                  Nuevo Documento
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -575,6 +989,18 @@ const Documents = () => {
                               </button>
                             </>
                           )}
+                          {canEdit(folder) && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenPermissionsModal(folder, 'folder');
+                              }}
+                              className="inline-flex items-center px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 text-sm font-semibold rounded-lg transition-all"
+                            >
+                              <FaUser className="mr-1" />
+                              Permisos
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -635,8 +1061,7 @@ const Documents = () => {
                           {/* Actions */}
                           <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
                             <a
-                              href={`http://localhost:5000/${doc.filePath}`}
-                              download={getDownloadName(doc)}
+                              href={`${getServerBaseURL()}/api/documents/${doc.id}/download`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center px-4 py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all"
@@ -1029,8 +1454,7 @@ const Documents = () => {
                       </div>
                       <div className="flex gap-2">
                         <a
-                          href={`http://localhost:5000/${version.filePath}`}
-                          download={getDownloadName(selectedDocument, version)}
+                          href={`${getServerBaseURL()}/api/documents/${version.id}/download`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-lg transition-all"
@@ -1038,7 +1462,7 @@ const Documents = () => {
                           <FaDownload className="mr-1" />
                           Descargar
                         </a>
-                        {user.role?.name === 'Administrador' && (
+                        {(user.role?.name === 'Administrador' || user.role?.name === 'Técnico') && (
                           <button
                             onClick={() => handleDeleteVersion(version.id)}
                             className="inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-all"
@@ -1189,6 +1613,221 @@ const Documents = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Permissions Modal */}
+      {showPermissionsModal && selectedItemForPermissions && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transform transition-all animate-in zoom-in-95">
+            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10 flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-linear-to-br from-purple-600 to-violet-600 rounded-xl flex items-center justify-center">
+                  <FaUser className="text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Gestionar Permisos</h2>
+                  <p className="text-sm text-gray-600">
+                    {selectedItemForPermissions.type === 'document' ? 'Documento' : 'Carpeta'}: {selectedItemForPermissions.id}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowPermissionsModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+              >
+                <FaTimes className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-5rem)]">
+              {/* Current Permissions */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Permisos Actuales</h3>
+                {permissions.length === 0 ? (
+                  <p className="text-gray-500 text-center py-4">No hay permisos asignados</p>
+                ) : (
+                  <div className="space-y-3">
+                    {permissions.map((permission) => (
+                      <div key={permission.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                            <FaUser className="w-4 h-4 text-purple-600" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              {permission.user?.name || permission.user?.username}
+                            </p>
+                            <p className="text-sm text-gray-500">{permission.user?.email}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                            permission.permissionType === 'write'
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-blue-100 text-blue-700'
+                          }`}>
+                            {permission.permissionType === 'write' ? 'Lectura y Escritura' : 'Solo Lectura'}
+                          </span>
+                          <button
+                            onClick={() => handleRevokePermission(permission.id)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Revocar permiso"
+                          >
+                            <FaTrash className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Grant New Permissions */}
+              <div className="border-t border-gray-200 pt-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Otorgar Nuevos Permisos</h3>
+
+                {/* Permission Type */}
+                <div className="mb-4">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Tipo de Permiso</label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="permissionType"
+                        value="read"
+                        checked={permissionType === 'read'}
+                        onChange={(e) => setPermissionType(e.target.value)}
+                        className="mr-2"
+                      />
+                      <span className="text-sm">Solo Lectura (ver y descargar)</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="permissionType"
+                        value="write"
+                        checked={permissionType === 'write'}
+                        onChange={(e) => setPermissionType(e.target.value)}
+                        className="mr-2"
+                      />
+                      <span className="text-sm">Lectura y Escritura (crear, editar, eliminar)</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* User Selection */}
+                <div className="mb-4">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Seleccionar Usuarios</label>
+
+                  {/* Search Bar */}
+                  <div className="mb-3 relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Buscar usuarios por nombre, usuario o email..."
+                      value={userSearchTerm}
+                      onChange={(e) => setUserSearchTerm(e.target.value)}
+                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 text-sm"
+                    />
+                  </div>
+
+                  {/* Selection Controls */}
+                  <div className="flex gap-2 mb-3">
+                    <button
+                      type="button"
+                      onClick={handleSelectAllUsers}
+                      className="px-3 py-1.5 bg-purple-100 text-purple-700 text-xs font-medium rounded-md hover:bg-purple-200 transition-colors"
+                    >
+                      Seleccionar Todos
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDeselectAllUsers}
+                      className="px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-md hover:bg-gray-200 transition-colors"
+                    >
+                      Deseleccionar Todos
+                    </button>
+                    <span className="text-xs text-gray-500 self-center ml-auto">
+                      {selectedUsers.length} seleccionados
+                    </span>
+                  </div>
+
+                  {/* Users List */}
+                  <div className="border border-gray-300 rounded-lg max-h-60 overflow-y-auto">
+                    {filteredUsers.length === 0 ? (
+                      <div className="p-4 text-center text-gray-500 text-sm">
+                        {userSearchTerm ? (
+                          `No se encontraron usuarios para "${userSearchTerm}"`
+                        ) : allUsers.length === 0 ? (
+                          <div>
+                            <p>No hay usuarios disponibles</p>
+                            <p className="text-xs mt-1">Verifica que tengas permisos para ver usuarios</p>
+                          </div>
+                        ) : (
+                          'No hay usuarios que coincidan con los criterios'
+                        )}
+                      </div>
+                    ) : (
+                      <div className="divide-y divide-gray-200">
+                        {filteredUsers.map((u) => (
+                          <label key={u.id} className="flex items-center p-3 hover:bg-gray-50 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={selectedUsers.includes(u.id)}
+                              onChange={() => handleUserToggle(u.id)}
+                              className="mr-3 h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                            />
+                            <div className="flex items-center space-x-3 flex-1">
+                              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                <span className="text-sm font-medium text-purple-600">
+                                  {(u.name || u.username || 'U').charAt(0).toUpperCase()}
+                                </span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-gray-900 text-sm truncate">
+                                  {u.name || u.username || 'Usuario sin nombre'}
+                                </p>
+                                <p className="text-xs text-gray-500 truncate">
+                                  {u.email || 'Sin email'}
+                                </p>
+                                {u.Role && (
+                                  <p className="text-xs text-purple-600 truncate">
+                                    {u.Role.name}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-3 pt-4 border-t border-gray-200">
+                  <button
+                    onClick={() => setShowPermissionsModal(false)}
+                    className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleGrantPermissions}
+                    disabled={selectedUsers.length === 0}
+                    className="flex-1 px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Otorgar Permisos
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

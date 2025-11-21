@@ -9,7 +9,9 @@ module.exports = {
       exec_mode: 'fork',
       env: {
         NODE_ENV: 'production',
-        PORT: 8080
+        PORT: 8080,
+        VITE_API_URL: 'http://192.168.30.246:5000/api',
+        VITE_SOCKET_URL: 'http://192.168.30.246:5000'
       },
       error_file: './logs/frontend-error.log',
       out_file: './logs/frontend-out.log',

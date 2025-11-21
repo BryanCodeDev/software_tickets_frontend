@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { usersAPI, authAPI } from '../../api';
 import { inventoryAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
-import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSearch, FaFilter, FaUserShield, FaUserCog, FaUser, FaChartBar, FaDownload, FaSortAmountDown, FaSortAmountUp, FaClock, FaEnvelope, FaKey, FaToggleOn, FaToggleOff, FaBan } from 'react-icons/fa';
+import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSearch, FaFilter, FaUserShield, FaUserCog, FaUser, FaChartBar, FaDownload, FaSortAmountDown, FaSortAmountUp, FaClock, FaEnvelope, FaKey, FaToggleOn, FaToggleOff, FaBan, FaShieldAlt } from 'react-icons/fa';
 import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 import { onUserUpdated, onUsersListUpdated, offUserUpdated, offUsersListUpdated } from '../../api/socket';
 
@@ -136,10 +136,11 @@ const Users = () => {
     const total = users.length;
     const admins = users.filter(u => u.Role?.name === 'Administrador').length;
     const technicians = users.filter(u => u.Role?.name === 'Técnico').length;
+    const calidad = users.filter(u => u.Role?.name === 'Calidad').length;
     const employees = users.filter(u => u.Role?.name === 'Empleado').length;
     const withIT = users.filter(u => u.it).length;
 
-    return { total, admins, technicians, employees, withIT };
+    return { total, admins, technicians, calidad, employees, withIT };
   };
 
   const stats = calculateStats();
@@ -206,6 +207,7 @@ const Users = () => {
     switch(roleName) {
       case 'Administrador': return <FaUserShield className="w-4 h-4 text-purple-600" />;
       case 'Técnico': return <FaUserCog className="w-4 h-4 text-blue-600" />;
+      case 'Calidad': return <FaShieldAlt className="w-4 h-4 text-emerald-600" />;
       case 'Empleado': return <FaUser className="w-4 h-4 text-green-600" />;
       default: return <FaUser className="w-4 h-4 text-gray-600" />;
     }
@@ -216,6 +218,7 @@ const Users = () => {
     switch(roleName) {
       case 'Administrador': return 'bg-purple-100 text-purple-700 border-purple-200';
       case 'Técnico': return 'bg-blue-100 text-blue-700 border-blue-200';
+      case 'Calidad': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
       case 'Empleado': return 'bg-green-100 text-green-700 border-green-200';
       default: return 'bg-gray-100 text-gray-700 border-gray-200';
     }
@@ -421,6 +424,13 @@ const Users = () => {
                 loading: loading
               },
               {
+                key: 'calidad',
+                label: 'Calidad',
+                icon: FaShieldAlt,
+                gradient: 'from-emerald-500 to-emerald-600',
+                loading: loading
+              },
+              {
                 key: 'employees',
                 label: 'Empleados',
                 icon: FaUser,
@@ -453,6 +463,7 @@ const Users = () => {
               options: [
                 { value: 'Administrador', label: 'Administrador' },
                 { value: 'Técnico', label: 'Técnico' },
+                { value: 'Calidad', label: 'Calidad' },
                 { value: 'Empleado', label: 'Empleado' }
               ]
             }
@@ -714,6 +725,7 @@ const Users = () => {
                   >
                     <option value={1}>Administrador</option>
                     <option value={2}>Técnico</option>
+                    <option value={4}>Calidad</option>
                     <option value={3}>Empleado</option>
                   </select>
                 </div>

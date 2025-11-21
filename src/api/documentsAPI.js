@@ -90,6 +90,62 @@ const documentsAPI = {
       throw error;
     }
   },
+
+  // Permissions API
+  getDocumentPermissions: async (documentId, folderId) => {
+    try {
+      const params = new URLSearchParams();
+      if (documentId) params.append('documentId', documentId);
+      if (folderId) params.append('folderId', folderId);
+      const response = await api.get(`/documents/permissions?${params}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  grantDocumentPermissions: async (documentId, folderId, userIds, permissionType) => {
+    try {
+      const response = await api.post('/documents/permissions', {
+        documentId,
+        folderId,
+        userIds,
+        permissionType
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  revokeDocumentPermission: async (permissionId) => {
+    try {
+      await api.delete(`/documents/permissions/${permissionId}`);
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  checkUserDocumentPermission: async (documentId, folderId) => {
+    try {
+      const params = new URLSearchParams();
+      if (documentId) params.append('documentId', documentId);
+      if (folderId) params.append('folderId', folderId);
+      const response = await api.get(`/documents/check-permission?${params}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  fetchUsers: async () => {
+    try {
+      const response = await api.get('/users');
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default documentsAPI;

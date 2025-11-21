@@ -11,7 +11,8 @@ const TicketCreateModal = ({
   userRole,
   technicians,
   administrators,
-  standardizedTitles
+  standardizedTitles,
+  isCalidad = false
 }) => {
   if (!showCreateModal) return null;
 
@@ -128,8 +129,10 @@ const TicketCreateModal = ({
                     </optgroup>
                   )}
                   {administrators.length > 0 && (
-                    <optgroup label="👨‍💼 Administradores">
-                      <option value="all-administrators">Todos los administradores</option>
+                    <optgroup label={isCalidad ? "🛡️ Calidad" : "‍💼 Administradores"}>
+                      <option value={isCalidad ? "all-calidad" : "all-administrators"}>
+                        {isCalidad ? "Todos los de calidad" : "Todos los administradores"}
+                      </option>
                       {administrators.map((admin) => (
                         <option key={admin.id} value={admin.id}>
                           {admin.name || admin.username}

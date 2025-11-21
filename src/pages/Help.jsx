@@ -182,6 +182,30 @@ const Help = () => {
     {
       question: '¿Cómo gestionar la información de contacto?',
       answer: 'La información de contacto incluye email y teléfono de soporte. Está disponible en la sección de Ayuda para consultas adicionales.'
+    },
+    {
+      question: '¿Cómo acceder al módulo de Calidad?',
+      answer: 'En la barra lateral, haga clic en "Calidad" para desplegar el submenú. Desde ahí puede acceder a "Documentos" para gestión documental y "Ticket Calidad" para reportes de calidad y cambios documentales.'
+    },
+    {
+      question: '¿Cómo crear tickets de calidad?',
+      answer: 'Desde el módulo "Ticket Calidad", haga clic en "Nuevo Ticket Calidad". Complete información sobre problemas en documentación, cambios de versiones, errores en procedimientos o actualizaciones de calidad.'
+    },
+    {
+      question: '¿Cómo funcionan los permisos específicos por carpeta?',
+      answer: 'Los empleados pueden tener permisos de solo lectura en una carpeta y permisos de escritura en otra. El botón de "Nuevo Documento" se activa automáticamente según los permisos de la carpeta actual, pero los empleados no pueden crear carpetas (solo administradores y técnicos).'
+    },
+    {
+      question: '¿Cómo gestionar permisos en documentos y carpetas?',
+      answer: 'Los administradores pueden asignar permisos específicos a usuarios en documentos o carpetas. Haga clic en el botón de opciones de un elemento y seleccione "Gestionar Permisos" para otorgar o revocar accesos.'
+    },
+    {
+      question: '¿Qué tipos de problemas se reportan en tickets de calidad?',
+      answer: 'Los tickets de calidad incluyen: problemas en documentación, cambios de versiones documentales, errores en procedimientos, actualizaciones de calidad, reportes de no conformidades, mejoras en procesos documentales, problemas con versiones de software, cambios en políticas de calidad, errores en manuales, actualizaciones de estándares, problemas con certificaciones y cambios en documentación técnica.'
+    },
+    {
+      question: '¿Qué es el rol de Calidad?',
+      answer: 'El rol de Calidad es un usuario especializado que tiene acceso limitado general pero control administrativo completo sobre los módulos de calidad y documentación. Puede crear tickets de calidad, gestionar todos los tickets de calidad existentes, acceder completamente al módulo de documentos (crear carpetas, editar cualquier documento, eliminar documentos), pero no tiene acceso a inventario, credenciales, gestión de usuarios ni configuración del sistema.'
     }
   ];
 
@@ -432,6 +456,18 @@ const Help = () => {
                             <li>• Resultados categorizados</li>
                           </ul>
                         </div>
+                        <div className="bg-orange-50 p-3 rounded-lg">
+                          <h6 className="font-medium text-orange-900 mb-2 flex items-center">
+                            <FaShieldAlt className="text-orange-600 mr-2" />
+                            Gestión de Calidad
+                          </h6>
+                          <ul className="text-sm space-y-1">
+                            <li>• Tickets especializados en calidad</li>
+                            <li>• Control documental avanzado</li>
+                            <li>• Reportes de no conformidades</li>
+                            <li>• Seguimiento de versiones</li>
+                          </ul>
+                        </div>
                         <div className="bg-red-50 p-3 rounded-lg">
                           <h6 className="font-medium text-red-900 mb-2 flex items-center">
                             <FaChartBar className="text-red-600 mr-2" />
@@ -568,6 +604,20 @@ const Help = () => {
                                 <li><FaCheck className="text-green-600" /> Control total sobre permisos documentales</li>
                                 <li><FaCheck className="text-green-600" /> Búsqueda avanzada completa</li>
                                 <li><FaCheck className="text-green-600" /> Generar reportes de documentos</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaShieldAlt className="text-red-600 mr-2" />
+                                Gestión de Calidad
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li><FaCheck className="text-green-600" /> Acceso completo al módulo de calidad</li>
+                                <li><FaCheck className="text-green-600" /> Crear y gestionar tickets de calidad</li>
+                                <li><FaCheck className="text-green-600" /> Reportes de no conformidades y problemas documentales</li>
+                                <li><FaCheck className="text-green-600" /> Seguimiento de cambios de versiones</li>
+                                <li><FaCheck className="text-green-600" /> Control total sobre procesos de calidad</li>
                               </ul>
                             </div>
 
@@ -712,6 +762,105 @@ const Help = () => {
                                 <li><FaCheck className="text-green-600" /> Generar reportes de inventario</li>
                               </ul>
                             </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaShieldAlt className="text-blue-600 mr-2" />
+                                Gestión de Calidad
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li><FaCheck className="text-green-600" /> Acceso al módulo de calidad</li>
+                                <li><FaCheck className="text-green-600" /> Gestionar tickets de calidad asignados</li>
+                                <li><FaCheck className="text-green-600" /> Reportes técnicos de calidad</li>
+                                <li><FaCheck className="text-green-600" /> Seguimiento de procesos documentales</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
+                          <h6 className="font-bold text-purple-900 mb-3 flex items-center">
+                            <FaShieldAlt className="text-purple-600 mr-2" />
+                            Calidad (Nivel 3 - Gestión de Calidad)
+                          </h6>
+                          <p className="text-sm mb-3 text-purple-800">Los usuarios de calidad tienen acceso limitado general pero control administrativo completo sobre los módulos de calidad y documentación.</p>
+
+                          <div className="grid grid-cols-1 gap-4">
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaTicketAlt className="text-purple-600 mr-2" />
+                                Mesa de Ayuda (Tickets)
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li><FaCheck className="text-green-600" /> Crear tickets propios</li>
+                                <li><FaCheck className="text-green-600" /> Ver todos los tickets del sistema</li>
+                                <li><FaCheck className="text-green-600" /> Editar cualquier ticket de calidad</li>
+                                <li><FaCheck className="text-green-600" /> Eliminar tickets de calidad</li>
+                                <li><FaCheck className="text-green-600" /> Gestionar estados y asignaciones</li>
+                                <li><FaCheck className="text-green-600" /> Acceso completo a tickets de calidad</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaFileAlt className="text-purple-600 mr-2" />
+                                Control de Versiones de Documentos
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li><FaCheck className="text-green-600" /> Ver todos los documentos activos</li>
+                                <li><FaCheck className="text-green-600" /> Subir documentos nuevos y versiones</li>
+                                <li><FaCheck className="text-green-600" /> Editar cualquier documento</li>
+                                <li><FaCheck className="text-green-600" /> Eliminar documentos del sistema</li>
+                                <li><FaCheck className="text-green-600" /> Ver historial completo de versiones</li>
+                                <li><FaCheck className="text-green-600" /> Control total sobre permisos documentales</li>
+                                <li><FaCheck className="text-green-600" /> Crear y gestionar carpetas</li>
+                                <li><FaCheck className="text-green-600" /> Acceso administrativo en documentos</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaShieldAlt className="text-purple-600 mr-2" />
+                                Gestión de Calidad
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li><FaCheck className="text-green-600" /> Acceso completo al módulo de calidad</li>
+                                <li><FaCheck className="text-green-600" /> Gestionar todos los tickets de calidad</li>
+                                <li><FaCheck className="text-green-600" /> Reportes de no conformidades</li>
+                                <li><FaCheck className="text-green-600" /> Seguimiento de procesos documentales</li>
+                                <li><FaCheck className="text-green-600" /> Control administrativo de calidad</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaBox className="text-purple-600 mr-2" />
+                                Inventario IT
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li><FaTimes className="text-red-600" /> Sin acceso al módulo de inventario</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaKey className="text-purple-600 mr-2" />
+                                Gestión de Credenciales
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li><FaTimes className="text-red-600" /> Sin acceso al módulo de credenciales</li>
+                              </ul>
+                            </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaUsers className="text-purple-600 mr-2" />
+                                Gestión de Usuarios
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li><FaTimes className="text-red-600" /> Sin acceso a gestión de usuarios</li>
+                              </ul>
+                            </div>
                           </div>
                         </div>
 
@@ -800,6 +949,19 @@ const Help = () => {
                                 <li><FaTimes className="text-red-600" /> Sin acceso a generación de reportes</li>
                               </ul>
                             </div>
+
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaShieldAlt className="text-green-600 mr-2" />
+                                Gestión de Calidad
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li><FaCheck className="text-green-600" /> Acceso al módulo de calidad</li>
+                                <li><FaCheck className="text-green-600" /> Crear tickets de calidad propios</li>
+                                <li><FaCheck className="text-green-600" /> Reportar problemas documentales</li>
+                                <li><FaCheck className="text-green-600" /> Permisos específicos por carpeta</li>
+                              </ul>
+                            </div>
                           </div>
                         </div>
 
@@ -812,6 +974,7 @@ const Help = () => {
                                   <th className="border border-gray-300 p-2 text-left">Funcionalidad</th>
                                   <th className="border border-gray-300 p-2 text-center">Administrador</th>
                                   <th className="border border-gray-300 p-2 text-center">Técnico</th>
+                                  <th className="border border-gray-300 p-2 text-center">Calidad</th>
                                   <th className="border border-gray-300 p-2 text-center">Empleado</th>
                                 </tr>
                               </thead>
@@ -820,10 +983,12 @@ const Help = () => {
                                   <td className="border border-gray-300 p-2 font-medium">Ver Todos los Tickets</td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr className="bg-gray-50">
                                   <td className="border border-gray-300 p-2 font-medium">Crear Tickets</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
@@ -832,6 +997,7 @@ const Help = () => {
                                   <td className="border border-gray-300 p-2 font-medium">Editar Cualquier Ticket</td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-yellow-600">⚠️ (asignados)</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr className="bg-gray-50">
@@ -839,15 +1005,18 @@ const Help = () => {
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr>
                                   <td className="border border-gray-300 p-2 font-medium">Editar Inventario</td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr className="bg-gray-50">
                                   <td className="border border-gray-300 p-2 font-medium">Ver Todos los Documentos</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-yellow-600">⚠️ (activos)</td>
@@ -857,9 +1026,11 @@ const Help = () => {
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                 </tr>
                                 <tr className="bg-gray-50">
                                   <td className="border border-gray-300 p-2 font-medium">Subir Nuevas Versiones</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
@@ -868,16 +1039,19 @@ const Help = () => {
                                   <td className="border border-gray-300 p-2 font-medium">Editar Cualquier Documento</td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-yellow-600">⚠️ (propios)</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr className="bg-gray-50">
                                   <td className="border border-gray-300 p-2 font-medium">Eliminar Documentos</td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr>
                                   <td className="border border-gray-300 p-2 font-medium">Ver Historial de Versiones</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
@@ -898,11 +1072,27 @@ const Help = () => {
                                   <td className="border border-gray-300 p-2 font-medium">Reportes Completos</td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-yellow-600">⚠️ (limitados)</td>
+                                  <td className="border border-gray-300 p-2 text-center text-yellow-600">⚠️ (calidad)</td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                </tr>
+                                <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Permisos Específicos por Carpeta</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                  <td className="border border-gray-300 p-2 font-medium">Módulo de Calidad</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                 </tr>
                                 <tr>
                                   <td className="border border-gray-300 p-2 font-medium">Configuración del Sistema</td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
@@ -1274,6 +1464,43 @@ const Help = () => {
                             </div>
                           </div>
                         </div>
+
+                        <div className="bg-orange-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-orange-900 mb-3 flex items-center">
+                            <FaShieldAlt className="text-orange-600 mr-2" />
+                            Gestión de Calidad
+                          </h6>
+                          <div className="space-y-3">
+                            <div>
+                              <h7 className="font-medium text-sm">Acceso al Módulo</h7>
+                              <ol className="text-sm space-y-1 list-decimal list-inside ml-4">
+                                <li>Haga clic en "Calidad" en la barra lateral</li>
+                                <li>Se desplegará un submenú con opciones</li>
+                                <li>Seleccione "Documentos" para gestión documental</li>
+                                <li>Seleccione "Ticket Calidad" para reportes de calidad</li>
+                              </ol>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Tickets de Calidad</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Haga clic en "Nuevo Ticket Calidad"</li>
+                                <li>• Seleccione tipo de problema: documentación, versiones, procedimientos</li>
+                                <li>• Complete descripción detallada del problema</li>
+                                <li>• Adjunte evidencias si es necesario</li>
+                                <li>• Los técnicos especializados gestionarán el ticket</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Permisos por Carpeta</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Los botones de creación se activan según permisos</li>
+                                <li>• Lectura: solo ver documentos</li>
+                                <li>• Escritura: crear y editar documentos</li>
+                                <li>• Los permisos cambian al navegar entre carpetas</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </details>
@@ -1326,6 +1553,30 @@ const Help = () => {
                         </div>
                         <div className="bg-gray-50 p-3 rounded-lg">
                           <strong>Auditoría:</strong> Historial de todas las acciones
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Calidad:</strong> Módulo especializado en gestión de calidad y procesos documentales
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Ticket de Calidad:</strong> Reporte específico para problemas de calidad y cambios documentales
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Permisos por Carpeta:</strong> Control de acceso específico para cada carpeta documental
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>No Conformidad:</strong> Problema identificado en procesos de calidad
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Control de Versiones:</strong> Seguimiento de cambios en documentos a lo largo del tiempo
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Permiso de Lectura:</strong> Acceso para ver documentos sin poder modificarlos
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Permiso de Escritura:</strong> Acceso completo para crear, editar y eliminar documentos
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Rol de Calidad:</strong> Usuario con acceso administrativo a módulos de calidad y documentación
                         </div>
                       </div>
                       <div className="mt-4 text-center text-xs text-gray-500">

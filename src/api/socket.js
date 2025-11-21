@@ -127,4 +127,77 @@ export const offForceLogout = (callback) => {
   socket.off('force-logout', callback);
 };
 
+// Document WebSocket functions
+export const onDocumentCreated = (callback) => {
+  socket.on('document-created', callback);
+};
+
+export const onDocumentUpdated = (callback) => {
+  socket.on('document-updated', callback);
+};
+
+export const onDocumentDeleted = (callback) => {
+  socket.on('document-deleted', callback);
+};
+
+export const onDocumentsListUpdated = (callback) => {
+  socket.on('documents-list-updated', callback);
+};
+
+export const onFolderCreated = (callback) => {
+  socket.on('folder-created', callback);
+};
+
+export const onFolderUpdated = (callback) => {
+  socket.on('folder-updated', callback);
+};
+
+export const onFolderDeleted = (callback) => {
+  socket.on('folder-deleted', callback);
+};
+
+export const onFoldersListUpdated = (callback) => {
+  socket.on('folders-list-updated', callback);
+};
+
+export const onDocumentPermissionsUpdated = (callback) => {
+  socket.on('document-permissions-updated', callback);
+};
+
+export const offDocumentCreated = (callback) => {
+  socket.off('document-created', callback);
+};
+
+export const offDocumentUpdated = (callback) => {
+  socket.off('document-updated', callback);
+};
+
+export const offDocumentDeleted = (callback) => {
+  socket.off('document-deleted', callback);
+};
+
+export const offDocumentsListUpdated = (callback) => {
+  socket.off('documents-list-updated', callback);
+};
+
+export const offFolderCreated = (callback) => {
+  socket.off('folder-created', callback);
+};
+
+export const offFolderUpdated = (callback) => {
+  socket.off('folder-updated', callback);
+};
+
+export const offFolderDeleted = (callback) => {
+  socket.off('folder-deleted', callback);
+};
+
+export const offFoldersListUpdated = (callback) => {
+  socket.off('folders-list-updated', callback);
+};
+
+export const offDocumentPermissionsUpdated = (callback) => {
+  socket.off('document-permissions-updated', callback);
+};
+
 export default socket;

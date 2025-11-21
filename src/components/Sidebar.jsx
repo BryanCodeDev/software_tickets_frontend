@@ -1,11 +1,12 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaCrown, FaWrench, FaUser } from 'react-icons/fa';
+import { FaCrown, FaWrench, FaUser, FaShieldAlt, FaClipboardList } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext.jsx';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { user } = useContext(AuthContext);
   const location = useLocation();
+  const [isCalidadOpen, setIsCalidadOpen] = useState(false);
 
   const menuItems = [];
 
@@ -47,14 +48,28 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         description: 'Control de activos tecnológicos'
       },
       {
-        path: '/documents',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-          </svg>
-        ),
-        label: 'Documentos',
-        description: 'Archivos oficiales y políticas'
+        type: 'submenu',
+        label: 'Calidad',
+        icon: <FaShieldAlt className="w-5 h-5" />,
+        description: 'Gestión de calidad y documentación',
+        subItems: [
+          {
+            path: '/documents',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            ),
+            label: 'Documentos',
+            description: 'Archivos oficiales y políticas'
+          },
+          {
+            path: '/ticket_calidad',
+            icon: <FaClipboardList className="w-5 h-5" />,
+            label: 'Ticket Calidad',
+            description: 'Reportes de calidad y cambios documentales'
+          }
+        ]
       },
       {
         path: '/credentials',
@@ -100,14 +115,28 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         description: 'Control de activos tecnológicos'
       },
       {
-        path: '/documents',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-          </svg>
-        ),
-        label: 'Documentos',
-        description: 'Documentación técnica'
+        type: 'submenu',
+        label: 'Calidad',
+        icon: <FaShieldAlt className="w-5 h-5" />,
+        description: 'Gestión de calidad y documentación',
+        subItems: [
+          {
+            path: '/documents',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            ),
+            label: 'Documentos',
+            description: 'Documentación técnica'
+          },
+          {
+            path: '/ticket_calidad',
+            icon: <FaClipboardList className="w-5 h-5" />,
+            label: 'Ticket Calidad',
+            description: 'Reportes de calidad y cambios documentales'
+          }
+        ]
       },
       {
         path: '/credentials',
@@ -133,14 +162,65 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         description: 'Crear y seguir solicitudes'
       },
       {
-        path: '/documents',
+        type: 'submenu',
+        label: 'Calidad',
+        icon: <FaShieldAlt className="w-5 h-5" />,
+        description: 'Gestión de calidad y documentación',
+        subItems: [
+          {
+            path: '/documents',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            ),
+            label: 'Documentos',
+            description: 'Documentos públicos'
+          },
+          {
+            path: '/ticket_calidad',
+            icon: <FaClipboardList className="w-5 h-5" />,
+            label: 'Ticket Calidad',
+            description: 'Reportes de calidad y cambios documentales'
+          }
+        ]
+      }
+    );
+  } else if (role === 'Calidad') {
+    menuItems.push(
+      {
+        path: '/tickets',
         icon: (
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
         ),
-        label: 'Documentos',
-        description: 'Documentos públicos'
+        label: 'Tickets',
+        description: 'Gestión de incidencias IT'
+      },
+      {
+        type: 'submenu',
+        label: 'Calidad',
+        icon: <FaShieldAlt className="w-5 h-5" />,
+        description: 'Gestión de calidad y documentación',
+        subItems: [
+          {
+            path: '/documents',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            ),
+            label: 'Documentos',
+            description: 'Gestión de documentos de calidad'
+          },
+          {
+            path: '/ticket_calidad',
+            icon: <FaClipboardList className="w-5 h-5" />,
+            label: 'Ticket Calidad',
+            description: 'Reportes de calidad y cambios documentales'
+          }
+        ]
       }
     );
   }
@@ -149,6 +229,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     const badges = {
       'Administrador': { color: 'from-red-500 to-pink-600', icon: <FaCrown />, text: 'Admin', iconColor: 'text-red-500' },
       'Técnico': { color: 'from-blue-500 to-cyan-600', icon: <FaWrench />, text: 'Tech', iconColor: 'text-blue-500' },
+      'Calidad': { color: 'from-purple-500 to-indigo-600', icon: <FaShieldAlt />, text: 'Quality', iconColor: 'text-purple-500' },
       'Empleado': { color: 'from-green-500 to-emerald-600', icon: <FaUser />, text: 'User', iconColor: 'text-green-500' }
     };
     return badges[roleName] || badges['Empleado'];
@@ -259,6 +340,117 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </div>
             
             {menuItems.map((item) => {
+              if (item.type === 'submenu') {
+                const isSubmenuActive = item.subItems.some(subItem => location.pathname === subItem.path);
+
+                return (
+                  <div key={item.label}>
+                    <button
+                      onClick={() => setIsCalidadOpen(!isCalidadOpen)}
+                      className={`
+                        group relative flex items-center w-full px-3 py-3.5 rounded-xl transition-all duration-200
+                        ${isSubmenuActive
+                          ? 'bg-linear-to-r from-purple-600 to-violet-600 text-white shadow-lg shadow-purple-500/30 scale-[1.02]'
+                          : 'text-gray-700 hover:text-purple-700 hover:bg-purple-50/80'
+                        }
+                      `}
+                    >
+                      {/* Active indicator bar */}
+                      {isSubmenuActive && (
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-white rounded-r-full shadow-lg"></div>
+                      )}
+
+                      {/* Icon container */}
+                      <div className={`
+                        shrink-0 w-11 h-11 rounded-xl flex items-center justify-center mr-3 transition-all duration-200
+                        ${isSubmenuActive
+                          ? 'bg-white/20 shadow-inner'
+                          : 'bg-linear-to-br from-gray-100 to-gray-50 group-hover:from-purple-100 group-hover:to-purple-50 group-hover:scale-110 shadow-sm'
+                        }
+                      `}>
+                        <div className={`transition-colors ${isSubmenuActive ? 'text-white' : 'text-gray-600 group-hover:text-purple-600'}`}>
+                          {item.icon}
+                        </div>
+                      </div>
+
+                      {/* Text content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="font-bold text-sm truncate">{item.label}</span>
+                        </div>
+                        <p className={`text-xs truncate leading-tight ${isSubmenuActive ? 'text-purple-100' : 'text-gray-500 group-hover:text-purple-600'}`}>
+                          {item.description}
+                        </p>
+                      </div>
+
+                      {/* Arrow indicator */}
+                      <svg
+                        className={`w-5 h-5 transition-transform duration-200 ${isCalidadOpen ? 'rotate-90' : ''} ${isSubmenuActive ? 'text-white' : 'text-gray-400'}`}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+
+                    {/* Submenu items */}
+                    {isCalidadOpen && (
+                      <div className="ml-6 mt-1 space-y-1 animate-fade-in">
+                        {item.subItems.map((subItem) => {
+                          const isSubActive = location.pathname === subItem.path;
+
+                          return (
+                            <Link
+                              key={subItem.path}
+                              to={subItem.path}
+                              onClick={() => {
+                                if (window.innerWidth < 1024) {
+                                  toggleSidebar();
+                                }
+                              }}
+                              className={`
+                                group relative flex items-center px-3 py-2.5 rounded-lg transition-all duration-200
+                                ${isSubActive
+                                  ? 'bg-linear-to-r from-purple-500 to-violet-500 text-white shadow-md scale-[1.01]'
+                                  : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50/60'
+                                }
+                              `}
+                            >
+                              {/* Active indicator bar */}
+                              {isSubActive && (
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full shadow-sm"></div>
+                              )}
+
+                              {/* Icon container */}
+                              <div className={`
+                                shrink-0 w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-all duration-200
+                                ${isSubActive
+                                  ? 'bg-white/20'
+                                  : 'bg-gray-100 group-hover:bg-purple-100 group-hover:scale-105'
+                                }
+                              `}>
+                                <div className={`transition-colors text-xs ${isSubActive ? 'text-white' : 'text-gray-500 group-hover:text-purple-600'}`}>
+                                  {subItem.icon}
+                                </div>
+                              </div>
+
+                              {/* Text content */}
+                              <div className="flex-1 min-w-0">
+                                <span className="font-medium text-sm truncate">{subItem.label}</span>
+                                <p className={`text-xs truncate leading-tight ${isSubActive ? 'text-purple-100' : 'text-gray-400 group-hover:text-purple-500'}`}>
+                                  {subItem.description}
+                                </p>
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
               const isActive = location.pathname === item.path;
 
               return (

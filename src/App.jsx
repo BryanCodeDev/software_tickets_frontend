@@ -16,6 +16,7 @@ const TermsAndConditions = lazy(() => import('./pages/TermsAndConditions'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Tickets = lazy(() => import('./pages/Tickets/Tickets'));
+const TicketCalidad = lazy(() => import('./pages/Tickets/TicketCalidad'));
 const Inventory = lazy(() => import('./pages/Inventory/Inventory'));
 const Documents = lazy(() => import('./pages/Documents/Documents'));
 const Credentials = lazy(() => import('./pages/Credentials/Credentials'));
@@ -69,6 +70,13 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <Tickets />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/ticket_calidad" element={
+              <ProtectedRoute>
+                <Layout>
+                  <TicketCalidad />
                 </Layout>
               </ProtectedRoute>
             } />

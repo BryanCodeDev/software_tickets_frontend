@@ -152,10 +152,38 @@ const Credentials = () => {
   // NUEVA FUNCIONALIDAD: Copiar al portapapeles
   const copyToClipboard = async (text, label) => {
     try {
-      await navigator.clipboard.writeText(text);
-      showNotification(`${label} copiado al portapapeles`, 'success');
+      // Intentar con la API moderna
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+        showNotification(`${label} copiado al portapapeles`, 'success');
+        return;
+      }
     } catch (err) {
-      showNotification('Error al copiar al portapapeles', 'error');
+      console.warn('Clipboard API failed, trying fallback:', err);
+    }
+
+    // Fallback para navegadores antiguos o cuando falla la API moderna
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      if (successful) {
+        showNotification(`${label} copiado al portapapeles`, 'success');
+      } else {
+        throw new Error('execCommand failed');
+      }
+    } catch (fallbackErr) {
+      console.error('Fallback copy failed:', fallbackErr);
+      showNotification('Error al copiar al portapapeles. Intente copiar manualmente.', 'error');
     }
   };
 
