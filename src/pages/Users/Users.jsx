@@ -748,8 +748,8 @@ const Users = () => {
                   >
                     <option value={1}>Administrador</option>
                     <option value={2}>Técnico</option>
-                    <option value={4}>Calidad</option>
-                    <option value={3}>Empleado</option>
+                    <option value={3}>Calidad</option>
+                    <option value={4}>Empleado</option>
                   </select>
                 </div>
 
