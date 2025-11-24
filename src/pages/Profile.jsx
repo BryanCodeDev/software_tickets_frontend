@@ -10,7 +10,9 @@ const Profile = () => {
     name: '',
     email: '',
     username: '',
-    it: ''
+    it: '',
+    hasCorporatePhone: false,
+    corporatePhone: ''
   });
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState(null);
@@ -22,7 +24,9 @@ const Profile = () => {
         name: user.name || '',
         email: user.email || '',
         username: user.username || '',
-        it: user.it || ''
+        it: user.it || '',
+        hasCorporatePhone: user.hasCorporatePhone || false,
+        corporatePhone: user.corporatePhone || ''
       });
     }
     fetchUniqueITs();
@@ -38,7 +42,9 @@ const Profile = () => {
           name: updatedUser.name || updatedUser.username || '',
           email: updatedUser.email || '',
           username: updatedUser.username || '',
-          it: updatedUser.it || ''
+          it: updatedUser.it || '',
+          hasCorporatePhone: updatedUser.hasCorporatePhone || false,
+          corporatePhone: updatedUser.corporatePhone || ''
         });
         updateUser(updatedUser);
       }
@@ -184,6 +190,50 @@ const Profile = () => {
                 ))}
               </select>
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                ¿Tiene teléfono corporativo?
+              </label>
+              <div className="flex gap-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="hasCorporatePhone"
+                    checked={formData.hasCorporatePhone === true}
+                    onChange={() => setFormData({ ...formData, hasCorporatePhone: true })}
+                    className="mr-2"
+                  />
+                  Sí
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="hasCorporatePhone"
+                    checked={formData.hasCorporatePhone === false}
+                    onChange={() => setFormData({ ...formData, hasCorporatePhone: false, corporatePhone: '' })}
+                    className="mr-2"
+                  />
+                  No
+                </label>
+              </div>
+            </div>
+
+            {formData.hasCorporatePhone && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Número Corporativo
+                </label>
+                <input
+                  type="text"
+                  name="corporatePhone"
+                  value={formData.corporatePhone}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Ej: 300 123 4567"
+                />
+              </div>
+            )}
           </div>
 
           <div className="flex items-center justify-between pt-4">

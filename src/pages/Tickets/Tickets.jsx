@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { FaEdit, FaTrash, FaComment, FaPlus, FaCheck, FaTimes, FaEye, FaImage, FaVideo, FaFile, FaPaperPlane, FaEllipsisV, FaPen, FaTrashAlt, FaSearch, FaFilter, FaDownload, FaChartBar, FaClock, FaExclamationTriangle, FaCheckCircle, FaSpinner, FaUserCircle, FaClipboardList, FaFileExport, FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
 import AuthContext from '../../context/AuthContext';
 import ticketsAPI from '../../api/ticketsAPI';
 import messagesAPI from '../../api/messagesAPI';
@@ -14,6 +24,15 @@ import {
   TicketStats
 } from '../../components/Tickets';
 import { getTimeAgo } from '../../utils';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Tickets = () => {
   const [tickets, setTickets] = useState([]);
@@ -245,6 +264,49 @@ const Tickets = () => {
   };
 
   const stats = calculateStats();
+
+  const getAdminChartData = () => {
+    const adminCounts = {};
+    administrators.forEach(admin => {
+      adminCounts[admin.name] = 0;
+    });
+    tickets.forEach(ticket => {
+      if (ticket.assignee && administrators.some(admin => admin.id === ticket.assignee.id)) {
+        const name = ticket.assignee.name;
+        adminCounts[name] = (adminCounts[name] || 0) + 1;
+      }
+    });
+    const sorted = Object.entries(adminCounts).sort((a, b) => b[1] - a[1]);
+    return {
+      labels: sorted.map(([name]) => name),
+      datasets: [{
+        label: 'Tickets Asignados',
+        data: sorted.map(([, count]) => count),
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
+      }],
+    };
+  };
+
+  const getCategoryChartData = () => {
+    const categoryCounts = {};
+    tickets.forEach(ticket => {
+      const category = ticket.category || 'Sin Categoría';
+      categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+    });
+    const sorted = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
+    return {
+      labels: sorted.map(([cat]) => cat),
+      datasets: [{
+        label: 'Reportes',
+        data: sorted.map(([, count]) => count),
+        backgroundColor: 'rgba(153, 102, 255, 0.6)',
+        borderColor: 'rgba(153, 102, 255, 1)',
+        borderWidth: 1,
+      }],
+    };
+  };
 
   const handleCreate = useCallback(() => {
     setFormData({
@@ -703,6 +765,34 @@ const Tickets = () => {
 
         {/* Stats Cards */}
         {showStats && <TicketStats stats={stats} />}
+
+        {/* Charts */}
+        {showStats && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Administradores con Más Tickets Asignados</h3>
+              <Bar data={getAdminChartData()} options={{
+                responsive: true,
+                plugins: {
+                  legend: {
+                    position: 'top',
+                  },
+                },
+              }} />
+            </div>
+            <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Categorías con Más Reportes</h3>
+              <Bar data={getCategoryChartData()} options={{
+                responsive: true,
+                plugins: {
+                  legend: {
+                    position: 'top',
+                  },
+                },
+              }} />
+            </div>
+          </div>
+        )}
 
         {/* Search and Filters */}
         <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 mb-6">
