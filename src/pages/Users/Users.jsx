@@ -11,7 +11,7 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const [formData, setFormData] = useState({ username: '', name: '', email: '', password: '', roleId: 1, it: '' });
+  const [formData, setFormData] = useState({ username: '', name: '', email: '', password: '', roleId: 1, it: '', hasCorporatePhone: false, corporatePhone: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [uniqueITs, setUniqueITs] = useState([]);
@@ -95,7 +95,8 @@ const Users = () => {
         usr.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         usr.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         usr.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        usr.it?.toLowerCase().includes(searchTerm.toLowerCase())
+        usr.it?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        usr.corporatePhone?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -139,8 +140,9 @@ const Users = () => {
     const calidad = users.filter(u => u.Role?.name === 'Calidad').length;
     const employees = users.filter(u => u.Role?.name === 'Empleado').length;
     const withIT = users.filter(u => u.it).length;
+    const withCorporatePhone = users.filter(u => u.hasCorporatePhone).length;
 
-    return { total, admins, technicians, calidad, employees, withIT };
+    return { total, admins, technicians, calidad, employees, withIT, withCorporatePhone };
   };
 
   const stats = calculateStats();
@@ -251,7 +253,7 @@ const Users = () => {
 
   const handleCreate = () => {
     setEditingUser(null);
-    setFormData({ username: '', name: '', email: '', password: '', roleId: 1, it: '' });
+    setFormData({ username: '', name: '', email: '', password: '', roleId: 1, it: '', hasCorporatePhone: false, corporatePhone: '' });
     setPasswordStrength(null);
     setShowModal(true);
   };
@@ -264,7 +266,9 @@ const Users = () => {
       email: usr.email,
       password: '', // No mostrar contraseña actual (está hasheada)
       roleId: usr.roleId,
-      it: usr.it || ''
+      it: usr.it || '',
+      hasCorporatePhone: usr.hasCorporatePhone || false,
+      corporatePhone: usr.corporatePhone || ''
     });
     setPasswordStrength(null);
     setShowModal(true);
@@ -298,7 +302,7 @@ const Users = () => {
     setFormLoading(true);
     try {
       if (editingUser) {
-        const updateData = { roleId: formData.roleId, it: formData.it };
+        const updateData = { roleId: formData.roleId, it: formData.it, hasCorporatePhone: formData.hasCorporatePhone, corporatePhone: formData.corporatePhone };
         if (formData.password) updateData.password = formData.password;
         await usersAPI.updateUser(editingUser.id, updateData);
         showNotification('Usuario actualizado exitosamente', 'success');
@@ -309,7 +313,9 @@ const Users = () => {
           formData.email,
           formData.password,
           formData.roleId,
-          formData.it
+          formData.it,
+          formData.hasCorporatePhone,
+          formData.corporatePhone
         );
         showNotification('Usuario creado exitosamente', 'success');
       }
@@ -443,6 +449,13 @@ const Users = () => {
                 icon: FaCheck,
                 gradient: 'from-violet-500 to-purple-600',
                 loading: loading
+              },
+              {
+                key: 'withCorporatePhone',
+                label: 'Con Teléfono Corporativo',
+                icon: FaCheck,
+                gradient: 'from-teal-500 to-cyan-600',
+                loading: loading
               }
             ]}
           />
@@ -545,6 +558,16 @@ const Users = () => {
                             </div>
                           ) : (
                             <p className="text-xs text-gray-400 italic">No asignado</p>
+                          )}
+                        </div>
+                        <div className="pt-2 border-t border-gray-200">
+                          <p className="text-xs text-gray-500 mb-1"><strong>Teléfono Corporativo:</strong></p>
+                          {usr.hasCorporatePhone ? (
+                            <div className="bg-green-50 rounded-lg p-2">
+                              <p className="text-xs font-semibold text-green-700">{usr.corporatePhone}</p>
+                            </div>
+                          ) : (
+                            <p className="text-xs text-gray-400 italic">No tiene</p>
                           )}
                         </div>
                         {/* NUEVA FUNCIONALIDAD: Mostrar fecha de creación */}
@@ -747,6 +770,50 @@ const Users = () => {
                     ))}
                   </select>
                 </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                    ¿Tiene teléfono corporativo?
+                  </label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="hasCorporatePhone"
+                        checked={formData.hasCorporatePhone === true}
+                        onChange={() => setFormData({ ...formData, hasCorporatePhone: true })}
+                        className="mr-2"
+                      />
+                      Sí
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="hasCorporatePhone"
+                        checked={formData.hasCorporatePhone === false}
+                        onChange={() => setFormData({ ...formData, hasCorporatePhone: false, corporatePhone: '' })}
+                        className="mr-2"
+                      />
+                      No
+                    </label>
+                  </div>
+                </div>
+
+                {formData.hasCorporatePhone && (
+                  <div>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                      Número Corporativo
+                    </label>
+                    <input
+                      type="text"
+                      name="corporatePhone"
+                      value={formData.corporatePhone}
+                      onChange={(e) => setFormData({ ...formData, corporatePhone: e.target.value })}
+                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                      placeholder="Ej: 300 123 4567"
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="flex space-x-3 pt-4">

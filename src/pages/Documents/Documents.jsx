@@ -77,9 +77,7 @@ const Documents = () => {
 
   const fetchUsers = async () => {
     try {
-      console.log('Fetching users...');
       const usersData = await documentsAPI.fetchUsers();
-      console.log('Users fetched:', usersData);
       setAllUsers(usersData || []);
     } catch (err) {
       console.error('Error fetching users:', err);
@@ -120,7 +118,6 @@ const Documents = () => {
     };
 
     const handleFolderUpdated = (data) => {
-      console.log('Carpeta actualizada:', data);
       fetchFolders();
       showNotification('Carpeta actualizada', 'success');
     };
@@ -499,7 +496,7 @@ const Documents = () => {
         }
         showNotification('Carpeta eliminada exitosamente', 'success');
       } catch (err) {
-        showNotification('Error al eliminar la carpeta. Por favor, inténtalo de nuevo.', 'error');
+        showNotification(err.response?.data?.error || 'Error al eliminar la carpeta. Por favor, inténtalo de nuevo.', 'error');
       }
     });
   };
