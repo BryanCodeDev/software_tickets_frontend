@@ -138,6 +138,8 @@ const Users = () => {
     const admins = users.filter(u => u.Role?.name === 'Administrador').length;
     const technicians = users.filter(u => u.Role?.name === 'Técnico').length;
     const calidad = users.filter(u => u.Role?.name === 'Calidad').length;
+    const coordinadorCompras = users.filter(u => u.Role?.name === 'Coordinador de Compras').length;
+    const directorCompras = users.filter(u => u.Role?.name === 'Director de Compras').length;
     const employees = users.filter(u => u.Role?.name === 'Empleado').length;
     const withIT = users.filter(u => u.it).length;
     const withCorporatePhone = users.filter(u => u.hasCorporatePhone).length;
@@ -210,6 +212,8 @@ const Users = () => {
       case 'Administrador': return <FaUserShield className="w-4 h-4 text-purple-600" />;
       case 'Técnico': return <FaUserCog className="w-4 h-4 text-blue-600" />;
       case 'Calidad': return <FaShieldAlt className="w-4 h-4 text-emerald-600" />;
+      case 'Coordinador de Compras': return <FaClipboardList className="w-4 h-4 text-orange-600" />;
+      case 'Director de Compras': return <FaCrown className="w-4 h-4 text-red-600" />;
       case 'Empleado': return <FaUser className="w-4 h-4 text-green-600" />;
       default: return <FaUser className="w-4 h-4 text-gray-600" />;
     }
@@ -221,6 +225,8 @@ const Users = () => {
       case 'Administrador': return 'bg-purple-100 text-purple-700 border-purple-200';
       case 'Técnico': return 'bg-blue-100 text-blue-700 border-blue-200';
       case 'Calidad': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
+      case 'Coordinador de Compras': return 'bg-orange-100 text-orange-700 border-orange-200';
+      case 'Director de Compras': return 'bg-red-100 text-red-700 border-red-200';
       case 'Empleado': return 'bg-green-100 text-green-700 border-green-200';
       default: return 'bg-gray-100 text-gray-700 border-gray-200';
     }
@@ -375,7 +381,9 @@ const Users = () => {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 flex items-center">
                 <div className="w-12 h-12 bg-linear-to-r from-purple-600 to-violet-600 rounded-xl flex items-center justify-center mr-3 shadow-lg">
-                  <FaUsers className="text-white text-lg" />
+                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                  </svg>
                 </div>
                 Usuarios
               </h1>
@@ -477,6 +485,8 @@ const Users = () => {
                 { value: 'Administrador', label: 'Administrador' },
                 { value: 'Técnico', label: 'Técnico' },
                 { value: 'Calidad', label: 'Calidad' },
+                { value: 'Coordinador de Compras', label: 'Coordinador de Compras' },
+                { value: 'Director de Compras', label: 'Director de Compras' },
                 { value: 'Empleado', label: 'Empleado' }
               ]
             }
@@ -606,20 +616,18 @@ const Users = () => {
 
       {/* Modal for Create/Edit */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-[95vw] sm:max-w-md md:max-w-lg lg:max-w-4xl xl:max-w-5xl max-h-[95vh] overflow-y-auto border border-gray-200">
-            <div className="p-6 border-b border-gray-200">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-xl lg:text-2xl font-bold text-white">
                   {editingUser ? 'Editar Usuario' : 'Nuevo Usuario'}
                 </h2>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
                 >
-                  <svg className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
                 </button>
               </div>
             </div>
@@ -749,6 +757,8 @@ const Users = () => {
                     <option value={1}>Administrador</option>
                     <option value={2}>Técnico</option>
                     <option value={3}>Calidad</option>
+                    <option value={5}>Coordinador de Compras</option>
+                    <option value={6}>Director de Compras</option>
                     <option value={4}>Empleado</option>
                   </select>
                 </div>

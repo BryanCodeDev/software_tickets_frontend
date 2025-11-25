@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
 import AuthContext from '../context/AuthContext.jsx';
 import { dashboardAPI } from '../api';
-import { FaTicketAlt, FaBox, FaFolder, FaFile, FaLock, FaChartLine, FaClock, FaExclamationTriangle, FaCheckCircle, FaUserClock, FaServer, FaShieldAlt } from 'react-icons/fa';
+import { FaTicketAlt, FaBox, FaFolder, FaFile, FaLock, FaChartLine, FaClock, FaExclamationTriangle, FaCheckCircle, FaUserClock, FaServer, FaShieldAlt, FaShoppingCart } from 'react-icons/fa';
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
-  const [stats, setStats] = useState({ tickets: 0, inventory: 0, documents: 0, credentials: 0, users: 0, qualityTickets: 0, regularTickets: 0 });
+  const [stats, setStats] = useState({ tickets: 0, inventory: 0, documents: 0, credentials: 0, users: 0, qualityTickets: 0, regularTickets: 0, purchaseRequests: 0 });
   const [ticketStats, setTicketStats] = useState({ pending: 0, inProgress: 0, resolved: 0 });
   const [qualityTicketStats, setQualityTicketStats] = useState({ pending: 0, inProgress: 0, resolved: 0 });
   const [recentActivity, setRecentActivity] = useState([]);
@@ -26,7 +26,8 @@ const Dashboard = () => {
         credentials: data.credentials,
         users: data.users,
         qualityTickets: data.qualityTickets || 0,
-        regularTickets: data.regularTickets || 0
+        regularTickets: data.regularTickets || 0,
+        purchaseRequests: data.purchaseRequests || 0
       });
 
       // Estadísticas de tickets desglosadas (todos los tickets)
@@ -84,7 +85,7 @@ const Dashboard = () => {
     </div>
   );
 
-  const totalResources = stats.tickets + stats.inventory + stats.documents + stats.credentials;
+  const totalResources = stats.tickets + stats.inventory + stats.documents + stats.credentials + stats.purchaseRequests;
   const completionRate = stats.tickets > 0 ? Math.round(((ticketStats.resolved + ticketStats.pending + ticketStats.inProgress) > 0 ? (ticketStats.resolved / (ticketStats.resolved + ticketStats.pending + ticketStats.inProgress)) * 100 : 0)) : 0;
   const qualityCompletionRate = stats.qualityTickets > 0 ? Math.round(((qualityTicketStats.resolved + qualityTicketStats.pending + qualityTicketStats.inProgress) > 0 ? (qualityTicketStats.resolved / (qualityTicketStats.resolved + qualityTicketStats.pending + qualityTicketStats.inProgress)) * 100 : 0)) : 0;
 
@@ -111,7 +112,7 @@ const Dashboard = () => {
         </div>
 
         {/* Main Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
         <StatCard
           title="Tickets"
           value={stats.tickets}
@@ -128,6 +129,15 @@ const Dashboard = () => {
           icon={FaShieldAlt}
           gradient="bg-gradient-to-br from-emerald-500 to-emerald-600"
           textColor="text-emerald-100"
+        />
+
+        <StatCard
+          title="Solicitudes de Compra"
+          value={stats.purchaseRequests}
+          description="Periféricos y electrodomésticos"
+          icon={FaShoppingCart}
+          gradient="bg-gradient-to-br from-orange-500 to-orange-600"
+          textColor="text-orange-100"
         />
 
         <StatCard
@@ -255,6 +265,10 @@ const Dashboard = () => {
               <div className="flex justify-between items-center p-2 sm:p-3 bg-emerald-50 rounded-lg">
                 <span className="text-xs sm:text-sm text-gray-700 font-medium truncate">Tickets de Calidad</span>
                 <span className="text-emerald-600 font-bold text-base sm:text-lg shrink-0">{loading ? '...' : stats.qualityTickets}</span>
+              </div>
+              <div className="flex justify-between items-center p-2 sm:p-3 bg-orange-50 rounded-lg">
+                <span className="text-xs sm:text-sm text-gray-700 font-medium truncate">Solicitudes de Compra</span>
+                <span className="text-orange-600 font-bold text-base sm:text-lg shrink-0">{loading ? '...' : stats.purchaseRequests}</span>
               </div>
               <div className="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg">
                 <span className="text-xs sm:text-sm text-gray-700 font-medium truncate">Credenciales Seguras</span>

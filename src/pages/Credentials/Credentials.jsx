@@ -412,7 +412,9 @@ const Credentials = () => {
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-r from-purple-600 to-violet-600 rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg">
-                  <FaLock className="text-white text-base sm:text-lg" />
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
                 </div>
                 {currentFolder ? `Carpeta: ${currentFolder.name}` : 'Credenciales'}
               </h1>
@@ -658,20 +660,18 @@ const Credentials = () => {
 
       {/* Modal for Create/Edit */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-[95vw] sm:max-w-md md:max-w-lg lg:max-w-4xl xl:max-w-5xl max-h-[95vh] overflow-y-auto border border-gray-200">
-            <div className="p-4 sm:p-6 border-b border-gray-200">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg sm:text-2xl font-bold text-gray-900">
+                <h2 className="text-xl lg:text-2xl font-bold text-white">
                   {editingCredential ? 'Editar Credencial' : 'Nueva Credencial'}
                 </h2>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
                 >
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
                 </button>
               </div>
             </div>
@@ -909,21 +909,18 @@ const Credentials = () => {
 
       {/* Modal for Create Folder */}
       {showFolderModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden transform transition-all animate-in zoom-in-95">
-            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10 flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-linear-to-br from-green-600 to-green-600 rounded-xl flex items-center justify-center">
-                  <FaPlus className="text-white" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900">Nueva Carpeta</h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-green-600 to-green-700 p-4 lg:p-6 z-10">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl lg:text-2xl font-bold text-white">Nueva Carpeta</h2>
+                <button
+                  onClick={() => setShowFolderModal(false)}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                >
+                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                </button>
               </div>
-              <button
-                onClick={() => setShowFolderModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
-              >
-                <FaTimes className="w-5 h-5 text-gray-500" />
-              </button>
             </div>
 
             <form onSubmit={handleFolderSubmit} className="p-6 space-y-5">
@@ -986,21 +983,18 @@ const Credentials = () => {
 
       {/* Modal for Edit Folder */}
       {showEditFolderModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden transform transition-all animate-in zoom-in-95">
-            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10 flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-linear-to-br from-blue-600 to-blue-600 rounded-xl flex items-center justify-center">
-                  <FaEdit className="text-white" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900">Editar Carpeta</h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-blue-600 to-blue-700 p-4 lg:p-6 z-10">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl lg:text-2xl font-bold text-white">Editar Carpeta</h2>
+                <button
+                  onClick={() => setShowEditFolderModal(false)}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                >
+                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                </button>
               </div>
-              <button
-                onClick={() => setShowEditFolderModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
-              >
-                <FaTimes className="w-5 h-5 text-gray-500" />
-              </button>
             </div>
 
             <form onSubmit={handleEditFolderSubmit} className="p-6 space-y-5">

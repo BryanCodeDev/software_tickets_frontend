@@ -806,7 +806,9 @@ const Documents = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center space-x-4">
               <div className="w-14 h-14 bg-linear-to-br from-purple-600 to-violet-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <FaFileAlt className="text-white text-2xl" />
+                <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">
@@ -1104,21 +1106,18 @@ const Documents = () => {
 
       {/* Upload Modal */}
       {showUploadModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transform transition-all animate-in zoom-in-95">
-            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10 flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-linear-to-br from-purple-600 to-violet-600 rounded-xl flex items-center justify-center">
-                  <FaUpload className="text-white" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900">Nuevo Documento</h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl lg:text-2xl font-bold text-white">Nuevo Documento</h2>
+                <button
+                  onClick={() => setShowUploadModal(false)}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                >
+                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                </button>
               </div>
-              <button
-                onClick={() => setShowUploadModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
-              >
-                <FaTimes className="w-5 h-5 text-gray-500" />
-              </button>
             </div>
 
             <form onSubmit={handleUpload} className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-5rem)]">
@@ -1329,21 +1328,16 @@ const Documents = () => {
 
       {/* Edit Modal */}
       {showEditModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto transform transition-all animate-in zoom-in-95">
-            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-linear-to-br from-purple-600 to-violet-600 rounded-xl flex items-center justify-center">
-                    <FaEdit className="text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Editar Documento</h2>
-                </div>
+                <h2 className="text-xl lg:text-2xl font-bold text-white">Editar Documento</h2>
                 <button
                   onClick={() => setShowEditModal(false)}
-                  className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
                 >
-                  <FaTimes className="w-5 h-5 text-gray-500" />
+                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
                 </button>
               </div>
             </div>
@@ -1420,21 +1414,16 @@ const Documents = () => {
 
       {/* History Modal */}
       {showHistoryModal && selectedDocument && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all animate-in zoom-in-95">
-            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-linear-to-br from-purple-600 to-violet-600 rounded-xl flex items-center justify-center">
-                    <FaClock className="text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Historial de Versiones: {selectedDocument.title}</h2>
-                </div>
+                <h2 className="text-xl lg:text-2xl font-bold text-white">Historial de Versiones: {selectedDocument.title}</h2>
                 <button
                   onClick={() => setShowHistoryModal(false)}
-                  className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
                 >
-                  <FaTimes className="w-5 h-5 text-gray-500" />
+                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
                 </button>
               </div>
             </div>
@@ -1486,21 +1475,18 @@ const Documents = () => {
 
       {/* Create Folder Modal */}
       {showCreateFolderModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden transform transition-all animate-in zoom-in-95">
-            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10 flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-linear-to-br from-green-600 to-green-600 rounded-xl flex items-center justify-center">
-                  <FaPlus className="text-white" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900">Nueva Carpeta</h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-green-600 to-green-700 p-4 lg:p-6 z-10">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl lg:text-2xl font-bold text-white">Nueva Carpeta</h2>
+                <button
+                  onClick={() => setShowCreateFolderModal(false)}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                >
+                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                </button>
               </div>
-              <button
-                onClick={() => setShowCreateFolderModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
-              >
-                <FaTimes className="w-5 h-5 text-gray-500" />
-              </button>
             </div>
 
             <form onSubmit={handleCreateFolder} className="p-6 space-y-5">
@@ -1551,21 +1537,18 @@ const Documents = () => {
 
       {/* Edit Folder Modal */}
       {showEditFolderModal && editingFolder && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden transform transition-all animate-in zoom-in-95">
-            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10 flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-linear-to-br from-blue-600 to-blue-600 rounded-xl flex items-center justify-center">
-                  <FaEdit className="text-white" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900">Editar Carpeta</h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-blue-600 to-blue-700 p-4 lg:p-6 z-10">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl lg:text-2xl font-bold text-white">Editar Carpeta</h2>
+                <button
+                  onClick={() => setShowEditFolderModal(false)}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                >
+                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                </button>
               </div>
-              <button
-                onClick={() => setShowEditFolderModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
-              >
-                <FaTimes className="w-5 h-5 text-gray-500" />
-              </button>
             </div>
 
             <form onSubmit={handleUpdateFolder} className="p-6 space-y-5">
@@ -1616,26 +1599,18 @@ const Documents = () => {
 
       {/* Permissions Modal */}
       {showPermissionsModal && selectedItemForPermissions && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transform transition-all animate-in zoom-in-95">
-            <div className="sticky top-0 bg-white px-6 py-5 border-b border-gray-200 rounded-t-2xl z-10 flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-linear-to-br from-purple-600 to-violet-600 rounded-xl flex items-center justify-center">
-                  <FaUser className="text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900">Gestionar Permisos</h2>
-                  <p className="text-sm text-gray-600">
-                    {selectedItemForPermissions.type === 'document' ? 'Documento' : 'Carpeta'}: {selectedItemForPermissions.id}
-                  </p>
-                </div>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl lg:text-2xl font-bold text-white">Gestionar Permisos</h2>
+                <button
+                  onClick={() => setShowPermissionsModal(false)}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                >
+                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                </button>
               </div>
-              <button
-                onClick={() => setShowPermissionsModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
-              >
-                <FaTimes className="w-5 h-5 text-gray-500" />
-              </button>
             </div>
 
             <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-5rem)]">

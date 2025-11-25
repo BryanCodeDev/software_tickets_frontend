@@ -200,4 +200,45 @@ export const offDocumentPermissionsUpdated = (callback) => {
   socket.off('document-permissions-updated', callback);
 };
 
+// Purchase Request WebSocket functions
+export const joinPurchaseRequestRoom = (requestId) => {
+  socket.emit('join-purchase-request', requestId);
+};
+
+export const leavePurchaseRequestRoom = (requestId) => {
+  socket.emit('leave-purchase-request', requestId);
+};
+
+export const onPurchaseRequestUpdated = (callback) => {
+  socket.on('purchase-request-updated', callback);
+};
+
+export const onPurchaseRequestCreated = (callback) => {
+  socket.on('purchase-request-created', callback);
+};
+
+export const onPurchaseRequestDeleted = (callback) => {
+  socket.on('purchase-request-deleted', callback);
+};
+
+export const onPurchaseRequestsListUpdated = (callback) => {
+  socket.on('purchase-requests-list-updated', callback);
+};
+
+export const offPurchaseRequestUpdated = (callback) => {
+  socket.off('purchase-request-updated', callback);
+};
+
+export const offPurchaseRequestCreated = (callback) => {
+  socket.off('purchase-request-created', callback);
+};
+
+export const offPurchaseRequestDeleted = (callback) => {
+  socket.off('purchase-request-deleted', callback);
+};
+
+export const offPurchaseRequestsListUpdated = (callback) => {
+  socket.off('purchase-requests-list-updated', callback);
+};
+
 export default socket;

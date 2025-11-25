@@ -17,10 +17,12 @@ const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Tickets = lazy(() => import('./pages/Tickets/Tickets'));
 const TicketCalidad = lazy(() => import('./pages/Tickets/TicketCalidad'));
+const PurchaseRequests = lazy(() => import('./pages/PurchaseRequests/PurchaseRequests'));
 const Inventory = lazy(() => import('./pages/Inventory/Inventory'));
 const Documents = lazy(() => import('./pages/Documents/Documents'));
 const Credentials = lazy(() => import('./pages/Credentials/Credentials'));
 const Users = lazy(() => import('./pages/Users/Users'));
+const Roles = lazy(() => import('./pages/Roles/Roles'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Help = lazy(() => import('./pages/Help'));
@@ -80,6 +82,13 @@ function App() {
                 </Layout>
               </ProtectedRoute>
             } />
+            <Route path="/purchase-requests" element={
+              <ProtectedRoute>
+                <Layout>
+                  <PurchaseRequests />
+                </Layout>
+              </ProtectedRoute>
+            } />
             <Route path="/inventory" element={
               <ProtectedRoute>
                 <Layout>
@@ -122,6 +131,13 @@ function App() {
                 </Layout>
               </ProtectedRoute>
             } />
+            <Route path="/roles" element={
+              <ProtectedRoute>
+                <Layout>
+                  <Roles />
+                </Layout>
+              </ProtectedRoute>
+            } />
             <Route path="/profile" element={
               <ProtectedRoute>
                 <Layout>
@@ -156,5 +172,3 @@ function App() {
 }
 
 export default App;
-
-

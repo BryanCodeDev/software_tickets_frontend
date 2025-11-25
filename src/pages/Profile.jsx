@@ -239,6 +239,12 @@ const Profile = () => {
           <div className="flex items-center justify-between pt-4">
             <div className="text-sm text-gray-600">
               <p><strong>Rol:</strong> {user?.role?.name || 'N/A'}</p>
+              {user?.role?.name === 'Coordinador de Compras' && (
+                <p className="text-xs text-orange-600 mt-1">Responsable de aprobar solicitudes de compra iniciales</p>
+              )}
+              {user?.role?.name === 'Director de Compras' && (
+                <p className="text-xs text-red-600 mt-1">Responsable de aprobar solicitudes de compra finales</p>
+              )}
             </div>
 
             <button

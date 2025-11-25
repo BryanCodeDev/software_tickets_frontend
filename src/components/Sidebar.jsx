@@ -48,6 +48,16 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         description: 'Control de activos tecnológicos'
       },
       {
+        path: '/purchase-requests',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        ),
+        label: 'Solicitudes de Compra',
+        description: 'Periféricos y electrodomésticos'
+      },
+      {
         type: 'submenu',
         label: 'Calidad',
         icon: <FaShieldAlt className="w-5 h-5" />,
@@ -90,6 +100,16 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         ),
         label: 'Usuarios',
         description: 'Administración de usuarios'
+      },
+      {
+        path: '/roles',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        ),
+        label: 'Roles',
+        description: 'Gestión de roles y permisos'
       }
     );
   } else if (role === 'Técnico') {
@@ -113,6 +133,16 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         ),
         label: 'Inventario',
         description: 'Control de activos tecnológicos'
+      },
+      {
+        path: '/purchase-requests',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        ),
+        label: 'Solicitudes de Compra',
+        description: 'Periféricos y electrodomésticos'
       },
       {
         type: 'submenu',
@@ -162,6 +192,16 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         description: 'Crear y seguir solicitudes'
       },
       {
+        path: '/purchase-requests',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        ),
+        label: 'Solicitudes de Compra',
+        description: 'Periféricos y electrodomésticos'
+      },
+      {
         type: 'submenu',
         label: 'Calidad',
         icon: <FaShieldAlt className="w-5 h-5" />,
@@ -197,6 +237,16 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         ),
         label: 'Tickets',
         description: 'Gestión de incidencias IT'
+      },
+      {
+        path: '/purchase-requests',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        ),
+        label: 'Solicitudes de Compra',
+        description: 'Periféricos y electrodomésticos'
       },
       {
         type: 'submenu',

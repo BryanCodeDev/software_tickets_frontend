@@ -778,6 +778,54 @@ const Help = () => {
                           </div>
                         </div>
 
+                        <div className="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500">
+                          <h6 className="font-bold text-orange-900 mb-3 flex items-center">
+                            <FaClipboardList className="text-orange-600 mr-2" />
+                            Coordinador de Compras (Nivel 3 - Gestión de Compras)
+                          </h6>
+                          <p className="text-sm mb-3 text-orange-800">Los coordinadores de compras gestionan las solicitudes iniciales de compra y aprueban las primeras etapas del proceso de adquisiciones.</p>
+
+                          <div className="grid grid-cols-1 gap-4">
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaBox className="text-orange-600 mr-2" />
+                                Solicitudes de Compra
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li><FaCheck className="text-green-600" /> Ver todas las solicitudes de compra</li>
+                                <li><FaCheck className="text-green-600" /> Aprobar solicitudes iniciales</li>
+                                <li><FaCheck className="text-green-600" /> Gestionar estados de aprobación inicial</li>
+                                <li><FaCheck className="text-green-600" /> Comunicar con solicitantes</li>
+                                <li><FaTimes className="text-red-600" /> No puede aprobar compras finales</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                          <h6 className="font-bold text-red-900 mb-3 flex items-center">
+                            <FaCrown className="text-red-600 mr-2" />
+                            Director de Compras (Nivel 4 - Dirección de Compras)
+                          </h6>
+                          <p className="text-sm mb-3 text-red-800">Los directores de compras tienen autoridad final para aprobar todas las solicitudes de compra y gestionar proveedores.</p>
+
+                          <div className="grid grid-cols-1 gap-4">
+                            <div className="bg-white p-3 rounded border">
+                              <h7 className="font-medium text-sm mb-2 flex items-center">
+                                <FaBox className="text-red-600 mr-2" />
+                                Solicitudes de Compra
+                              </h7>
+                              <ul className="text-xs space-y-1 ml-6">
+                                <li><FaCheck className="text-green-600" /> Ver todas las solicitudes de compra</li>
+                                <li><FaCheck className="text-green-600" /> Aprobar solicitudes finales</li>
+                                <li><FaCheck className="text-green-600" /> Gestionar proveedores y contratos</li>
+                                <li><FaCheck className="text-green-600" /> Autoridad completa en proceso de compras</li>
+                                <li><FaCheck className="text-green-600" /> Reportes completos de adquisiciones</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
                         <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
                           <h6 className="font-bold text-purple-900 mb-3 flex items-center">
                             <FaShieldAlt className="text-purple-600 mr-2" />
@@ -974,6 +1022,8 @@ const Help = () => {
                                   <th className="border border-gray-300 p-2 text-left">Funcionalidad</th>
                                   <th className="border border-gray-300 p-2 text-center">Administrador</th>
                                   <th className="border border-gray-300 p-2 text-center">Técnico</th>
+                                  <th className="border border-gray-300 p-2 text-center">Coordinador<br/>Compras</th>
+                                  <th className="border border-gray-300 p-2 text-center">Director<br/>Compras</th>
                                   <th className="border border-gray-300 p-2 text-center">Calidad</th>
                                   <th className="border border-gray-300 p-2 text-center">Empleado</th>
                                 </tr>
@@ -984,10 +1034,14 @@ const Help = () => {
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr className="bg-gray-50">
                                   <td className="border border-gray-300 p-2 font-medium">Crear Tickets</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
@@ -998,6 +1052,26 @@ const Help = () => {
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-yellow-600">⚠️ (asignados)</td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                  <td className="border border-gray-300 p-2 font-medium">Ver Solicitudes de Compra</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                </tr>
+                                <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Aprobar Solicitudes de Compra</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-yellow-600">⚠️ (inicial)</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr className="bg-gray-50">
@@ -1006,11 +1080,15 @@ const Help = () => {
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
                                 <tr>
                                   <td className="border border-gray-300 p-2 font-medium">Editar Inventario</td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>

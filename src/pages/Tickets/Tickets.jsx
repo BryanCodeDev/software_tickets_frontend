@@ -718,7 +718,9 @@ const Tickets = () => {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 lg:gap-4 mb-3">
                 <div className="w-12 h-12 lg:w-14 lg:h-14 bg-linear-to-br from-purple-600 to-violet-600 rounded-2xl flex items-center justify-center shadow-xl shrink-0">
-                  <FaClipboardList className="text-white text-xl lg:text-2xl" />
+                  <svg className="w-6 h-6 lg:w-8 lg:h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
                 </div>
                 <div className="min-w-0 flex-1">
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight truncate">
@@ -1123,57 +1125,54 @@ const Tickets = () => {
 
             {/* Pagination Controls Removed */}
 
-            {/* Detail Modal */}
-            <TicketDetailModal
-              showDetailModal={showDetailModal}
-              setShowDetailModal={setShowDetailModal}
-              selectedTicket={selectedTicket}
-              comments={comments}
-              messages={messages}
-              newMessage={newMessage}
-              setNewMessage={setNewMessage}
-              handleSendMessage={handleSendMessage}
-              handleViewDetail={handleViewDetail}
-              handleEdit={handleEdit}
-              handleDelete={handleDelete}
-              canEditTicket={canEditTicket}
-              canDeleteTicket={canDeleteTicket}
-              canSendMessage={canSendMessage}
-              user={user}
-            />
-     
-            {/* Edit Modal */}
-            {/* Create Modal */}
-            <TicketCreateModal
-              showCreateModal={showCreateModal}
-              setShowCreateModal={setShowCreateModal}
-              formData={formData}
-              setFormData={setFormData}
-              handleCreateSubmit={handleCreateSubmit}
-              formLoading={formLoading}
-              userRole={userRole}
-              technicians={technicians}
-              administrators={administrators}
-              standardizedTitles={standardizedTitles}
-            />
-
-            {/* Edit Modal */}
-            <TicketEditModal
-              showEditModal={showEditModal}
-              setShowEditModal={setShowEditModal}
-              editingTicket={editingTicket}
-              editFormData={editFormData}
-              setEditFormData={setEditFormData}
-              handleEditSubmit={handleEditSubmit}
-              formLoading={formLoading}
-              userRole={userRole}
-              technicians={technicians}
-              administrators={administrators}
-              standardizedTitles={standardizedTitles}
-            />
-
           </>
         )}
+
+        {/* Modals - Always rendered */}
+        <TicketDetailModal
+          showDetailModal={showDetailModal}
+          setShowDetailModal={setShowDetailModal}
+          selectedTicket={selectedTicket}
+          comments={comments}
+          messages={messages}
+          newMessage={newMessage}
+          setNewMessage={setNewMessage}
+          handleSendMessage={handleSendMessage}
+          handleViewDetail={handleViewDetail}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+          canEditTicket={canEditTicket}
+          canDeleteTicket={canDeleteTicket}
+          canSendMessage={canSendMessage}
+          user={user}
+        />
+
+        <TicketCreateModal
+          showCreateModal={showCreateModal}
+          setShowCreateModal={setShowCreateModal}
+          formData={formData}
+          setFormData={setFormData}
+          handleCreateSubmit={handleCreateSubmit}
+          formLoading={formLoading}
+          userRole={userRole}
+          technicians={technicians}
+          administrators={administrators}
+          standardizedTitles={standardizedTitles}
+        />
+
+        <TicketEditModal
+          showEditModal={showEditModal}
+          setShowEditModal={setShowEditModal}
+          editingTicket={editingTicket}
+          editFormData={editFormData}
+          setEditFormData={setEditFormData}
+          handleEditSubmit={handleEditSubmit}
+          formLoading={formLoading}
+          userRole={userRole}
+          technicians={technicians}
+          administrators={administrators}
+          standardizedTitles={standardizedTitles}
+        />
       </div>
 
       <style>{`
