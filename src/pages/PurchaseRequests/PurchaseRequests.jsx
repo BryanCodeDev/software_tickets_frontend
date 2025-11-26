@@ -636,6 +636,7 @@ const PurchaseRequests = () => {
                       onEdit={handleEdit}
                       onDelete={handleDelete}
                       userRole={userRole}
+                      user={user}
                     />
                   ))}
                 </div>

@@ -2,7 +2,7 @@ import React from 'react';
 import { FaEye, FaClock, FaCheck, FaTimes, FaArrowRight, FaCheckCircle, FaUserCircle, FaEdit, FaTrash, FaDollarSign, FaExclamationTriangle } from 'react-icons/fa';
 import { getTimeAgo } from '../../utils';
 
-const PurchaseRequestCard = ({ request, onViewDetail, onEdit, onDelete, userRole }) => {
+const PurchaseRequestCard = ({ request, onViewDetail, onEdit, onDelete, userRole, user }) => {
   const getStatusColor = (status) => {
     const colors = {
       'solicitado': 'bg-blue-100 text-blue-700 border-blue-200',
@@ -58,6 +58,15 @@ const PurchaseRequestCard = ({ request, onViewDetail, onEdit, onDelete, userRole
     return request.budget && parseFloat(request.estimatedCost) > (parseFloat(request.budget.totalAmount) - parseFloat(request.budget.usedAmount));
   };
 
+  const canDelete = () => {
+    const isAdmin = userRole === 'Administrador';
+    const isOwner = request.userId === user?.id; // Comparar con el ID del usuario actual
+    const allowedStatuses = ['solicitado', 'pendiente_coordinadora', 'rechazado'];
+    const statusAllowsDeletion = allowedStatuses.includes(request.status?.toLowerCase());
+
+    return isAdmin || (isOwner && statusAllowsDeletion);
+  };
+
   return (
     <div className={`bg-white rounded-xl shadow-lg border-2 hover:shadow-xl transition-all duration-200 overflow-hidden ${
       isUrgent() ? 'border-red-300 ring-2 ring-red-100' : hasBudgetIssue() ? 'border-orange-300 ring-2 ring-orange-100' : 'border-gray-200'
@@ -94,22 +103,22 @@ const PurchaseRequestCard = ({ request, onViewDetail, onEdit, onDelete, userRole
           </div>
           <div className="flex items-center gap-1 shrink-0 self-end sm:self-start">
             {userRole === 'Administrador' && (
-              <>
-                <button
-                  onClick={() => onEdit && onEdit(request)}
-                  className="p-1.5 sm:p-2 text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200"
-                  title="Editar solicitud"
-                >
-                  <FaEdit className="w-3 h-3 sm:w-4 sm:h-4" />
-                </button>
-                <button
-                  onClick={() => onDelete && onDelete(request)}
-                  className="p-1.5 sm:p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
-                  title="Eliminar solicitud"
-                >
-                  <FaTrash className="w-3 h-3 sm:w-4 sm:h-4" />
-                </button>
-              </>
+              <button
+                onClick={() => onEdit && onEdit(request)}
+                className="p-1.5 sm:p-2 text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200"
+                title="Editar solicitud"
+              >
+                <FaEdit className="w-3 h-3 sm:w-4 sm:h-4" />
+              </button>
+            )}
+            {canDelete() && (
+              <button
+                onClick={() => onDelete && onDelete(request)}
+                className="p-1.5 sm:p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
+                title="Eliminar solicitud"
+              >
+                <FaTrash className="w-3 h-3 sm:w-4 sm:h-4" />
+              </button>
             )}
             <button
               onClick={() => onViewDetail(request)}

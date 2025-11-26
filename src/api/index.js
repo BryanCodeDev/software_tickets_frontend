@@ -3,6 +3,7 @@ export { default as dashboardAPI } from './dashboardAPI';
 export { default as credentialsAPI } from './credentialsAPI';
 export { default as documentsAPI } from './documentsAPI';
 export { default as inventoryAPI } from './inventoryAPI';
+export { default as corporatePhoneAPI } from './corporatePhoneAPI';
 export { default as ticketsAPI } from './ticketsAPI';
 export { default as qualityTicketsAPI } from './qualityTicketsAPI';
 export { default as purchaseRequestsAPI } from './purchaseRequestsAPI';

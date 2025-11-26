@@ -7,6 +7,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { user } = useContext(AuthContext);
   const location = useLocation();
   const [isCalidadOpen, setIsCalidadOpen] = useState(false);
+  const [isInventarioOpen, setIsInventarioOpen] = useState(false);
 
   const menuItems = [];
 
@@ -38,16 +39,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         description: 'Gestión de incidencias IT'
       },
       {
-        path: '/inventory',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-        ),
-        label: 'Inventario',
-        description: 'Control de activos tecnológicos'
-      },
-      {
         path: '/purchase-requests',
         icon: (
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,6 +47,38 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         ),
         label: 'Solicitudes de Compra',
         description: 'Periféricos y electrodomésticos'
+      },
+      {
+        type: 'submenu',
+        label: 'Inventario',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        ),
+        description: 'Control de activos tecnológicos',
+        subItems: [
+          {
+            path: '/inventory',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+              </svg>
+            ),
+            label: 'Computadores',
+            description: 'Inventario de equipos de cómputo'
+          },
+          {
+            path: '/corporate-phones',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+            ),
+            label: 'Celulares Corporativos',
+            description: 'Gestión de teléfonos corporativos'
+          }
+        ]
       },
       {
         type: 'submenu',
@@ -125,16 +148,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         description: 'Gestión de incidencias IT'
       },
       {
-        path: '/inventory',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-        ),
-        label: 'Inventario',
-        description: 'Control de activos tecnológicos'
-      },
-      {
         path: '/purchase-requests',
         icon: (
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -143,6 +156,38 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         ),
         label: 'Solicitudes de Compra',
         description: 'Periféricos y electrodomésticos'
+      },
+      {
+        type: 'submenu',
+        label: 'Inventario',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        ),
+        description: 'Control de activos tecnológicos',
+        subItems: [
+          {
+            path: '/inventory',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+              </svg>
+            ),
+            label: 'Computadores',
+            description: 'Inventario de equipos de cómputo'
+          },
+          {
+            path: '/corporate-phones',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+            ),
+            label: 'Celulares Corporativos',
+            description: 'Gestión de teléfonos corporativos'
+          }
+        ]
       },
       {
         type: 'submenu',
@@ -286,16 +331,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         description: 'Gestión de incidencias IT'
       },
       {
-        path: '/inventory',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-        ),
-        label: 'Inventario',
-        description: 'Control de activos tecnológicos'
-      },
-      {
         path: '/purchase-requests',
         icon: (
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -304,6 +339,38 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         ),
         label: 'Solicitudes de Compra',
         description: 'Periféricos y electrodomésticos'
+      },
+      {
+        type: 'submenu',
+        label: 'Inventario',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        ),
+        description: 'Control de activos tecnológicos',
+        subItems: [
+          {
+            path: '/inventory',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+              </svg>
+            ),
+            label: 'Computadores',
+            description: 'Inventario de equipos de cómputo'
+          },
+          {
+            path: '/corporate-phones',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+            ),
+            label: 'Celulares Corporativos',
+            description: 'Gestión de teléfonos corporativos'
+          }
+        ]
       },
       {
         type: 'submenu',
@@ -353,16 +420,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         description: 'Gestión de incidencias IT'
       },
       {
-        path: '/inventory',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-        ),
-        label: 'Inventario',
-        description: 'Control de activos tecnológicos'
-      },
-      {
         path: '/purchase-requests',
         icon: (
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -399,16 +456,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     );
   } else if (role === 'Compras') {
     menuItems.push(
-      {
-        path: '/inventory',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-        ),
-        label: 'Inventario',
-        description: 'Control de activos tecnológicos'
-      },
       {
         path: '/purchase-requests',
         icon: (
@@ -570,7 +617,13 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 return (
                   <div key={item.label}>
                     <button
-                      onClick={() => setIsCalidadOpen(!isCalidadOpen)}
+                      onClick={() => {
+                        if (item.label === 'Calidad') {
+                          setIsCalidadOpen(!isCalidadOpen);
+                        } else if (item.label === 'Inventario') {
+                          setIsInventarioOpen(!isInventarioOpen);
+                        }
+                      }}
                       className={`
                         group relative flex items-center w-full px-3 py-3.5 rounded-xl transition-all duration-200
                         ${isSubmenuActive
@@ -609,7 +662,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
                       {/* Arrow indicator */}
                       <svg
-                        className={`w-5 h-5 transition-transform duration-200 ${isCalidadOpen ? 'rotate-90' : ''} ${isSubmenuActive ? 'text-white' : 'text-gray-400'}`}
+                        className={`w-5 h-5 transition-transform duration-200 ${
+                          (item.label === 'Calidad' && isCalidadOpen) || (item.label === 'Inventario' && isInventarioOpen) ? 'rotate-90' : ''
+                        } ${isSubmenuActive ? 'text-white' : 'text-gray-400'}`}
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -619,7 +674,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     </button>
 
                     {/* Submenu items */}
-                    {isCalidadOpen && (
+                    {((item.label === 'Calidad' && isCalidadOpen) || (item.label === 'Inventario' && isInventarioOpen)) && (
                       <div className="ml-6 mt-1 space-y-1 animate-fade-in">
                         {item.subItems.map((subItem) => {
                           const isSubActive = location.pathname === subItem.path;

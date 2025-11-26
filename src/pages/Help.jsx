@@ -56,6 +56,22 @@ const Help = () => {
       answer: 'Los administradores pueden crear y gestionar credenciales desde la sección de Credenciales. Incluye servicios, usuarios, contraseñas y áreas correspondientes.'
     },
     {
+      question: '¿Cómo acceder al módulo de teléfonos corporativos?',
+      answer: 'En la barra lateral, haga clic en "Inventario" para desplegar el submenú. Desde ahí puede acceder a "Celulares Corporativos" para gestionar teléfonos asignados a empleados. Solo administradores, técnicos y coordinadores administrativos tienen acceso.'
+    },
+    {
+      question: '¿Cómo gestionar teléfonos corporativos?',
+      answer: 'Desde el módulo "Celulares Corporativos", puede ver todos los teléfonos organizados por categorías (Administración, Asesores, Socios, Reposición). Cada teléfono incluye información completa: número, plan, equipo, IMEI, fecha de entrega y responsable.'
+    },
+    {
+      question: '¿Qué categorías existen en teléfonos corporativos?',
+      answer: 'Los teléfonos se dividen en 4 categorías: Administración (directivos), Asesores (vendedores), Socios (familiares estratégicos) y Reposición (equipos repuestos por robo, cambio o daño).'
+    },
+    {
+      question: '¿Cómo agregar un nuevo teléfono corporativo?',
+      answer: 'Solo administradores pueden agregar teléfonos. Haga clic en "Nuevo Teléfono" en el módulo de Celulares Corporativos, complete la información del equipo y asigne a un responsable.'
+    },
+    {
       question: '¿Cómo asignar un equipo IT a un usuario?',
       answer: 'Al crear o editar un usuario, selecciona el código IT correspondiente del menú desplegable que muestra los equipos disponibles en el inventario.'
     },
@@ -443,6 +459,18 @@ const Help = () => {
                             <li>• Almacenamiento seguro</li>
                             <li>• Acceso restringido por roles</li>
                             <li>• Registro de auditoría</li>
+                          </ul>
+                        </div>
+                        <div className="bg-pink-50 p-3 rounded-lg">
+                          <h6 className="font-medium text-pink-900 mb-2 flex items-center">
+                            <FaPhone className="text-pink-600 mr-2" />
+                            Teléfonos Corporativos
+                          </h6>
+                          <ul className="text-sm space-y-1">
+                            <li>• Gestión de equipos móviles</li>
+                            <li>• 4 categorías organizadas</li>
+                            <li>• Control de asignaciones</li>
+                            <li>• Seguimiento de IMEI y planes</li>
                           </ul>
                         </div>
                         <div className="bg-indigo-50 p-3 rounded-lg">
@@ -1168,6 +1196,15 @@ const Help = () => {
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                 </tr>
                                 <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Teléfonos Corporativos</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                </tr>
+                                <tr>
                                   <td className="border border-gray-300 p-2 font-medium">Configuración del Sistema</td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
@@ -1579,6 +1616,64 @@ const Help = () => {
                             </div>
                           </div>
                         </div>
+
+                        <div className="bg-pink-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-pink-900 mb-3 flex items-center">
+                            <FaPhone className="text-pink-600 mr-2" />
+                            Teléfonos Corporativos
+                          </h6>
+                          <div className="space-y-3">
+                            <div>
+                              <h7 className="font-medium text-sm">Acceso al Módulo</h7>
+                              <ol className="text-sm space-y-1 list-decimal list-inside ml-4">
+                                <li>Haga clic en "Inventario" en la barra lateral</li>
+                                <li>Se desplegará un submenú con opciones</li>
+                                <li>Seleccione "Celulares Corporativos"</li>
+                                <li>Solo administradores, técnicos y coordinadores tienen acceso</li>
+                              </ol>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Categorías de Teléfonos</h7>
+                              <div className="grid grid-cols-2 gap-2 ml-4">
+                                <div className="bg-white p-2 rounded border">
+                                  <div className="font-medium text-xs text-red-700">Administración</div>
+                                  <div className="text-xs">Directivos y gerentes</div>
+                                </div>
+                                <div className="bg-white p-2 rounded border">
+                                  <div className="font-medium text-xs text-blue-700">Asesores</div>
+                                  <div className="text-xs">Vendedores y ejecutivos</div>
+                                </div>
+                                <div className="bg-white p-2 rounded border">
+                                  <div className="font-medium text-xs text-green-700">Socios</div>
+                                  <div className="text-xs">Familiares estratégicos</div>
+                                </div>
+                                <div className="bg-white p-2 rounded border">
+                                  <div className="font-medium text-xs text-orange-700">Reposición</div>
+                                  <div className="text-xs">Equipos repuestos</div>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Información por Teléfono</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Número celular y operador</li>
+                                <li>• Plan y tarifa mensual</li>
+                                <li>• Equipo asignado y IMEI</li>
+                                <li>• Responsable y fecha de entrega</li>
+                                <li>• Estado y observaciones</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Gestión de Equipos</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Solo administradores pueden agregar equipos</li>
+                                <li>• Técnicos pueden editar información básica</li>
+                                <li>• Coordinadores tienen acceso de lectura</li>
+                                <li>• Seguimiento completo de asignaciones</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </details>
@@ -1656,10 +1751,26 @@ const Help = () => {
                         <div className="bg-gray-50 p-3 rounded-lg">
                           <strong>Rol de Calidad:</strong> Usuario con acceso administrativo a módulos de calidad y documentación
                         </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Teléfonos Corporativos:</strong> Módulo para gestión de equipos móviles asignados a empleados
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>IMEI:</strong> Identificador único internacional de equipo móvil
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Plan Corporativo:</strong> Servicio de telefonía móvil contratado para empleados
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Categorías de Teléfonos:</strong> Clasificación de equipos por tipo de usuario (Administración, Asesores, Socios, Reposición)
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Asignación de Equipos:</strong> Proceso de asignar teléfonos corporativos a empleados específicos
+                        </div>
                       </div>
                       <div className="mt-4 text-center text-xs text-gray-500">
                         <p>DuvyClass – Transformando la gestión tecnológica empresarial</p>
-                        <p>Manual actualizado: noviembre 2025 | Versión del Sistema: 1.0.0</p>
+                        <p>Manual actualizado: noviembre 2025 | Versión del Sistema: 1.1.0</p>
+                        <p>Nueva funcionalidad: Módulo de Teléfonos Corporativos</p>
                       </div>
                     </div>
                   </details>
