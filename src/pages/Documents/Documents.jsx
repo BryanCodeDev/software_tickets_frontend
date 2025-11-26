@@ -89,30 +89,25 @@ const Documents = () => {
   // WebSocket listeners for real-time document updates
   useEffect(() => {
     const handleDocumentCreated = (document) => {
-      console.log('Nuevo documento creado:', document);
       fetchDocuments();
       showNotification('Nuevo documento agregado', 'success');
     };
 
     const handleDocumentUpdated = (data) => {
-      console.log('Documento actualizado:', data);
       fetchDocuments();
       showNotification('Documento actualizado', 'success');
     };
 
     const handleDocumentDeleted = (documentId) => {
-      console.log('Documento eliminado:', documentId);
       fetchDocuments();
       showNotification('Documento eliminado', 'success');
     };
 
     const handleDocumentsListUpdated = () => {
-      console.log('Lista de documentos actualizada');
       fetchDocuments();
     };
 
     const handleFolderCreated = (folder) => {
-      console.log('Nueva carpeta creada:', folder);
       fetchFolders();
       showNotification('Nueva carpeta agregada', 'success');
     };
@@ -123,19 +118,16 @@ const Documents = () => {
     };
 
     const handleFolderDeleted = (folderId) => {
-      console.log('Carpeta eliminada:', folderId);
       fetchFolders();
       fetchDocuments(); // También recargar documentos por si se eliminó una carpeta con documentos
       showNotification('Carpeta eliminada', 'success');
     };
 
     const handleFoldersListUpdated = () => {
-      console.log('Lista de carpetas actualizada');
       fetchFolders();
     };
 
     const handleDocumentPermissionsUpdated = (data) => {
-      console.log('Permisos de documento actualizados:', data);
       // Si estamos en el modal de permisos, recargar los permisos
       if (showPermissionsModal && selectedItemForPermissions) {
         handleOpenPermissionsModal(selectedItemForPermissions, selectedItemForPermissions.type);
@@ -618,9 +610,7 @@ const Documents = () => {
 
       // Cargar lista de usuarios (siempre intentar cargar para asegurar datos frescos)
       try {
-        console.log('Loading users in permissions modal...');
         const usersData = await documentsAPI.fetchUsers();
-        console.log('Users loaded in modal:', usersData);
         setAllUsers(usersData || []);
       } catch (usersErr) {
         console.error('Error loading users in modal:', usersErr);

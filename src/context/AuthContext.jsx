@@ -43,7 +43,6 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const handleForceLogout = () => {
-      console.log('Force logout received');
       logout();
       // Opcional: mostrar mensaje al usuario
       alert('Tu sesión ha sido cerrada desde otro dispositivo.');

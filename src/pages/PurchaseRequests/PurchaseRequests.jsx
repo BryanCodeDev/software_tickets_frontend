@@ -21,6 +21,7 @@ import {
   PurchaseRequestCard,
   PurchaseRequestStats
 } from '../../components/PurchaseRequests';
+import { ConfirmDialog } from '../../components/common';
 import { getTimeAgo } from '../../utils';
 
 ChartJS.register(
@@ -252,7 +253,6 @@ const PurchaseRequests = () => {
   };
 
   const handleCreate = () => {
-    console.log('Creating new purchase request');
     setFormData({
       title: '',
       itemType: 'periferico',
@@ -359,11 +359,15 @@ const PurchaseRequests = () => {
     showNotification('Solicitudes exportadas exitosamente', 'success');
   };
 
-  const canCreate = ['Administrador', 'Técnico', 'Empleado'].includes(userRole);
+  const canCreate = ['Administrador', 'Técnico', 'Empleado', 'Jefe', 'Coordinadora Administrativa'].includes(userRole);
 
   const showNotification = (message, type = 'info') => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 5000);
+  };
+
+  const showConfirmDialog = (message, onConfirm) => {
+    setConfirmDialog({ message, onConfirm });
   };
 
 
@@ -780,6 +784,18 @@ const PurchaseRequests = () => {
             }
           }}
         />
+
+        {/* Confirm Dialog */}
+        {confirmDialog && (
+          <ConfirmDialog
+            confirmDialog={confirmDialog}
+            onClose={() => setConfirmDialog(null)}
+            onConfirm={() => {
+              if (confirmDialog?.onConfirm) confirmDialog.onConfirm();
+              setConfirmDialog(null);
+            }}
+          />
+        )}
       </div>
 
       <style>{`
