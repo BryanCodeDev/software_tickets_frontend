@@ -17,6 +17,7 @@ import { joinPurchaseRequestRoom, leavePurchaseRequestRoom, onPurchaseRequestUpd
 import {
   PurchaseRequestCreateModal,
   PurchaseRequestDetailModal,
+  PurchaseRequestEditModal,
   PurchaseRequestCard,
   PurchaseRequestStats
 } from '../../components/PurchaseRequests';
@@ -35,8 +36,10 @@ const PurchaseRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [editingRequest, setEditingRequest] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterItemType, setFilterItemType] = useState('all');
@@ -59,6 +62,8 @@ const PurchaseRequests = () => {
   const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
+
+  const userRole = user?.role?.name;
 
   // WebSocket listeners for real-time updates
   useEffect(() => {
@@ -119,6 +124,28 @@ const PurchaseRequests = () => {
     if (!Array.isArray(requests)) return [];
     let filtered = [...requests];
 
+    // Role-based filtering
+    if (userRole === 'Coordinadora Administrativa') {
+      // Coordinadora solo ve solicitudes pendientes de su aprobación
+      filtered = filtered.filter(request =>
+        ['solicitado', 'pendiente_coordinadora'].includes(request.status?.toLowerCase())
+      );
+    } else if (userRole === 'Jefe') {
+      // Jefe ve solicitudes aprobadas por coordinadora y pendientes de su aprobación
+      filtered = filtered.filter(request =>
+        ['aprobado_coordinadora', 'pendiente_jefe'].includes(request.status?.toLowerCase())
+      );
+    } else if (userRole === 'Compras') {
+      // Compras ve solicitudes aprobadas por jefe y en proceso de compra
+      filtered = filtered.filter(request =>
+        ['aprobado_jefe', 'en_compras', 'comprado'].includes(request.status?.toLowerCase())
+      );
+    } else if (!['Administrador', 'Técnico'].includes(userRole)) {
+      // Otros roles solo ven sus propias solicitudes
+      filtered = filtered.filter(request => request.userId === user?.id);
+    }
+    // Administrador y Técnico ven todas las solicitudes
+
     if (searchTerm) {
       filtered = filtered.filter(request =>
         request.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -161,16 +188,36 @@ const PurchaseRequests = () => {
 
   const calculateStats = () => {
     if (!Array.isArray(requests)) return { total: 0, solicitado: 0, aprobadoCoordinadora: 0, aprobadoJefe: 0, enCompras: 0, completado: 0 };
-    const total = requests.length;
-    const solicitado = requests.filter(r => r.status?.toLowerCase() === 'solicitado').length;
-    const aprobadoCoordinadora = requests.filter(r => r.status?.toLowerCase() === 'aprobado_coordinadora').length;
-    const aprobadoJefe = requests.filter(r => r.status?.toLowerCase() === 'aprobado_jefe').length;
-    const enCompras = requests.filter(r => r.status?.toLowerCase() === 'en_compras').length;
-    const completado = requests.filter(r =>
-      r.status?.toLowerCase() === 'comprado' || r.status?.toLowerCase() === 'entregado'
-    ).length;
 
-    return { total, solicitado, aprobadoCoordinadora, aprobadoJefe, enCompras, completado };
+    // Role-based stats
+    if (userRole === 'Coordinadora Administrativa') {
+      const pendientes = requests.filter(r => ['solicitado', 'pendiente_coordinadora'].includes(r.status?.toLowerCase())).length;
+      const aprobados = requests.filter(r => r.status?.toLowerCase() === 'aprobado_coordinadora').length;
+      const rechazados = requests.filter(r => r.status?.toLowerCase() === 'rechazado').length;
+      return { pendientes, aprobados, rechazados };
+    } else if (userRole === 'Jefe') {
+      const pendientes = requests.filter(r => ['aprobado_coordinadora', 'pendiente_jefe'].includes(r.status?.toLowerCase())).length;
+      const aprobados = requests.filter(r => r.status?.toLowerCase() === 'aprobado_jefe').length;
+      const rechazados = requests.filter(r => r.status?.toLowerCase() === 'rechazado').length;
+      return { pendientes, aprobados, rechazados };
+    } else if (userRole === 'Compras') {
+      const enProceso = requests.filter(r => ['aprobado_jefe', 'en_compras'].includes(r.status?.toLowerCase())).length;
+      const comprados = requests.filter(r => r.status?.toLowerCase() === 'comprado').length;
+      const entregados = requests.filter(r => r.status?.toLowerCase() === 'entregado').length;
+      return { enProceso, comprados, entregados };
+    } else {
+      // Admin/Técnico/Empleado - todas las estadísticas
+      const total = requests.length;
+      const solicitado = requests.filter(r => r.status?.toLowerCase() === 'solicitado').length;
+      const aprobadoCoordinadora = requests.filter(r => r.status?.toLowerCase() === 'aprobado_coordinadora').length;
+      const aprobadoJefe = requests.filter(r => r.status?.toLowerCase() === 'aprobado_jefe').length;
+      const enCompras = requests.filter(r => r.status?.toLowerCase() === 'en_compras').length;
+      const completado = requests.filter(r =>
+        r.status?.toLowerCase() === 'comprado' || r.status?.toLowerCase() === 'entregado'
+      ).length;
+
+      return { total, solicitado, aprobadoCoordinadora, aprobadoJefe, enCompras, completado };
+    }
   };
 
   const stats = calculateStats();
@@ -236,6 +283,26 @@ const PurchaseRequests = () => {
     setShowDetailModal(true);
   };
 
+  const handleEdit = (request) => {
+    setEditingRequest(request);
+    setShowEditModal(true);
+  };
+
+  const handleDelete = async (request) => {
+    showConfirmDialog(
+      '¿Estás seguro de que deseas eliminar esta solicitud de compra? Esta acción no se puede deshacer.',
+      async () => {
+        try {
+          await purchaseRequestsAPI.deletePurchaseRequest(request.id);
+          showNotification('Solicitud eliminada exitosamente', 'success');
+          fetchPurchaseRequests();
+        } catch (err) {
+          showNotification('Error al eliminar la solicitud', 'error');
+        }
+      }
+    );
+  };
+
   const exportToExcel = () => {
     const headers = ['ID', 'Título', 'Tipo', 'Estado', 'Costo Estimado', 'Solicitante', 'Fecha Creación'];
     const rows = filteredRequests.map(request => [
@@ -292,7 +359,6 @@ const PurchaseRequests = () => {
     showNotification('Solicitudes exportadas exitosamente', 'success');
   };
 
-  const userRole = user?.role?.name;
   const canCreate = ['Administrador', 'Técnico', 'Empleado'].includes(userRole);
 
   const showNotification = (message, type = 'info') => {
@@ -313,7 +379,7 @@ const PurchaseRequests = () => {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-4 px-3 sm:py-6 sm:px-4 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-2 px-2 sm:py-4 sm:px-3 lg:py-6 lg:px-8">
       {/* Notification */}
       {notification && (
         <div className="fixed top-3 right-3 left-3 sm:top-4 sm:right-4 sm:left-auto z-50 max-w-sm animate-slide-in-right">
@@ -348,41 +414,41 @@ const PurchaseRequests = () => {
 
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6 lg:mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
+        <div className="mb-4 sm:mb-6 lg:mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 lg:gap-6">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 lg:gap-4 mb-3">
-                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-linear-to-br from-purple-600 to-violet-600 rounded-2xl flex items-center justify-center shadow-xl shrink-0">
-                  <svg className="w-6 h-6 lg:w-8 lg:h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 mb-2 sm:mb-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-linear-to-br from-purple-600 to-violet-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xl shrink-0">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                   </svg>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight truncate">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-900 leading-tight truncate">
                     Solicitudes de Compra
                   </h1>
-                  <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                  <p className="text-xs sm:text-sm text-gray-600 mt-1 hidden sm:block">
                     Gestión de solicitudes de periféricos y electrodomésticos
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 lg:gap-3">
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               {(userRole === 'Administrador' || userRole === 'Técnico') && (
                 <>
                   <button
                     onClick={() => setShowStats(!showStats)}
-                    className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
+                    className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base"
                   >
-                    <FaChartBar className="w-4 h-4" />
+                    <FaChartBar className="w-3 h-3 sm:w-4 sm:h-4" />
                     <span className="hidden sm:inline">Estadísticas</span>
                   </button>
                   <button
                     onClick={exportToExcel}
-                    className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
+                    className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base"
                   >
-                    <FaDownload className="w-4 h-4" />
+                    <FaDownload className="w-3 h-3 sm:w-4 sm:h-4" />
                     <span className="hidden sm:inline">Exportar</span>
                   </button>
                 </>
@@ -390,10 +456,11 @@ const PurchaseRequests = () => {
               {canCreate && (
                 <button
                   onClick={handleCreate}
-                  className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
+                  className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-xs sm:text-sm lg:text-base"
                 >
-                  <FaPlus className="w-4 h-4" />
-                  <span>Nueva Solicitud</span>
+                  <FaPlus className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Nueva</span>
+                  <span className="sm:hidden">Nueva</span>
                 </button>
               )}
             </div>
@@ -401,7 +468,7 @@ const PurchaseRequests = () => {
         </div>
 
         {/* Stats Cards */}
-        {showStats && <PurchaseRequestStats stats={stats} />}
+        {showStats && <PurchaseRequestStats stats={stats} userRole={userRole} />}
 
         {/* Search and Filters */}
         <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 mb-6">
@@ -495,32 +562,32 @@ const PurchaseRequests = () => {
         </div>
 
         {/* Results Summary */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <p className="text-sm text-gray-600 font-medium">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 mb-3 sm:mb-4">
+          <p className="text-xs sm:text-sm text-gray-600 font-medium">
             Mostrando <span className="font-bold text-purple-600">{filteredRequests.length}</span> de <span className="font-bold">{requests.length}</span> solicitudes
           </p>
-          <div className="flex gap-2">
+          <div className="flex gap-1 sm:gap-2">
             <button
               onClick={() => setViewMode('cards')}
-              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
+              className={`px-2 sm:px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-xs sm:text-sm lg:text-base ${
                 viewMode === 'cards'
                   ? 'bg-purple-600 text-white shadow-md'
                   : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >
-              <FaClipboardList className="w-4 h-4" />
-              <span className="hidden sm:inline ml-2">Tarjetas</span>
+              <FaClipboardList className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline ml-1 sm:ml-2">Tarjetas</span>
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
+              className={`px-2 sm:px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-xs sm:text-sm lg:text-base ${
                 viewMode === 'list'
                   ? 'bg-purple-600 text-white shadow-md'
                   : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >
-              <FaChartBar className="w-4 h-4" />
-              <span className="hidden sm:inline ml-2">Lista</span>
+              <FaChartBar className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline ml-1 sm:ml-2">Lista</span>
             </button>
           </div>
         </div>
@@ -555,13 +622,15 @@ const PurchaseRequests = () => {
           <>
             {/* Cards View */}
             {viewMode === 'cards' && (
-              <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
+              <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-3 sm:p-4 lg:p-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                   {filteredRequests.map((request) => (
                     <PurchaseRequestCard
                       key={request.id}
                       request={request}
                       onViewDetail={handleViewDetail}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
                       userRole={userRole}
                     />
                   ))}
@@ -692,6 +761,18 @@ const PurchaseRequests = () => {
           formData={formData}
           setFormData={setFormData}
           userRole={userRole}
+          onSuccess={(message, type = 'success') => {
+            showNotification(message, type);
+            if (type === 'success') {
+              fetchPurchaseRequests(); // Refrescar la lista
+            }
+          }}
+        />
+
+        <PurchaseRequestEditModal
+          showEditModal={showEditModal}
+          setShowEditModal={setShowEditModal}
+          editingRequest={editingRequest}
           onSuccess={(message, type = 'success') => {
             showNotification(message, type);
             if (type === 'success') {

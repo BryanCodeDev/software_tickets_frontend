@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { FaTimes, FaCheck, FaTimes as FaReject, FaArrowRight, FaCheckCircle, FaClock, FaUserCircle, FaComment } from 'react-icons/fa';
+import React, { useState, useContext, useEffect } from 'react';
+import { FaTimes, FaCheck, FaTimes as FaReject, FaArrowRight, FaCheckCircle, FaClock, FaUserCircle, FaComment, FaPaperclip, FaDownload, FaTrash, FaUpload } from 'react-icons/fa';
 import { purchaseRequestsAPI } from '../../../api';
 import AuthContext from '../../../context/AuthContext';
 import { getTimeAgo } from '../../../utils';
@@ -14,8 +14,106 @@ const PurchaseRequestDetailModal = ({
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [actionComments, setActionComments] = useState('');
+  const [attachments, setAttachments] = useState([]);
+  const [attachmentsLoading, setAttachmentsLoading] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [newComment, setNewComment] = useState('');
+  const [isInternalComment, setIsInternalComment] = useState(false);
 
   const userRole = user?.role?.name;
+
+  useEffect(() => {
+    if (showDetailModal && selectedRequest?.id) {
+      loadAttachments();
+      loadComments();
+    }
+  }, [showDetailModal, selectedRequest]);
+
+  const loadAttachments = async () => {
+    if (!selectedRequest?.id) return;
+
+    setAttachmentsLoading(true);
+    try {
+      const data = await purchaseRequestsAPI.getAttachments(selectedRequest.id);
+      setAttachments(data);
+    } catch (error) {
+      console.error('Error loading attachments:', error);
+    } finally {
+      setAttachmentsLoading(false);
+    }
+  };
+
+  const loadComments = async () => {
+    if (!selectedRequest?.id) return;
+
+    setCommentsLoading(true);
+    try {
+      const data = await purchaseRequestsAPI.getComments(selectedRequest.id);
+      setComments(data);
+    } catch (error) {
+      console.error('Error loading comments:', error);
+    } finally {
+      setCommentsLoading(false);
+    }
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      await purchaseRequestsAPI.uploadAttachment(selectedRequest.id, file);
+      loadAttachments(); // Reload attachments
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+  };
+
+  const handleDeleteAttachment = async (attachmentId) => {
+    if (!confirm('¿Estás seguro de que deseas eliminar este archivo?')) return;
+
+    try {
+      await purchaseRequestsAPI.deleteAttachment(selectedRequest.id, attachmentId);
+      loadAttachments(); // Reload attachments
+    } catch (error) {
+      console.error('Error deleting attachment:', error);
+    }
+  };
+
+  const downloadAttachment = (attachment) => {
+    // Create download link
+    const link = document.createElement('a');
+    link.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/${attachment.path}`;
+    link.download = attachment.originalName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleAddComment = async () => {
+    if (!newComment.trim()) return;
+
+    try {
+      await purchaseRequestsAPI.addComment(selectedRequest.id, newComment.trim(), isInternalComment);
+      setNewComment('');
+      setIsInternalComment(false);
+      loadComments();
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!confirm('¿Estás seguro de que deseas eliminar este comentario?')) return;
+
+    try {
+      await purchaseRequestsAPI.deleteComment(selectedRequest.id, commentId);
+      loadComments();
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
 
   const getStatusColor = (status) => {
     const colors = {
@@ -244,6 +342,76 @@ const PurchaseRequestDetailModal = ({
                 </div>
               </div>
 
+              {/* Attachments */}
+              <div className="bg-gray-50 rounded-xl p-4 lg:p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-gray-900 flex items-center">
+                    <FaPaperclip className="mr-2" />
+                    Archivos Adjuntos ({attachments.length})
+                  </h3>
+                  {(userRole === 'Administrador' || selectedRequest?.userId === user?.id) && (
+                    <div>
+                      <label className="inline-flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg cursor-pointer transition-colors">
+                        <FaUpload className="mr-2" />
+                        Subir Archivo
+                        <input
+                          type="file"
+                          onChange={handleFileUpload}
+                          className="hidden"
+                          accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.gif"
+                        />
+                      </label>
+                    </div>
+                  )}
+                </div>
+
+                {attachmentsLoading ? (
+                  <div className="text-center py-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                    <p className="text-sm text-gray-600 mt-2">Cargando archivos...</p>
+                  </div>
+                ) : attachments.length === 0 ? (
+                  <div className="text-center py-8">
+                    <FaPaperclip className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500">No hay archivos adjuntos</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {attachments.map((attachment) => (
+                      <div key={attachment.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
+                        <div className="flex items-center flex-1 min-w-0">
+                          <FaPaperclip className="w-4 h-4 text-gray-400 mr-3 shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">{attachment.originalName}</p>
+                            <p className="text-xs text-gray-500">
+                              {(attachment.size / 1024).toFixed(1)} KB • Subido por {attachment.uploader?.name || 'Usuario'} • {getTimeAgo(attachment.createdAt)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 ml-4">
+                          <button
+                            onClick={() => downloadAttachment(attachment)}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            title="Descargar"
+                          >
+                            <FaDownload className="w-4 h-4" />
+                          </button>
+                          {(userRole === 'Administrador' || attachment.uploadedBy === user?.id) && (
+                            <button
+                              onClick={() => handleDeleteAttachment(attachment.id)}
+                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Eliminar"
+                            >
+                              <FaTrash className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               {/* Workflow Timeline */}
               <div className="bg-gray-50 rounded-xl p-4 lg:p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Progreso del Workflow</h3>
@@ -467,6 +635,114 @@ const PurchaseRequestDetailModal = ({
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Comments Section */}
+          <div className="bg-gray-50 rounded-xl p-4 lg:p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900 flex items-center">
+                <FaComment className="mr-2" />
+                Comentarios ({comments.length})
+              </h3>
+            </div>
+
+            {/* Add Comment */}
+            {(userRole === 'Administrador' || userRole === 'Coordinadora Administrativa' || userRole === 'Jefe' || userRole === 'Compras' || selectedRequest?.userId === user?.id) && (
+              <div className="mb-4">
+                <div className="bg-white rounded-lg p-4 border border-gray-200">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center shrink-0">
+                      <span className="text-sm font-medium text-purple-600">
+                        {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <textarea
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        placeholder="Escribe un comentario..."
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none resize-none"
+                        rows="3"
+                      />
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center space-x-2">
+                          {userRole === 'Administrador' && (
+                            <label className="flex items-center space-x-2 text-sm text-gray-600">
+                              <input
+                                type="checkbox"
+                                checked={isInternalComment}
+                                onChange={(e) => setIsInternalComment(e.target.checked)}
+                                className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                              />
+                              <span>Comentario interno</span>
+                            </label>
+                          )}
+                        </div>
+                        <button
+                          onClick={handleAddComment}
+                          disabled={!newComment.trim()}
+                          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Comentar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Comments List */}
+            {commentsLoading ? (
+              <div className="text-center py-4">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+                <p className="text-sm text-gray-600 mt-2">Cargando comentarios...</p>
+              </div>
+            ) : comments.length === 0 ? (
+              <div className="text-center py-8">
+                <FaComment className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500">No hay comentarios aún</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {comments.map((comment) => (
+                  <div key={comment.id} className={`p-4 rounded-lg border ${comment.isInternal ? 'bg-yellow-50 border-yellow-200' : 'bg-white border-gray-200'}`}>
+                    <div className="flex items-start space-x-3">
+                      <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center shrink-0">
+                        <span className="text-sm font-medium text-purple-600">
+                          {(comment.user?.name || comment.user?.username || 'U').charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <span className="font-medium text-gray-900 text-sm">
+                            {comment.user?.name || comment.user?.username || 'Usuario'}
+                          </span>
+                          {comment.isInternal && (
+                            <span className="px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
+                              Interno
+                            </span>
+                          )}
+                          <span className="text-xs text-gray-500">
+                            {getTimeAgo(comment.createdAt)}
+                          </span>
+                        </div>
+                        <p className="text-gray-700 text-sm leading-relaxed">{comment.content}</p>
+                      </div>
+                      {(userRole === 'Administrador' || comment.userId === user?.id) && (
+                        <button
+                          onClick={() => handleDeleteComment(comment.id)}
+                          className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors opacity-0 group-hover:opacity-100"
+                          title="Eliminar comentario"
+                        >
+                          <FaTimes className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -77,6 +77,8 @@ const TicketCalidad = () => {
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
 
+  const userRole = user?.role?.name;
+
   // Socket listeners
   useEffect(() => {
     if (selectedTicket) {
@@ -186,6 +188,13 @@ const TicketCalidad = () => {
   const filterAndSortTickets = () => {
     if (!Array.isArray(tickets)) return [];
     let filtered = [...tickets];
+
+    // Role-based filtering
+    if (!['Administrador', 'Técnico', 'Calidad'].includes(userRole)) {
+      // Otros roles solo ven sus propios tickets
+      filtered = filtered.filter(ticket => ticket.userId === user?.id);
+    }
+    // Administrador, Técnico y Calidad ven todos los tickets
 
     if (searchTerm) {
       filtered = filtered.filter(ticket =>
@@ -502,7 +511,6 @@ const TicketCalidad = () => {
     showNotification('Tickets de calidad exportados exitosamente', 'success');
   };
 
-  const userRole = user?.role?.name;
   const canCreate = userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Empleado';
 
   // Funciones helper para verificar permisos por ticket específico

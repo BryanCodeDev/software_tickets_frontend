@@ -98,7 +98,7 @@ const Roles = () => {
   // Calculate stats
   const calculateStats = () => {
     const total = roles.length;
-    const systemRoles = roles.filter(r => r.name === 'Administrador' || r.name === 'Empleado').length;
+    const systemRoles = roles.filter(r => ['Administrador', 'Empleado', 'Coordinadora Administrativa', 'Jefe', 'Compras'].includes(r.name)).length;
     const customRoles = total - systemRoles;
     const totalPermissions = permissions.length;
     const avgPermissions = total > 0 ? Math.round(roles.reduce((sum, role) => sum + (role.permissions?.length || 0), 0) / total) : 0;
@@ -218,8 +218,11 @@ const Roles = () => {
   const getRoleIcon = (roleName) => {
     switch(roleName) {
       case 'Administrador': return <FaUserShield className="w-4 h-4 text-purple-600" />;
+      case 'Coordinadora Administrativa': return <FaUserShield className="w-4 h-4 text-orange-600" />;
       case 'Técnico': return <FaUserCog className="w-4 h-4 text-blue-600" />;
       case 'Calidad': return <FaShieldAlt className="w-4 h-4 text-emerald-600" />;
+      case 'Jefe': return <FaUserCog className="w-4 h-4 text-yellow-600" />;
+      case 'Compras': return <FaKey className="w-4 h-4 text-teal-600" />;
       default: return <FaUser className="w-4 h-4 text-green-600" />;
     }
   };
@@ -227,8 +230,11 @@ const Roles = () => {
   const getRoleBadgeColor = (roleName) => {
     switch(roleName) {
       case 'Administrador': return 'bg-purple-100 text-purple-700 border-purple-200';
+      case 'Coordinadora Administrativa': return 'bg-orange-100 text-orange-700 border-orange-200';
       case 'Técnico': return 'bg-blue-100 text-blue-700 border-blue-200';
       case 'Calidad': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
+      case 'Jefe': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+      case 'Compras': return 'bg-teal-100 text-teal-700 border-teal-200';
       default: return 'bg-green-100 text-green-700 border-green-200';
     }
   };

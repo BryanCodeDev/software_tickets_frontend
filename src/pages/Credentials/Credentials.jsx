@@ -507,13 +507,13 @@ const Credentials = () => {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                   {filteredCredentials.map((cred) => (
-                    <div key={cred.id} className="bg-gray-50 rounded-xl p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-shadow">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
-                        <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">{cred.service}</h3>
+                    <div key={cred.id} className="bg-gray-50 rounded-xl p-4 md:p-6 border border-gray-200 hover:shadow-md transition-shadow">
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
+                        <h3 className="font-semibold text-gray-900 text-sm md:text-base truncate">{cred.service}</h3>
                       </div>
-                      <div className="space-y-2 text-xs sm:text-sm text-gray-600 mb-4">
+                      <div className="space-y-2 text-xs md:text-sm text-gray-600 mb-4">
                         <div className="flex items-center justify-between">
                           <p><strong>Usuario:</strong> {cred.username}</p>
                           <button
@@ -562,20 +562,20 @@ const Credentials = () => {
                           </div>
                         )}
                       </div>
-                      <div className="flex flex-col sm:flex-row gap-2">
+                      <div className="flex flex-col md:flex-row gap-2">
                         <button
                           onClick={() => handleEdit(cred)}
-                          className="flex items-center justify-center space-x-1 px-3 py-2 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors"
+                          className="flex items-center justify-center space-x-1 px-3 md:px-4 py-2 md:py-3 bg-blue-100 text-blue-700 text-xs md:text-sm font-medium rounded-lg hover:bg-blue-200 transition-colors"
                         >
-                          <FaEdit className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <FaEdit className="w-3 h-3 md:w-4 md:h-4" />
                           <span>Editar</span>
                         </button>
                         {user.role?.name === 'Administrador' && (
                           <button
                             onClick={() => handleDelete(cred.id)}
-                            className="flex items-center justify-center space-x-1 px-3 py-2 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors"
+                            className="flex items-center justify-center space-x-1 px-3 md:px-4 py-2 md:py-3 bg-red-100 text-red-700 text-xs md:text-sm font-medium rounded-lg hover:bg-red-200 transition-colors"
                           >
-                            <FaTrash className="w-3 h-3 sm:w-4 sm:h-4" />
+                            <FaTrash className="w-3 h-3 md:w-4 md:h-4" />
                             <span>Eliminar</span>
                           </button>
                         )}
@@ -599,19 +599,19 @@ const Credentials = () => {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                   {rootFolders.map((folder) => (
                     <div
                       key={folder.id}
                       onClick={() => handleEnterFolder(folder)}
                       className="group bg-linear-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 cursor-pointer"
                     >
-                      <div className="flex items-start space-x-4 mb-4">
-                        <div className="w-12 h-12 bg-linear-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center shrink-0">
+                      <div className="flex flex-col md:flex-row items-start md:items-center space-x-0 md:space-x-4 mb-4">
+                        <div className="w-12 h-12 bg-linear-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center shrink-0 mb-2 md:mb-0">
                           <FaFolder className="text-blue-600 text-xl" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-gray-900 mb-2 text-lg">{folder.name}</h3>
+                          <h3 className="font-bold text-gray-900 mb-2 text-base md:text-lg">{folder.name}</h3>
                           {folder.description && (
                             <p className="text-sm text-gray-600 mb-2">{folder.description}</p>
                           )}
@@ -624,7 +624,7 @@ const Credentials = () => {
                             )}
                           </div>
                         </div>
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col md:flex-row gap-2 mt-2 md:mt-0">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();

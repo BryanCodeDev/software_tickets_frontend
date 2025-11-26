@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaCrown, FaWrench, FaUser, FaShieldAlt, FaClipboardList } from 'react-icons/fa';
+import { FaCrown, FaWrench, FaUser, FaShieldAlt, FaClipboardList, FaUserShield, FaUserCog } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext.jsx';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
@@ -273,12 +273,186 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         ]
       }
     );
+  } else if (role === 'Coordinadora Administrativa') {
+    menuItems.push(
+      {
+        path: '/tickets',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        ),
+        label: 'Tickets',
+        description: 'Gestión de incidencias IT'
+      },
+      {
+        path: '/inventory',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        ),
+        label: 'Inventario',
+        description: 'Control de activos tecnológicos'
+      },
+      {
+        path: '/purchase-requests',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        ),
+        label: 'Solicitudes de Compra',
+        description: 'Periféricos y electrodomésticos'
+      },
+      {
+        type: 'submenu',
+        label: 'Calidad',
+        icon: <FaShieldAlt className="w-5 h-5" />,
+        description: 'Gestión de calidad y documentación',
+        subItems: [
+          {
+            path: '/documents',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            ),
+            label: 'Documentos',
+            description: 'Documentos administrativos'
+          },
+          {
+            path: '/ticket_calidad',
+            icon: <FaClipboardList className="w-5 h-5" />,
+            label: 'Ticket Calidad',
+            description: 'Reportes de calidad y cambios documentales'
+          }
+        ]
+      },
+      {
+        path: '/users',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+          </svg>
+        ),
+        label: 'Usuarios',
+        description: 'Administración de usuarios'
+      }
+    );
+  } else if (role === 'Jefe') {
+    menuItems.push(
+      {
+        path: '/tickets',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        ),
+        label: 'Tickets',
+        description: 'Gestión de incidencias IT'
+      },
+      {
+        path: '/inventory',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        ),
+        label: 'Inventario',
+        description: 'Control de activos tecnológicos'
+      },
+      {
+        path: '/purchase-requests',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        ),
+        label: 'Solicitudes de Compra',
+        description: 'Periféricos y electrodomésticos'
+      },
+      {
+        type: 'submenu',
+        label: 'Calidad',
+        icon: <FaShieldAlt className="w-5 h-5" />,
+        description: 'Gestión de calidad y documentación',
+        subItems: [
+          {
+            path: '/documents',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            ),
+            label: 'Documentos',
+            description: 'Documentos operativos'
+          },
+          {
+            path: '/ticket_calidad',
+            icon: <FaClipboardList className="w-5 h-5" />,
+            label: 'Ticket Calidad',
+            description: 'Reportes de calidad y cambios documentales'
+          }
+        ]
+      }
+    );
+  } else if (role === 'Compras') {
+    menuItems.push(
+      {
+        path: '/inventory',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        ),
+        label: 'Inventario',
+        description: 'Control de activos tecnológicos'
+      },
+      {
+        path: '/purchase-requests',
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        ),
+        label: 'Solicitudes de Compra',
+        description: 'Periféricos y electrodomésticos'
+      },
+      {
+        type: 'submenu',
+        label: 'Calidad',
+        icon: <FaShieldAlt className="w-5 h-5" />,
+        description: 'Gestión de calidad y documentación',
+        subItems: [
+          {
+            path: '/documents',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            ),
+            label: 'Documentos',
+            description: 'Documentos de compras'
+          },
+          {
+            path: '/ticket_calidad',
+            icon: <FaClipboardList className="w-5 h-5" />,
+            label: 'Ticket Calidad',
+            description: 'Reportes de calidad y cambios documentales'
+          }
+        ]
+      }
+    );
   }
 
   const getRoleBadge = (roleName) => {
     const badges = {
       'Administrador': { color: 'from-red-500 to-pink-600', icon: <FaCrown />, text: 'Admin', iconColor: 'text-red-500' },
+      'Coordinadora Administrativa': { color: 'from-orange-500 to-red-600', icon: <FaUserShield />, text: 'Coord', iconColor: 'text-orange-500' },
       'Técnico': { color: 'from-blue-500 to-cyan-600', icon: <FaWrench />, text: 'Tech', iconColor: 'text-blue-500' },
+      'Jefe': { color: 'from-yellow-500 to-orange-600', icon: <FaUserCog />, text: 'Jefe', iconColor: 'text-yellow-500' },
+      'Compras': { color: 'from-teal-500 to-cyan-600', icon: <FaUser />, text: 'Compras', iconColor: 'text-teal-500' },
       'Calidad': { color: 'from-purple-500 to-indigo-600', icon: <FaShieldAlt />, text: 'Quality', iconColor: 'text-purple-500' },
       'Empleado': { color: 'from-green-500 to-emerald-600', icon: <FaUser />, text: 'User', iconColor: 'text-green-500' }
     };

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { usersAPI, authAPI } from '../../api';
 import { inventoryAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
-import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSearch, FaFilter, FaUserShield, FaUserCog, FaUser, FaChartBar, FaDownload, FaSortAmountDown, FaSortAmountUp, FaClock, FaEnvelope, FaKey, FaToggleOn, FaToggleOff, FaBan, FaShieldAlt } from 'react-icons/fa';
+import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSearch, FaFilter, FaUserShield, FaUserCog, FaUser, FaChartBar, FaDownload, FaSortAmountDown, FaSortAmountUp, FaClock, FaEnvelope, FaKey, FaToggleOn, FaToggleOff, FaBan, FaShieldAlt, FaCrown, FaClipboardList } from 'react-icons/fa';
 import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 import { onUserUpdated, onUsersListUpdated, offUserUpdated, offUsersListUpdated } from '../../api/socket';
 
@@ -138,13 +138,14 @@ const Users = () => {
     const admins = users.filter(u => u.Role?.name === 'Administrador').length;
     const technicians = users.filter(u => u.Role?.name === 'Técnico').length;
     const calidad = users.filter(u => u.Role?.name === 'Calidad').length;
-    const coordinadorCompras = users.filter(u => u.Role?.name === 'Coordinador de Compras').length;
-    const directorCompras = users.filter(u => u.Role?.name === 'Director de Compras').length;
+    const jefe = users.filter(u => u.Role?.name === 'Jefe').length;
+    const compras = users.filter(u => u.Role?.name === 'Compras').length;
+    const coordinadoraAdministrativa = users.filter(u => u.Role?.name === 'Coordinadora Administrativa').length;
     const employees = users.filter(u => u.Role?.name === 'Empleado').length;
     const withIT = users.filter(u => u.it).length;
     const withCorporatePhone = users.filter(u => u.hasCorporatePhone).length;
 
-    return { total, admins, technicians, calidad, employees, withIT, withCorporatePhone };
+    return { total, admins, technicians, calidad, coordinadoraAdministrativa, jefe, compras, employees, withIT, withCorporatePhone };
   };
 
   const stats = calculateStats();
@@ -210,10 +211,11 @@ const Users = () => {
   const getRoleIcon = (roleName) => {
     switch(roleName) {
       case 'Administrador': return <FaUserShield className="w-4 h-4 text-purple-600" />;
+      case 'Coordinadora Administrativa': return <FaUserShield className="w-4 h-4 text-orange-600" />;
       case 'Técnico': return <FaUserCog className="w-4 h-4 text-blue-600" />;
       case 'Calidad': return <FaShieldAlt className="w-4 h-4 text-emerald-600" />;
-      case 'Coordinador de Compras': return <FaClipboardList className="w-4 h-4 text-orange-600" />;
-      case 'Director de Compras': return <FaCrown className="w-4 h-4 text-red-600" />;
+      case 'Jefe': return <FaClipboardList className="w-4 h-4 text-yellow-600" />;
+      case 'Compras': return <FaCrown className="w-4 h-4 text-teal-600" />;
       case 'Empleado': return <FaUser className="w-4 h-4 text-green-600" />;
       default: return <FaUser className="w-4 h-4 text-gray-600" />;
     }
@@ -223,10 +225,11 @@ const Users = () => {
   const getRoleBadgeColor = (roleName) => {
     switch(roleName) {
       case 'Administrador': return 'bg-purple-100 text-purple-700 border-purple-200';
+      case 'Coordinadora Administrativa': return 'bg-orange-100 text-orange-700 border-orange-200';
       case 'Técnico': return 'bg-blue-100 text-blue-700 border-blue-200';
       case 'Calidad': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
-      case 'Coordinador de Compras': return 'bg-orange-100 text-orange-700 border-orange-200';
-      case 'Director de Compras': return 'bg-red-100 text-red-700 border-red-200';
+      case 'Jefe': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+      case 'Compras': return 'bg-teal-100 text-teal-700 border-teal-200';
       case 'Empleado': return 'bg-green-100 text-green-700 border-green-200';
       default: return 'bg-gray-100 text-gray-700 border-gray-200';
     }
@@ -445,6 +448,27 @@ const Users = () => {
                 loading: loading
               },
               {
+                key: 'coordinadoraAdministrativa',
+                label: 'Coordinadoras Administrativas',
+                icon: FaUserShield,
+                gradient: 'from-orange-500 to-red-600',
+                loading: loading
+              },
+              {
+                key: 'jefe',
+                label: 'Jefes',
+                icon: FaClipboardList,
+                gradient: 'from-yellow-500 to-orange-600',
+                loading: loading
+              },
+              {
+                key: 'compras',
+                label: 'Compras',
+                icon: FaCrown,
+                gradient: 'from-teal-500 to-cyan-600',
+                loading: loading
+              },
+              {
                 key: 'employees',
                 label: 'Empleados',
                 icon: FaUser,
@@ -483,10 +507,11 @@ const Users = () => {
               type: 'select',
               options: [
                 { value: 'Administrador', label: 'Administrador' },
+                { value: 'Coordinadora Administrativa', label: 'Coordinadora Administrativa' },
                 { value: 'Técnico', label: 'Técnico' },
                 { value: 'Calidad', label: 'Calidad' },
-                { value: 'Coordinador de Compras', label: 'Coordinador de Compras' },
-                { value: 'Director de Compras', label: 'Director de Compras' },
+                { value: 'Jefe', label: 'Jefe' },
+                { value: 'Compras', label: 'Compras' },
                 { value: 'Empleado', label: 'Empleado' }
               ]
             }
@@ -755,11 +780,12 @@ const Users = () => {
                     className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
                   >
                     <option value={1}>Administrador</option>
+                    <option value={5}>Coordinadora Administrativa</option>
                     <option value={2}>Técnico</option>
-                    <option value={3}>Calidad</option>
-                    <option value={5}>Coordinador de Compras</option>
-                    <option value={6}>Director de Compras</option>
-                    <option value={4}>Empleado</option>
+                    <option value={4}>Calidad</option>
+                    <option value={6}>Jefe</option>
+                    <option value={7}>Compras</option>
+                    <option value={3}>Empleado</option>
                   </select>
                 </div>
 

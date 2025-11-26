@@ -1,57 +1,146 @@
 import React from 'react';
-import { FaClipboardList, FaClock, FaCheck, FaArrowRight, FaCheckCircle, FaTimes } from 'react-icons/fa';
+import { FaClipboardList, FaClock, FaCheck, FaArrowRight, FaCheckCircle, FaTimes, FaExclamationTriangle, FaShoppingCart, FaBoxOpen } from 'react-icons/fa';
 
-const PurchaseRequestStats = ({ stats }) => {
-  const statCards = [
-    {
-      title: 'Total Solicitudes',
-      value: stats.total,
-      icon: FaClipboardList,
-      color: 'from-blue-500 to-blue-600',
-      bgColor: 'from-blue-50 to-blue-100',
-      textColor: 'text-blue-700'
-    },
-    {
-      title: 'Solicitadas',
-      value: stats.solicitado,
-      icon: FaClock,
-      color: 'from-yellow-500 to-yellow-600',
-      bgColor: 'from-yellow-50 to-yellow-100',
-      textColor: 'text-yellow-700'
-    },
-    {
-      title: 'Aprobadas Coordinadora',
-      value: stats.aprobadoCoordinadora,
-      icon: FaCheck,
-      color: 'from-orange-500 to-orange-600',
-      bgColor: 'from-orange-50 to-orange-100',
-      textColor: 'text-orange-700'
-    },
-    {
-      title: 'Aprobadas Jefe',
-      value: stats.aprobadoJefe,
-      icon: FaCheck,
-      color: 'from-purple-500 to-purple-600',
-      bgColor: 'from-purple-50 to-purple-100',
-      textColor: 'text-purple-700'
-    },
-    {
-      title: 'En Compras',
-      value: stats.enCompras,
-      icon: FaArrowRight,
-      color: 'from-cyan-500 to-cyan-600',
-      bgColor: 'from-cyan-50 to-cyan-100',
-      textColor: 'text-cyan-700'
-    },
-    {
-      title: 'Completadas',
-      value: stats.completado,
-      icon: FaCheckCircle,
-      color: 'from-green-500 to-green-600',
-      bgColor: 'from-green-50 to-green-100',
-      textColor: 'text-green-700'
+const PurchaseRequestStats = ({ stats, userRole }) => {
+  // Define stat cards based on user role
+  const getStatCards = () => {
+    if (userRole === 'Coordinadora Administrativa') {
+      return [
+        {
+          title: 'Pendientes de Aprobación',
+          value: stats.pendientes,
+          icon: FaClock,
+          color: 'from-yellow-500 to-yellow-600',
+          bgColor: 'from-yellow-50 to-yellow-100',
+          textColor: 'text-yellow-700'
+        },
+        {
+          title: 'Aprobadas',
+          value: stats.aprobados,
+          icon: FaCheck,
+          color: 'from-green-500 to-green-600',
+          bgColor: 'from-green-50 to-green-100',
+          textColor: 'text-green-700'
+        },
+        {
+          title: 'Rechazadas',
+          value: stats.rechazados,
+          icon: FaTimes,
+          color: 'from-red-500 to-red-600',
+          bgColor: 'from-red-50 to-red-100',
+          textColor: 'text-red-700'
+        }
+      ];
+    } else if (userRole === 'Jefe') {
+      return [
+        {
+          title: 'Pendientes de Aprobación',
+          value: stats.pendientes,
+          icon: FaClock,
+          color: 'from-purple-500 to-purple-600',
+          bgColor: 'from-purple-50 to-purple-100',
+          textColor: 'text-purple-700'
+        },
+        {
+          title: 'Aprobadas',
+          value: stats.aprobados,
+          icon: FaCheck,
+          color: 'from-green-500 to-green-600',
+          bgColor: 'from-green-50 to-green-100',
+          textColor: 'text-green-700'
+        },
+        {
+          title: 'Rechazadas',
+          value: stats.rechazados,
+          icon: FaTimes,
+          color: 'from-red-500 to-red-600',
+          bgColor: 'from-red-50 to-red-100',
+          textColor: 'text-red-700'
+        }
+      ];
+    } else if (userRole === 'Compras') {
+      return [
+        {
+          title: 'En Proceso',
+          value: stats.enProceso,
+          icon: FaShoppingCart,
+          color: 'from-blue-500 to-blue-600',
+          bgColor: 'from-blue-50 to-blue-100',
+          textColor: 'text-blue-700'
+        },
+        {
+          title: 'Compradas',
+          value: stats.comprados,
+          icon: FaCheck,
+          color: 'from-green-500 to-green-600',
+          bgColor: 'from-green-50 to-green-100',
+          textColor: 'text-green-700'
+        },
+        {
+          title: 'Entregadas',
+          value: stats.entregados,
+          icon: FaBoxOpen,
+          color: 'from-teal-500 to-teal-600',
+          bgColor: 'from-teal-50 to-teal-100',
+          textColor: 'text-teal-700'
+        }
+      ];
+    } else {
+      // Admin/Técnico/Empleado - full stats
+      return [
+        {
+          title: 'Total Solicitudes',
+          value: stats.total,
+          icon: FaClipboardList,
+          color: 'from-blue-500 to-blue-600',
+          bgColor: 'from-blue-50 to-blue-100',
+          textColor: 'text-blue-700'
+        },
+        {
+          title: 'Solicitadas',
+          value: stats.solicitado,
+          icon: FaClock,
+          color: 'from-yellow-500 to-yellow-600',
+          bgColor: 'from-yellow-50 to-yellow-100',
+          textColor: 'text-yellow-700'
+        },
+        {
+          title: 'Aprobadas Coordinadora',
+          value: stats.aprobadoCoordinadora,
+          icon: FaCheck,
+          color: 'from-orange-500 to-orange-600',
+          bgColor: 'from-orange-50 to-orange-100',
+          textColor: 'text-orange-700'
+        },
+        {
+          title: 'Aprobadas Jefe',
+          value: stats.aprobadoJefe,
+          icon: FaCheck,
+          color: 'from-purple-500 to-purple-600',
+          bgColor: 'from-purple-50 to-purple-100',
+          textColor: 'text-purple-700'
+        },
+        {
+          title: 'En Compras',
+          value: stats.enCompras,
+          icon: FaArrowRight,
+          color: 'from-cyan-500 to-cyan-600',
+          bgColor: 'from-cyan-50 to-cyan-100',
+          textColor: 'text-cyan-700'
+        },
+        {
+          title: 'Completadas',
+          value: stats.completado,
+          icon: FaCheckCircle,
+          color: 'from-green-500 to-green-600',
+          bgColor: 'from-green-50 to-green-100',
+          textColor: 'text-green-700'
+        }
+      ];
     }
-  ];
+  };
+
+  const statCards = getStatCards();
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6 mb-6">

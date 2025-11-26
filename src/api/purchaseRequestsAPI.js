@@ -133,6 +133,82 @@ const purchaseRequestsAPI = {
       console.error('Error getting purchase request stats:', error);
       throw error;
     }
+  },
+
+  // Upload attachment
+  uploadAttachment: async (requestId, file) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await api.post(`/purchase-requests/${requestId}/attachments`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error uploading attachment:', error);
+      throw error;
+    }
+  },
+
+  // Get attachments for a request
+  getAttachments: async (requestId) => {
+    try {
+      const response = await api.get(`/purchase-requests/${requestId}/attachments`);
+      return response.data;
+    } catch (error) {
+      console.error('Error getting attachments:', error);
+      throw error;
+    }
+  },
+
+  // Delete attachment
+  deleteAttachment: async (requestId, attachmentId) => {
+    try {
+      const response = await api.delete(`/purchase-requests/${requestId}/attachments/${attachmentId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting attachment:', error);
+      throw error;
+    }
+  },
+
+  // Add comment
+  addComment: async (requestId, content, isInternal = false) => {
+    try {
+      const response = await api.post(`/purchase-requests/${requestId}/comments`, {
+        content,
+        isInternal
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      throw error;
+    }
+  },
+
+  // Get comments
+  getComments: async (requestId) => {
+    try {
+      const response = await api.get(`/purchase-requests/${requestId}/comments`);
+      return response.data;
+    } catch (error) {
+      console.error('Error getting comments:', error);
+      throw error;
+    }
+  },
+
+  // Delete comment
+  deleteComment: async (requestId, commentId) => {
+    try {
+      const response = await api.delete(`/purchase-requests/${requestId}/comments/${commentId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      throw error;
+    }
   }
 };
 

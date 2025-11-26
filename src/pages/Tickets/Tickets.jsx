@@ -82,7 +82,7 @@ const Tickets = () => {
     'Problemas con Excel, Word, PDF',
     'Problemas con Acceso a carpetas',
     'Problemas con El navegador',
-    'Problemas con Rsales',
+    'Problemas con R-sales',
     'Problemas con Envio',
     'Problemas con Correo',
     'Problemas con Hardware',
@@ -95,6 +95,8 @@ const Tickets = () => {
   const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
+
+  const userRole = user?.role?.name;
 
   // Socket listeners
   useEffect(() => {
@@ -202,6 +204,13 @@ const Tickets = () => {
   const filterAndSortTickets = () => {
     if (!Array.isArray(tickets)) return [];
     let filtered = [...tickets];
+
+    // Role-based filtering
+    if (!['Administrador', 'Técnico'].includes(userRole)) {
+      // Otros roles solo ven sus propios tickets
+      filtered = filtered.filter(ticket => ticket.userId === user?.id);
+    }
+    // Administrador y Técnico ven todos los tickets
 
     if (searchTerm) {
       filtered = filtered.filter(ticket =>
@@ -556,7 +565,6 @@ const Tickets = () => {
     showNotification('Tickets exportados exitosamente', 'success');
   };
 
-  const userRole = user?.role?.name;
   const canCreate = true;
 
   // Funciones helper para verificar permisos por ticket específico
