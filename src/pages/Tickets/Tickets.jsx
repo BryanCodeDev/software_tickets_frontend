@@ -82,7 +82,7 @@ const Tickets = () => {
     'Problemas con Excel, Word, PDF',
     'Problemas con Acceso a carpetas',
     'Problemas con El navegador',
-    'Problemas con R-sales',
+    'Problemas con R-SALES',
     'Problemas con Envio',
     'Problemas con Correo',
     'Problemas con Hardware',
