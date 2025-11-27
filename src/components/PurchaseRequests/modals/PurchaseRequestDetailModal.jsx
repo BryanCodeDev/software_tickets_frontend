@@ -3,6 +3,7 @@ import { FaTimes, FaCheck, FaTimes as FaReject, FaArrowRight, FaCheckCircle, FaC
 import { purchaseRequestsAPI } from '../../../api';
 import AuthContext from '../../../context/AuthContext';
 import { getTimeAgo } from '../../../utils';
+import { SERVER_BASE_URL } from '../../../utils/constants';
 
 const PurchaseRequestDetailModal = ({
   showDetailModal,
@@ -84,7 +85,7 @@ const PurchaseRequestDetailModal = ({
   const downloadAttachment = (attachment) => {
     // Create download link
     const link = document.createElement('a');
-    link.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/${attachment.path}`;
+    link.href = `${SERVER_BASE_URL}/${attachment.path}`;
     link.download = attachment.originalName;
     document.body.appendChild(link);
     link.click();

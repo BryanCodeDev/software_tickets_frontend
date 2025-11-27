@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { FaTimes, FaEdit, FaTrash, FaClipboardList, FaImage, FaComment, FaUserCircle, FaClock, FaPaperPlane } from 'react-icons/fa';
+import { SERVER_BASE_URL } from '../../../utils/constants';
 
 const TicketDetailModal = ({
   showDetailModal,
@@ -109,10 +110,10 @@ const TicketDetailModal = ({
                       <div key={attachment.id} className="bg-white rounded-lg p-3 border border-gray-200">
                         {attachment.type.startsWith('image/') ? (
                           <img
-                            src={`http://localhost:5000/uploads/tickets/${attachment.filename}`}
+                            src={`${SERVER_BASE_URL}/uploads/tickets/${attachment.filename}`}
                             alt={attachment.originalName}
                             className="w-full h-32 object-cover rounded-lg mb-2 cursor-pointer"
-                            onClick={() => window.open(`http://localhost:5000/uploads/tickets/${attachment.filename}`, '_blank')}
+                            onClick={() => window.open(`${SERVER_BASE_URL}/uploads/tickets/${attachment.filename}`, '_blank')}
                             onError={(e) => {
                               e.target.style.display = 'none';
                             }}
@@ -122,7 +123,7 @@ const TicketDetailModal = ({
                             controls
                             className="w-full h-32 object-cover rounded-lg mb-2"
                           >
-                            <source src={`http://localhost:5000/uploads/tickets/${attachment.filename}`} type={attachment.type} />
+                            <source src={`${SERVER_BASE_URL}/uploads/tickets/${attachment.filename}`} type={attachment.type} />
                             Tu navegador no soporta el elemento de video.
                           </video>
                         ) : (
@@ -136,7 +137,7 @@ const TicketDetailModal = ({
                         </p>
                         {attachment.type.startsWith('image/') && (
                           <button
-                            onClick={() => window.open(`http://localhost:5000/uploads/tickets/${attachment.filename}`, '_blank')}
+                            onClick={() => window.open(`${SERVER_BASE_URL}/uploads/tickets/${attachment.filename}`, '_blank')}
                             className="text-xs text-purple-600 hover:text-purple-700 mt-1"
                           >
                             Ver imagen completa

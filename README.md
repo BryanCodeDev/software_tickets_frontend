@@ -77,6 +77,20 @@ Una plataforma web interna completa para la gestión tecnológica de empresas, q
 - Buscador rápido por servicio o sistema
 - Encriptación de contraseñas
 
+### 🛡️ **Gestión de Calidad**
+- Tickets especializados en calidad y procesos documentales
+- Control documental avanzado con permisos específicos por carpeta
+- Reportes de no conformidades y cambios de versiones
+- Seguimiento de estándares, certificaciones y mejoras en procesos
+- Gestión de tickets de calidad para problemas documentales
+
+### 📱 **Teléfonos Corporativos**
+- Gestión completa de equipos móviles corporativos
+- 4 categorías organizadas: Administración, Asesores, Socios, Reposición
+- Control de IMEI, planes tarifarios y asignaciones por responsable
+- Seguimiento de garantías, fechas de entrega y estados de equipos
+- Acceso restringido por roles (Administradores, Técnicos, Coordinadores)
+
 ### 🔍 **Búsqueda Global**
 - Buscador unificado en toda la plataforma
 - Resultados categorizados por módulo
@@ -446,6 +460,26 @@ Roles (1) ──── (N) Users
 #### 👥 **Usuarios**
 - ❌ Sin acceso
 
+### 🛒 **Coordinador de Compras** (Gestión de Compras)
+- ✅ Gestión de solicitudes de compra iniciales
+- ✅ Aprobación de primeras etapas del proceso de adquisiciones
+- ✅ Comunicación con solicitantes
+- ❌ Sin autoridad para aprobaciones finales
+
+### 👑 **Director de Compras** (Dirección de Compras)
+- ✅ Autoridad final para aprobar todas las solicitudes de compra
+- ✅ Gestión completa de proveedores y contratos
+- ✅ Control total del proceso de adquisiciones
+- ✅ Reportes completos de compras
+
+### 🛡️ **Calidad** (Gestión de Calidad)
+- ✅ Control administrativo completo sobre módulos de calidad
+- ✅ Gestión de todos los tickets de calidad
+- ✅ Acceso completo al módulo de documentos
+- ✅ Creación y gestión de carpetas documentales
+- ✅ Permisos específicos por carpeta
+- ❌ Acceso limitado general (sin inventario, credenciales, usuarios)
+
 ## 🎯 Funcionalidades
 
 ### ✅ Implementadas
@@ -468,6 +502,10 @@ Roles (1) ──── (N) Users
 - [x] Historial de auditoría completo
 - [x] Autenticación de dos factores (2FA)
 - [x] Encriptación bcrypt para contraseñas
+- [x] Gestión de Calidad con tickets especializados
+- [x] Teléfonos Corporativos con 4 categorías organizadas
+- [x] Roles de Calidad, Coordinador y Director de Compras
+- [x] Permisos específicos por carpeta en documentos
 
 ### 🚀 Características Avanzadas
 - **WebSocket**: Comunicación en tiempo real para tickets
@@ -618,7 +656,10 @@ Este proyecto está bajo la Licencia ISC. Ver el archivo `LICENSE` para más det
 ## 📞 Soporte
 
 Para soporte técnico o preguntas:
-- Email: soporte@duvyclass.com
+- Email: asistentesistemas@duvyclass.co
+- Dirección: Kilómetro 3.5 vía Funza - Siberia, Parque Industrial Galicia, Manzana D, Bodegas 2 y 3
+- PBX: (57) 601-821 6565
+- Sitio Web: www.duvyclass.com
 - Documentación: [Wiki del Proyecto](https://github.com/tu-usuario/duvyclass/wiki)
 
 ---
