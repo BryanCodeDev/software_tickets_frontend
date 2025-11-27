@@ -515,24 +515,24 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       `}>
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="relative p-6 bg-linear-to-br from-purple-600 via-violet-600 to-indigo-600 overflow-hidden">
+          <div className="relative h-14 sm:h-16 flex items-center px-6 bg-linear-to-br from-purple-600 via-violet-600 to-indigo-600 overflow-hidden">
             {/* Decorative elements */}
             <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
-            
-            <div className="relative flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-200">
-                  <span className="text-transparent bg-clip-text bg-linear-to-br from-purple-600 to-violet-600 font-bold text-2xl">D</span>
+
+            <div className="relative flex items-center justify-between w-full">
+              <div className="flex items-center space-x-3 min-w-0 flex-1">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-200 flex-shrink-0">
+                  <span className="text-transparent bg-clip-text bg-linear-to-br from-purple-600 to-violet-600 font-bold text-lg sm:text-2xl">D</span>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-xl font-bold text-white truncate drop-shadow-lg">DuvyClass</h2>
-                  <p className="text-xs text-purple-100 font-medium truncate">Gestión Tecnológica</p>
+                  <h2 className="text-lg sm:text-xl font-bold text-white truncate drop-shadow-lg">DuvyClass</h2>
+                  <p className="text-xs sm:text-sm text-purple-100 font-medium truncate">Gestión Tecnológica</p>
                 </div>
               </div>
               <button
                 onClick={toggleSidebar}
-                className="lg:hidden p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200 backdrop-blur-sm"
+                className="lg:hidden p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200 backdrop-blur-sm flex-shrink-0"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

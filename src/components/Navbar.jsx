@@ -1,42 +1,78 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext.jsx';
+import { FaCrown, FaWrench, FaUser, FaShieldAlt, FaUserShield, FaUserCog } from 'react-icons/fa';
 
 const Navbar = ({ toggleSidebar }) => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const getRoleBadge = (roleName) => {
+    const badges = {
+      'Administrador': { color: 'from-red-500 to-pink-600', icon: <FaCrown />, text: 'Admin', iconColor: 'text-red-500' },
+      'Coordinadora Administrativa': { color: 'from-orange-500 to-red-600', icon: <FaUserShield />, text: 'Coord', iconColor: 'text-orange-500' },
+      'Técnico': { color: 'from-blue-500 to-cyan-600', icon: <FaWrench />, text: 'Tech', iconColor: 'text-blue-500' },
+      'Jefe': { color: 'from-yellow-500 to-orange-600', icon: <FaUserCog />, text: 'Jefe', iconColor: 'text-yellow-500' },
+      'Compras': { color: 'from-teal-500 to-cyan-600', icon: <FaUser />, text: 'Compras', iconColor: 'text-teal-500' },
+      'Calidad': { color: 'from-purple-500 to-indigo-600', icon: <FaShieldAlt />, text: 'Quality', iconColor: 'text-purple-500' },
+      'Empleado': { color: 'from-green-500 to-emerald-600', icon: <FaUser />, text: 'User', iconColor: 'text-green-500' }
+    };
+    return badges[roleName] || badges['Empleado'];
+  };
+
+  const roleBadge = getRoleBadge(user?.role?.name);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   if (!user) return null;
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-30">
+    <nav className={`sticky top-0 z-30 transition-all duration-300 ${
+      isScrolled
+        ? 'bg-white shadow-sm border-b border-gray-200'
+        : 'bg-linear-to-br from-purple-600 via-violet-600 to-indigo-600 shadow-lg'
+    }`}>
       <div className="px-2 sm:px-4 lg:px-8">
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Left side - Menu button and Title for mobile */}
           <div className="flex items-center space-x-2 sm:space-x-4">
             <button
               onClick={toggleSidebar}
-              className="lg:hidden p-1.5 sm:p-2 rounded-xl text-gray-600 hover:text-purple-600 hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200"
+              className={`lg:hidden p-1.5 sm:p-2 rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${
+                isScrolled
+                  ? 'text-gray-600 hover:text-purple-600 hover:bg-purple-50 focus:ring-purple-500'
+                  : 'text-white/80 hover:text-white hover:bg-white/20 focus:ring-white'
+              }`}
             >
               <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            
+
             <div className="lg:hidden flex items-center">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-linear-to-br from-purple-500 to-violet-600 rounded-lg flex items-center justify-center mr-2">
-                <span className="text-white font-bold text-xs sm:text-sm">D</span>
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-white rounded-lg flex items-center justify-center mr-2">
+                <span className="text-transparent bg-clip-text bg-linear-to-br from-purple-600 to-violet-600 font-bold text-xs sm:text-sm">D</span>
               </div>
               <div className="min-w-0">
-                <h1 className="text-base sm:text-lg font-bold text-gray-900 truncate">Duvy Class</h1>
-                <p className="text-xs text-gray-500 truncate">Sistema IT</p>
+                <h1 className={`text-base sm:text-lg font-bold truncate ${
+                  isScrolled ? 'text-gray-900' : 'text-white'
+                }`}>Duvy Class</h1>
+                <p className={`text-xs truncate ${
+                  isScrolled ? 'text-gray-500' : 'text-purple-100'
+                }`}>Sistema IT</p>
               </div>
             </div>
           </div>
@@ -48,18 +84,29 @@ const Navbar = ({ toggleSidebar }) => {
             <div className="relative">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center space-x-2 sm:space-x-3 p-1.5 rounded-xl hover:bg-gray-50 transition-all duration-200"
+                className={`flex items-center space-x-2 sm:space-x-3 p-1.5 rounded-xl transition-all duration-200 ${
+                  isScrolled ? 'hover:bg-gray-50' : 'hover:bg-white/20'
+                }`}
               >
                 <div className="hidden sm:block text-right">
-                  <p className="text-sm font-semibold text-gray-900 truncate max-w-24">{user?.name || user?.username || 'Usuario'}</p>
-                  <p className="text-xs text-gray-500 truncate max-w-24">{user?.role?.name || 'Rol'}</p>
+                  <div className="flex items-center gap-2">
+                    <p className={`text-sm font-semibold truncate max-w-20 ${
+                      isScrolled ? 'text-gray-900' : 'text-white'
+                    }`}>{user?.name || user?.username || 'Usuario'}</p>
+                    <span className={`shrink-0 text-base ${roleBadge.iconColor}`}>{roleBadge.icon}</span>
+                  </div>
+                  <p className={`text-xs truncate max-w-24 ${
+                    isScrolled ? 'text-gray-500' : 'text-purple-100'
+                  }`}>{user?.role?.name || 'Rol'}</p>
                 </div>
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-linear-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center shadow-md">
+                <div className={`w-8 h-8 sm:w-10 sm:h-10 bg-linear-to-br ${roleBadge.color} rounded-xl flex items-center justify-center shadow-md ring-2 ring-white`}>
                   <span className="text-white text-xs sm:text-sm font-bold">
                     {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
                   </span>
                 </div>
-                <svg className="hidden sm:block w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className={`hidden sm:block w-4 h-4 ${
+                  isScrolled ? 'text-gray-400' : 'text-white/80'
+                }`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>

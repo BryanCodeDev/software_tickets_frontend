@@ -392,7 +392,7 @@ const Credentials = () => {
   if (loading) return <div>Cargando...</div>;
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-4 sm:py-6 md:py-8 px-2 sm:px-4 md:px-6 lg:px-8">
       {/* Notification */}
       <NotificationSystem
         notification={notification}
@@ -407,45 +407,45 @@ const Credentials = () => {
       />
 
       <div>
-        <div className="mb-6 sm:mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="mb-4 sm:mb-6 md:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-r from-purple-600 to-violet-600 rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg">
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 flex items-center">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-linear-to-r from-purple-600 to-violet-600 rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                 </div>
                 {currentFolder ? `Carpeta: ${currentFolder.name}` : 'Credenciales'}
               </h1>
-              <p className="mt-2 text-sm sm:text-base text-gray-600">
+              <p className="mt-2 text-xs sm:text-sm md:text-base text-gray-600">
                 {currentFolder ? (currentFolder.description || 'Gestiona las credenciales de esta carpeta') : 'Gestiona las credenciales internas del sistema'}
               </p>
             </div>
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
               {currentFolder && (
                 <button
                   onClick={handleGoBack}
-                  className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
+                  className="flex items-center justify-center space-x-2 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto text-sm sm:text-base"
                 >
-                  <FaArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <FaArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
                   <span>Atrás</span>
                 </button>
               )}
               {currentFolder ? (
                 <button
                   onClick={handleCreate}
-                  className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
+                  className="flex items-center justify-center space-x-2 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto text-sm sm:text-base"
                 >
-                  <FaPlus className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <FaPlus className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
                   <span>Nueva Credencial</span>
                 </button>
               ) : (
                 <button
                   onClick={handleCreateFolder}
-                  className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
+                  className="flex items-center justify-center space-x-2 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto text-sm sm:text-base"
                 >
-                  <FaPlus className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <FaPlus className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
                   <span>Nueva Carpeta</span>
                 </button>
               )}
@@ -472,8 +472,8 @@ const Credentials = () => {
         />
 
         {/* Resumen de resultados */}
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-sm text-gray-600 font-medium">
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
+          <p className="text-xs sm:text-sm text-gray-600 font-medium">
             {currentFolder
               ? `Mostrando ${filteredCredentials.length} credenciales en esta carpeta`
               : `Mostrando ${rootFolders.length} carpetas`
@@ -482,38 +482,38 @@ const Credentials = () => {
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+          <div className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 border-b border-gray-200 bg-gray-50">
+            <h2 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900">
               {currentFolder ? 'Credenciales de la Carpeta' : 'Carpetas de Credenciales'}
             </h2>
           </div>
-          <div className="p-4 sm:p-6">
+          <div className="p-3 sm:p-4 md:p-6">
             {currentFolder ? (
               // Vista de credenciales dentro de una carpeta
               filteredCredentials.length === 0 ? (
-                <div className="text-center py-8 sm:py-12">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FaLock className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
+                <div className="text-center py-6 sm:py-8 md:py-12">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <FaLock className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-gray-400" />
                   </div>
-                  <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
+                  <h3 className="text-sm sm:text-base md:text-lg font-medium text-gray-900 mb-2">
                     {searchTerm
                       ? 'No se encontraron credenciales'
                       : 'No hay credenciales en esta carpeta'}
                   </h3>
-                  <p className="text-sm sm:text-base text-gray-600">
+                  <p className="text-xs sm:text-sm md:text-base text-gray-600">
                     {searchTerm
                       ? 'Intenta ajustar los filtros de búsqueda'
                       : 'Comienza creando una nueva credencial'}
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
                   {filteredCredentials.map((cred) => (
-                    <div key={cred.id} className="bg-gray-50 rounded-xl p-4 md:p-6 border border-gray-200 hover:shadow-md transition-shadow">
-                      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
-                        <h3 className="font-semibold text-gray-900 text-sm md:text-base truncate">{cred.service}</h3>
+                    <div key={cred.id} className="bg-gray-50 rounded-xl p-3 sm:p-4 md:p-6 border border-gray-200 hover:shadow-md transition-shadow">
+                      <div className="flex flex-col items-center text-center sm:items-start sm:text-left md:flex-row md:items-center md:justify-between mb-3 sm:mb-4 gap-2">
+                        <h3 className="font-semibold text-gray-900 text-sm sm:text-sm md:text-base truncate w-full sm:w-auto">{cred.service}</h3>
                       </div>
-                      <div className="space-y-2 text-xs md:text-sm text-gray-600 mb-4">
+                      <div className="space-y-2 text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
                         <div className="flex items-center justify-between">
                           <p><strong>Usuario:</strong> {cred.username}</p>
                           <button
@@ -521,7 +521,7 @@ const Credentials = () => {
                             className="text-gray-400 hover:text-purple-600 p-1 transition-colors"
                             title="Copiar usuario"
                           >
-                            <FaCopy className="w-3 h-3 sm:w-4 sm:h-4" />
+                            <FaCopy className="w-3 h-3" />
                           </button>
                         </div>
                         {cred.area && (
@@ -539,14 +539,14 @@ const Credentials = () => {
                             className="text-gray-400 hover:text-gray-600 p-1"
                             title={showPassword[cred.id] ? 'Ocultar' : 'Mostrar'}
                           >
-                            {showPassword[cred.id] ? <FaEyeSlash className="w-3 h-3 sm:w-4 sm:h-4" /> : <FaEye className="w-3 h-3 sm:w-4 sm:h-4" />}
+                            {showPassword[cred.id] ? <FaEyeSlash className="w-3 h-3" /> : <FaEye className="w-3 h-3" />}
                           </button>
                           <button
                             onClick={() => copyToClipboard(cred.password, 'Contraseña')}
                             className="text-gray-400 hover:text-purple-600 p-1 transition-colors"
                             title="Copiar contraseña"
                           >
-                            <FaCopy className="w-3 h-3 sm:w-4 sm:h-4" />
+                            <FaCopy className="w-3 h-3" />
                           </button>
                         </div>
                         {cred.description && (
@@ -556,26 +556,26 @@ const Credentials = () => {
                           </div>
                         )}
                         {cred.createdAt && (
-                          <div className="flex items-center gap-2 text-xs text-gray-500 pt-2">
+                          <div className="flex items-center justify-center sm:justify-start gap-2 text-xs text-gray-500 pt-2">
                             <FaClock className="w-3 h-3" />
                             <span>Creada {getTimeAgo(cred.createdAt)}</span>
                           </div>
                         )}
                       </div>
-                      <div className="flex flex-col md:flex-row gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <button
                           onClick={() => handleEdit(cred)}
-                          className="flex items-center justify-center space-x-1 px-3 md:px-4 py-2 md:py-3 bg-blue-100 text-blue-700 text-xs md:text-sm font-medium rounded-lg hover:bg-blue-200 transition-colors"
+                          className="flex items-center justify-center space-x-1 px-3 sm:px-3 md:px-4 py-2 sm:py-2 md:py-3 bg-blue-100 text-blue-700 text-sm sm:text-sm font-medium rounded-lg hover:bg-blue-200 transition-colors"
                         >
-                          <FaEdit className="w-3 h-3 md:w-4 md:h-4" />
+                          <FaEdit className="w-4 h-4 sm:w-4 md:w-4" />
                           <span>Editar</span>
                         </button>
                         {user.role?.name === 'Administrador' && (
                           <button
                             onClick={() => handleDelete(cred.id)}
-                            className="flex items-center justify-center space-x-1 px-3 md:px-4 py-2 md:py-3 bg-red-100 text-red-700 text-xs md:text-sm font-medium rounded-lg hover:bg-red-200 transition-colors"
+                            className="flex items-center justify-center space-x-1 px-3 sm:px-3 md:px-4 py-2 sm:py-2 md:py-3 bg-red-100 text-red-700 text-sm sm:text-sm font-medium rounded-lg hover:bg-red-200 transition-colors"
                           >
-                            <FaTrash className="w-3 h-3 md:w-4 md:h-4" />
+                            <FaTrash className="w-4 h-4 sm:w-4 md:w-4" />
                             <span>Eliminar</span>
                           </button>
                         )}
@@ -587,35 +587,35 @@ const Credentials = () => {
             ) : (
               // Vista de carpetas en la raíz
               rootFolders.length === 0 ? (
-                <div className="text-center py-8 sm:py-12">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FaFolder className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
+                <div className="text-center py-6 sm:py-8 md:py-12">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <FaFolder className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-gray-400" />
                   </div>
-                  <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
+                  <h3 className="text-sm sm:text-base md:text-lg font-medium text-gray-900 mb-2">
                     No hay carpetas disponibles
                   </h3>
-                  <p className="text-sm sm:text-base text-gray-600">
+                  <p className="text-xs sm:text-sm md:text-base text-gray-600">
                     Comienza creando una nueva carpeta
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
                   {rootFolders.map((folder) => (
                     <div
                       key={folder.id}
                       onClick={() => handleEnterFolder(folder)}
-                      className="group bg-linear-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 cursor-pointer"
+                      className="group bg-linear-to-r from-blue-50 to-indigo-50 rounded-xl p-3 sm:p-4 md:p-5 border border-blue-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 cursor-pointer"
                     >
-                      <div className="flex flex-col md:flex-row items-start md:items-center space-x-0 md:space-x-4 mb-4">
-                        <div className="w-12 h-12 bg-linear-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center shrink-0 mb-2 md:mb-0">
-                          <FaFolder className="text-blue-600 text-xl" />
+                      <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left space-y-2 sm:space-y-0 sm:space-x-3 md:space-x-4">
+                        <div className="w-10 h-10 sm:w-10 sm:h-10 md:w-12 bg-linear-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center shrink-0">
+                          <FaFolder className="text-blue-600 text-lg sm:text-lg md:text-xl" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-gray-900 mb-2 text-base md:text-lg">{folder.name}</h3>
+                          <h3 className="font-bold text-gray-900 mb-1.5 sm:mb-2 text-sm sm:text-sm md:text-base lg:text-lg">{folder.name}</h3>
                           {folder.description && (
-                            <p className="text-sm text-gray-600 mb-2">{folder.description}</p>
+                            <p className="text-xs sm:text-sm text-gray-600 mb-1.5 sm:mb-2">{folder.description}</p>
                           )}
-                          <div className="flex items-center gap-3 text-xs text-gray-500">
+                          <div className="flex items-center justify-center sm:justify-start gap-2 sm:gap-3 text-xs text-gray-500">
                             {folder.createdAt && (
                               <span className="flex items-center gap-1">
                                 <FaClock className="w-3 h-3" />
@@ -624,16 +624,16 @@ const Credentials = () => {
                             )}
                           </div>
                         </div>
-                        <div className="flex flex-col md:flex-row gap-2 mt-2 md:mt-0">
+                        <div className="flex flex-row sm:flex-col gap-1.5 sm:gap-2">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               handleEditFolder(folder);
                             }}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            className="p-1.5 sm:p-1.5 md:p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                             title="Editar carpeta"
                           >
-                            <FaEdit className="w-4 h-4" />
+                            <FaEdit className="w-4 h-4 sm:w-4" />
                           </button>
                           {user.role?.name === 'Administrador' && (
                             <button
@@ -641,10 +641,10 @@ const Credentials = () => {
                                 e.stopPropagation();
                                 handleDeleteFolder(folder.id);
                               }}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              className="p-1.5 sm:p-1.5 md:p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                               title="Eliminar carpeta"
                             >
-                              <FaTrash className="w-4 h-4" />
+                              <FaTrash className="w-4 h-4 sm:w-4" />
                             </button>
                           )}
                         </div>
@@ -660,26 +660,26 @@ const Credentials = () => {
 
       {/* Modal for Create/Edit */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-1 sm:p-2 md:p-4 animate-fade-in">
+          <div className="bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-3 sm:p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl lg:text-2xl font-bold text-white">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">
                   {editingCredential ? 'Editar Credencial' : 'Nueva Credencial'}
                 </h2>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                  className="p-1.5 sm:p-2 hover:bg-white/20 rounded-lg transition-all text-white"
                 >
-                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                  <FaTimes className="w-4 h-4 sm:w-5 lg:w-6 lg:h-6" />
                 </button>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-5 lg:space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+            <form onSubmit={handleSubmit} className="p-3 sm:p-4 md:p-6 lg:p-8 space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
                 <div>
-                  <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2 sm:mb-3">
+                  <label className="block text-xs sm:text-sm md:text-base lg:text-lg font-medium text-gray-700 mb-1.5 sm:mb-2 md:mb-3">
                     Servicio *
                   </label>
                   <input
@@ -687,13 +687,13 @@ const Credentials = () => {
                     placeholder="Ej: Base de datos, API, etc."
                     value={formData.service}
                     onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                    className="w-full px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-base"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2 sm:mb-3">
+                  <label className="block text-xs sm:text-sm md:text-base lg:text-lg font-medium text-gray-700 mb-1.5 sm:mb-2 md:mb-3">
                     Usuario *
                   </label>
                   <input
@@ -701,19 +701,19 @@ const Credentials = () => {
                     placeholder="Nombre de usuario"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    className="w-full px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-base"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2 sm:mb-3">
+                  <label className="block text-xs sm:text-sm md:text-base lg:text-lg font-medium text-gray-700 mb-1.5 sm:mb-2 md:mb-3">
                     Área
                   </label>
                   <select
                     value={formData.area}
                     onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                    className="w-full px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-base bg-white"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base bg-white"
                   >
                     <option value="">Seleccionar área</option>
 
@@ -795,7 +795,7 @@ const Credentials = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2 sm:mb-3">
+                  <label className="block text-xs sm:text-sm md:text-base lg:text-lg font-medium text-gray-700 mb-1.5 sm:mb-2 md:mb-3">
                     Contraseña *
                   </label>
                   <div className="relative">
@@ -804,34 +804,34 @@ const Credentials = () => {
                       placeholder="Contraseña"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 pr-20 sm:pr-24 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-base"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 pr-16 sm:pr-20 md:pr-24 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base"
                       required
                     />
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:pr-3 gap-1 sm:gap-2">
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-1.5 sm:pr-2 md:pr-3 gap-0.5 sm:gap-1 md:gap-2">
                       {/* NUEVA FUNCIONALIDAD: Botón para generar contraseña segura */}
                       <button
                         type="button"
                         onClick={generateSecurePassword}
-                        className="text-gray-400 hover:text-purple-600 p-1.5 sm:p-2 transition-colors"
+                        className="text-gray-400 hover:text-purple-600 p-1 sm:p-1.5 md:p-2 transition-colors"
                         title="Generar contraseña segura"
                       >
-                        <FaKey className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
+                        <FaKey className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 lg:w-6 lg:h-6" />
                       </button>
                       <button
                         type="button"
                         onClick={toggleFormPasswordVisibility}
-                        className="text-gray-400 hover:text-gray-600 p-1.5 sm:p-2"
+                        className="text-gray-400 hover:text-gray-600 p-1 sm:p-1.5 md:p-2"
                         title={showFormPassword ? 'Ocultar' : 'Mostrar'}
                       >
-                        {showFormPassword ? <FaEyeSlash className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" /> : <FaEye className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />}
+                        {showFormPassword ? <FaEyeSlash className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 lg:w-6 lg:h-6" /> : <FaEye className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 lg:w-6 lg:h-6" />}
                       </button>
                     </div>
                   </div>
                   {/* NUEVA FUNCIONALIDAD: Indicador de fortaleza de contraseña */}
                   {passwordStrength && (
-                    <div className="mt-3 sm:mt-4">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="flex-1 h-2.5 sm:h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="mt-2 sm:mt-3 md:mt-4">
+                      <div className="flex items-center gap-2 sm:gap-3 mb-1.5 sm:mb-2">
+                        <div className="flex-1 h-2 sm:h-2.5 md:h-3 bg-gray-200 rounded-full overflow-hidden">
                           <div
                             className={`h-full transition-all duration-300 ${
                               passwordStrength.color === 'red' ? 'bg-red-500' :
@@ -841,7 +841,7 @@ const Credentials = () => {
                             style={{ width: `${(passwordStrength.strength / 5) * 100}%` }}
                           />
                         </div>
-                        <span className={`text-sm sm:text-base font-semibold ${
+                        <span className={`text-xs sm:text-sm md:text-base font-semibold ${
                           passwordStrength.color === 'red' ? 'text-red-600' :
                           passwordStrength.color === 'yellow' ? 'text-yellow-600' :
                           'text-green-600'
@@ -851,7 +851,7 @@ const Credentials = () => {
                         </span>
                       </div>
                       {passwordStrength.feedback.length > 0 && (
-                        <p className="text-sm sm:text-base text-gray-500">
+                        <p className="text-xs sm:text-sm md:text-base text-gray-500">
                           Mejoras: {passwordStrength.feedback.join(', ')}
                         </p>
                       )}
@@ -861,41 +861,41 @@ const Credentials = () => {
 
                 {/* NUEVA FUNCIONALIDAD: Campo de notas */}
                 <div className="sm:col-span-2 lg:col-span-3">
-                  <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2 sm:mb-3">
+                  <label className="block text-xs sm:text-sm md:text-base lg:text-lg font-medium text-gray-700 mb-1.5 sm:mb-2 md:mb-3">
                     Notas
                   </label>
                   <textarea
                     placeholder="Información adicional sobre esta credencial..."
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    className="w-full px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-base resize-none"
-                    rows="4 lg:rows-5"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base resize-none"
+                    rows="3 sm:rows-4 lg:rows-5"
                   />
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2 sm:pt-3 md:pt-4">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 lg:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base"
+                  className="flex-1 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 lg:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg sm:rounded-xl transition-colors text-xs sm:text-sm md:text-base"
                   disabled={formLoading}
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 lg:py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base"
+                  className="flex-1 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 lg:py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-xs sm:text-sm md:text-base"
                   disabled={formLoading}
                 >
                   {formLoading ? (
                     <>
-                      <svg className="animate-spin h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5 mr-1 sm:mr-2" fill="none" viewBox="0 0 24 24">
+                      <svg className="animate-spin h-3 w-3 sm:h-4 lg:h-5 lg:w-5 mr-1 sm:mr-2" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      <span className="hidden xs:inline">{editingCredential ? 'Actualizando...' : 'Creando...'}</span>
-                      <span className="xs:hidden">...</span>
+                      <span className="hidden sm:inline">{editingCredential ? 'Actualizando...' : 'Creando...'}</span>
+                      <span className="sm:hidden">...</span>
                     </>
                   ) : (
                     editingCredential ? 'Actualizar' : 'Crear'
@@ -909,23 +909,23 @@ const Credentials = () => {
 
       {/* Modal for Create Folder */}
       {showFolderModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-            <div className="sticky top-0 bg-linear-to-r from-green-600 to-green-700 p-4 lg:p-6 z-10">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-1 sm:p-2 md:p-4 animate-fade-in">
+          <div className="bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-green-600 to-green-700 p-3 sm:p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl lg:text-2xl font-bold text-white">Nueva Carpeta</h2>
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Nueva Carpeta</h2>
                 <button
                   onClick={() => setShowFolderModal(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                  className="p-1.5 sm:p-2 hover:bg-white/20 rounded-lg transition-all text-white"
                 >
-                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                  <FaTimes className="w-4 h-4 sm:w-5 lg:w-6 lg:h-6" />
                 </button>
               </div>
             </div>
 
-            <form onSubmit={handleFolderSubmit} className="p-6 space-y-5">
+            <form onSubmit={handleFolderSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-5">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                   Nombre <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -933,39 +933,39 @@ const Credentials = () => {
                   placeholder="Nombre de la carpeta"
                   value={folderFormData.name}
                   onChange={(e) => setFolderFormData({ ...folderFormData, name: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-xs sm:text-sm"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">Descripción</label>
                 <textarea
                   placeholder="Descripción de la carpeta (opcional)"
                   value={folderFormData.description}
                   onChange={(e) => setFolderFormData({ ...folderFormData, description: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none text-xs sm:text-sm"
                   rows="3"
                 />
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-gray-200">
+              <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-gray-200">
                 <button
                   type="button"
                   onClick={() => setShowFolderModal(false)}
-                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
+                  className="flex-1 px-4 sm:px-6 py-2 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg sm:rounded-xl transition-all text-xs sm:text-sm"
                   disabled={folderFormLoading}
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3 bg-linear-to-r from-green-600 to-green-600 hover:from-green-700 hover:to-green-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  className="flex-1 px-4 sm:px-6 py-2 sm:py-3 bg-linear-to-r from-green-600 to-green-600 hover:from-green-700 hover:to-green-700 text-white font-bold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-xs sm:text-sm"
                   disabled={folderFormLoading}
                 >
                   {folderFormLoading ? (
                     <>
-                      <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+                      <svg className="animate-spin h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
@@ -983,23 +983,23 @@ const Credentials = () => {
 
       {/* Modal for Edit Folder */}
       {showEditFolderModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-            <div className="sticky top-0 bg-linear-to-r from-blue-600 to-blue-700 p-4 lg:p-6 z-10">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-1 sm:p-2 md:p-4 animate-fade-in">
+          <div className="bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-blue-600 to-blue-700 p-3 sm:p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl lg:text-2xl font-bold text-white">Editar Carpeta</h2>
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Editar Carpeta</h2>
                 <button
                   onClick={() => setShowEditFolderModal(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                  className="p-1.5 sm:p-2 hover:bg-white/20 rounded-lg transition-all text-white"
                 >
-                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                  <FaTimes className="w-4 h-4 sm:w-5 lg:w-6 lg:h-6" />
                 </button>
               </div>
             </div>
 
-            <form onSubmit={handleEditFolderSubmit} className="p-6 space-y-5">
+            <form onSubmit={handleEditFolderSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-5">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                   Nombre <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -1007,39 +1007,39 @@ const Credentials = () => {
                   placeholder="Nombre de la carpeta"
                   value={editFolderFormData.name}
                   onChange={(e) => setEditFolderFormData({ ...editFolderFormData, name: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-xs sm:text-sm"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">Descripción</label>
                 <textarea
                   placeholder="Descripción de la carpeta (opcional)"
                   value={editFolderFormData.description}
                   onChange={(e) => setEditFolderFormData({ ...editFolderFormData, description: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none text-xs sm:text-sm"
                   rows="3"
                 />
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-gray-200">
+              <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-gray-200">
                 <button
                   type="button"
                   onClick={() => setShowEditFolderModal(false)}
-                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
+                  className="flex-1 px-4 sm:px-6 py-2 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg sm:rounded-xl transition-all text-xs sm:text-sm"
                   disabled={editFolderFormLoading}
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3 bg-linear-to-r from-blue-600 to-blue-600 hover:from-blue-700 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  className="flex-1 px-4 sm:px-6 py-2 sm:py-3 bg-linear-to-r from-blue-600 to-blue-600 hover:from-blue-700 hover:to-blue-700 text-white font-bold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-xs sm:text-sm"
                   disabled={editFolderFormLoading}
                 >
                   {editFolderFormLoading ? (
                     <>
-                      <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+                      <svg className="animate-spin h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
