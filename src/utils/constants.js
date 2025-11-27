@@ -1,5 +1,5 @@
 // Constantes centralizadas de la aplicación
-export const API_BASE_URL = 'http://localhost:5000/api';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 export const SERVER_BASE_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
 
 // Endpoints de API
