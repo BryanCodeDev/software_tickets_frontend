@@ -764,6 +764,16 @@ const Documents = () => {
     }
   };
 
+  const handleDownloadDocument = async (documentId, fileName) => {
+    try {
+      await documentsAPI.downloadDocument(documentId, fileName);
+      showNotification('Documento descargado exitosamente', 'success');
+    } catch (err) {
+      console.error('Error downloading document:', err);
+      showNotification('Error al descargar el documento. Por favor, inténtalo de nuevo.', 'error');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 flex items-center justify-center">
@@ -1049,15 +1059,13 @@ const Documents = () => {
   
                           {/* Actions */}
                           <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
-                            <a
-                              href={`${getServerBaseURL()}/api/documents/${doc.id}/download`}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              onClick={() => handleDownloadDocument(doc.id, getDownloadName(doc))}
                               className="inline-flex items-center px-4 py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all"
                             >
                               <FaDownload className="mr-2" />
                               Descargar
-                            </a>
+                            </button>
                             <button
                               onClick={() => handleViewHistory(doc)}
                               className="inline-flex items-center px-4 py-2.5 bg-green-50 hover:bg-green-100 text-green-700 text-sm font-semibold rounded-lg transition-all"
@@ -1429,15 +1437,13 @@ const Documents = () => {
                         <span className="text-sm text-gray-500">{getTimeAgo(version.createdAt)}</span>
                       </div>
                       <div className="flex gap-2">
-                        <a
-                          href={`${getServerBaseURL()}/api/documents/${version.id}/download`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <button
+                          onClick={() => handleDownloadDocument(version.id, getDownloadName(selectedDocument, version))}
                           className="inline-flex items-center px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-lg transition-all"
                         >
                           <FaDownload className="mr-1" />
                           Descargar
-                        </a>
+                        </button>
                         {(user.role?.name === 'Administrador' || user.role?.name === 'Técnico') && (
                           <button
                             onClick={() => handleDeleteVersion(version.id)}
