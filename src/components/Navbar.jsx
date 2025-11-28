@@ -42,7 +42,7 @@ const Navbar = ({ toggleSidebar }) => {
   return (
     <nav className={`sticky top-0 z-30 transition-all duration-300 ${
       isScrolled
-        ? 'bg-white shadow-sm border-b border-gray-200'
+        ? 'bg-white shadow-sm'
         : 'bg-linear-to-br from-purple-600 via-violet-600 to-indigo-600 shadow-lg'
     }`}>
       <div className="px-2 sm:px-4 lg:px-8">
