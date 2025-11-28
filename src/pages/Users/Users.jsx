@@ -382,7 +382,7 @@ const Users = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center">
                 <div className="w-12 h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg">
                   <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
@@ -407,7 +407,7 @@ const Users = () => {
                 className="flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 <FaPlus className="w-5 h-5" />
-                <span>Nuevo Usuario</span>
+                <span className="hidden sm:inline">Nuevo Usuario</span>
               </button>
             </div>
           </div>
@@ -529,7 +529,7 @@ const Users = () => {
         />
 
         {/* NUEVA FUNCIONALIDAD: Resumen de resultados y vista */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2 sm:gap-0">
           <p className="text-sm text-gray-600 font-medium">
             Mostrando <span className="font-bold text-[#662d91]">{filteredUsers.length}</span> de <span className="font-bold">{users.length}</span> usuarios
           </p>
@@ -559,9 +559,9 @@ const Users = () => {
             ) : (
               <>
                 {/* NUEVA FUNCIONALIDAD: Vista de cuadrícula */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                   {filteredUsers.map((usr) => (
-                    <div key={usr.id} className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:shadow-md transition-shadow">
+                    <div key={usr.id} className="bg-gray-50 rounded-xl p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-shadow">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
                           <div className="w-10 h-10 bg-[#f3ebf9] rounded-full flex items-center justify-center">
@@ -613,7 +613,7 @@ const Users = () => {
                           </div>
                         )}
                       </div>
-                      <div className="flex space-x-2">
+                      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                         <button
                           onClick={() => handleEdit(usr)}
                           className="flex items-center space-x-1 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors"
@@ -657,7 +657,7 @@ const Users = () => {
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4 md:space-y-5">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 md:p-8 space-y-3 sm:space-y-4 md:space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
