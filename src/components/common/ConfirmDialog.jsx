@@ -38,3 +38,4 @@ const ConfirmDialog = React.memo(({ confirmDialog, onClose, onConfirm }) => {
 ConfirmDialog.displayName = 'ConfirmDialog';
 
 export default ConfirmDialog;
+

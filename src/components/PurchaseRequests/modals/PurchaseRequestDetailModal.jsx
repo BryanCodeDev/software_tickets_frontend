@@ -121,7 +121,7 @@ const PurchaseRequestDetailModal = ({
       'solicitado': 'bg-blue-100 text-blue-700 border-blue-200',
       'pendiente_coordinadora': 'bg-yellow-100 text-yellow-700 border-yellow-200',
       'aprobado_coordinadora': 'bg-orange-100 text-orange-700 border-orange-200',
-      'pendiente_jefe': 'bg-purple-100 text-purple-700 border-purple-200',
+      'pendiente_jefe': 'bg-[#f3ebf9] text-[#662d91] border-[#e8d5f5]',
       'aprobado_jefe': 'bg-indigo-100 text-indigo-700 border-indigo-200',
       'en_compras': 'bg-cyan-100 text-cyan-700 border-cyan-200',
       'comprado': 'bg-teal-100 text-teal-700 border-teal-200',
@@ -652,8 +652,8 @@ const PurchaseRequestDetailModal = ({
               <div className="mb-4">
                 <div className="bg-white rounded-lg p-4 border border-gray-200">
                   <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center shrink-0">
-                      <span className="text-sm font-medium text-purple-600">
+                    <div className="w-8 h-8 bg-[#f3ebf9] rounded-full flex items-center justify-center shrink-0">
+                      <span className="text-sm font-medium text-[#662d91]">
                         {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
                       </span>
                     </div>
@@ -662,7 +662,7 @@ const PurchaseRequestDetailModal = ({
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         placeholder="Escribe un comentario..."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none resize-none"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none resize-none"
                         rows="3"
                       />
                       <div className="flex items-center justify-between mt-2">
@@ -673,7 +673,7 @@ const PurchaseRequestDetailModal = ({
                                 type="checkbox"
                                 checked={isInternalComment}
                                 onChange={(e) => setIsInternalComment(e.target.checked)}
-                                className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                                className="rounded border-gray-300 text-[#662d91] focus:ring-[#662d91]"
                               />
                               <span>Comentario interno</span>
                             </label>
@@ -682,7 +682,7 @@ const PurchaseRequestDetailModal = ({
                         <button
                           onClick={handleAddComment}
                           disabled={!newComment.trim()}
-                          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-4 py-2 bg-[#662d91] hover:bg-[#7a3da8] text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Comentar
                         </button>
@@ -696,7 +696,7 @@ const PurchaseRequestDetailModal = ({
             {/* Comments List */}
             {commentsLoading ? (
               <div className="text-center py-4">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#662d91] mx-auto"></div>
                 <p className="text-sm text-gray-600 mt-2">Cargando comentarios...</p>
               </div>
             ) : comments.length === 0 ? (
@@ -709,8 +709,8 @@ const PurchaseRequestDetailModal = ({
                 {comments.map((comment) => (
                   <div key={comment.id} className={`p-4 rounded-lg border ${comment.isInternal ? 'bg-yellow-50 border-yellow-200' : 'bg-white border-gray-200'}`}>
                     <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center shrink-0">
-                        <span className="text-sm font-medium text-purple-600">
+                      <div className="w-8 h-8 bg-[#f3ebf9] rounded-full flex items-center justify-center shrink-0">
+                        <span className="text-sm font-medium text-[#662d91]">
                           {(comment.user?.name || comment.user?.username || 'U').charAt(0).toUpperCase()}
                         </span>
                       </div>
@@ -752,3 +752,4 @@ const PurchaseRequestDetailModal = ({
 };
 
 export default PurchaseRequestDetailModal;
+

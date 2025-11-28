@@ -37,9 +37,9 @@ const PurchaseRequestStats = ({ stats, userRole }) => {
           title: 'Pendientes de Aprobación',
           value: stats.pendientes,
           icon: FaClock,
-          color: 'from-purple-500 to-purple-600',
-          bgColor: 'from-purple-50 to-purple-100',
-          textColor: 'text-purple-700'
+          color: 'from-[#662d91] to-[#8e4dbf]',
+          bgColor: 'from-[#f3ebf9] to-[#e8d5f5]',
+          textColor: 'text-[#662d91]'
         },
         {
           title: 'Aprobadas',
@@ -116,9 +116,9 @@ const PurchaseRequestStats = ({ stats, userRole }) => {
           title: 'Aprobadas Jefe',
           value: stats.aprobadoJefe,
           icon: FaCheck,
-          color: 'from-purple-500 to-purple-600',
-          bgColor: 'from-purple-50 to-purple-100',
-          textColor: 'text-purple-700'
+          color: 'from-[#662d91] to-[#8e4dbf]',
+          bgColor: 'from-[#f3ebf9] to-[#e8d5f5]',
+          textColor: 'text-[#662d91]'
         },
         {
           title: 'En Compras',
@@ -172,3 +172,4 @@ const PurchaseRequestStats = ({ stats, userRole }) => {
 };
 
 export default PurchaseRequestStats;
+

@@ -7,11 +7,11 @@ const TermsAndConditions = () => {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
           {/* Header */}
-          <div className="bg-linear-to-r from-purple-600 to-violet-600 px-8 py-6">
+          <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-8 py-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
-                  <svg className="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-6 h-6 text-[#662d91]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
@@ -19,7 +19,7 @@ const TermsAndConditions = () => {
               </div>
               <Link
                 to="/register"
-                className="text-white hover:text-purple-100 transition-colors"
+                className="text-white hover:text-[#e8d5f5] transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -124,7 +124,7 @@ const TermsAndConditions = () => {
                 </p>
                 <Link
                   to="/register"
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-purple-600 bg-purple-50 hover:bg-purple-100 transition-colors"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-[#662d91] bg-[#f3ebf9] hover:bg-[#f3ebf9] transition-colors"
                 >
                   Volver al Registro
                 </Link>
@@ -138,3 +138,5 @@ const TermsAndConditions = () => {
 };
 
 export default TermsAndConditions;
+
+

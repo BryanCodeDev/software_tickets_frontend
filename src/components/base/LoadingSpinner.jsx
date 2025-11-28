@@ -16,7 +16,7 @@ const LoadingSpinner = React.memo(({
   };
 
   const colorClasses = {
-    purple: 'text-purple-600',
+    purple: 'text-[#662d91]',
     blue: 'text-blue-600',
     green: 'text-green-600',
     red: 'text-red-600',
@@ -46,3 +46,4 @@ const LoadingSpinner = React.memo(({
 LoadingSpinner.displayName = 'LoadingSpinner';
 
 export default LoadingSpinner;
+

@@ -316,10 +316,10 @@ const CorporatePhones = () => {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-8 px-4">
+    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4">
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#662d91] mx-auto mb-4"></div>
           <p className="text-lg text-gray-600 font-medium">Cargando teléfonos corporativos...</p>
         </div>
       </div>
@@ -327,7 +327,7 @@ const CorporatePhones = () => {
   );
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-4 px-3 sm:py-6 sm:px-4 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8">
       {/* Notification */}
       <NotificationSystem
         notification={notification}
@@ -352,7 +352,7 @@ const CorporatePhones = () => {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 lg:gap-4 mb-3">
-                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-linear-to-br from-purple-600 to-violet-600 rounded-2xl flex items-center justify-center shadow-xl shrink-0">
+                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-2xl flex items-center justify-center shadow-xl shrink-0">
                   <FaMobile className="text-white text-xl lg:text-2xl" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -384,7 +384,7 @@ const CorporatePhones = () => {
               {canEdit && (
                 <button
                   onClick={handleCreate}
-                  className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
+                  className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
                 >
                   <FaPlus className="w-4 h-4" />
                   Nuevo Teléfono
@@ -421,7 +421,7 @@ const CorporatePhones = () => {
                 label: 'Tasa de Uso',
                 description: `${stats.activos} teléfonos activos`,
                 icon: FaChartBar,
-                gradient: 'from-purple-500 to-purple-600',
+                gradient: 'from-[#662d91] to-[#8e4dbf]',
                 loading: loading,
                 formatter: (value) => `${value}%`
               },
@@ -483,14 +483,14 @@ const CorporatePhones = () => {
         {/* Results Summary */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <p className="text-sm text-gray-600 font-medium">
-            Mostrando <span className="font-bold text-purple-600">{filteredPhones.length}</span> de <span className="font-bold">{corporatePhones.length}</span> teléfonos
+            Mostrando <span className="font-bold text-[#662d91]">{filteredPhones.length}</span> de <span className="font-bold">{corporatePhones.length}</span> teléfonos
           </p>
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode('cards')}
               className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
                 viewMode === 'cards'
-                  ? 'bg-purple-600 text-white shadow-md'
+                  ? 'bg-[#662d91] text-white shadow-md'
                   : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >
@@ -501,7 +501,7 @@ const CorporatePhones = () => {
               onClick={() => setViewMode('table')}
               className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
                 viewMode === 'table'
-                  ? 'bg-purple-600 text-white shadow-md'
+                  ? 'bg-[#662d91] text-white shadow-md'
                   : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >
@@ -514,8 +514,8 @@ const CorporatePhones = () => {
         {/* Main Content */}
         {filteredPhones.length === 0 ? (
           <div className="bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center">
-            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-purple-100 to-violet-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FaMobile className="w-8 h-8 lg:w-10 lg:h-10 text-purple-600" />
+            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaMobile className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
             </div>
             <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2">
               {searchTerm || filterStatus !== 'all' || filterCategory !== 'all'
@@ -530,7 +530,7 @@ const CorporatePhones = () => {
             {canEdit && !searchTerm && filterStatus === 'all' && filterCategory === 'all' && (
               <button
                 onClick={handleCreate}
-                className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
+                className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
               >
                 <FaPlus className="w-4 h-4" />
                 Agregar Primer Teléfono
@@ -545,10 +545,10 @@ const CorporatePhones = () => {
                 {filteredPhones.map((item) => (
                   <div
                     key={item.id}
-                    className="bg-white rounded-xl lg:rounded-2xl border-2 border-gray-200 hover:border-purple-300 hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                    className="bg-white rounded-xl lg:rounded-2xl border-2 border-gray-200 hover:border-[#8e4dbf] hover:shadow-xl transition-all duration-300 overflow-hidden group"
                   >
                     {/* Card Header */}
-                    <div className="bg-linear-to-r from-purple-600 to-violet-600 p-3 lg:p-4 text-white">
+                    <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-3 lg:p-4 text-white">
                       <div className="flex items-start justify-between">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
@@ -585,8 +585,8 @@ const CorporatePhones = () => {
                     <div className="p-4 lg:p-5">
                       <div className="space-y-3">
                         <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
-                          <div className="w-8 h-8 lg:w-10 lg:h-10 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
-                            <FaMobile className="w-4 h-4 lg:w-5 lg:h-5 text-purple-600" />
+                          <div className="w-8 h-8 lg:w-10 lg:h-10 bg-[#f3ebf9] rounded-lg flex items-center justify-center shrink-0">
+                            <FaMobile className="w-4 h-4 lg:w-5 lg:h-5 text-[#662d91]" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-xs text-gray-500 font-medium">Plan</p>
@@ -621,7 +621,7 @@ const CorporatePhones = () => {
               <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-linear-to-r from-purple-600 to-violet-600 text-white">
+                    <thead className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white">
                       <tr>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Categoría</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Número</th>
@@ -636,9 +636,9 @@ const CorporatePhones = () => {
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                       {filteredPhones.map((item) => (
-                        <tr key={item.id} className="hover:bg-purple-50 transition-colors">
+                        <tr key={item.id} className="hover:bg-[#f3ebf9] transition-colors">
                           <td className="px-4 py-4">
-                            <span className="font-semibold text-purple-600">{getCategoryLabel(item.category)}</span>
+                            <span className="font-semibold text-[#662d91]">{getCategoryLabel(item.category)}</span>
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-700 font-mono">{item.numero_celular}</td>
                           <td className="px-4 py-4 text-sm text-gray-700">{item.nombre}</td>
@@ -684,7 +684,7 @@ const CorporatePhones = () => {
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
           <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">
                   {editingItem ? 'Editar Teléfono Corporativo' : 'Nuevo Teléfono Corporativo'}
@@ -702,8 +702,8 @@ const CorporatePhones = () => {
               {/* Información Básica */}
               <div>
                 <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <div className="w-6 h-6 lg:w-8 lg:h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <FaMobile className="w-3 h-3 lg:w-4 lg:h-4 text-purple-600" />
+                  <div className="w-6 h-6 lg:w-8 lg:h-8 bg-[#f3ebf9] rounded-lg flex items-center justify-center">
+                    <FaMobile className="w-3 h-3 lg:w-4 lg:h-4 text-[#662d91]" />
                   </div>
                   Información Básica
                 </h3>
@@ -715,7 +715,7 @@ const CorporatePhones = () => {
                     <select
                       value={formData.category}
                       onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     >
                       <option value="admon">Administración</option>
@@ -734,7 +734,7 @@ const CorporatePhones = () => {
                       placeholder="Ej: 300 123 4567"
                       value={formData.numero_celular}
                       onChange={(e) => setFormData({ ...formData, numero_celular: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     />
                   </div>
@@ -746,7 +746,7 @@ const CorporatePhones = () => {
                     <select
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     >
                       <option value="activo">Activo</option>
@@ -775,7 +775,7 @@ const CorporatePhones = () => {
                       placeholder="Nombre completo"
                       value={formData.nombre}
                       onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     />
                   </div>
@@ -789,7 +789,7 @@ const CorporatePhones = () => {
                       placeholder="Cargo del usuario"
                       value={formData.cargo}
                       onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
 
@@ -802,7 +802,7 @@ const CorporatePhones = () => {
                       placeholder="correo@empresa.com"
                       value={formData.correos}
                       onChange={(e) => setFormData({ ...formData, correos: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
 
@@ -815,7 +815,7 @@ const CorporatePhones = () => {
                       placeholder="Ciudad"
                       value={formData.ciudad}
                       onChange={(e) => setFormData({ ...formData, ciudad: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
                 </div>
@@ -839,7 +839,7 @@ const CorporatePhones = () => {
                       placeholder="Nombre del plan"
                       value={formData.plan}
                       onChange={(e) => setFormData({ ...formData, plan: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
 
@@ -852,7 +852,7 @@ const CorporatePhones = () => {
                       placeholder="Ej: 300 min"
                       value={formData.plan_minutos}
                       onChange={(e) => setFormData({ ...formData, plan_minutos: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
 
@@ -865,7 +865,7 @@ const CorporatePhones = () => {
                       placeholder="0"
                       value={formData.tarifa}
                       onChange={(e) => setFormData({ ...formData, tarifa: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
 
@@ -878,7 +878,7 @@ const CorporatePhones = () => {
                       placeholder="Ej: 10GB"
                       value={formData.gigas_internet}
                       onChange={(e) => setFormData({ ...formData, gigas_internet: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
                 </div>
@@ -902,7 +902,7 @@ const CorporatePhones = () => {
                       placeholder="Modelo del equipo"
                       value={formData.equipo_celular}
                       onChange={(e) => setFormData({ ...formData, equipo_celular: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
 
@@ -915,7 +915,7 @@ const CorporatePhones = () => {
                       placeholder="Número IMEI"
                       value={formData.imei}
                       onChange={(e) => setFormData({ ...formData, imei: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-mono text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-mono text-sm lg:text-base"
                     />
                   </div>
 
@@ -927,7 +927,7 @@ const CorporatePhones = () => {
                       type="date"
                       value={formData.fecha_entrega}
                       onChange={(e) => setFormData({ ...formData, fecha_entrega: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
 
@@ -943,7 +943,7 @@ const CorporatePhones = () => {
                           ...formData,
                           [formData.category === 'asesores' ? 'fecha_entrega_reposicion' : 'fecha_entrega_nueva_persona']: e.target.value
                         })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       />
                     </div>
                   )}
@@ -959,7 +959,7 @@ const CorporatePhones = () => {
                         placeholder="Detalles de la devolución del equipo"
                         value={formData.devolucion_equipo}
                         onChange={(e) => setFormData({ ...formData, devolucion_equipo: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                         rows="3"
                       />
                     </div>
@@ -973,7 +973,7 @@ const CorporatePhones = () => {
                         placeholder="Número de factura de compra"
                         value={formData.numero_factura_compra}
                         onChange={(e) => setFormData({ ...formData, numero_factura_compra: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       />
                     </div>
                   </div>
@@ -992,7 +992,7 @@ const CorporatePhones = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 lg:px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-sm lg:text-base"
+                  className="flex-1 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-sm lg:text-base"
                   disabled={formLoading}
                 >
                   {formLoading ? (
@@ -1050,3 +1050,4 @@ const CorporatePhones = () => {
 };
 
 export default CorporatePhones;
+

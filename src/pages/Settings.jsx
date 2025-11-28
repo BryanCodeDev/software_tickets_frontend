@@ -260,7 +260,7 @@ const Settings = () => {
                   className={`px-4 py-2 font-medium rounded-lg focus:ring-2 focus:ring-offset-2 transition-colors shrink-0 ${
                     twoFactorData.isEnabled
                       ? 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500'
-                      : 'bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500'
+                      : 'bg-[#662d91] text-white hover:bg-[#7a3da8] focus:ring-[#662d91]'
                   } disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   {twoFactorLoading ? 'Procesando...' : (twoFactorData.isEnabled ? 'Deshabilitar' : 'Habilitar')}
@@ -274,7 +274,7 @@ const Settings = () => {
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3 bg-purple-600 text-white font-semibold rounded-xl hover:bg-purple-700 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+              className="px-6 py-3 bg-[#662d91] text-white font-semibold rounded-xl hover:bg-[#7a3da8] focus:ring-2 focus:ring-[#662d91] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
             >
               {loading ? 'Guardando...' : 'Guardar Cambios'}
             </button>
@@ -334,7 +334,7 @@ const Settings = () => {
                     value={twoFactorData.token}
                     onChange={handle2FAChange}
                     placeholder="Ingresa el código de 6 dígitos"
-                    className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                    className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all"
                     required
                     maxLength="6"
                   />
@@ -354,7 +354,7 @@ const Settings = () => {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    className="flex-1 px-4 py-3 bg-[#662d91] hover:bg-[#7a3da8] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                     disabled={twoFactorLoading}
                   >
                     {twoFactorLoading ? (
@@ -407,7 +407,7 @@ const Settings = () => {
                       name="currentPassword"
                       value={passwordData.currentPassword}
                       onChange={handlePasswordChange}
-                      className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                      className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all"
                       required
                     />
                     <button
@@ -430,7 +430,7 @@ const Settings = () => {
                       name="newPassword"
                       value={passwordData.newPassword}
                       onChange={handlePasswordChange}
-                      className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                      className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all"
                       required
                     />
                     <button
@@ -453,7 +453,7 @@ const Settings = () => {
                       name="confirmPassword"
                       value={passwordData.confirmPassword}
                       onChange={handlePasswordChange}
-                      className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                      className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all"
                       required
                     />
                     <button
@@ -477,7 +477,7 @@ const Settings = () => {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    className="flex-1 px-4 py-3 bg-[#662d91] hover:bg-[#7a3da8] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                     disabled={passwordLoading}
                   >
                     {passwordLoading ? (
@@ -503,3 +503,5 @@ const Settings = () => {
 };
 
 export default Settings;
+
+

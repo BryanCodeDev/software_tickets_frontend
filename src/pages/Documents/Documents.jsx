@@ -361,10 +361,10 @@ const Documents = () => {
       case 'jpg':
       case 'jpeg':
       case 'png':
-      case 'gif': return <FaFileImage className="text-purple-600 text-xl" />;
+      case 'gif': return <FaFileImage className="text-[#662d91] text-xl" />;
       case 'zip':
       case 'rar': return <FaFileArchive className="text-yellow-600 text-xl" />;
-      default: return <FaFileAlt className="text-purple-600 text-xl" />;
+      default: return <FaFileAlt className="text-[#662d91] text-xl" />;
     }
   };
 
@@ -776,9 +776,9 @@ const Documents = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-[#662d91] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600 font-medium">Cargando documentos...</p>
         </div>
       </div>
@@ -786,7 +786,7 @@ const Documents = () => {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50">
+    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]">
       {/* Notification */}
       <NotificationSystem
         notification={notification}
@@ -805,7 +805,7 @@ const Documents = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center space-x-4">
-              <div className="w-14 h-14 bg-linear-to-br from-purple-600 to-violet-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <div className="w-14 h-14 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-2xl flex items-center justify-center shadow-lg">
                 <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
@@ -820,7 +820,7 @@ const Documents = () => {
               </div>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
-              <div className="flex items-center space-x-2 bg-purple-50 px-4 py-2 rounded-xl">
+              <div className="flex items-center space-x-2 bg-[#f3ebf9] px-4 py-2 rounded-xl">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="text-sm font-medium text-gray-700">{totalUniqueDocuments} documentos</span>
               </div>
@@ -848,7 +848,7 @@ const Documents = () => {
               {((user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico') || canWriteInCurrentFolder) && (
                 <button
                   onClick={() => setShowUploadModal(true)}
-                  className="inline-flex items-center px-5 py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                  className="inline-flex items-center px-5 py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
                 >
                   <FaUpload className="mr-2" />
                   Nuevo Documento
@@ -888,7 +888,7 @@ const Documents = () => {
 
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm text-gray-600 font-medium">
-            Mostrando <span className="font-bold text-purple-600">{filteredDocuments.length}</span> documentos
+            Mostrando <span className="font-bold text-[#662d91]">{filteredDocuments.length}</span> documentos
           </p>
         </div>
       </div>
@@ -896,13 +896,13 @@ const Documents = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200 bg-linear-to-r from-purple-50 to-violet-50">
+          <div className="px-6 py-4 border-b border-gray-200 bg-linear-to-r from-[#f3ebf9] to-[#e8d5f5]">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <FaFile className="text-purple-600 text-lg" />
+                <FaFile className="text-[#662d91] text-lg" />
                 <h2 className="text-lg font-bold text-gray-900">Repositorio de Versiones de Documentos</h2>
               </div>
-              <span className="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-semibold rounded-full">
+              <span className="px-3 py-1 bg-[#f3ebf9] text-[#662d91] text-sm font-semibold rounded-full">
                {currentFolders.length + filteredDocuments.length} elementos
              </span>
             </div>
@@ -994,7 +994,7 @@ const Documents = () => {
                                 e.stopPropagation();
                                 handleOpenPermissionsModal(folder, 'folder');
                               }}
-                              className="inline-flex items-center px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 text-sm font-semibold rounded-lg transition-all"
+                              className="inline-flex items-center px-3 py-1.5 bg-[#f3ebf9] hover:bg-[#f3ebf9] text-[#662d91] text-sm font-semibold rounded-lg transition-all"
                             >
                               <FaUser className="mr-1" />
                               Permisos
@@ -1009,11 +1009,11 @@ const Documents = () => {
                       return (
                         <div
                           key={doc.id}
-                          className="group bg-linear-to-r from-gray-50 to-white rounded-xl p-5 border border-gray-200 hover:border-purple-300 hover:shadow-md transition-all duration-200"
+                          className="group bg-linear-to-r from-gray-50 to-white rounded-xl p-5 border border-gray-200 hover:border-[#8e4dbf] hover:shadow-md transition-all duration-200"
                         >
                           {/* Document Header with Icon and Info */}
                           <div className="flex items-start space-x-4 mb-4">
-                            <div className="w-12 h-12 bg-linear-to-br from-purple-100 to-violet-100 rounded-xl flex items-center justify-center shrink-0">
+                            <div className="w-12 h-12 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-xl flex items-center justify-center shrink-0">
                               {getFileIcon(doc.filePath)}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -1031,7 +1031,7 @@ const Documents = () => {
                                   </span>
                                 )}
                                 {doc.version && (
-                                  <span className="inline-flex items-center px-2.5 py-1 bg-purple-50 text-purple-700 text-xs font-medium rounded-lg">
+                                  <span className="inline-flex items-center px-2.5 py-1 bg-[#f3ebf9] text-[#662d91] text-xs font-medium rounded-lg">
                                     v{doc.version}
                                   </span>
                                 )}
@@ -1061,7 +1061,7 @@ const Documents = () => {
                           <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
                             <button
                               onClick={() => handleDownloadDocument(doc.id, getDownloadName(doc))}
-                              className="inline-flex items-center px-4 py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all"
+                              className="inline-flex items-center px-4 py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all"
                             >
                               <FaDownload className="mr-2" />
                               Descargar
@@ -1106,7 +1106,7 @@ const Documents = () => {
       {showUploadModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
           <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">Nuevo Documento</h2>
                 <button
@@ -1160,7 +1160,7 @@ const Documents = () => {
                         version: selectedDoc ? (parseFloat(selectedDoc.version) + 0.1).toFixed(1) : '1.0'
                       });
                     }}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                     required={formData.isNewVersion}
                   >
                     <option value="">Seleccionar documento...</option>
@@ -1195,7 +1195,7 @@ const Documents = () => {
                     placeholder="Nombre del documento"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                     required
                     disabled={formData.isNewVersion}
                   />
@@ -1208,7 +1208,7 @@ const Documents = () => {
                     placeholder="Ej: 1.0"
                     value={formData.version}
                     onChange={(e) => setFormData({ ...formData, version: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                     required
                   />
                 </div>
@@ -1220,7 +1220,7 @@ const Documents = () => {
                     placeholder="Ej: Manual, Política"
                     value={formData.type}
                     onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                     disabled={formData.isNewVersion}
                   />
                 </div>
@@ -1232,7 +1232,7 @@ const Documents = () => {
                     placeholder="Ej: Recursos Humanos"
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                     disabled={formData.isNewVersion}
                   />
                 </div>
@@ -1243,7 +1243,7 @@ const Documents = () => {
                     placeholder="Descripción del contenido del documento"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all resize-none"
                     rows="3"
                   />
                 </div>
@@ -1255,7 +1255,7 @@ const Documents = () => {
                       placeholder="Describe los cambios en esta versión"
                       value={formData.changeDescription}
                       onChange={(e) => setFormData({ ...formData, changeDescription: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all resize-none"
                       rows="2"
                     />
                   </div>
@@ -1267,7 +1267,7 @@ const Documents = () => {
                     <select
                       value={formData.folderId || ''}
                       onChange={(e) => setFormData({ ...formData, folderId: e.target.value || null })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                     >
                       <option value="">Seleccionar carpeta (opcional)</option>
                       {folders.map((folder) => (
@@ -1284,7 +1284,7 @@ const Documents = () => {
                   <input
                     type="file"
                     onChange={(e) => setFormData({ ...formData, file: e.target.files[0] })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-100 file:text-purple-700 hover:file:bg-purple-200 file:cursor-pointer"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#f3ebf9] file:text-[#662d91] hover:file:bg-[#e8d5f5] file:cursor-pointer"
                     required
                   />
                 </div>
@@ -1300,7 +1300,7 @@ const Documents = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  className="flex-1 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                   disabled={uploadLoading}
                 >
                   {uploadLoading ? (
@@ -1328,7 +1328,7 @@ const Documents = () => {
       {showEditModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
           <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">Editar Documento</h2>
                 <button
@@ -1351,7 +1351,7 @@ const Documents = () => {
                     placeholder="Nombre del documento"
                     value={editFormData.title}
                     onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                     required
                   />
                 </div>
@@ -1363,7 +1363,7 @@ const Documents = () => {
                     placeholder="Ej: Manual, Política"
                     value={editFormData.type}
                     onChange={(e) => setEditFormData({ ...editFormData, type: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                   />
                 </div>
 
@@ -1374,7 +1374,7 @@ const Documents = () => {
                     placeholder="Ej: Recursos Humanos"
                     value={editFormData.category}
                     onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                   />
                 </div>
 
@@ -1384,7 +1384,7 @@ const Documents = () => {
                     placeholder="Descripción del contenido del documento"
                     value={editFormData.description}
                     onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all resize-none"
                     rows="4"
                   />
                 </div>
@@ -1400,7 +1400,7 @@ const Documents = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                  className="flex-1 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
                 >
                   Actualizar Documento
                 </button>
@@ -1414,7 +1414,7 @@ const Documents = () => {
       {showHistoryModal && selectedDocument && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
           <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">Historial de Versiones: {selectedDocument.title}</h2>
                 <button
@@ -1429,17 +1429,17 @@ const Documents = () => {
             <div className="p-6">
               <div className="space-y-4">
                 {selectedDocument.versions.map((version, index) => (
-                  <div key={version.id} className={`p-4 rounded-xl border ${version.isActive ? 'border-purple-300 bg-purple-50' : 'border-gray-200 bg-gray-50'}`}>
+                  <div key={version.id} className={`p-4 rounded-xl border ${version.isActive ? 'border-[#8e4dbf] bg-[#f3ebf9]' : 'border-gray-200 bg-gray-50'}`}>
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center space-x-3">
                         <span className="text-lg font-bold text-gray-900">Versión {version.version}</span>
-                        {version.isActive && <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full">Activa</span>}
+                        {version.isActive && <span className="px-2 py-1 bg-[#f3ebf9] text-[#662d91] text-xs font-semibold rounded-full">Activa</span>}
                         <span className="text-sm text-gray-500">{getTimeAgo(version.createdAt)}</span>
                       </div>
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleDownloadDocument(version.id, getDownloadName(selectedDocument, version))}
-                          className="inline-flex items-center px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-lg transition-all"
+                          className="inline-flex items-center px-3 py-1.5 bg-[#662d91] hover:bg-[#7a3da8] text-white text-sm font-semibold rounded-lg transition-all"
                         >
                           <FaDownload className="mr-1" />
                           Descargar
@@ -1597,7 +1597,7 @@ const Documents = () => {
       {showPermissionsModal && selectedItemForPermissions && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
           <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">Gestionar Permisos</h2>
                 <button
@@ -1620,8 +1620,8 @@ const Documents = () => {
                     {permissions.map((permission) => (
                       <div key={permission.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                         <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                            <FaUser className="w-4 h-4 text-purple-600" />
+                          <div className="w-8 h-8 bg-[#f3ebf9] rounded-full flex items-center justify-center">
+                            <FaUser className="w-4 h-4 text-[#662d91]" />
                           </div>
                           <div>
                             <p className="font-medium text-gray-900">
@@ -1701,7 +1701,7 @@ const Documents = () => {
                       placeholder="Buscar usuarios por nombre, usuario o email..."
                       value={userSearchTerm}
                       onChange={(e) => setUserSearchTerm(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 text-sm"
+                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#662d91] focus:border-[#662d91] text-sm"
                     />
                   </div>
 
@@ -1710,7 +1710,7 @@ const Documents = () => {
                     <button
                       type="button"
                       onClick={handleSelectAllUsers}
-                      className="px-3 py-1.5 bg-purple-100 text-purple-700 text-xs font-medium rounded-md hover:bg-purple-200 transition-colors"
+                      className="px-3 py-1.5 bg-[#f3ebf9] text-[#662d91] text-xs font-medium rounded-md hover:bg-[#e8d5f5] transition-colors"
                     >
                       Seleccionar Todos
                     </button>
@@ -1749,11 +1749,11 @@ const Documents = () => {
                               type="checkbox"
                               checked={selectedUsers.includes(u.id)}
                               onChange={() => handleUserToggle(u.id)}
-                              className="mr-3 h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                              className="mr-3 h-4 w-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
                             />
                             <div className="flex items-center space-x-3 flex-1">
-                              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                                <span className="text-sm font-medium text-purple-600">
+                              <div className="w-8 h-8 bg-[#f3ebf9] rounded-full flex items-center justify-center">
+                                <span className="text-sm font-medium text-[#662d91]">
                                   {(u.name || u.username || 'U').charAt(0).toUpperCase()}
                                 </span>
                               </div>
@@ -1765,7 +1765,7 @@ const Documents = () => {
                                   {u.email || 'Sin email'}
                                 </p>
                                 {u.Role && (
-                                  <p className="text-xs text-purple-600 truncate">
+                                  <p className="text-xs text-[#662d91] truncate">
                                     {u.Role.name}
                                   </p>
                                 )}
@@ -1789,7 +1789,7 @@ const Documents = () => {
                   <button
                     onClick={handleGrantPermissions}
                     disabled={selectedUsers.length === 0}
-                    className="flex-1 px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Otorgar Permisos
                   </button>
@@ -1804,3 +1804,5 @@ const Documents = () => {
 };
 
 export default Documents;
+
+

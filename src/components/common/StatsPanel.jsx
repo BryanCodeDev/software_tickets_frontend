@@ -35,3 +35,4 @@ const StatsPanel = React.memo(({ stats, showStats, onToggleStats, title, statsCo
 StatsPanel.displayName = 'StatsPanel';
 
 export default StatsPanel;
+

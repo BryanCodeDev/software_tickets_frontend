@@ -12,7 +12,7 @@ const TicketStats = ({ stats }) => {
         <p className="text-xs lg:text-sm font-medium opacity-90">Total Tickets</p>
       </div>
 
-      <div className="bg-linear-to-br from-purple-500 to-purple-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg">
+      <div className="bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg">
         <div className="flex items-center justify-between mb-1 lg:mb-2">
           <FaExclamationTriangle className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
           <span className="text-xl lg:text-3xl font-bold">{stats.abiertos}</span>
@@ -44,7 +44,7 @@ const TicketStats = ({ stats }) => {
         <p className="text-xs lg:text-sm font-medium opacity-90">Alta Prioridad</p>
       </div>
 
-      <div className="bg-linear-to-br from-violet-500 to-purple-600 rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg col-span-2 sm:col-span-3 lg:col-span-1 xl:col-span-1">
+      <div className="bg-linear-to-br from-[#8e4dbf] to-[#8e4dbf] rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg col-span-2 sm:col-span-3 lg:col-span-1 xl:col-span-1">
         <div className="flex items-center justify-between mb-1 lg:mb-2">
           <FaChartBar className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />
           <span className="text-xl lg:text-3xl font-bold">{stats.resolutionRate}%</span>
@@ -56,3 +56,4 @@ const TicketStats = ({ stats }) => {
 };
 
 export default TicketStats;
+

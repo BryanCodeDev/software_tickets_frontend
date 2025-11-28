@@ -39,3 +39,4 @@ const NotificationSystem = React.memo(({ notification, onClose }) => {
 NotificationSystem.displayName = 'NotificationSystem';
 
 export default NotificationSystem;
+

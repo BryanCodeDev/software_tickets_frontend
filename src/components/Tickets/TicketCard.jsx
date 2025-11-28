@@ -10,7 +10,7 @@ const TicketCard = ({
 }) => {
   const getStatusColor = (status) => {
     const colors = {
-      'abierto': 'bg-purple-100 text-purple-700 border-purple-200',
+      'abierto': 'bg-[#f3ebf9] text-[#662d91] border-[#e8d5f5]',
       'en progreso': 'bg-blue-100 text-blue-700 border-blue-200',
       'cerrado': 'bg-gray-200 text-gray-700 border-gray-300',
       'resuelto': 'bg-green-100 text-green-700 border-green-200'
@@ -50,7 +50,7 @@ const TicketCard = ({
 
   return (
     <div
-      className="bg-gray-50 rounded-xl lg:rounded-2xl border-2 border-gray-200 hover:border-purple-300 hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer"
+      className="bg-gray-50 rounded-xl lg:rounded-2xl border-2 border-gray-200 hover:border-[#8e4dbf] hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer"
       onClick={() => onViewDetail(ticket)}
     >
       {/* Card Header */}
@@ -97,8 +97,8 @@ const TicketCard = ({
 
         <div className="space-y-3">
           <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
-            <div className="w-8 h-8 lg:w-10 lg:h-10 bg-purple-100 rounded-full flex items-center justify-center shrink-0">
-              <FaUserCircle className="w-5 h-5 lg:w-6 lg:h-6 text-purple-600" />
+            <div className="w-8 h-8 lg:w-10 lg:h-10 bg-[#f3ebf9] rounded-full flex items-center justify-center shrink-0">
+              <FaUserCircle className="w-5 h-5 lg:w-6 lg:h-6 text-[#662d91]" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs text-gray-500 font-medium">Creado por</p>
@@ -127,7 +127,7 @@ const TicketCard = ({
                 <FaClock className="w-3 h-3" />
                 {new Date(ticket.createdAt).toLocaleDateString('es-ES')}
               </span>
-              <button className="flex items-center gap-1 text-purple-600 hover:text-purple-700 font-semibold">
+              <button className="flex items-center gap-1 text-[#662d91] hover:text-[#662d91] font-semibold">
                 <FaEye className="w-3 h-3" />
                 Ver detalles
               </button>
@@ -140,3 +140,4 @@ const TicketCard = ({
 };
 
 export default TicketCard;
+

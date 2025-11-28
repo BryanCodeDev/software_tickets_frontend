@@ -93,19 +93,19 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* Header Section */}
-        <div className="bg-linear-to-r from-purple-600 to-indigo-600 rounded-xl p-4 sm:p-6 lg:p-8 text-white shadow-lg">
+        <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl p-4 sm:p-6 lg:p-8 text-white shadow-lg">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex-1 min-w-0">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">Panel Principal</h1>
-              <p className="text-base sm:text-lg lg:text-xl text-purple-100">
+              <p className="text-base sm:text-lg lg:text-xl text-[#e8d5f5]">
                 Bienvenido, <span className="font-semibold">{user?.name || 'Usuario'}</span>
               </p>
-              <p className="text-xs sm:text-sm text-purple-200 mt-1">
+              <p className="text-xs sm:text-sm text-[#e8d5f5] mt-1">
                 Rol: {user?.role?.name || 'Empleado'} • Sistema DuvyClass
               </p>
             </div>
             <div className="flex items-center space-x-2 text-xs sm:text-sm bg-white/20 px-3 py-2 lg:px-4 lg:py-2 rounded-lg backdrop-blur-sm w-fit">
-              <FaClock className="text-purple-200 shrink-0" />
+              <FaClock className="text-[#e8d5f5] shrink-0" />
               <span className="truncate">{new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
             </div>
           </div>
@@ -118,8 +118,8 @@ const Dashboard = () => {
           value={stats.tickets}
           description="Gestionar solicitudes de IT"
           icon={FaTicketAlt}
-          gradient="bg-gradient-to-br from-violet-500 to-violet-600"
-          textColor="text-violet-100"
+          gradient="bg-gradient-to-br from-[#7a3da8] to-[#8e4dbf]"
+          textColor="text-[#e8d5f5]"
         />
 
         <StatCard
@@ -145,8 +145,8 @@ const Dashboard = () => {
           value={stats.inventory}
           description="Activos tecnológicos"
           icon={FaBox}
-          gradient="bg-gradient-to-br from-purple-500 to-purple-600"
-          textColor="text-purple-100"
+          gradient="bg-gradient-to-br from-[#662d91] to-[#7a3da8]"
+          textColor="text-[#e8d5f5]"
         />
         
 
@@ -164,7 +164,7 @@ const Dashboard = () => {
         <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-2">
             <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center">
-              <FaChartLine className="mr-2 text-purple-600 shrink-0" />
+              <FaChartLine className="mr-2 text-[#662d91] shrink-0" />
               <span className="truncate">Estado de Tickets</span>
             </h2>
             <span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 sm:px-3 sm:py-1 rounded-full w-fit">
@@ -175,7 +175,7 @@ const Dashboard = () => {
           {/* Tickets Normales */}
           <div className="mb-6">
             <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
-              <FaTicketAlt className="mr-2 text-purple-600" />
+              <FaTicketAlt className="mr-2 text-[#662d91]" />
               Tickets de Soporte IT
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
@@ -236,7 +236,7 @@ const Dashboard = () => {
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 sm:h-3 overflow-hidden">
               <div
-                className="bg-linear-to-r from-purple-500 to-indigo-600 h-2 sm:h-3 rounded-full transition-all duration-500 ease-out"
+                className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] h-2 sm:h-3 rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${completionRate}%` }}
               ></div>
             </div>
@@ -248,19 +248,19 @@ const Dashboard = () => {
           {/* System Info */}
           <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
             <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 flex items-center">
-              <FaServer className="mr-2 text-purple-600 shrink-0" />
+              <FaServer className="mr-2 text-[#662d91] shrink-0" />
               <span className="truncate">Resumen del Sistema</span>
             </h2>
             <div className="space-y-2 sm:space-y-3">
-              <div className="flex justify-between items-center p-2 sm:p-3 bg-linear-to-r from-purple-50 to-indigo-50 rounded-lg border border-purple-100">
+              <div className="flex justify-between items-center p-2 sm:p-3 bg-linear-to-r from-[#f3ebf9] to-[#e8d5f5] rounded-lg border border-[#e8d5f5]">
                 <span className="text-xs sm:text-sm text-gray-700 font-medium truncate">Total de Recursos</span>
-                <span className="text-purple-600 font-bold text-base sm:text-lg shrink-0">
+                <span className="text-[#662d91] font-bold text-base sm:text-lg shrink-0">
                   {loading ? '...' : totalResources}
                 </span>
               </div>
               <div className="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg">
                 <span className="text-xs sm:text-sm text-gray-700 font-medium truncate">Activos en Inventario</span>
-                <span className="text-purple-600 font-bold text-base sm:text-lg shrink-0">{loading ? '...' : stats.inventory}</span>
+                <span className="text-[#662d91] font-bold text-base sm:text-lg shrink-0">{loading ? '...' : stats.inventory}</span>
               </div>
               <div className="flex justify-between items-center p-2 sm:p-3 bg-emerald-50 rounded-lg">
                 <span className="text-xs sm:text-sm text-gray-700 font-medium truncate">Tickets de Calidad</span>
@@ -342,10 +342,10 @@ const Dashboard = () => {
                   <p className="text-xs text-gray-600">Equipos por usuario</p>
                 </div>
 
-                <div className="p-3 sm:p-4 bg-purple-50 rounded-lg border border-purple-100">
+                <div className="p-3 sm:p-4 bg-[#f3ebf9] rounded-lg border border-[#e8d5f5]">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs sm:text-sm font-semibold text-gray-700 truncate">Eficiencia Global</span>
-                    <span className="text-xl sm:text-2xl font-bold text-purple-600 shrink-0">
+                    <span className="text-xl sm:text-2xl font-bold text-[#662d91] shrink-0">
                       {completionRate}%
                     </span>
                   </div>
@@ -386,7 +386,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="p-3 sm:p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500">
+              <div className="p-3 sm:p-4 bg-[#f3ebf9] rounded-lg border-l-4 border-[#662d91]">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-gray-900 text-sm sm:text-base truncate">Uptime del Sistema</p>
@@ -394,12 +394,12 @@ const Dashboard = () => {
                       {systemHealth.uptime ? `${Math.floor(systemHealth.uptime / 3600)}h ${Math.floor((systemHealth.uptime % 3600) / 60)}m` : 'Calculando...'}
                     </p>
                   </div>
-                  <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse shrink-0"></div>
+                  <div className="w-3 h-3 bg-[#662d91] rounded-full animate-pulse shrink-0"></div>
                 </div>
               </div>
 
               {user?.role?.name === 'Administrador' && (
-                <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-linear-to-r from-purple-600 to-indigo-600 rounded-lg text-white text-center">
+                <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-lg text-white text-center">
                   <FaLock className="inline-block mr-2 shrink-0" />
                   <span className="text-xs sm:text-sm font-semibold">Acceso Administrativo Activo</span>
                 </div>
@@ -413,3 +413,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

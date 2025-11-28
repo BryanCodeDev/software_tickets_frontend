@@ -19,7 +19,7 @@ const TicketPagination = ({ pagination, onPageChange }) => {
         <button
           onClick={() => onPageChange(pagination.currentPage + 1)}
           disabled={pagination.currentPage >= pagination.totalPages}
-          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 disabled:text-purple-100 text-white font-semibold rounded-xl transition-all disabled:cursor-not-allowed"
+          className="px-4 py-2 bg-[#662d91] hover:bg-[#7a3da8] disabled:bg-[#8e4dbf] disabled:text-[#e8d5f5] text-white font-semibold rounded-xl transition-all disabled:cursor-not-allowed"
         >
           Siguiente
         </button>
@@ -29,3 +29,4 @@ const TicketPagination = ({ pagination, onPageChange }) => {
 };
 
 export default TicketPagination;
+

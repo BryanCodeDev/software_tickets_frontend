@@ -229,25 +229,25 @@ const Help = () => {
     {
       type: 'Email',
       value: 'asistentesistemas@duvyclass.co',
-      icon: <FaEnvelope className="text-purple-600" />,
+      icon: <FaEnvelope className="text-[#662d91]" />,
       description: 'Envíanos un correo para soporte técnico'
     },
     {
       type: 'Dirección',
       value: 'Kilómetro 3.5 vía Funza - Siberia\nParque Industrial Galicia\nManzana D, Bodegas 2 y 3',
-      icon: <FaPhone className="text-purple-600" />,
+      icon: <FaPhone className="text-[#662d91]" />,
       description: 'Nuestra ubicación física'
     },
     {
       type: 'PBX',
       value: '(57) 601-821 6565',
-      icon: <FaPhone className="text-purple-600" />,
+      icon: <FaPhone className="text-[#662d91]" />,
       description: 'Línea principal de la empresa'
     },
     {
       type: 'Sitio Web',
       value: 'www.duvyclass.com',
-      icon: <FaPhone className="text-purple-600" />,
+      icon: <FaPhone className="text-[#662d91]" />,
       description: 'Visita nuestro sitio web oficial'
     }
   ];
@@ -267,7 +267,7 @@ const Help = () => {
               onClick={() => setActiveTab('faq')}
               className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'faq'
-                  ? 'border-purple-500 text-purple-600'
+                  ? 'border-[#662d91] text-[#662d91]'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -277,7 +277,7 @@ const Help = () => {
               onClick={() => setActiveTab('contact')}
               className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'contact'
-                  ? 'border-purple-500 text-purple-600'
+                  ? 'border-[#662d91] text-[#662d91]'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -287,7 +287,7 @@ const Help = () => {
               onClick={() => setActiveTab('manual')}
               className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'manual'
-                  ? 'border-purple-500 text-purple-600'
+                  ? 'border-[#662d91] text-[#662d91]'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -301,13 +301,13 @@ const Help = () => {
           {activeTab === 'faq' && (
             <div className="space-y-4">
               <div className="flex items-center mb-6">
-                <FaQuestionCircle className="text-purple-600 text-2xl mr-3" />
+                <FaQuestionCircle className="text-[#662d91] text-2xl mr-3" />
                 <h2 className="text-xl font-semibold text-gray-900">Preguntas Frecuentes</h2>
               </div>
               <div className="space-y-4">
                 {faqs.map((faq, index) => (
                   <details key={index} className="bg-gray-50 rounded-lg p-4">
-                    <summary className="font-medium text-gray-900 cursor-pointer hover:text-purple-600">
+                    <summary className="font-medium text-gray-900 cursor-pointer hover:text-[#662d91]">
                       {faq.question}
                     </summary>
                     <p className="mt-2 text-gray-600">{faq.answer}</p>
@@ -322,7 +322,7 @@ const Help = () => {
           {activeTab === 'contact' && (
             <div className="space-y-4">
               <div className="flex items-center mb-6">
-                <FaPhone className="text-purple-600 text-2xl mr-3" />
+                <FaPhone className="text-[#662d91] text-2xl mr-3" />
                 <h2 className="text-xl font-semibold text-gray-900">Contacto y Soporte</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -332,13 +332,13 @@ const Help = () => {
                       {contact.icon}
                       <h3 className="font-medium text-gray-900 ml-2">{contact.type}</h3>
                     </div>
-                    <p className="text-purple-600 font-medium mb-1 whitespace-pre-line">{contact.value}</p>
+                    <p className="text-[#662d91] font-medium mb-1 whitespace-pre-line">{contact.value}</p>
                     <p className="text-sm text-gray-600">{contact.description}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-8 bg-purple-50 rounded-lg p-6">
+              <div className="mt-8 bg-[#f3ebf9] rounded-lg p-6">
                 <h3 className="font-medium text-gray-900 mb-2">¿No encuentras lo que buscas?</h3>
                 <p className="text-gray-600 mb-4">
                   Si tienes alguna pregunta específica o necesitas ayuda con algo en particular,
@@ -346,7 +346,7 @@ const Help = () => {
                 </p>
                 <button
                   onClick={() => navigate('/tickets')}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                  className="px-4 py-2 bg-[#662d91] text-white rounded-lg hover:bg-[#7a3da8] transition-colors"
                 >
                   Crear Ticket de Soporte
                 </button>
@@ -358,11 +358,11 @@ const Help = () => {
           {activeTab === 'manual' && (
             <div className="space-y-6">
               <div className="flex items-center mb-6">
-                <FaBook className="text-purple-600 text-2xl mr-3" />
+                <FaBook className="text-[#662d91] text-2xl mr-3" />
                 <h2 className="text-xl font-semibold text-gray-900">Manual de Usuario</h2>
               </div>
               <div className="space-y-4">
-                <div className="bg-linear-to-r from-purple-500 to-purple-600 text-white p-4 rounded-lg">
+                <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white p-4 rounded-lg">
                   <h3 className="text-lg font-bold">Manual de Usuario - DuvyClass</h3>
                   <p className="text-sm opacity-90">Sistema IT de Gestión Tecnológica</p>
                 </div>
@@ -370,7 +370,7 @@ const Help = () => {
                 <div className="grid grid-cols-1 gap-4">
                   <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
                     <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
-                      <FaQuestionCircle className="text-purple-600 mr-2" />
+                      <FaQuestionCircle className="text-[#662d91] mr-2" />
                       Introducción
                     </summary>
                     <div className="p-4 pt-0 text-gray-700">
@@ -411,14 +411,14 @@ const Help = () => {
 
                   <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
                     <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
-                      <FaQuestionCircle className="text-purple-600 mr-2" />
+                      <FaQuestionCircle className="text-[#662d91] mr-2" />
                       Características Principales
                     </summary>
                     <div className="p-4 pt-0 text-gray-700">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="bg-purple-50 p-3 rounded-lg">
-                          <h6 className="font-medium text-purple-900 mb-2 flex items-center">
-                            <FaTicketAlt className="text-purple-600 mr-2" />
+                        <div className="bg-[#f3ebf9] p-3 rounded-lg">
+                          <h6 className="font-medium text-[#662d91] mb-2 flex items-center">
+                            <FaTicketAlt className="text-[#662d91] mr-2" />
                             Mesa de Ayuda
                           </h6>
                           <ul className="text-sm space-y-1">
@@ -513,7 +513,7 @@ const Help = () => {
 
                   <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
                     <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
-                      <FaQuestionCircle className="text-purple-600 mr-2" />
+                      <FaQuestionCircle className="text-[#662d91] mr-2" />
                       Requisitos del Sistema
                     </summary>
                     <div className="p-4 pt-0 text-gray-700">
@@ -539,7 +539,7 @@ const Help = () => {
                         </div>
                       </div>
                       <div className="mt-4">
-                        <h6 className="font-medium mb-2 text-purple-700 flex items-center"><FaGlobe className="text-purple-700 mr-2" /> Navegadores Soportados</h6>
+                        <h6 className="font-medium mb-2 text-[#662d91] flex items-center"><FaGlobe className="text-[#662d91] mr-2" /> Navegadores Soportados</h6>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                           <div className="bg-green-100 p-2 rounded-lg text-center">
                             <div className="font-medium text-green-800">Chrome</div>
@@ -567,7 +567,7 @@ const Help = () => {
 
                   <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
                     <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
-                      <FaShieldAlt className="text-purple-600 mr-2" />
+                      <FaShieldAlt className="text-[#662d91] mr-2" />
                       Roles y Permisos
                     </summary>
                     <div className="p-4 pt-0 text-gray-700">
@@ -854,17 +854,17 @@ const Help = () => {
                           </div>
                         </div>
 
-                        <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
-                          <h6 className="font-bold text-purple-900 mb-3 flex items-center">
-                            <FaShieldAlt className="text-purple-600 mr-2" />
+                        <div className="bg-[#f3ebf9] p-4 rounded-lg border-l-4 border-[#662d91]">
+                          <h6 className="font-bold text-[#662d91] mb-3 flex items-center">
+                            <FaShieldAlt className="text-[#662d91] mr-2" />
                             Calidad (Nivel 3 - Gestión de Calidad)
                           </h6>
-                          <p className="text-sm mb-3 text-purple-800">Los usuarios de calidad tienen acceso limitado general pero control administrativo completo sobre los módulos de calidad y documentación.</p>
+                          <p className="text-sm mb-3 text-[#7a3da8]">Los usuarios de calidad tienen acceso limitado general pero control administrativo completo sobre los módulos de calidad y documentación.</p>
 
                           <div className="grid grid-cols-1 gap-4">
                             <div className="bg-white p-3 rounded border">
                               <h7 className="font-medium text-sm mb-2 flex items-center">
-                                <FaTicketAlt className="text-purple-600 mr-2" />
+                                <FaTicketAlt className="text-[#662d91] mr-2" />
                                 Mesa de Ayuda (Tickets)
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
@@ -879,7 +879,7 @@ const Help = () => {
 
                             <div className="bg-white p-3 rounded border">
                               <h7 className="font-medium text-sm mb-2 flex items-center">
-                                <FaFileAlt className="text-purple-600 mr-2" />
+                                <FaFileAlt className="text-[#662d91] mr-2" />
                                 Control de Versiones de Documentos
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
@@ -896,7 +896,7 @@ const Help = () => {
 
                             <div className="bg-white p-3 rounded border">
                               <h7 className="font-medium text-sm mb-2 flex items-center">
-                                <FaShieldAlt className="text-purple-600 mr-2" />
+                                <FaShieldAlt className="text-[#662d91] mr-2" />
                                 Gestión de Calidad
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
@@ -910,7 +910,7 @@ const Help = () => {
 
                             <div className="bg-white p-3 rounded border">
                               <h7 className="font-medium text-sm mb-2 flex items-center">
-                                <FaBox className="text-purple-600 mr-2" />
+                                <FaBox className="text-[#662d91] mr-2" />
                                 Inventario IT
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
@@ -920,7 +920,7 @@ const Help = () => {
 
                             <div className="bg-white p-3 rounded border">
                               <h7 className="font-medium text-sm mb-2 flex items-center">
-                                <FaKey className="text-purple-600 mr-2" />
+                                <FaKey className="text-[#662d91] mr-2" />
                                 Gestión de Credenciales
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
@@ -930,7 +930,7 @@ const Help = () => {
 
                             <div className="bg-white p-3 rounded border">
                               <h7 className="font-medium text-sm mb-2 flex items-center">
-                                <FaUsers className="text-purple-600 mr-2" />
+                                <FaUsers className="text-[#662d91] mr-2" />
                                 Gestión de Usuarios
                               </h7>
                               <ul className="text-xs space-y-1 ml-6">
@@ -1221,7 +1221,7 @@ const Help = () => {
 
                   <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
                     <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
-                      <FaLightbulb className="text-purple-600 mr-2" />
+                      <FaLightbulb className="text-[#662d91] mr-2" />
                       Primeros Pasos
                     </summary>
                     <div className="p-4 pt-0 text-gray-700">
@@ -1248,8 +1248,8 @@ const Help = () => {
                         </div>
 
 
-                        <div className="bg-purple-50 p-4 rounded-lg">
-                          <h6 className="font-medium text-purple-900 mb-2 flex items-center"><FaLock className="text-purple-600 mr-2" /> Cambio de Contraseña Inicial</h6>
+                        <div className="bg-[#f3ebf9] p-4 rounded-lg">
+                          <h6 className="font-medium text-[#662d91] mb-2 flex items-center"><FaLock className="text-[#662d91] mr-2" /> Cambio de Contraseña Inicial</h6>
                           <p className="text-sm mb-2">Después del primer acceso, se recomienda cambiar la contraseña por defecto:</p>
                           <ol className="text-sm space-y-1 list-decimal list-inside">
                             <li>Vaya a <strong>Perfil</strong> en la barra lateral</li>
@@ -1264,7 +1264,7 @@ const Help = () => {
 
                   <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
                     <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
-                      <FaQuestionCircle className="text-purple-600 mr-2" />
+                      <FaQuestionCircle className="text-[#662d91] mr-2" />
                       Guía de Uso
                     </summary>
                     <div className="p-4 pt-0 text-gray-700">
@@ -1326,9 +1326,9 @@ const Help = () => {
                           </div>
                         </div>
 
-                        <div className="bg-purple-50 p-4 rounded-lg">
-                          <h6 className="font-medium text-purple-900 mb-3 flex items-center">
-                            <FaTicketAlt className="text-purple-600 mr-2" />
+                        <div className="bg-[#f3ebf9] p-4 rounded-lg">
+                          <h6 className="font-medium text-[#662d91] mb-3 flex items-center">
+                            <FaTicketAlt className="text-[#662d91] mr-2" />
                             Gestión de Tickets
                           </h6>
                           <div className="space-y-3">
@@ -1345,7 +1345,7 @@ const Help = () => {
                             <div>
                               <h7 className="font-medium text-sm">Estados de Tickets</h7>
                               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 ml-4">
-                                <div className="bg-purple-200 p-2 rounded text-xs text-center">Abierto</div>
+                                <div className="bg-[#e8d5f5] p-2 rounded text-xs text-center">Abierto</div>
                                 <div className="bg-blue-200 p-2 rounded text-xs text-center">En Progreso</div>
                                 <div className="bg-gray-200 p-2 rounded text-xs text-center">Cerrado</div>
                                 <div className="bg-indigo-200 p-2 rounded text-xs text-center">Resuelto</div>
@@ -1680,7 +1680,7 @@ const Help = () => {
 
                   <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
                     <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
-                      <FaQuestionCircle className="text-purple-600 mr-2" />
+                      <FaQuestionCircle className="text-[#662d91] mr-2" />
                       Solución de Problemas
                     </summary>
                     <div className="p-4 pt-0 text-gray-700">
@@ -1704,7 +1704,7 @@ const Help = () => {
 
                   <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
                     <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
-                      <FaBook className="text-purple-600 mr-2" />
+                      <FaBook className="text-[#662d91] mr-2" />
                       Glosario
                     </summary>
                     <div className="p-4 pt-0 text-gray-700">
@@ -1785,3 +1785,5 @@ const Help = () => {
 };
 
 export default Help;
+
+

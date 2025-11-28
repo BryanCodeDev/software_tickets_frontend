@@ -19,7 +19,7 @@ const Input = React.memo(({
 
   const inputType = showPasswordToggle && showPassword ? 'text' : type;
 
-  const baseClasses = 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all disabled:bg-gray-100 disabled:cursor-not-allowed';
+  const baseClasses = 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all disabled:bg-gray-100 disabled:cursor-not-allowed';
   const errorClasses = error ? 'border-red-500 focus:ring-red-500' : '';
   const iconClasses = Icon ? 'pl-12' : '';
 
@@ -72,3 +72,4 @@ const Input = React.memo(({
 Input.displayName = 'Input';
 
 export default Input;
+

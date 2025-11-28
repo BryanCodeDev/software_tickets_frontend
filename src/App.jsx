@@ -40,7 +40,7 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const LoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900">
+  <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-slate-900 via-[#662d91] to-slate-900">
     <LoadingSpinner size="lg" color="purple" text="Cargando página..." />
   </div>
 );
@@ -180,3 +180,4 @@ function App() {
 }
 
 export default App;
+

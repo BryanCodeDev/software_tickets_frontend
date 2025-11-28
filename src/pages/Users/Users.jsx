@@ -210,7 +210,7 @@ const Users = () => {
   // NUEVA FUNCIONALIDAD: Obtener icono de rol
   const getRoleIcon = (roleName) => {
     switch(roleName) {
-      case 'Administrador': return <FaUserShield className="w-4 h-4 text-purple-600" />;
+      case 'Administrador': return <FaUserShield className="w-4 h-4 text-[#662d91]" />;
       case 'Coordinadora Administrativa': return <FaUserShield className="w-4 h-4 text-orange-600" />;
       case 'Técnico': return <FaUserCog className="w-4 h-4 text-blue-600" />;
       case 'Calidad': return <FaShieldAlt className="w-4 h-4 text-emerald-600" />;
@@ -224,7 +224,7 @@ const Users = () => {
   // NUEVA FUNCIONALIDAD: Obtener color de badge por rol
   const getRoleBadgeColor = (roleName) => {
     switch(roleName) {
-      case 'Administrador': return 'bg-purple-100 text-purple-700 border-purple-200';
+      case 'Administrador': return 'bg-[#f3ebf9] text-[#662d91] border-[#e8d5f5]';
       case 'Coordinadora Administrativa': return 'bg-orange-100 text-orange-700 border-orange-200';
       case 'Técnico': return 'bg-blue-100 text-blue-700 border-blue-200';
       case 'Calidad': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
@@ -364,7 +364,7 @@ const Users = () => {
   if (loading) return <div>Cargando...</div>;
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4 sm:px-6 lg:px-8">
       {/* Notification */}
       <NotificationSystem
         notification={notification}
@@ -383,7 +383,7 @@ const Users = () => {
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-                <div className="w-12 h-12 bg-linear-to-r from-purple-600 to-violet-600 rounded-xl flex items-center justify-center mr-3 shadow-lg">
+                <div className="w-12 h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg">
                   <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                   </svg>
@@ -404,7 +404,7 @@ const Users = () => {
               </button>
               <button
                 onClick={handleCreate}
-                className="flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                className="flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 <FaPlus className="w-5 h-5" />
                 <span>Nuevo Usuario</span>
@@ -430,7 +430,7 @@ const Users = () => {
                 key: 'admins',
                 label: 'Administradores',
                 icon: FaUserShield,
-                gradient: 'from-purple-500 to-purple-600',
+                gradient: 'from-[#662d91] to-[#8e4dbf]',
                 loading: loading
               },
               {
@@ -479,7 +479,7 @@ const Users = () => {
                 key: 'withIT',
                 label: 'Con IT Asignado',
                 icon: FaCheck,
-                gradient: 'from-violet-500 to-purple-600',
+                gradient: 'from-[#8e4dbf] to-[#662d91]',
                 loading: loading
               },
               {
@@ -531,7 +531,7 @@ const Users = () => {
         {/* NUEVA FUNCIONALIDAD: Resumen de resultados y vista */}
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm text-gray-600 font-medium">
-            Mostrando <span className="font-bold text-purple-600">{filteredUsers.length}</span> de <span className="font-bold">{users.length}</span> usuarios
+            Mostrando <span className="font-bold text-[#662d91]">{filteredUsers.length}</span> de <span className="font-bold">{users.length}</span> usuarios
           </p>
         </div>
 
@@ -564,7 +564,7 @@ const Users = () => {
                     <div key={usr.id} className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:shadow-md transition-shadow">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
-                          <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                          <div className="w-10 h-10 bg-[#f3ebf9] rounded-full flex items-center justify-center">
                             {getRoleIcon(usr.Role?.name)}
                           </div>
                           <h3 className="font-semibold text-gray-900">{usr.username}</h3>
@@ -643,7 +643,7 @@ const Users = () => {
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
           <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">
                   {editingUser ? 'Editar Usuario' : 'Nuevo Usuario'}
@@ -668,7 +668,7 @@ const Users = () => {
                     placeholder="Nombre de usuario"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
                     required
                     disabled={editingUser}
                   />
@@ -683,7 +683,7 @@ const Users = () => {
                     placeholder="Email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
                     required
                     disabled={editingUser}
                   />
@@ -698,7 +698,7 @@ const Users = () => {
                     placeholder="Nombre completo"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
                     required
                     disabled={editingUser}
                   />
@@ -715,7 +715,7 @@ const Users = () => {
                         placeholder={editingUser ? "Dejar vacío para mantener contraseña actual" : "Contraseña"}
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 pr-20 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 pr-20 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
                         required={!editingUser}
                       />
                       <div className="absolute inset-y-0 right-0 flex items-center pr-2 gap-1">
@@ -723,7 +723,7 @@ const Users = () => {
                         <button
                           type="button"
                           onClick={generateSecurePassword}
-                          className="text-gray-400 hover:text-purple-600 p-1 transition-colors"
+                          className="text-gray-400 hover:text-[#662d91] p-1 transition-colors"
                           title="Generar contraseña segura"
                         >
                           <FaKey className="w-4 h-4" />
@@ -777,7 +777,7 @@ const Users = () => {
                   <select
                     value={formData.roleId}
                     onChange={(e) => setFormData({ ...formData, roleId: parseInt(e.target.value) })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
                   >
                     <option value={1}>Administrador</option>
                     <option value={5}>Coordinadora Administrativa</option>
@@ -796,7 +796,7 @@ const Users = () => {
                   <select
                     value={formData.it}
                     onChange={(e) => setFormData({ ...formData, it: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
                   >
                     <option value="">Sin asignar</option>
                     {uniqueITs.map((item) => (
@@ -845,7 +845,7 @@ const Users = () => {
                       name="corporatePhone"
                       value={formData.corporatePhone}
                       onChange={(e) => setFormData({ ...formData, corporatePhone: e.target.value })}
-                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
                       placeholder="Ej: 300 123 4567"
                     />
                   </div>
@@ -863,7 +863,7 @@ const Users = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  className="flex-1 px-4 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                   disabled={formLoading}
                 >
                   {formLoading ? (
@@ -888,3 +888,5 @@ const Users = () => {
 };
 
 export default Users;
+
+

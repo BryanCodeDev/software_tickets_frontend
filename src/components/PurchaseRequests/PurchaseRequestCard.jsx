@@ -8,7 +8,7 @@ const PurchaseRequestCard = ({ request, onViewDetail, onEdit, onDelete, userRole
       'solicitado': 'bg-blue-100 text-blue-700 border-blue-200',
       'pendiente_coordinadora': 'bg-yellow-100 text-yellow-700 border-yellow-200',
       'aprobado_coordinadora': 'bg-orange-100 text-orange-700 border-orange-200',
-      'pendiente_jefe': 'bg-purple-100 text-purple-700 border-purple-200',
+      'pendiente_jefe': 'bg-[#f3ebf9] text-[#662d91] border-[#e8d5f5]',
       'aprobado_jefe': 'bg-indigo-100 text-indigo-700 border-indigo-200',
       'en_compras': 'bg-cyan-100 text-cyan-700 border-cyan-200',
       'comprado': 'bg-teal-100 text-teal-700 border-teal-200',
@@ -36,7 +36,7 @@ const PurchaseRequestCard = ({ request, onViewDetail, onEdit, onDelete, userRole
     const colors = {
       'periferico': 'bg-blue-100 text-blue-700',
       'electrodomestico': 'bg-green-100 text-green-700',
-      'software': 'bg-purple-100 text-purple-700',
+      'software': 'bg-[#f3ebf9] text-[#662d91]',
       'otro': 'bg-gray-100 text-gray-700'
     };
     return colors[itemType?.toLowerCase()] || 'bg-gray-100 text-gray-700';
@@ -76,7 +76,7 @@ const PurchaseRequestCard = ({ request, onViewDetail, onEdit, onDelete, userRole
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-2">
-              <span className="font-bold text-purple-600 text-base sm:text-lg">#{request.id}</span>
+              <span className="font-bold text-[#662d91] text-base sm:text-lg">#{request.id}</span>
               <span className={`px-2 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1 ${getStatusColor(request.status)}`}>
                 {getStatusIcon(request.status)}
                 <span className="hidden sm:inline">{request.status}</span>
@@ -212,3 +212,4 @@ const PurchaseRequestCard = ({ request, onViewDetail, onEdit, onDelete, userRole
 };
 
 export default PurchaseRequestCard;
+

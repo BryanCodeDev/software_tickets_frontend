@@ -228,7 +228,7 @@ const PurchaseRequests = () => {
       'solicitado': 'bg-blue-100 text-blue-700 border-blue-200',
       'pendiente_coordinadora': 'bg-yellow-100 text-yellow-700 border-yellow-200',
       'aprobado_coordinadora': 'bg-orange-100 text-orange-700 border-orange-200',
-      'pendiente_jefe': 'bg-purple-100 text-purple-700 border-purple-200',
+      'pendiente_jefe': 'bg-[#f3ebf9] text-[#662d91] border-[#e8d5f5]',
       'aprobado_jefe': 'bg-indigo-100 text-indigo-700 border-indigo-200',
       'en_compras': 'bg-cyan-100 text-cyan-700 border-cyan-200',
       'comprado': 'bg-teal-100 text-teal-700 border-teal-200',
@@ -373,9 +373,9 @@ const PurchaseRequests = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#662d91] mx-auto mb-4"></div>
           <p className="text-lg text-gray-600 font-medium">Cargando solicitudes de compra...</p>
         </div>
       </div>
@@ -383,7 +383,7 @@ const PurchaseRequests = () => {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-2 px-2 sm:py-4 sm:px-3 lg:py-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-2 px-2 sm:py-4 sm:px-3 lg:py-6 lg:px-8">
       {/* Notification */}
       {notification && (
         <div className="fixed top-3 right-3 left-3 sm:top-4 sm:right-4 sm:left-auto z-50 max-w-sm animate-slide-in-right">
@@ -422,7 +422,7 @@ const PurchaseRequests = () => {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 lg:gap-6">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 mb-2 sm:mb-3">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-linear-to-br from-purple-600 to-violet-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xl shrink-0">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xl shrink-0">
                   <svg className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                   </svg>
@@ -460,7 +460,7 @@ const PurchaseRequests = () => {
               {canCreate && (
                 <button
                   onClick={handleCreate}
-                  className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-xs sm:text-sm lg:text-base"
+                  className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-xs sm:text-sm lg:text-base"
                 >
                   <FaPlus className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">Nueva</span>
@@ -485,7 +485,7 @@ const PurchaseRequests = () => {
                   placeholder="Buscar por título, descripción o solicitante..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-gray-700 font-medium text-sm lg:text-base"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-gray-700 font-medium text-sm lg:text-base"
                 />
               </div>
 
@@ -493,7 +493,7 @@ const PurchaseRequests = () => {
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${
                   showFilters
-                    ? 'bg-purple-600 text-white shadow-lg'
+                    ? 'bg-[#662d91] text-white shadow-lg'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -509,7 +509,7 @@ const PurchaseRequests = () => {
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm"
                   >
                     <option value="all">Todos los estados</option>
                     <option value="solicitado">Solicitado</option>
@@ -529,7 +529,7 @@ const PurchaseRequests = () => {
                   <select
                     value={filterItemType || 'all'}
                     onChange={(e) => setFilterItemType(e.target.value)}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm"
                   >
                     <option value="all">Todos los tipos</option>
                     <option value="periferico">Periférico</option>
@@ -545,7 +545,7 @@ const PurchaseRequests = () => {
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="flex-1 px-3 lg:px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm"
+                      className="flex-1 px-3 lg:px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm"
                     >
                       <option value="createdAt">Fecha creación</option>
                       <option value="updatedAt">Última actualización</option>
@@ -568,14 +568,14 @@ const PurchaseRequests = () => {
         {/* Results Summary */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 mb-3 sm:mb-4">
           <p className="text-xs sm:text-sm text-gray-600 font-medium">
-            Mostrando <span className="font-bold text-purple-600">{filteredRequests.length}</span> de <span className="font-bold">{requests.length}</span> solicitudes
+            Mostrando <span className="font-bold text-[#662d91]">{filteredRequests.length}</span> de <span className="font-bold">{requests.length}</span> solicitudes
           </p>
           <div className="flex gap-1 sm:gap-2">
             <button
               onClick={() => setViewMode('cards')}
               className={`px-2 sm:px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-xs sm:text-sm lg:text-base ${
                 viewMode === 'cards'
-                  ? 'bg-purple-600 text-white shadow-md'
+                  ? 'bg-[#662d91] text-white shadow-md'
                   : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >
@@ -586,7 +586,7 @@ const PurchaseRequests = () => {
               onClick={() => setViewMode('list')}
               className={`px-2 sm:px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-xs sm:text-sm lg:text-base ${
                 viewMode === 'list'
-                  ? 'bg-purple-600 text-white shadow-md'
+                  ? 'bg-[#662d91] text-white shadow-md'
                   : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >
@@ -599,8 +599,8 @@ const PurchaseRequests = () => {
         {/* Purchase Requests Display */}
         {filteredRequests.length === 0 ? (
           <div className="bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center">
-            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-purple-100 to-violet-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FaClipboardList className="w-8 h-8 lg:w-10 lg:h-10 text-purple-600" />
+            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaClipboardList className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
             </div>
             <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2">
               {searchTerm || filterStatus !== 'all'
@@ -615,7 +615,7 @@ const PurchaseRequests = () => {
             {canCreate && (
               <button
                 onClick={handleCreate}
-                className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
+                className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
               >
                 <FaPlus className="w-4 h-4" />
                 Nueva Solicitud
@@ -650,11 +650,11 @@ const PurchaseRequests = () => {
                 <div className="block md:hidden">
                   <div className="divide-y divide-gray-200">
                     {filteredRequests.map((request) => (
-                      <div key={request.id} className="p-4 hover:bg-purple-50 transition-colors">
+                      <div key={request.id} className="p-4 hover:bg-[#f3ebf9] transition-colors">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="font-bold text-purple-600">#{request.id}</span>
+                              <span className="font-bold text-[#662d91]">#{request.id}</span>
                               <span className={`px-2 py-1 rounded-full text-xs font-bold ${getStatusColor(request.status)}`}>
                                 {request.status}
                               </span>
@@ -692,7 +692,7 @@ const PurchaseRequests = () => {
                 {/* Desktop Table View */}
                 <div className="hidden md:block">
                   <table className="w-full">
-                    <thead className="bg-linear-to-r from-purple-600 to-violet-600 text-white">
+                    <thead className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white">
                       <tr>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase">ID</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase">Título</th>
@@ -706,9 +706,9 @@ const PurchaseRequests = () => {
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                       {filteredRequests.map((request) => (
-                        <tr key={request.id} className="hover:bg-purple-50 transition-colors">
+                        <tr key={request.id} className="hover:bg-[#f3ebf9] transition-colors">
                           <td className="px-4 py-4">
-                            <span className="font-bold text-purple-600">#{request.id}</span>
+                            <span className="font-bold text-[#662d91]">#{request.id}</span>
                           </td>
                           <td className="px-4 py-4">
                             <div className="font-semibold text-gray-900">{request.title}</div>
@@ -851,3 +851,5 @@ const PurchaseRequests = () => {
 };
 
 export default PurchaseRequests;
+
+

@@ -87,3 +87,4 @@ const Modal = React.memo(({
 Modal.displayName = 'Modal';
 
 export default Modal;
+

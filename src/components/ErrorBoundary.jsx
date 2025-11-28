@@ -37,7 +37,7 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       // UI de respaldo
       return (
-        <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] flex items-center justify-center p-4">
           <div className="max-w-md w-full bg-white rounded-xl lg:rounded-2xl shadow-2xl border-2 border-red-200 p-6 lg:p-8 text-center">
             <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <FaExclamationTriangle className="w-8 h-8 lg:w-10 lg:h-10 text-white" />
@@ -54,7 +54,7 @@ class ErrorBoundary extends React.Component {
             <div className="space-y-3">
               <button
                 onClick={this.handleReload}
-                className="w-full flex items-center justify-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                className="w-full flex items-center justify-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 <FaRedo className="w-4 h-4" />
                 Recargar Página
@@ -106,3 +106,5 @@ class ErrorBoundary extends React.Component {
 }
 
 export default ErrorBoundary;
+
+

@@ -81,9 +81,9 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 flex">
+    <div className="min-h-screen bg-linear-to-br from-slate-900 via-[#662d91] to-slate-900 flex">
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-linear-to-br from-purple-600 via-violet-600 to-indigo-600 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-linear-to-br from-[#662d91] via-[#8e4dbf] to-indigo-600 p-12 flex-col justify-between relative overflow-hidden">
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-48 -mt-48"></div>
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-white opacity-5 rounded-full -ml-40 -mb-40"></div>
@@ -91,7 +91,7 @@ const Register = () => {
         <div className="relative z-10">
           <div className="flex items-center space-x-3 mb-8">
             <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-xl">
-              <svg className="w-7 h-7 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-7 h-7 text-[#662d91]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
               </svg>
             </div>
@@ -102,7 +102,7 @@ const Register = () => {
             <h1 className="text-5xl font-bold text-white leading-tight">
               Únete a la Plataforma<br />de Gestión IT Líder
             </h1>
-            <p className="text-xl text-purple-100 leading-relaxed">
+            <p className="text-xl text-[#e8d5f5] leading-relaxed">
               Crea tu cuenta y accede a herramientas profesionales para gestionar soporte técnico, inventarios y documentación empresarial.
             </p>
           </div>
@@ -118,7 +118,7 @@ const Register = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <span className="text-purple-100">Gestión de tickets en tiempo real</span>
+                <span className="text-[#e8d5f5]">Gestión de tickets en tiempo real</span>
               </li>
               <li className="flex items-center space-x-3">
                 <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
@@ -126,7 +126,7 @@ const Register = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <span className="text-purple-100">Control completo de inventario IT</span>
+                <span className="text-[#e8d5f5]">Control completo de inventario IT</span>
               </li>
               <li className="flex items-center space-x-3">
                 <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
@@ -134,7 +134,7 @@ const Register = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <span className="text-purple-100">Repositorio de documentación técnica</span>
+                <span className="text-[#e8d5f5]">Repositorio de documentación técnica</span>
               </li>
               <li className="flex items-center space-x-3">
                 <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
@@ -142,7 +142,7 @@ const Register = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <span className="text-purple-100">Seguridad empresarial avanzada</span>
+                <span className="text-[#e8d5f5]">Seguridad empresarial avanzada</span>
               </li>
             </ul>
           </div>
@@ -154,7 +154,7 @@ const Register = () => {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center space-x-3 mb-8">
-            <div className="w-10 h-10 bg-linear-to-br from-purple-600 to-violet-600 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center shadow-lg">
               <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
               </svg>
@@ -200,7 +200,7 @@ const Register = () => {
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                     placeholder="Tu nombre completo"
                   />
                 </div>
@@ -224,7 +224,7 @@ const Register = () => {
                     required
                     value={formData.username}
                     onChange={handleChange}
-                    className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                     placeholder="tu_usuario"
                   />
                 </div>
@@ -248,7 +248,7 @@ const Register = () => {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                     placeholder="correo@empresa.com"
                   />
                 </div>
@@ -272,7 +272,7 @@ const Register = () => {
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="block w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="block w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                     placeholder="••••••••"
                   />
                   <button
@@ -332,7 +332,7 @@ const Register = () => {
                     required
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="block w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="block w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                     placeholder="••••••••"
                   />
                   <button
@@ -364,17 +364,17 @@ const Register = () => {
                     name="terms"
                     type="checkbox"
                     required
-                    className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
                   />
                 </div>
                 <div className="ml-3 text-sm">
                   <label htmlFor="terms" className="text-gray-600">
                     Acepto los{' '}
-                    <Link to="/terms-and-conditions" className="font-medium text-purple-600 hover:text-purple-500">
+                    <Link to="/terms-and-conditions" className="font-medium text-[#662d91] hover:text-[#8e4dbf]">
                       Términos y Condiciones
                     </Link>{' '}
                     y la{' '}
-                    <Link to="/privacy-policy" className="font-medium text-purple-600 hover:text-purple-500">
+                    <Link to="/privacy-policy" className="font-medium text-[#662d91] hover:text-[#8e4dbf]">
                       Política de Privacidad
                     </Link>
                   </label>
@@ -384,7 +384,7 @@ const Register = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
+                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#662d91] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
               >
                 {loading ? (
                   <>
@@ -415,7 +415,7 @@ const Register = () => {
 
               <Link
                 to="/login"
-                className="w-full flex justify-center items-center py-3 px-4 border-2 border-purple-600 rounded-xl shadow-sm text-sm font-semibold text-purple-600 bg-white hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200"
+                className="w-full flex justify-center items-center py-3 px-4 border-2 border-[#662d91] rounded-xl shadow-sm text-sm font-semibold text-[#662d91] bg-white hover:bg-[#f3ebf9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#662d91] transition-all duration-200"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
@@ -436,3 +436,5 @@ const Register = () => {
 };
 
 export default Register;
+
+

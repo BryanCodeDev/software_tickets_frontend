@@ -36,9 +36,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 flex">
+    <div className="min-h-screen bg-linear-to-br from-slate-900 via-[#662d91] to-slate-900 flex">
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-linear-to-br from-purple-600 via-violet-600 to-indigo-600 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-linear-to-br from-[#662d91] via-[#8e4dbf] to-indigo-600 p-12 flex-col justify-between relative overflow-hidden">
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-48 -mt-48"></div>
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-white opacity-5 rounded-full -ml-40 -mb-40"></div>
@@ -46,7 +46,7 @@ const Login = () => {
         <div className="relative z-10">
           <div className="flex items-center space-x-3 mb-8">
             <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-xl">
-              <svg className="w-7 h-7 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-7 h-7 text-[#662d91]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
               </svg>
             </div>
@@ -57,7 +57,7 @@ const Login = () => {
             <h1 className="text-5xl font-bold text-white leading-tight">
               Plataforma de Gestión<br />Tecnológica Empresarial
             </h1>
-            <p className="text-xl text-purple-100 leading-relaxed">
+            <p className="text-xl text-[#e8d5f5] leading-relaxed">
               Centraliza tu soporte técnico, inventario IT, documentación y gestión de credenciales en una sola solución profesional.
             </p>
           </div>
@@ -74,7 +74,7 @@ const Login = () => {
                 </div>
                 <div>
                   <p className="text-white font-semibold">Mesa de Ayuda</p>
-                  <p className="text-purple-100 text-sm">Tickets en tiempo real</p>
+                  <p className="text-[#e8d5f5] text-sm">Tickets en tiempo real</p>
                 </div>
               </div>
             </div>
@@ -87,7 +87,7 @@ const Login = () => {
                 </div>
                 <div>
                   <p className="text-white font-semibold">Inventario IT</p>
-                  <p className="text-purple-100 text-sm">Control de activos</p>
+                  <p className="text-[#e8d5f5] text-sm">Control de activos</p>
                 </div>
               </div>
             </div>
@@ -100,7 +100,7 @@ const Login = () => {
                 </div>
                 <div>
                   <p className="text-white font-semibold">Repositorio</p>
-                  <p className="text-purple-100 text-sm">Documentación técnica</p>
+                  <p className="text-[#e8d5f5] text-sm">Documentación técnica</p>
                 </div>
               </div>
             </div>
@@ -113,7 +113,7 @@ const Login = () => {
                 </div>
                 <div>
                   <p className="text-white font-semibold">Credenciales</p>
-                  <p className="text-purple-100 text-sm">Gestión segura</p>
+                  <p className="text-[#e8d5f5] text-sm">Gestión segura</p>
                 </div>
               </div>
             </div>
@@ -126,7 +126,7 @@ const Login = () => {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center space-x-3 mb-8">
-            <div className="w-10 h-10 bg-linear-to-br from-purple-600 to-violet-600 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center shadow-lg">
               <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
               </svg>
@@ -172,7 +172,7 @@ const Login = () => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                     placeholder="correo@empresa.com"
                   />
                 </div>
@@ -196,7 +196,7 @@ const Login = () => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="block w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                     placeholder="••••••••"
                   />
                   <button
@@ -236,7 +236,7 @@ const Login = () => {
                       required
                       value={twoFactorToken}
                       onChange={(e) => setTwoFactorToken(e.target.value)}
-                      className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                      className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
                       placeholder="Ingresa el código de 6 dígitos"
                       maxLength="6"
                     />
@@ -250,14 +250,14 @@ const Login = () => {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
                   />
                   <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
                     Recordarme
                   </label>
                 </div>
                 <div className="text-sm">
-                  <Link to="/forgot-password" className="font-medium text-purple-600 hover:text-purple-500">
+                  <Link to="/forgot-password" className="font-medium text-[#662d91] hover:text-[#8e4dbf]">
                     ¿Olvidaste tu contraseña?
                   </Link>
                 </div>
@@ -266,7 +266,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
+                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#662d91] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
               >
                 {loading ? (
                   <>
@@ -297,7 +297,7 @@ const Login = () => {
 
               <Link
                 to="/register"
-                className="w-full flex justify-center items-center py-3 px-4 border-2 border-purple-600 rounded-xl shadow-sm text-sm font-semibold text-purple-600 bg-white hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200"
+                className="w-full flex justify-center items-center py-3 px-4 border-2 border-[#662d91] rounded-xl shadow-sm text-sm font-semibold text-[#662d91] bg-white hover:bg-[#f3ebf9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#662d91] transition-all duration-200"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -318,3 +318,5 @@ const Login = () => {
 };
 
 export default Login;
+
+

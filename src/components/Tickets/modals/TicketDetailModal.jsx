@@ -27,7 +27,7 @@ const TicketDetailModal = ({
 
   const getStatusColor = (status) => {
     const colors = {
-      'abierto': 'bg-purple-100 text-purple-700 border-purple-200',
+      'abierto': 'bg-[#f3ebf9] text-[#662d91] border-[#e8d5f5]',
       'en progreso': 'bg-blue-100 text-blue-700 border-blue-200',
       'cerrado': 'bg-gray-200 text-gray-700 border-gray-300',
       'resuelto': 'bg-green-100 text-green-700 border-green-200'
@@ -60,7 +60,7 @@ const TicketDetailModal = ({
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
       <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-        <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
+        <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
           <div className="flex items-center justify-between">
             <div className="min-w-0 flex-1">
               <h2 className="text-xl lg:text-2xl font-bold text-white mb-2 truncate">{selectedTicket.title}</h2>
@@ -92,7 +92,7 @@ const TicketDetailModal = ({
               {/* Description */}
               <div className="bg-gray-50 rounded-xl p-4 lg:p-5 border-2 border-gray-200">
                 <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                  <FaClipboardList className="text-purple-600 w-4 h-4 lg:w-5 lg:h-5" />
+                  <FaClipboardList className="text-[#662d91] w-4 h-4 lg:w-5 lg:h-5" />
                   Descripción del Problema
                 </h3>
                 <p className="text-sm lg:text-base text-gray-700 leading-relaxed">{selectedTicket.description}</p>
@@ -102,7 +102,7 @@ const TicketDetailModal = ({
               {selectedTicket.TicketAttachments && selectedTicket.TicketAttachments.length > 0 && (
                 <div className="bg-gray-50 rounded-xl p-4 lg:p-5 border-2 border-gray-200">
                   <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <FaImage className="text-purple-600 w-4 h-4 lg:w-5 lg:h-5" />
+                    <FaImage className="text-[#662d91] w-4 h-4 lg:w-5 lg:h-5" />
                     Archivos Adjuntos
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -138,7 +138,7 @@ const TicketDetailModal = ({
                         {attachment.type.startsWith('image/') && (
                           <button
                             onClick={() => window.open(`${SERVER_BASE_URL}/uploads/tickets/${attachment.filename}`, '_blank')}
-                            className="text-xs text-purple-600 hover:text-purple-700 mt-1"
+                            className="text-xs text-[#662d91] hover:text-[#662d91] mt-1"
                           >
                             Ver imagen completa
                           </button>
@@ -151,9 +151,9 @@ const TicketDetailModal = ({
 
               {/* Chat Section */}
               <div className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden">
-                <div className="bg-linear-to-r from-purple-100 to-violet-100 px-4 lg:px-5 py-3 border-b-2 border-gray-200">
+                <div className="bg-linear-to-r from-[#f3ebf9] to-[#e8d5f5] px-4 lg:px-5 py-3 border-b-2 border-gray-200">
                   <h3 className="text-base lg:text-lg font-bold text-gray-900 flex items-center gap-2">
-                    <FaComment className="text-purple-600 w-4 h-4 lg:w-5 lg:h-5" />
+                    <FaComment className="text-[#662d91] w-4 h-4 lg:w-5 lg:h-5" />
                     Conversación del Ticket ({messages.length})
                   </h3>
                 </div>
@@ -174,17 +174,17 @@ const TicketDetailModal = ({
                         <div key={message.id} className={`flex ${message.sender?.id === user?.id ? 'justify-end' : 'justify-start'}`}>
                           <div className={`max-w-xs lg:max-w-md px-3 lg:px-4 py-2 lg:py-3 rounded-2xl ${
                             message.sender?.id === user?.id
-                              ? 'bg-linear-to-r from-purple-600 to-violet-600 text-white'
+                              ? 'bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white'
                               : 'bg-gray-100 border-2 border-gray-200 text-gray-900'
                           }`}>
                             <div className="flex items-center justify-between mb-1 lg:mb-2">
                               <span className={`text-xs font-bold ${
-                                message.sender?.id === user?.id ? 'text-purple-100' : 'text-gray-600'
+                                message.sender?.id === user?.id ? 'text-[#e8d5f5]' : 'text-gray-600'
                               }`}>
                                 {message.sender?.name || 'Usuario'}
                               </span>
                               <span className={`text-xs ${
-                                message.sender?.id === user?.id ? 'text-purple-200' : 'text-gray-400'
+                                message.sender?.id === user?.id ? 'text-[#e8d5f5]' : 'text-gray-400'
                               }`}>
                                 {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                               </span>
@@ -205,11 +205,11 @@ const TicketDetailModal = ({
                         placeholder="Escribe un mensaje..."
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        className="flex-1 px-3 lg:px-4 py-2 lg:py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className="flex-1 px-3 lg:px-4 py-2 lg:py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       />
                       <button
                         type="submit"
-                        className="px-4 lg:px-5 py-2 lg:py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl transition-all flex items-center gap-2 disabled:opacity-50"
+                        className="px-4 lg:px-5 py-2 lg:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl transition-all flex items-center gap-2 disabled:opacity-50"
                         disabled={!newMessage.trim()}
                       >
                         <FaPaperPlane className="w-3 h-3 lg:w-4 lg:h-4" />
@@ -229,21 +229,21 @@ const TicketDetailModal = ({
             {/* Sidebar */}
             <div className="space-y-4 lg:space-y-6">
               {/* Ticket Info Card */}
-              <div className="bg-linear-to-br from-purple-50 to-violet-50 rounded-xl p-4 lg:p-5 border-2 border-purple-200">
+              <div className="bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-xl p-4 lg:p-5 border-2 border-[#e8d5f5]">
                 <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2 text-sm lg:text-base">
-                  <FaClipboardList className="text-purple-600 w-4 h-4 lg:w-5 lg:h-5" />
+                  <FaClipboardList className="text-[#662d91] w-4 h-4 lg:w-5 lg:h-5" />
                   Información del Ticket
                 </h4>
                 <div className="space-y-3 text-sm">
-                  <div className="bg-white rounded-lg p-3 border border-purple-100">
+                  <div className="bg-white rounded-lg p-3 border border-[#e8d5f5]">
                     <p className="text-xs text-gray-500 font-medium mb-1">Creado por</p>
                     <p className="font-bold text-gray-900 flex items-center gap-2">
-                      <FaUserCircle className="text-purple-600 w-4 h-4 lg:w-5 lg:h-5" />
+                      <FaUserCircle className="text-[#662d91] w-4 h-4 lg:w-5 lg:h-5" />
                       <span className="truncate">{selectedTicket.creator?.name || 'Usuario'}</span>
                     </p>
                   </div>
 
-                  <div className="bg-white rounded-lg p-3 border border-purple-100">
+                  <div className="bg-white rounded-lg p-3 border border-[#e8d5f5]">
                     <p className="text-xs text-gray-500 font-medium mb-1">Asignado a</p>
                     <p className="font-bold text-gray-900 flex items-center gap-2">
                       <FaUserCircle className="text-blue-600 w-4 h-4 lg:w-5 lg:h-5" />
@@ -251,7 +251,7 @@ const TicketDetailModal = ({
                     </p>
                   </div>
 
-                  <div className="bg-white rounded-lg p-3 border border-purple-100">
+                  <div className="bg-white rounded-lg p-3 border border-[#e8d5f5]">
                     <p className="text-xs text-gray-500 font-medium mb-1">Fecha de creación</p>
                     <p className="font-bold text-gray-900 flex items-center gap-2">
                       <FaClock className="text-green-600 w-4 h-4 lg:w-5 lg:h-5" />
@@ -265,7 +265,7 @@ const TicketDetailModal = ({
                     </p>
                   </div>
 
-                  <div className="bg-white rounded-lg p-3 border border-purple-100">
+                  <div className="bg-white rounded-lg p-3 border border-[#e8d5f5]">
                     <p className="text-xs text-gray-500 font-medium mb-1">Última actualización</p>
                     <p className="font-bold text-gray-900 flex items-center gap-2">
                       <FaClock className="text-orange-600 w-4 h-4 lg:w-5 lg:h-5" />
@@ -323,3 +323,4 @@ const TicketDetailModal = ({
 };
 
 export default TicketDetailModal;
+

@@ -392,7 +392,7 @@ const Credentials = () => {
   if (loading) return <div>Cargando...</div>;
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 py-4 sm:py-6 md:py-8 px-2 sm:px-4 md:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 sm:py-6 md:py-8 px-2 sm:px-4 md:px-6 lg:px-8">
       {/* Notification */}
       <NotificationSystem
         notification={notification}
@@ -411,7 +411,7 @@ const Credentials = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
             <div>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 flex items-center">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-linear-to-r from-purple-600 to-violet-600 rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg">
                   <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
@@ -435,7 +435,7 @@ const Credentials = () => {
               {currentFolder ? (
                 <button
                   onClick={handleCreate}
-                  className="flex items-center justify-center space-x-2 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto text-sm sm:text-base"
+                  className="flex items-center justify-center space-x-2 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto text-sm sm:text-base"
                 >
                   <FaPlus className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
                   <span>Nueva Credencial</span>
@@ -518,7 +518,7 @@ const Credentials = () => {
                           <p><strong>Usuario:</strong> {cred.username}</p>
                           <button
                             onClick={() => copyToClipboard(cred.username, 'Usuario')}
-                            className="text-gray-400 hover:text-purple-600 p-1 transition-colors"
+                            className="text-gray-400 hover:text-[#662d91] p-1 transition-colors"
                             title="Copiar usuario"
                           >
                             <FaCopy className="w-3 h-3" />
@@ -543,7 +543,7 @@ const Credentials = () => {
                           </button>
                           <button
                             onClick={() => copyToClipboard(cred.password, 'Contraseña')}
-                            className="text-gray-400 hover:text-purple-600 p-1 transition-colors"
+                            className="text-gray-400 hover:text-[#662d91] p-1 transition-colors"
                             title="Copiar contraseña"
                           >
                             <FaCopy className="w-3 h-3" />
@@ -662,7 +662,7 @@ const Credentials = () => {
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-1 sm:p-2 md:p-4 animate-fade-in">
           <div className="bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-3 sm:p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-3 sm:p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">
                   {editingCredential ? 'Editar Credencial' : 'Nueva Credencial'}
@@ -687,7 +687,7 @@ const Credentials = () => {
                     placeholder="Ej: Base de datos, API, etc."
                     value={formData.service}
                     onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base"
                     required
                   />
                 </div>
@@ -701,7 +701,7 @@ const Credentials = () => {
                     placeholder="Nombre de usuario"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base"
                     required
                   />
                 </div>
@@ -713,7 +713,7 @@ const Credentials = () => {
                   <select
                     value={formData.area}
                     onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base bg-white"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base bg-white"
                   >
                     <option value="">Seleccionar área</option>
 
@@ -804,7 +804,7 @@ const Credentials = () => {
                       placeholder="Contraseña"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 pr-16 sm:pr-20 md:pr-24 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 pr-16 sm:pr-20 md:pr-24 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base"
                       required
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-1.5 sm:pr-2 md:pr-3 gap-0.5 sm:gap-1 md:gap-2">
@@ -812,7 +812,7 @@ const Credentials = () => {
                       <button
                         type="button"
                         onClick={generateSecurePassword}
-                        className="text-gray-400 hover:text-purple-600 p-1 sm:p-1.5 md:p-2 transition-colors"
+                        className="text-gray-400 hover:text-[#662d91] p-1 sm:p-1.5 md:p-2 transition-colors"
                         title="Generar contraseña segura"
                       >
                         <FaKey className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 lg:w-6 lg:h-6" />
@@ -868,7 +868,7 @@ const Credentials = () => {
                     placeholder="Información adicional sobre esta credencial..."
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base resize-none"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base resize-none"
                     rows="3 sm:rows-4 lg:rows-5"
                   />
                 </div>
@@ -885,7 +885,7 @@ const Credentials = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 lg:py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-xs sm:text-sm md:text-base"
+                  className="flex-1 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 lg:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-xs sm:text-sm md:text-base"
                   disabled={formLoading}
                 >
                   {formLoading ? (
@@ -1059,4 +1059,6 @@ const Credentials = () => {
 };
 
 export default Credentials;
+
+
 

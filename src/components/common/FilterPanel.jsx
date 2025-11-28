@@ -24,7 +24,7 @@ const FilterPanel = React.memo(({
               placeholder="Buscar..."
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-gray-700 font-medium text-xs sm:text-sm lg:text-base"
+              className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-gray-700 font-medium text-xs sm:text-sm lg:text-base"
             />
           </div>
 
@@ -32,7 +32,7 @@ const FilterPanel = React.memo(({
             onClick={onToggleFilters}
             className={`flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 lg:px-6 py-2.5 sm:py-3 rounded-xl font-semibold transition-all duration-200 min-w-[100px] sm:min-w-[120px] ${
               showFilters
-                ? 'bg-purple-600 text-white shadow-lg'
+                ? 'bg-[#662d91] text-white shadow-lg'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
@@ -52,7 +52,7 @@ const FilterPanel = React.memo(({
                   <select
                     value={filter.value}
                     onChange={(e) => filter.onChange(e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-xs sm:text-sm"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-xs sm:text-sm"
                   >
                     <option value="all">{filter.placeholder || 'Todos'}</option>
                     {filter.options?.map((option, idx) => (
@@ -65,7 +65,7 @@ const FilterPanel = React.memo(({
                   <select
                     value={filter.value}
                     onChange={(e) => filter.onChange(e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-xs sm:text-sm bg-white"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-xs sm:text-sm bg-white"
                   >
                     <option value="all">{filter.placeholder || 'Todos'}</option>
                     {filter.optgroups?.map((optgroup, idx) => (
@@ -89,7 +89,7 @@ const FilterPanel = React.memo(({
                   <select
                     value={sortBy}
                     onChange={(e) => onSortChange(e.target.value)}
-                    className="flex-1 px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-xs sm:text-sm"
+                    className="flex-1 px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-xs sm:text-sm"
                   >
                     {sortOptions.map((option, idx) => (
                       <option key={idx} value={option.value}>
@@ -116,3 +116,4 @@ const FilterPanel = React.memo(({
 FilterPanel.displayName = 'FilterPanel';
 
 export default FilterPanel;
+

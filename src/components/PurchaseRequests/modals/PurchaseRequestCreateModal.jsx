@@ -174,7 +174,7 @@ const PurchaseRequestCreateModal = ({
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
       <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] border-2 border-gray-200 animate-scale-in flex flex-col">
-        <div className="sticky top-0 bg-linear-to-r from-purple-600 to-violet-600 p-4 lg:p-6 z-10">
+        <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
           <div className="flex items-center justify-between">
             <h2 className="text-xl lg:text-2xl font-bold text-white">Nueva Solicitud de Compra</h2>
             <button
@@ -198,7 +198,7 @@ const PurchaseRequestCreateModal = ({
                 value={formData.title}
                 onChange={handleInputChange}
                 placeholder="Ej: Mouse inalámbrico Logitech"
-                className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${
+                className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${
                   errors.title ? 'border-red-300 bg-red-50' : 'border-gray-200'
                 }`}
                 disabled={formLoading}
@@ -216,7 +216,7 @@ const PurchaseRequestCreateModal = ({
                 name="itemType"
                 value={formData.itemType}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                 disabled={formLoading}
               >
                 <option value="periferico">Periférico</option>
@@ -236,7 +236,7 @@ const PurchaseRequestCreateModal = ({
                 value={formData.quantity}
                 onChange={handleInputChange}
                 min="1"
-                className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${
+                className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${
                   errors.quantity ? 'border-red-300 bg-red-50' : 'border-gray-200'
                 }`}
                 disabled={formLoading}
@@ -257,7 +257,7 @@ const PurchaseRequestCreateModal = ({
                   value={formData.estimatedCost}
                   onChange={handleCostChange}
                   placeholder="0"
-                  className={`w-full pl-8 pr-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${
+                  className={`w-full pl-8 pr-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${
                     errors.estimatedCost ? 'border-red-300 bg-red-50' : 'border-gray-200'
                   }`}
                   disabled={formLoading}
@@ -278,7 +278,7 @@ const PurchaseRequestCreateModal = ({
                 onChange={handleInputChange}
                 placeholder="Describe detalladamente el ítem que necesitas..."
                 rows="4 lg:rows-5"
-                className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium resize-none text-sm lg:text-base ${
+                className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium resize-none text-sm lg:text-base ${
                   errors.description ? 'border-red-300 bg-red-50' : 'border-gray-200'
                 }`}
                 disabled={formLoading}
@@ -298,7 +298,7 @@ const PurchaseRequestCreateModal = ({
                 onChange={handleInputChange}
                 placeholder="Explica por qué necesitas este ítem y cómo beneficiará tu trabajo..."
                 rows="4 lg:rows-5"
-                className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all font-medium resize-none text-sm lg:text-base ${
+                className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium resize-none text-sm lg:text-base ${
                   errors.justification ? 'border-red-300 bg-red-50' : 'border-gray-200'
                 }`}
                 disabled={formLoading}
@@ -371,7 +371,7 @@ const PurchaseRequestCreateModal = ({
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 lg:px-6 py-3 bg-linear-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-sm lg:text-base"
+              className="flex-1 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-sm lg:text-base"
               disabled={formLoading}
             >
               {formLoading ? (
@@ -394,3 +394,4 @@ const PurchaseRequestCreateModal = ({
 };
 
 export default PurchaseRequestCreateModal;
+
