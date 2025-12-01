@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { authAPI } from '../api';
-import { onForceLogout, offForceLogout } from '../api/socket';
+import { onForceLogout, offForceLogout, updateSocketAuth } from '../api/socket';
 
 const AuthContext = createContext();
 
@@ -72,6 +72,9 @@ export const AuthProvider = ({ children }) => {
       // Set token timestamp for session validation
       localStorage.setItem('token_timestamp', Date.now().toString());
 
+      // Update socket with new token
+      updateSocketAuth();
+
       return res;
     } catch (err) {
       throw err;
@@ -95,6 +98,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('user');
     localStorage.removeItem('token_timestamp');
     setUser(null);
+    // Disconnect socket
+    updateSocketAuth();
   };
 
   const updateUser = (updatedUserData) => {
