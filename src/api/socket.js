@@ -103,160 +103,199 @@ export const onNewMessage = (callback) => {
 };
 
 export const onMessageUpdated = (callback) => {
-  getSocket().on('message-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.on('message-updated', callback);
 };
 
 export const onMessageDeleted = (callback) => {
-  getSocket().on('message-deleted', callback);
+  const sock = getSocket();
+  if (sock) sock.on('message-deleted', callback);
 };
 
 export const onNewComment = (callback) => {
-  getSocket().on('new-comment', callback);
+  const sock = getSocket();
+  if (sock) sock.on('new-comment', callback);
 };
 
 export const onTicketUpdated = (callback) => {
-  getSocket().on('ticket-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.on('ticket-updated', callback);
 };
 
 export const onTicketCreated = (callback) => {
-  getSocket().on('ticket-created', callback);
+  const sock = getSocket();
+  if (sock) sock.on('ticket-created', callback);
 };
 
 export const onTicketDeleted = (callback) => {
-  getSocket().on('ticket-deleted', callback);
+  const sock = getSocket();
+  if (sock) sock.on('ticket-deleted', callback);
 };
 
 export const onTicketsListUpdated = (callback) => {
-  getSocket().on('tickets-list-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.on('tickets-list-updated', callback);
 };
 
 export const offNewMessage = (callback) => {
-  getSocket().off('new-message', callback);
+  const sock = getSocket();
+  if (sock) sock.off('new-message', callback);
 };
 
 export const offMessageUpdated = (callback) => {
-  getSocket().off('message-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.off('message-updated', callback);
 };
 
 export const offMessageDeleted = (callback) => {
-  getSocket().off('message-deleted', callback);
+  const sock = getSocket();
+  if (sock) sock.off('message-deleted', callback);
 };
 
 export const offNewComment = (callback) => {
-  getSocket().off('new-comment', callback);
+  const sock = getSocket();
+  if (sock) sock.off('new-comment', callback);
 };
 
 export const offTicketUpdated = (callback) => {
-  getSocket().off('ticket-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.off('ticket-updated', callback);
 };
 
 export const offTicketCreated = (callback) => {
-  getSocket().off('ticket-created', callback);
+  const sock = getSocket();
+  if (sock) sock.off('ticket-created', callback);
 };
 
 export const offTicketDeleted = (callback) => {
-  getSocket().off('ticket-deleted', callback);
+  const sock = getSocket();
+  if (sock) sock.off('ticket-deleted', callback);
 };
 
 export const offTicketsListUpdated = (callback) => {
-  getSocket().off('tickets-list-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.off('tickets-list-updated', callback);
 };
 
 export const onUserUpdated = (callback) => {
-  getSocket().on('user-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.on('user-updated', callback);
 };
 
 export const onUsersListUpdated = (callback) => {
-  getSocket().on('users-list-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.on('users-list-updated', callback);
 };
 
 export const offUserUpdated = (callback) => {
-  getSocket().off('user-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.off('user-updated', callback);
 };
 
 export const offUsersListUpdated = (callback) => {
-  getSocket().off('users-list-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.off('users-list-updated', callback);
 };
 
 export const onForceLogout = (callback) => {
-  getSocket().on('force-logout', callback);
+  const sock = getSocket();
+  if (sock) sock.on('force-logout', callback);
 };
 
 export const offForceLogout = (callback) => {
-  getSocket().off('force-logout', callback);
+  const sock = getSocket();
+  if (sock) sock.off('force-logout', callback);
 };
 
 // Document WebSocket functions
 export const onDocumentCreated = (callback) => {
-  getSocket().on('document-created', callback);
+  const sock = getSocket();
+  if (sock) sock.on('document-created', callback);
 };
 
 export const onDocumentUpdated = (callback) => {
-  getSocket().on('document-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.on('document-updated', callback);
 };
 
 export const onDocumentDeleted = (callback) => {
-  getSocket().on('document-deleted', callback);
+  const sock = getSocket();
+  if (sock) sock.on('document-deleted', callback);
 };
 
 export const onDocumentsListUpdated = (callback) => {
-  getSocket().on('documents-list-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.on('documents-list-updated', callback);
 };
 
 export const onFolderCreated = (callback) => {
-  getSocket().on('folder-created', callback);
+  const sock = getSocket();
+  if (sock) sock.on('folder-created', callback);
 };
 
 export const onFolderUpdated = (callback) => {
-  getSocket().on('folder-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.on('folder-updated', callback);
 };
 
 export const onFolderDeleted = (callback) => {
-  getSocket().on('folder-deleted', callback);
+  const sock = getSocket();
+  if (sock) sock.on('folder-deleted', callback);
 };
 
 export const onFoldersListUpdated = (callback) => {
-  getSocket().on('folders-list-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.on('folders-list-updated', callback);
 };
 
 export const onDocumentPermissionsUpdated = (callback) => {
-  getSocket().on('document-permissions-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.on('document-permissions-updated', callback);
 };
 
 export const offDocumentCreated = (callback) => {
-  getSocket().off('document-created', callback);
+  const sock = getSocket();
+  if (sock) sock.off('document-created', callback);
 };
 
 export const offDocumentUpdated = (callback) => {
-  getSocket().off('document-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.off('document-updated', callback);
 };
 
 export const offDocumentDeleted = (callback) => {
-  getSocket().off('document-deleted', callback);
+  const sock = getSocket();
+  if (sock) sock.off('document-deleted', callback);
 };
 
 export const offDocumentsListUpdated = (callback) => {
-  getSocket().off('documents-list-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.off('documents-list-updated', callback);
 };
 
 export const offFolderCreated = (callback) => {
-  getSocket().off('folder-created', callback);
+  const sock = getSocket();
+  if (sock) sock.off('folder-created', callback);
 };
 
 export const offFolderUpdated = (callback) => {
-  getSocket().off('folder-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.off('folder-updated', callback);
 };
 
 export const offFolderDeleted = (callback) => {
-  getSocket().off('folder-deleted', callback);
+  const sock = getSocket();
+  if (sock) sock.off('folder-deleted', callback);
 };
 
 export const offFoldersListUpdated = (callback) => {
-  getSocket().off('folders-list-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.off('folders-list-updated', callback);
 };
 
 export const offDocumentPermissionsUpdated = (callback) => {
-  getSocket().off('document-permissions-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.off('document-permissions-updated', callback);
 };
 
 // Purchase Request WebSocket functions
@@ -279,35 +318,43 @@ export const leavePurchaseRequestRoom = (requestId) => {
 };
 
 export const onPurchaseRequestUpdated = (callback) => {
-  getSocket().on('purchase-request-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.on('purchase-request-updated', callback);
 };
 
 export const onPurchaseRequestCreated = (callback) => {
-  getSocket().on('purchase-request-created', callback);
+  const sock = getSocket();
+  if (sock) sock.on('purchase-request-created', callback);
 };
 
 export const onPurchaseRequestDeleted = (callback) => {
-  getSocket().on('purchase-request-deleted', callback);
+  const sock = getSocket();
+  if (sock) sock.on('purchase-request-deleted', callback);
 };
 
 export const onPurchaseRequestsListUpdated = (callback) => {
-  getSocket().on('purchase-requests-list-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.on('purchase-requests-list-updated', callback);
 };
 
 export const offPurchaseRequestUpdated = (callback) => {
-  getSocket().off('purchase-request-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.off('purchase-request-updated', callback);
 };
 
 export const offPurchaseRequestCreated = (callback) => {
-  getSocket().off('purchase-request-created', callback);
+  const sock = getSocket();
+  if (sock) sock.off('purchase-request-created', callback);
 };
 
 export const offPurchaseRequestDeleted = (callback) => {
-  getSocket().off('purchase-request-deleted', callback);
+  const sock = getSocket();
+  if (sock) sock.off('purchase-request-deleted', callback);
 };
 
 export const offPurchaseRequestsListUpdated = (callback) => {
-  getSocket().off('purchase-requests-list-updated', callback);
+  const sock = getSocket();
+  if (sock) sock.off('purchase-requests-list-updated', callback);
 };
 
 export default getSocket;
