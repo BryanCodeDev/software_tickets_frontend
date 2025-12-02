@@ -507,7 +507,7 @@ const Credentials = () => {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
                   {filteredCredentials.map((cred) => (
                     <div key={cred.id} className="bg-gray-50 rounded-xl p-3 sm:p-4 md:p-6 border border-gray-200 hover:shadow-md transition-shadow">
                       <div className="flex flex-col items-center text-center sm:items-start sm:text-left md:flex-row md:items-center md:justify-between mb-3 sm:mb-4 gap-2">
@@ -599,7 +599,7 @@ const Credentials = () => {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
                   {rootFolders.map((folder) => (
                     <div
                       key={folder.id}
