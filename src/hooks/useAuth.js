@@ -15,18 +15,17 @@ export const useAuth = () => {
   } = useContext(AuthContext);
 
   // Función mejorada para verificar permisos
-  const checkPermission = useCallback((permission) => {
+  const checkPermission = useCallback((module, action) => {
     if (!user) return false;
 
-    // Lógica de permisos basada en roles
-    const rolePermissions = {
-      Administrador: ['all'],
-      Técnico: ['read_tickets', 'update_tickets', 'read_inventory', 'update_inventory', 'read_credentials', 'manage_credentials'],
-      Empleado: ['read_tickets', 'create_tickets', 'read_inventory']
-    };
+    // Check if user has permissions array
+    if (!user.permissions || !Array.isArray(user.permissions)) {
+      return false;
+    }
 
-    const userPermissions = rolePermissions[user.role?.name] || [];
-    return userPermissions.includes('all') || userPermissions.includes(permission);
+    // Check if user has the specific permission
+    const permissionString = `${module}:${action}`;
+    return user.permissions.some(permission => `${permission.module}:${permission.action}` === permissionString);
   }, [user]);
 
   // Función para verificar si el usuario puede editar un ticket

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { FaMobile, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory, FaIndustry, FaFlask, FaCalculator, FaShoppingCart, FaUsers, FaBuilding, FaTools, FaLaptop, FaClipboardCheck } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { corporatePhoneAPI } from '../../api';
 import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 
@@ -44,6 +45,7 @@ const CorporatePhones = () => {
   const [showStats, setShowStats] = useState(false);
   const [viewMode, setViewMode] = useState('cards'); // 'cards' or 'table'
   const { user } = useContext(AuthContext);
+  const { checkPermission } = useAuth();
 
   useEffect(() => {
     fetchCorporatePhones();
@@ -285,7 +287,10 @@ const CorporatePhones = () => {
     showNotification('Teléfonos corporativos exportados exitosamente', 'success');
   };
 
-  const canEdit = user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico';
+  const canCreate = checkPermission('corporate_phones', 'create');
+  const canEdit = checkPermission('corporate_phones', 'edit');
+  const canDelete = checkPermission('corporate_phones', 'delete');
+  const canView = checkPermission('corporate_phones', 'view');
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
@@ -381,7 +386,7 @@ const CorporatePhones = () => {
                 <FaDownload className="w-4 h-4" />
                 <span className="hidden sm:inline">Exportar</span>
               </button>
-              {canEdit && (
+              {canCreate && (
                 <button
                   onClick={handleCreate}
                   className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
@@ -527,7 +532,7 @@ const CorporatePhones = () => {
                 ? 'Intenta ajustar los filtros de búsqueda'
                 : 'Comienza agregando un nuevo teléfono corporativo al inventario'}
             </p>
-            {canEdit && !searchTerm && filterStatus === 'all' && filterCategory === 'all' && (
+            {canCreate && !searchTerm && filterStatus === 'all' && filterCategory === 'all' && (
               <button
                 onClick={handleCreate}
                 className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
@@ -569,6 +574,10 @@ const CorporatePhones = () => {
                             >
                               <FaEdit className="w-3 h-3 lg:w-4 lg:h-4" />
                             </button>
+                          </div>
+                        )}
+                        {canDelete && (
+                          <div className="flex gap-1 lg:gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                             <button
                               onClick={() => handleDelete(item.id)}
                               className="p-1.5 lg:p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all touch-manipulation"
@@ -629,7 +638,7 @@ const CorporatePhones = () => {
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Plan</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Equipo</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Estado</th>
-                        {canEdit && (
+                        {(canEdit || canDelete) && (
                           <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Acciones</th>
                         )}
                       </tr>
@@ -649,23 +658,27 @@ const CorporatePhones = () => {
                               {item.status}
                             </span>
                           </td>
-                          {canEdit && (
+                          {(canEdit || canDelete) && (
                             <td className="px-4 py-4">
                               <div className="flex gap-2">
-                                <button
-                                  onClick={() => handleEdit(item)}
-                                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                                  title="Editar"
-                                >
-                                  <FaEdit className="w-4 h-4" />
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(item.id)}
-                                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                                  title="Eliminar"
-                                >
-                                  <FaTrash className="w-4 h-4" />
-                                </button>
+                                {canEdit && (
+                                  <button
+                                    onClick={() => handleEdit(item)}
+                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                    title="Editar"
+                                  >
+                                    <FaEdit className="w-4 h-4" />
+                                  </button>
+                                )}
+                                {canDelete && (
+                                  <button
+                                    onClick={() => handleDelete(item.id)}
+                                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                    title="Eliminar"
+                                  >
+                                    <FaTrash className="w-4 h-4" />
+                                  </button>
+                                )}
                               </div>
                             </td>
                           )}

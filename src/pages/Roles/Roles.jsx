@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { rolesAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
+import { useAuth } from '../../hooks/useAuth';
 import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaShieldAlt, FaKey, FaUserShield, FaUserCog, FaUser, FaChartBar, FaSave, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 
@@ -22,6 +23,7 @@ const Roles = () => {
   const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
+  const { checkPermission } = useAuth();
 
   // Search and filter states
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,11 +33,11 @@ const Roles = () => {
   const [showStats, setShowStats] = useState(false);
 
   useEffect(() => {
-    if (user && user.role?.name === 'Administrador') {
+    if (user && checkPermission('roles', 'view')) {
       fetchRoles();
       fetchPermissions();
     }
-  }, [user]);
+  }, [user, checkPermission]);
 
   const fetchRoles = async () => {
     try {
@@ -239,7 +241,7 @@ const Roles = () => {
     }
   };
 
-  if (!user || user.role?.name !== 'Administrador') {
+  if (!user || !checkPermission('roles', 'view')) {
     return <div className="container mx-auto p-6">Acceso Denegado</div>;
   }
 
@@ -284,13 +286,15 @@ const Roles = () => {
                 <FaChartBar className="mr-2" />
                 <span className="hidden sm:inline">Estadísticas</span>
               </button>
-              <button
-                onClick={handleCreate}
-                className="flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-              >
-                <FaPlus className="w-5 h-5" />
-                <span>Nuevo Rol</span>
-              </button>
+              {checkPermission('roles', 'create') && (
+                <button
+                  onClick={handleCreate}
+                  className="flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  <FaPlus className="w-5 h-5" />
+                  <span>Nuevo Rol</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -417,22 +421,26 @@ const Roles = () => {
                       </div>
                     </div>
                     <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleEdit(role)}
-                        className="flex items-center space-x-1 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors"
-                        disabled={role.name === 'Administrador'}
-                      >
-                        <FaEdit />
-                        <span>Editar</span>
-                      </button>
-                      <button
-                        onClick={() => handleDelete(role.id)}
-                        className="flex items-center space-x-1 px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors"
-                        disabled={role.name === 'Administrador'}
-                      >
-                        <FaTrash />
-                        <span>Eliminar</span>
-                      </button>
+                      {checkPermission('roles', 'edit') && (
+                        <button
+                          onClick={() => handleEdit(role)}
+                          className="flex items-center space-x-1 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors"
+                          disabled={role.name === 'Administrador'}
+                        >
+                          <FaEdit />
+                          <span>Editar</span>
+                        </button>
+                      )}
+                      {checkPermission('roles', 'delete') && (
+                        <button
+                          onClick={() => handleDelete(role.id)}
+                          className="flex items-center space-x-1 px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors"
+                          disabled={role.name === 'Administrador'}
+                        >
+                          <FaTrash />
+                          <span>Eliminar</span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
