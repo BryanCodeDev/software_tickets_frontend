@@ -771,7 +771,14 @@ const Documents = () => {
       showNotification('Documento descargado exitosamente', 'success');
     } catch (err) {
       console.error('Error downloading document:', err);
-      showNotification('Error al descargar el documento. Por favor, inténtalo de nuevo.', 'error');
+
+      // Si el documento no existe (404), refrescar la lista de documentos
+      if (err.response?.status === 404) {
+        showNotification('El documento no existe o ha sido eliminado. Actualizando lista...', 'warning');
+        fetchDocuments();
+      } else {
+        showNotification('Error al descargar el documento. Por favor, inténtalo de nuevo.', 'error');
+      }
     }
   };
 
