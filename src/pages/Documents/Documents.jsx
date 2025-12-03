@@ -742,6 +742,7 @@ const Documents = () => {
   // Funciones para manejo de usuarios en permisos
   const filteredUsers = allUsers.filter(u =>
     u.id !== user?.id &&
+    !permissions.some(p => p.user?.id === u.id) &&
     (u.name?.toLowerCase().includes(userSearchTerm.toLowerCase()) ||
      u.username?.toLowerCase().includes(userSearchTerm.toLowerCase()) ||
      u.email?.toLowerCase().includes(userSearchTerm.toLowerCase()))
