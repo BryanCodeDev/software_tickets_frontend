@@ -42,6 +42,8 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    if (!user) return;
+
     const handleForceLogout = () => {
       logout();
       // Opcional: mostrar mensaje al usuario
@@ -53,7 +55,7 @@ export const AuthProvider = ({ children }) => {
     return () => {
       offForceLogout(handleForceLogout);
     };
-  }, []);
+  }, [user]);
 
   const login = async (email, password, twoFactorToken = null) => {
     try {
