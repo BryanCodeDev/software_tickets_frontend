@@ -103,9 +103,11 @@ export const exportToPDF = async (acta, equipo) => {
     pdf.line(margin, y + 1.5, pageWidth - margin, y + 1.5);
   };
 
-  drawInfoRow('Marca:', acta.marca || equipo?.marca || 'N/A', 'Modelo:', acta.modelo_equipo || equipo?.propiedad || 'N/A', yPos);
+  // Mostrar equipo con IT y marca en formato: IT0016 - LENOVO (MP13ZXQN)
+  const equipoInfo = equipo ? `${equipo.it || 'N/A'} - ${equipo.marca || 'N/A'} (${equipo.serial || 'N/A'})` : 'N/A';
+  drawInfoRow('Equipo:', equipoInfo, 'Modelo:', acta.modelo_equipo || equipo?.propiedad || 'N/A', yPos);
   yPos += 6;
-  
+
   drawInfoRow('Serial/IMEI:', acta.serial_imei || equipo?.serial || 'N/A', 'Procesador:', acta.procesador || equipo?.it || 'N/A', yPos);
   yPos += 6;
   
@@ -469,8 +471,8 @@ export const exportToWord = async (acta, equipo) => {
           rows: [
             new TableRow({
               children: [
-                new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "Marca:", bold: true })] })] }),
-                new TableCell({ children: [new Paragraph(acta.marca || equipo?.marca || 'N/A')] }),
+                new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "Equipo:", bold: true })] })] }),
+                new TableCell({ children: [new Paragraph(equipo ? `${equipo.it || 'N/A'} - ${equipo.marca || 'N/A'} (${equipo.serial || 'N/A'})` : 'N/A')] }),
                 new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "Modelo:", bold: true })] })] }),
                 new TableCell({ children: [new Paragraph(acta.modelo_equipo || equipo?.propiedad || 'N/A')] }),
               ],
@@ -880,8 +882,8 @@ const generateActaHTML = (acta, equipo) => {
           <div class="section-title">INFORMACIÓN DEL EQUIPO</div>
           <table class="equipment-table">
             <tr>
-              <td>Marca:</td>
-              <td>${acta.marca || equipo?.marca || 'N/A'}</td>
+              <td>Equipo:</td>
+              <td>${equipo ? `${equipo.it || 'N/A'} - ${equipo.marca || 'N/A'} (${equipo.serial || 'N/A'})` : 'N/A'}</td>
               <td>Modelo:</td>
               <td>${acta.modelo_equipo || equipo?.propiedad || equipo?.equipo_celular || 'N/A'}</td>
             </tr>
