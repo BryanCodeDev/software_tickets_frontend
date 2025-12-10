@@ -59,35 +59,54 @@ const ActasEntrega = () => {
 
     // Configurar WebSocket para actas de entrega
     const socket = getSocket();
-    if (socket) {
-      onActaEntregaCreated((acta) => {
-        console.log('WebSocket: Nueva acta creada', acta);
-        fetchActas();
-      });
 
-      onActaEntregaUpdated((data) => {
-        console.log('WebSocket: Acta actualizada', data);
-        fetchActas();
-      });
+    // Función para configurar los listeners de WebSocket
+    const setupWebSocketListeners = () => {
+      if (socket && socket.connected) {
+        console.log('Configurando listeners de WebSocket para actas de entrega');
 
-      onActaEntregaDeleted((data) => {
-        console.log('WebSocket: Acta eliminada', data);
-        fetchActas();
-      });
+        onActaEntregaCreated((acta) => {
+          console.log('WebSocket: Nueva acta creada', acta);
+          fetchActas();
+        });
 
-      onActasEntregaListUpdated(() => {
-        console.log('WebSocket: Lista de actas actualizada');
-        fetchActas();
-      });
-    }
+        onActaEntregaUpdated((data) => {
+          console.log('WebSocket: Acta actualizada', data);
+          fetchActas();
+        });
+
+        onActaEntregaDeleted((data) => {
+          console.log('WebSocket: Acta eliminada', data);
+          fetchActas();
+        });
+
+        onActasEntregaListUpdated(() => {
+          console.log('WebSocket: Lista de actas actualizada');
+          fetchActas();
+        });
+      } else if (socket) {
+        // Si el socket existe pero no está conectado, esperar a que se conecte
+        const connectListener = () => {
+          console.log('Socket conectado, configurando listeners');
+          setupWebSocketListeners();
+          socket.off('connect', connectListener);
+        };
+        socket.on('connect', connectListener);
+      }
+    };
+
+    // Configurar listeners inicialmente
+    setupWebSocketListeners();
 
     return () => {
       // Limpiar listeners al desmontar el componente
       if (socket) {
+        console.log('Limpiando listeners de WebSocket');
         socket.off('acta-entrega-created');
         socket.off('acta-entrega-updated');
         socket.off('acta-entrega-deleted');
         socket.off('actas-entrega-list-updated');
+        socket.off('connect');
       }
     };
   }, []);

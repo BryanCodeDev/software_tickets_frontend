@@ -49,14 +49,28 @@ const createSocket = () => {
   // Add error handling
   socket.on('connect_error', (error) => {
     console.error('Socket connection error:', error);
+    // Intentar reconectar después de un error
+    setTimeout(() => {
+      if (socket && !socket.connected) {
+        socket.connect();
+      }
+    }, 5000);
   });
 
   socket.on('connect', () => {
-    // console.log('Socket connected successfully');
+    console.log('Socket connected successfully');
   });
 
   socket.on('disconnect', (reason) => {
-    // console.log('Socket disconnected:', reason);
+    console.log('Socket disconnected:', reason);
+    // Intentar reconectar automáticamente
+    if (reason !== 'io client disconnect' && reason !== 'io server disconnect') {
+      setTimeout(() => {
+        if (socket && !socket.connected) {
+          socket.connect();
+        }
+      }, 5000);
+    }
   });
 
   // Handle authentication errors
