@@ -39,6 +39,10 @@ const createSocket = () => {
     reconnectionAttempts: 5,
     query: {
       token: token
+    },
+    withCredentials: true,
+    extraHeaders: {
+      'Authorization': `Bearer ${token}`
     }
   });
 
