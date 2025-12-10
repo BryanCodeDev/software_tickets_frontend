@@ -48,11 +48,11 @@ const createSocket = () => {
   });
 
   socket.on('connect', () => {
-    console.log('Socket connected successfully');
+    // console.log('Socket connected successfully');
   });
 
   socket.on('disconnect', (reason) => {
-    console.log('Socket disconnected:', reason);
+    // console.log('Socket disconnected:', reason);
   });
 
   // Handle authentication errors
@@ -355,6 +355,47 @@ export const offPurchaseRequestDeleted = (callback) => {
 export const offPurchaseRequestsListUpdated = (callback) => {
   const sock = getSocket();
   if (sock) sock.off('purchase-requests-list-updated', callback);
+};
+
+// Acta Entrega WebSocket functions
+export const onActaEntregaCreated = (callback) => {
+  const sock = getSocket();
+  if (sock) sock.on('acta-entrega-created', callback);
+};
+
+export const onActaEntregaUpdated = (callback) => {
+  const sock = getSocket();
+  if (sock) sock.on('acta-entrega-updated', callback);
+};
+
+export const onActaEntregaDeleted = (callback) => {
+  const sock = getSocket();
+  if (sock) sock.on('acta-entrega-deleted', callback);
+};
+
+export const onActasEntregaListUpdated = (callback) => {
+  const sock = getSocket();
+  if (sock) sock.on('actas-entrega-list-updated', callback);
+};
+
+export const offActaEntregaCreated = (callback) => {
+  const sock = getSocket();
+  if (sock) sock.off('acta-entrega-created', callback);
+};
+
+export const offActaEntregaUpdated = (callback) => {
+  const sock = getSocket();
+  if (sock) sock.off('acta-entrega-updated', callback);
+};
+
+export const offActaEntregaDeleted = (callback) => {
+  const sock = getSocket();
+  if (sock) sock.off('acta-entrega-deleted', callback);
+};
+
+export const offActasEntregaListUpdated = (callback) => {
+  const sock = getSocket();
+  if (sock) sock.off('actas-entrega-list-updated', callback);
 };
 
 export default getSocket;

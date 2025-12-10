@@ -11,4 +11,5 @@ export { default as messagesAPI } from './messagesAPI';
 export { default as qualityMessagesAPI } from './qualityMessagesAPI';
 export { default as usersAPI } from './usersAPI';
 export { default as rolesAPI } from './rolesAPI';
+export { default as actaEntregaAPI } from './actaEntregaAPI';
 export { getServerBaseURL } from './api';

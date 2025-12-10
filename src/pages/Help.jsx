@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaQuestionCircle, FaEnvelope, FaPhone, FaBook, FaTicketAlt, FaBox, FaFileAlt, FaKey, FaSearch, FaChartBar, FaSignInAlt, FaTachometerAlt, FaCog, FaUsers, FaShieldAlt, FaExclamationTriangle, FaLightbulb, FaHeadset, FaCrown, FaWrench, FaUser, FaGlobe, FaTimes, FaRocket, FaBullseye, FaLock, FaChartLine, FaBolt, FaCheck, FaClipboardList } from 'react-icons/fa';
+import { FaQuestionCircle, FaEnvelope, FaPhone, FaBook, FaTicketAlt, FaBox, FaFileAlt, FaKey, FaSearch, FaChartBar, FaSignInAlt, FaTachometerAlt, FaCog, FaUsers, FaShieldAlt, FaExclamationTriangle, FaLightbulb, FaHeadset, FaCrown, FaWrench, FaUser, FaGlobe, FaTimes, FaRocket, FaBullseye, FaLock, FaChartLine, FaBolt, FaCheck, FaClipboardList, FaClipboardCheck } from 'react-icons/fa';
 
 const Help = () => {
   const [activeTab, setActiveTab] = useState('faq');
@@ -200,6 +200,54 @@ const Help = () => {
       answer: 'La información de contacto incluye email y teléfono de soporte. Está disponible en la sección de Ayuda para consultas adicionales.'
     },
     {
+      question: '¿Cómo acceder al módulo de Actas de Entrega?',
+      answer: 'En la barra lateral, haga clic en "Actas de Entrega" para acceder al módulo de gestión de entregas y devoluciones de equipos corporativos. Solo usuarios con permisos de inventario pueden acceder.'
+    },
+    {
+      question: '¿Cómo crear una acta de entrega?',
+      answer: 'Haga clic en "Nueva Acta" en el módulo de Actas de Entrega. Seleccione el tipo de equipo (computadora o teléfono), el usuario receptor, fecha de entrega, estado del equipo y complete las observaciones. Debe aceptar las políticas de uso.'
+    },
+    {
+      question: '¿Cómo registrar la devolución de un equipo?',
+      answer: 'Edite el acta existente de entrega y complete la información de devolución: fecha, estado del equipo al devolver, observaciones y firma del responsable que recibe el equipo devuelto.'
+    },
+    {
+      question: '¿Cómo acceder al módulo de Solicitudes de Compra?',
+      answer: 'En la barra lateral, haga clic en "Solicitudes de Compra" para gestionar las solicitudes de adquisición de equipos, software, periféricos y otros elementos. Cada rol tiene permisos específicos según su nivel de aprobación.'
+    },
+    {
+      question: '¿Cómo crear una solicitud de compra?',
+      answer: 'Haga clic en "Nueva Solicitud" en el módulo de Solicitudes de Compra. Complete el título, tipo de artículo (periférico, electrodoméstico, software), descripción, cantidad, costo estimado y justificación detallada.'
+    },
+    {
+      question: '¿Cuál es el proceso de aprobación de solicitudes de compra?',
+      answer: 'El flujo es: 1) Empleado crea solicitud, 2) Coordinadora Administrativa aprueba inicial, 3) Jefe aprueba final, 4) Departamento de Compras procesa, 5) Se marca como comprado y entregado. Cada paso puede ser rechazado con motivo.'
+    },
+    {
+      question: '¿Cómo aprobar solicitudes como Coordinadora Administrativa?',
+      answer: 'Vaya a Solicitudes de Compra, filtre por "Pendiente Coordinadora", revise la solicitud y use los botones "Aprobar" o "Rechazar". Agregue comentarios si es necesario y justifique la decisión.'
+    },
+    {
+      question: '¿Cómo aprobar solicitudes como Jefe?',
+      answer: 'Vaya a Solicitudes de Compra, filtre por "Pendiente Jefe", revise la solicitud aprobada por la coordinadora y el presupuesto disponible. Use "Aprobar" para autorizar la compra o "Rechazar" con motivo.'
+    },
+    {
+      question: '¿Cómo marcar una solicitud como comprada y entregada?',
+      answer: 'El departamento de Compras puede marcar solicitudes como "En Compras", luego "Comprado" y finalmente "Entregado" una vez que el solicitante recibe el artículo.'
+    },
+    {
+      question: '¿Cómo gestionar presupuestos para compras?',
+      answer: 'Solo administradores pueden crear presupuestos anuales. Asigne categorías (tecnología, oficina, mantenimiento) y montos totales. El sistema verifica disponibilidad de presupuesto al aprobar solicitudes.'
+    },
+    {
+      question: '¿Cómo funciona el sistema de adjuntos en solicitudes de compra?',
+      answer: 'Puede adjuntar cotizaciones, especificaciones técnicas, imágenes o cualquier documento que respalde la solicitud. Los archivos se validan por tipo y tamaño, igual que en los tickets.'
+    },
+    {
+      question: '¿Cómo ver comentarios internos en solicitudes de compra?',
+      answer: 'Use el botón de comentarios en cada solicitud. Los comentarios internos solo son visibles para el personal de compras y aprobadores, mientras que los públicos son visibles para el solicitante.'
+    },
+    {
       question: '¿Cómo acceder al módulo de Calidad?',
       answer: 'En la barra lateral, haga clic en "Calidad" para desplegar el submenú. Desde ahí puede acceder a "Documentos" para gestión documental y "Ticket Calidad" para reportes de calidad y cambios documentales.'
     },
@@ -222,6 +270,30 @@ const Help = () => {
     {
       question: '¿Qué es el rol de Calidad?',
       answer: 'El rol de Calidad es un usuario especializado que tiene acceso limitado general pero control administrativo completo sobre los módulos de calidad y documentación. Puede crear tickets de calidad, gestionar todos los tickets de calidad existentes, acceder completamente al módulo de documentos (crear carpetas, editar cualquier documento, eliminar documentos), pero no tiene acceso a inventario, credenciales, gestión de usuarios ni configuración del sistema.'
+    },
+    {
+      question: '¿Cuáles son los nuevos roles del sistema?',
+      answer: 'Se han agregado tres nuevos roles: Coordinadora Administrativa (aprobaciones iniciales de compra), Jefe (aprobaciones finales y gestión), y Compras (procesamiento de compras). Cada rol tiene permisos específicos para el flujo de aprobación de solicitudes.'
+    },
+    {
+      question: '¿Cómo ver estadísticas de actas de entrega?',
+      answer: 'Use el botón "Estadísticas" en el módulo de Actas de Entrega para ver: total de actas, equipos entregados actualmente, tasa de devolución, distribución entre computadoras y celulares.'
+    },
+    {
+      question: '¿Cómo exportar datos de actas de entrega?',
+      answer: 'El sistema permite exportar actas en formato CSV para análisis en Excel. Use el botón de exportación en la vista de tabla para descargar todos los datos filtrados.'
+    },
+    {
+      question: '¿Cómo buscar actas de entrega?',
+      answer: 'Use la barra de búsqueda para filtrar por usuario, equipo, fecha o motivo de entrega. También puede filtrar por tipo de equipo (computadora/teléfono) y estado (entregado/devuelto).'
+    },
+    {
+      question: '¿Qué motivos de entrega se pueden registrar?',
+      answer: 'Los motivos incluyen: nuevo empleado, cambio de equipo, mantenimiento, fallas técnicas y otros. Cada motivo ayuda a clasificar y reportar el uso de equipos corporativos.'
+    },
+    {
+      question: '¿Cómo ver el historial completo de una solicitud de compra?',
+      answer: 'Abra los detalles de cualquier solicitud para ver el historial completo: fechas de creación, aprobaciones, rechazos con motivos, cambios de estado, y comentarios de cada etapa del proceso.'
     }
   ];
 
@@ -496,6 +568,30 @@ const Help = () => {
                             <li>• Seguimiento de versiones</li>
                           </ul>
                         </div>
+                        <div className="bg-purple-50 p-3 rounded-lg">
+                          <h6 className="font-medium text-purple-900 mb-2 flex items-center">
+                            <FaClipboardCheck className="text-purple-600 mr-2" />
+                            Actas de Entrega
+                          </h6>
+                          <ul className="text-sm space-y-1">
+                            <li>• Gestión de entregas y devoluciones</li>
+                            <li>• Registro de firmas y estados</li>
+                            <li>• Control de motivos de entrega</li>
+                            <li>• Estadísticas de equipos</li>
+                          </ul>
+                        </div>
+                        <div className="bg-teal-50 p-3 rounded-lg">
+                          <h6 className="font-medium text-teal-900 mb-2 flex items-center">
+                            <FaBox className="text-teal-600 mr-2" />
+                            Solicitudes de Compra
+                          </h6>
+                          <ul className="text-sm space-y-1">
+                            <li>• Sistema de aprobación por roles</li>
+                            <li>• Control de presupuestos</li>
+                            <li>• Seguimiento de compras</li>
+                            <li>• Historial completo</li>
+                          </ul>
+                        </div>
                         <div className="bg-red-50 p-3 rounded-lg">
                           <h6 className="font-medium text-red-900 mb-2 flex items-center">
                             <FaChartBar className="text-red-600 mr-2" />
@@ -560,6 +656,206 @@ const Help = () => {
                         </div>
                         <div className="mt-2 text-xs text-red-600 flex items-center">
                           <FaTimes className="text-red-600 mr-2" /> Internet Explorer no está soportado
+                        </div>
+                      </div>
+                    </div>
+                  </details>
+
+                  <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
+                      <FaClipboardCheck className="text-purple-600 mr-2" />
+                      Actas de Entrega
+                    </summary>
+                    <div className="p-4 pt-0 text-gray-700">
+                      <div className="space-y-4">
+                        <div className="bg-purple-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-purple-900 mb-3 flex items-center">
+                            <FaClipboardCheck className="text-purple-600 mr-2" />
+                            Gestión de Entregas y Devoluciones
+                          </h6>
+                          <div className="space-y-3">
+                            <div>
+                              <h7 className="font-medium text-sm">Acceso al Módulo</h7>
+                              <ol className="text-sm space-y-1 list-decimal list-inside ml-4">
+                                <li>Haga clic en "Actas de Entrega" en la barra lateral</li>
+                                <li>Verá todas las actas de entrega registradas</li>
+                                <li>Use filtros por tipo de equipo, estado y fecha</li>
+                                <li>Solo usuarios con permisos de inventario pueden acceder</li>
+                              </ol>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Creación de Actas</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Haga clic en "Nueva Acta"</li>
+                                <li>• Seleccione tipo de equipo: Computadora/Laptop o Teléfono Celular</li>
+                                <li>• Elija el equipo disponible del inventario</li>
+                                <li>• Asigne el usuario que recibe el equipo</li>
+                                <li>• Defina la fecha de entrega y estado del equipo</li>
+                                <li>• Agregue observaciones y acepte las políticas</li>
+                                <li>• Registre firma y cargo del receptor</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Registro de Devoluciones</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Edite el acta existente de entrega</li>
+                                <li>• Complete la fecha de devolución</li>
+                                <li>• Describa el estado del equipo al devolver</li>
+                                <li>• Agregue observaciones sobre la devolución</li>
+                                <li>• Registre la firma del responsable que recibe</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Motivos de Entrega</h7>
+                              <div className="grid grid-cols-2 gap-2 ml-4">
+                                <div className="bg-white p-2 rounded border">
+                                  <div className="font-medium text-xs text-purple-700">Nuevo Empleado</div>
+                                  <div className="text-xs">Asignación inicial de equipos</div>
+                                </div>
+                                <div className="bg-white p-2 rounded border">
+                                  <div className="font-medium text-xs text-blue-700">Cambio de Equipo</div>
+                                  <div className="text-xs">Reemplazo por actualización</div>
+                                </div>
+                                <div className="bg-white p-2 rounded border">
+                                  <div className="font-medium text-xs text-green-700">Mantenimiento</div>
+                                  <div className="text-xs">Envío a reparación</div>
+                                </div>
+                                <div className="bg-white p-2 rounded border">
+                                  <div className="font-medium text-xs text-red-700">Fallas</div>
+                                  <div className="text-xs">Equipo defectuoso</div>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Estadísticas y Reportes</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Total de actas registradas</li>
+                                <li>• Equipos actualmente entregados</li>
+                                <li>• Tasa de devolución de equipos</li>
+                                <li>• Distribución: computadoras vs celulares</li>
+                                <li>• Exportación de datos en CSV</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </details>
+
+                  <details className="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <summary className="cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center">
+                      <FaBox className="text-teal-600 mr-2" />
+                      Solicitudes de Compra
+                    </summary>
+                    <div className="p-4 pt-0 text-gray-700">
+                      <div className="space-y-4">
+                        <div className="bg-teal-50 p-4 rounded-lg">
+                          <h6 className="font-medium text-teal-900 mb-3 flex items-center">
+                            <FaBox className="text-teal-600 mr-2" />
+                            Sistema de Aprobación de Compras
+                          </h6>
+                          <div className="space-y-3">
+                            <div>
+                              <h7 className="font-medium text-sm">Acceso al Módulo</h7>
+                              <ol className="text-sm space-y-1 list-decimal list-inside ml-4">
+                                <li>Haga clic en "Solicitudes de Compra" en la barra lateral</li>
+                                <li>Verá todas las solicitudes filtradas por su rol</li>
+                                <li>Use filtros por estado: solicitado, pendiente, aprobado, rechazado</li>
+                                <li>Cada rol ve solo las solicitudes según sus permisos</li>
+                              </ol>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Creación de Solicitudes</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Haga clic en "Nueva Solicitud"</li>
+                                <li>• Complete título descriptivo de la compra</li>
+                                <li>• Seleccione tipo: Periférico, Electrodoméstico, Software, Otro</li>
+                                <li>• Describa detalladamente el artículo solicitado</li>
+                                <li>• Indique cantidad requerida</li>
+                                <li>• Estime el costo total de la compra</li>
+                                <li>• Justifique la necesidad de la compra</li>
+                                <li>• Adjunte cotizaciones o documentos de soporte</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Proceso de Aprobación</h7>
+                              <div className="bg-white p-3 rounded border mb-3">
+                                <div className="font-medium text-sm mb-2">Flujo de Aprobación:</div>
+                                <div className="space-y-2">
+                                  <div className="flex items-center text-sm">
+                                    <span className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-3">1</span>
+                                    <span><strong>Solicitado:</strong> Empleado crea la solicitud</span>
+                                  </div>
+                                  <div className="flex items-center text-sm">
+                                    <span className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-3">2</span>
+                                    <span><strong>Pendiente Coordinadora:</strong> Coordinadora Administrativa revisa</span>
+                                  </div>
+                                  <div className="flex items-center text-sm">
+                                    <span className="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-3">3</span>
+                                    <span><strong>Pendiente Jefe:</strong> Jefe autoriza la compra final</span>
+                                  </div>
+                                  <div className="flex items-center text-sm">
+                                    <span className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-3">4</span>
+                                    <span><strong>En Compras:</strong> Departamento de Compras procesa</span>
+                                  </div>
+                                  <div className="flex items-center text-sm">
+                                    <span className="w-8 h-8 bg-teal-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-3">5</span>
+                                    <span><strong>Comprado/Entregado:</strong> Proceso completado</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Aprobación como Coordinadora Administrativa</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Filtre por "Pendiente Coordinadora"</li>
+                                <li>• Revise la justificación y documentación</li>
+                                <li>• Use "Aprobar" para continuar al siguiente nivel</li>
+                                <li>• Use "Rechazar" con motivo si no procede</li>
+                                <li>• Agregue comentarios para clarificar la decisión</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Aprobación como Jefe</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Filtre por "Pendiente Jefe"</li>
+                                <li>• Revise la aprobación de la coordinadora</li>
+                                <li>• Verifique disponibilidad de presupuesto</li>
+                                <li>• Autorice con "Aprobar" o rechace con "Rechazar"</li>
+                                <li>• Agregue comentarios de autorización final</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Gestión por Departamento de Compras</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Reciba solicitudes aprobadas por el jefe</li>
+                                <li>• Procese la compra con proveedores</li>
+                                <li>• Marque como "En Compras" durante el proceso</li>
+                                <li>• Cambie a "Comprado" al recibir el artículo</li>
+                                <li>• Marque como "Entregado" al entregar al solicitante</li>
+                                <li>• Agregue notas sobre el proceso de compra</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Sistema de Presupuestos</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Solo administradores crean presupuestos anuales</li>
+                                <li>• Categorías: Tecnología, Oficina, Mantenimiento, Capacitación</li>
+                                <li>• Asignación por año y montos totales</li>
+                                <li>• Control automático de disponibilidad</li>
+                                <li>• Seguimiento de montos utilizados</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Comentarios y Seguimiento</h7>
+                              <ul className="text-sm space-y-1 ml-4">
+                                <li>• Comentarios públicos: visibles para el solicitante</li>
+                                <li>• Comentarios internos: solo para aprobadores</li>
+                                <li>• Historial completo de cambios de estado</li>
+                                <li>• Registro de todas las acciones y fechas</li>
+                              </ul>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1200,13 +1496,59 @@ const Help = () => {
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                </tr>
+                                <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Actas de Entrega</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                  <td className="border border-gray-300 p-2 font-medium">Solicitudes de Compra</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                </tr>
+                                <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Aprobar Compras (Coordinadora)</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                 </tr>
+                                <tr className="bg-gray-50">
+                                  <td className="border border-gray-300 p-2 font-medium">Aprobar Compras (Jefe)</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                </tr>
+                                <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Procesar Compras</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                </tr>
                                 <tr>
                                   <td className="border border-gray-300 p-2 font-medium">Configuración del Sistema</td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
@@ -1766,11 +2108,47 @@ const Help = () => {
                         <div className="bg-gray-50 p-3 rounded-lg">
                           <strong>Asignación de Equipos:</strong> Proceso de asignar teléfonos corporativos a empleados específicos
                         </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Acta de Entrega:</strong> Documento formal que registra la entrega y devolución de equipos corporativos con firmas y estados
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Solicitud de Compra:</strong> Petición formal para adquirir artículos, que pasa por un proceso de aprobación por roles específicos
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Coordinadora Administrativa:</strong> Rol responsable de la primera aprobación en el proceso de solicitudes de compra
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Departamento de Compras:</strong> Rol encargado de procesar y gestionar las compras aprobadas en el sistema
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Control de Presupuestos:</strong> Sistema de gestión de fondos anuales para categorizar y controlar gastos en compras
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Flujo de Aprobación:</strong> Proceso secuencial de autorizaciones que debe seguir una solicitud de compra
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Comentarios Internos:</strong> Notas visibles solo para personal de compras y aprobadores, no para el solicitante
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Motivo de Entrega:</strong> Razón registrada para la entrega de equipos (nuevo empleado, cambio, mantenimiento, fallas)
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Tasa de Devolución:</strong> Porcentaje de equipos que han sido devueltos respecto al total de entregas registradas
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Estado de Equipo:</strong> Condición física y funcional del equipo al momento de entrega y devolución
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Justificación de Compra:</strong> Explicación detallada que respalda la necesidad de adquirir un artículo específico
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Historial de Aprobaciones:</strong> Registro completo de todas las acciones, fechas y comentarios del proceso de compra
+                        </div>
                       </div>
                       <div className="mt-4 text-center text-xs text-gray-500">
                         <p>DuvyClass – Transformando la gestión tecnológica empresarial</p>
-                        <p>Manual actualizado: noviembre 2025 | Versión del Sistema: 1.1.0</p>
-                        <p>Nueva funcionalidad: Módulo de Teléfonos Corporativos</p>
+                        <p>Manual actualizado: diciembre 2025 | Versión del Sistema: 1.2.0</p>
+                        <p>Nuevas funcionalidades: Actas de Entrega y Solicitudes de Compra</p>
                       </div>
                     </div>
                   </details>

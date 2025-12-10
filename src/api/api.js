@@ -30,16 +30,49 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor to handle 401 errors
+const handleApiError = (error) => {
+  console.error('API Error:', {
+    url: error.config?.url,
+    method: error.config?.method,
+    status: error.response?.status,
+    statusText: error.response?.statusText,
+    data: error.response?.data,
+    message: error.message
+  });
+  
+  // Enhanced error logging for debugging
+  if (error.response?.status === 403) {
+    console.error('403 Forbidden Error Details:', {
+      url: error.config?.url,
+      headers: error.config?.headers,
+      userAgent: navigator.userAgent,
+      localStorage: {
+        hasToken: !!localStorage.getItem('token'),
+        hasUser: !!localStorage.getItem('user')
+      }
+    });
+  }
+  
+  return Promise.reject(error);
+};
+
+// Response interceptor to handle errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       // Token expired or invalid, redirect to login
+      console.log('Token expired or invalid, redirecting to login');
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('token_timestamp');
       window.location.href = '/login';
     }
-    return Promise.reject(error);
+    // Don't redirect on 403 errors, just return the error
+    if (error.response?.status === 403) {
+      return Promise.reject(error);
+    }
+    return handleApiError(error);
   }
 );
 

@@ -20,6 +20,7 @@ const TicketCalidad = lazy(() => import('./pages/Tickets/TicketCalidad'));
 const PurchaseRequests = lazy(() => import('./pages/PurchaseRequests/PurchaseRequests'));
 const Inventory = lazy(() => import('./pages/Inventory/Inventory'));
 const CorporatePhones = lazy(() => import('./pages/Inventory/CorporatePhones'));
+const ActasEntrega = lazy(() => import('./pages/ActasEntrega/ActasEntrega'));
 const Documents = lazy(() => import('./pages/Documents/Documents'));
 const Credentials = lazy(() => import('./pages/Credentials/Credentials'));
 const Users = lazy(() => import('./pages/Users/Users'));
@@ -108,6 +109,13 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <CorporatePhones />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/actas-entrega" element={
+              <ProtectedRoute>
+                <Layout>
+                  <ActasEntrega />
                 </Layout>
               </ProtectedRoute>
             } />
