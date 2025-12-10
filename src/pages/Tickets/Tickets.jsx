@@ -756,9 +756,10 @@ const Tickets = () => {
             </div>
 
             <div className="flex flex-wrap gap-2 lg:gap-3">
-              {(checkPermission('tickets', 'view_stats') || checkPermission('tickets', 'export')) && (
+              {((checkPermission('tickets', 'view_stats') || checkPermission('tickets', 'export') ||
+                userRole === 'Administrador' || userRole === 'Técnico')) && (
                 <>
-                  {checkPermission('tickets', 'view_stats') && (
+                  {(checkPermission('tickets', 'view_stats') || userRole === 'Administrador' || userRole === 'Técnico') && (
                     <button
                       onClick={() => setShowStats(!showStats)}
                       className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
@@ -767,7 +768,7 @@ const Tickets = () => {
                       <span className="hidden sm:inline">Estadísticas</span>
                     </button>
                   )}
-                  {checkPermission('tickets', 'export') && (
+                  {(checkPermission('tickets', 'export') || userRole === 'Administrador' || userRole === 'Técnico') && (
                     <button
                       onClick={exportToExcel}
                       className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"

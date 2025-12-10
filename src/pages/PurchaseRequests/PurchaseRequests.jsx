@@ -407,9 +407,10 @@ const PurchaseRequests = () => {
             </div>
 
             <div className="flex flex-wrap gap-2 sm:gap-3">
-              {(checkPermission('purchase_requests', 'view_stats') || checkPermission('purchase_requests', 'export')) && (
+              {((checkPermission('purchase_requests', 'view_stats') || checkPermission('purchase_requests', 'export') ||
+                userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Coordinadora Administrativa' || userRole === 'Jefe')) && (
                 <>
-                  {checkPermission('purchase_requests', 'view_stats') && (
+                  {(checkPermission('purchase_requests', 'view_stats') || userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Coordinadora Administrativa' || userRole === 'Jefe') && (
                     <button
                       onClick={() => setShowStats(!showStats)}
                       className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base"
@@ -418,7 +419,7 @@ const PurchaseRequests = () => {
                       <span className="hidden sm:inline">Estadísticas</span>
                     </button>
                   )}
-                  {checkPermission('purchase_requests', 'export') && (
+                  {(checkPermission('purchase_requests', 'export') || userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Coordinadora Administrativa' || userRole === 'Jefe') && (
                     <button
                       onClick={exportToExcel}
                       className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base"

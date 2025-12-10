@@ -632,13 +632,14 @@ const generateActaHTML = (acta, equipo) => {
           page-break-after: auto;
         }
         .header {
-          background: linear-gradient(135deg, #662d91 0%, #8e4dbf 100%);
+          background: #662d91;
           color: white;
           padding: 15px;
           margin: -10mm -10mm 10px -10mm;
           display: flex;
           justify-content: space-between;
           align-items: center;
+          border-bottom: 3px solid #8e4dbf;
         }
         .header-left h1 {
           font-size: 24px;
@@ -806,7 +807,7 @@ const generateActaHTML = (acta, equipo) => {
           color: #7f8c8d;
         }
         .footer {
-          background: linear-gradient(135deg, #662d91 0%, #8e4dbf 100%);
+          background: #662d91;
           color: white;
           padding: 8px;
           margin: 15px -10mm 0 -10mm;
@@ -815,16 +816,21 @@ const generateActaHTML = (acta, equipo) => {
           position: fixed;
           bottom: 0;
           width: 100%;
+          border-top: 2px solid #8e4dbf;
         }
         .devolution-page {
           page-break-before: always;
         }
         @media print {
-          body { margin: 0; }
+          body { margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           .page { margin: 0; padding: 10mm; page-break-after: auto; }
           @page { margin: 5mm; size: A4; }
           .devolution-page { page-break-before: always; }
           .footer { position: fixed; bottom: 0; width: 100%; }
+          .header, .footer, .divider, .info-box, .section-title, .checkbox.checked, .signature-line {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
         }
       </style>
     </head>

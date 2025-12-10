@@ -294,6 +294,18 @@ const Help = () => {
     {
       question: '¿Cómo ver el historial completo de una solicitud de compra?',
       answer: 'Abra los detalles de cualquier solicitud para ver el historial completo: fechas de creación, aprobaciones, rechazos con motivos, cambios de estado, y comentarios de cada etapa del proceso.'
+    },
+    {
+      question: '¿Qué roles pueden ver estadísticas y exportar datos en el módulo de Tickets?',
+      answer: 'Los roles de Administrador y Técnico ahora tienen acceso automático a las estadísticas y funcionalidad de exportación en el módulo de Tickets, además de los usuarios con permisos específicos "view_stats" y "export".'
+    },
+    {
+      question: '¿Qué roles pueden ver estadísticas y exportar datos en el módulo de Solicitudes de Compra?',
+      answer: 'Los roles de Administrador, Técnico, Coordinadora Administrativa y Jefe ahora tienen acceso automático a las estadísticas y funcionalidad de exportación en el módulo de Solicitudes de Compra, además de los usuarios con permisos específicos "view_stats" y "export".'
+    },
+    {
+      question: '¿Cómo funcionan los nuevos permisos basados en roles para estadísticas y exportación?',
+      answer: 'El sistema ahora permite que ciertos roles accedan automáticamente a las estadísticas y exportación sin necesidad de permisos específicos. Esto simplifica la gestión de permisos y asegura que los usuarios clave siempre tengan acceso a la información que necesitan para tomar decisiones.'
     }
   ];
 
@@ -1519,6 +1531,42 @@ const Help = () => {
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                 </tr>
                                 <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Estadísticas en Tickets</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                  <td className="border border-gray-300 p-2 font-medium">Exportación en Tickets</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                </tr>
+                                <tr>
+                                  <td className="border border-gray-300 p-2 font-medium">Estadísticas en Solicitudes de Compra</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                  <td className="border border-gray-300 p-2 font-medium">Exportación en Solicitudes de Compra</td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
+                                  <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
+                                </tr>
+                                <tr>
                                   <td className="border border-gray-300 p-2 font-medium">Aprobar Compras (Coordinadora)</td>
                                   <td className="border border-gray-300 p-2 text-center text-green-600"><FaCheck className="text-green-600" /></td>
                                   <td className="border border-gray-300 p-2 text-center text-red-600"><FaTimes className="text-red-600" /></td>
@@ -2144,11 +2192,20 @@ const Help = () => {
                         <div className="bg-gray-50 p-3 rounded-lg">
                           <strong>Historial de Aprobaciones:</strong> Registro completo de todas las acciones, fechas y comentarios del proceso de compra
                         </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Permisos Basados en Roles:</strong> Sistema que otorga acceso automático a funcionalidades según el rol del usuario, sin necesidad de permisos específicos
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Acceso Automático a Estadísticas:</strong> Funcionalidad que permite a ciertos roles ver estadísticas sin necesidad de permisos específicos
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <strong>Acceso Automático a Exportación:</strong> Funcionalidad que permite a ciertos roles exportar datos sin necesidad de permisos específicos
+                        </div>
                       </div>
                       <div className="mt-4 text-center text-xs text-gray-500">
                         <p>DuvyClass – Transformando la gestión tecnológica empresarial</p>
-                        <p>Manual actualizado: diciembre 2025 | Versión del Sistema: 1.2.0</p>
-                        <p>Nuevas funcionalidades: Actas de Entrega y Solicitudes de Compra</p>
+                        <p>Manual actualizado: diciembre 2025 | Versión del Sistema: 1.2.1</p>
+                        <p>Nuevas funcionalidades: Actas de Entrega, Solicitudes de Compra y Permisos Basados en Roles para Estadísticas y Exportación</p>
                       </div>
                     </div>
                   </details>
