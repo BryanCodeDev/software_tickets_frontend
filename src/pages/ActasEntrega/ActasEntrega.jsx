@@ -98,8 +98,9 @@ const ActasEntrega = () => {
 
   const fetchActas = async () => {
     try {
-      const data = await actaEntregaAPI.getAll();
-      setActas(data || []);
+      const response = await actaEntregaAPI.getAll();
+      const actasData = Array.isArray(response.data) ? response.data : [];
+      setActas(actasData);
     } catch (err) {
       console.error('Error fetching actas:', err);
       if (err.response && err.response.status === 403) {

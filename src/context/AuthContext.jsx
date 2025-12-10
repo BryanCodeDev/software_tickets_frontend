@@ -110,8 +110,16 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('user', JSON.stringify(newUser));
   };
 
+  const checkPermission = (module, action) => {
+    if (!user || !user.permissions) return false;
+
+    return user.permissions.some(permission =>
+      permission.module === module && permission.action === action
+    );
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, updateUser, loading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, updateUser, loading, checkPermission }}>
       {children}
     </AuthContext.Provider>
   );

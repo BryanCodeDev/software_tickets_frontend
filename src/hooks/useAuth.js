@@ -23,6 +23,15 @@ export const useAuth = () => {
       return false;
     }
 
+    // Special exception for purchase_requests module
+    if (module === 'purchase_requests' && action === 'view_all') {
+      const userRole = user.role?.name;
+      const allowedRoles = ['Administrador', 'Técnico', 'Coordinadora Administrativa', 'Jefe'];
+      if (allowedRoles.includes(userRole)) {
+        return true;
+      }
+    }
+
     // Check if user has the specific permission
     const permissionString = `${module}:${action}`;
     return user.permissions.some(permission => `${permission.module}:${permission.action}` === permissionString);

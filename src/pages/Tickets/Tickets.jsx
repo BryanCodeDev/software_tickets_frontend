@@ -94,8 +94,7 @@ const Tickets = () => {
   const [formLoading, setFormLoading] = useState(false);
   const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
-  const { user } = useContext(AuthContext);
-
+  const { user, checkPermission } = useContext(AuthContext);
   const userRole = user?.role?.name;
 
   // Socket listeners
@@ -205,12 +204,11 @@ const Tickets = () => {
     if (!Array.isArray(tickets)) return [];
     let filtered = [...tickets];
 
-    // Role-based filtering
-    if (!['Administrador', 'Técnico'].includes(userRole)) {
-      // Otros roles solo ven sus propios tickets
+    // Permission-based filtering
+    if (!checkPermission('tickets', 'view_all')) {
+      // Si no tiene permiso para ver todos, solo ver sus propios tickets
       filtered = filtered.filter(ticket => ticket.userId === user?.id);
     }
-    // Administrador y Técnico ven todos los tickets
 
     if (searchTerm) {
       filtered = filtered.filter(ticket =>
@@ -334,8 +332,6 @@ const Tickets = () => {
       showNotification('No tienes permisos para editar este ticket', 'error');
       return;
     }
-
-    const userRole = user?.role?.name;
 
     if (userRole === 'Administrador') {
       setEditFormData({
@@ -565,39 +561,42 @@ const Tickets = () => {
     showNotification('Tickets exportados exitosamente', 'success');
   };
 
-  const canCreate = true;
+  const canCreate = checkPermission('tickets', 'create');
 
   // Funciones helper para verificar permisos por ticket específico
   const canEditTicket = (ticket) => {
-    if (userRole === 'Administrador' || userRole === 'Técnico') {
+    // Si tiene permiso de edición general
+    if (checkPermission('tickets', 'edit')) return true;
+
+    // Si es su propio ticket y tiene permiso para editar los propios
+    if (ticket.userId === user?.id && checkPermission('tickets', 'edit_own')) {
       return true;
     }
-    if (userRole === 'Empleado' || userRole === 'Calidad') {
-      return ticket.userId === user?.id;
-    }
+
     return false;
   };
 
   const canDeleteTicket = (ticket) => {
-    if (userRole === 'Administrador') {
+    // Si tiene permiso de eliminación general
+    if (checkPermission('tickets', 'delete')) return true;
+
+    // Si es su propio ticket y tiene permiso para eliminar los propios
+    if (ticket.userId === user?.id && checkPermission('tickets', 'delete_own')) {
       return true;
     }
-    if (userRole === 'Técnico') {
-      return (ticket.userId === user?.id || ticket.assignedTo === user?.id) && ticket.status?.toLowerCase() === 'cerrado';
-    }
-    if (userRole === 'Empleado' || userRole === 'Calidad') {
-      return ticket.userId === user?.id;
-    }
+
     return false;
   };
 
   const canSendMessage = (ticket) => {
-    if (userRole === 'Administrador' || userRole === 'Técnico') {
+    // Si tiene permiso de comentar en general
+    if (checkPermission('tickets', 'comment')) return true;
+
+    // Si es su propio ticket y tiene permiso para comentar en los propios
+    if (ticket.userId === user?.id && checkPermission('tickets', 'comment_own')) {
       return true;
     }
-    if (userRole === 'Empleado' || userRole === 'Calidad') {
-      return ticket.userId === user?.id;
-    }
+
     return false;
   };
 
@@ -742,22 +741,26 @@ const Tickets = () => {
             </div>
 
             <div className="flex flex-wrap gap-2 lg:gap-3">
-              {(userRole === 'Administrador' || userRole === 'Técnico') && (
+              {(checkPermission('tickets', 'view_stats') || checkPermission('tickets', 'export')) && (
                 <>
-                  <button
-                    onClick={() => setShowStats(!showStats)}
-                    className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
-                  >
-                    <FaChartBar className="w-4 h-4" />
-                    <span className="hidden sm:inline">Estadísticas</span>
-                  </button>
-                  <button
-                    onClick={exportToExcel}
-                    className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
-                  >
-                    <FaDownload className="w-4 h-4" />
-                    <span className="hidden sm:inline">Exportar</span>
-                  </button>
+                  {checkPermission('tickets', 'view_stats') && (
+                    <button
+                      onClick={() => setShowStats(!showStats)}
+                      className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
+                    >
+                      <FaChartBar className="w-4 h-4" />
+                      <span className="hidden sm:inline">Estadísticas</span>
+                    </button>
+                  )}
+                  {checkPermission('tickets', 'export') && (
+                    <button
+                      onClick={exportToExcel}
+                      className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
+                    >
+                      <FaDownload className="w-4 h-4" />
+                      <span className="hidden sm:inline">Exportar</span>
+                    </button>
+                  )}
                 </>
               )}
               {canCreate && (

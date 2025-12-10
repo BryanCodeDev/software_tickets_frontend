@@ -13,6 +13,7 @@ import {
 import { Bar } from 'react-chartjs-2';
 import AuthContext from '../../context/AuthContext';
 import { purchaseRequestsAPI } from '../../api';
+import { useAuth } from '../../hooks/useAuth';
 import { joinPurchaseRequestRoom, leavePurchaseRequestRoom, onPurchaseRequestUpdated, onPurchaseRequestCreated, onPurchaseRequestDeleted, onPurchaseRequestsListUpdated, offPurchaseRequestUpdated, offPurchaseRequestCreated, offPurchaseRequestDeleted, offPurchaseRequestsListUpdated } from '../../api/socket';
 import {
   PurchaseRequestCreateModal,
@@ -63,6 +64,7 @@ const PurchaseRequests = () => {
   const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
+  const { checkPermission } = useAuth();
 
   const userRole = user?.role?.name;
 
@@ -125,27 +127,11 @@ const PurchaseRequests = () => {
     if (!Array.isArray(requests)) return [];
     let filtered = [...requests];
 
-    // Role-based filtering
-    if (userRole === 'Coordinadora Administrativa') {
-      // Coordinadora solo ve solicitudes pendientes de su aprobación
-      filtered = filtered.filter(request =>
-        ['solicitado', 'pendiente_coordinadora'].includes(request.status?.toLowerCase())
-      );
-    } else if (userRole === 'Jefe') {
-      // Jefe ve solicitudes aprobadas por coordinadora y pendientes de su aprobación
-      filtered = filtered.filter(request =>
-        ['aprobado_coordinadora', 'pendiente_jefe'].includes(request.status?.toLowerCase())
-      );
-    } else if (userRole === 'Compras') {
-      // Compras ve solicitudes aprobadas por jefe y en proceso de compra
-      filtered = filtered.filter(request =>
-        ['aprobado_jefe', 'en_compras', 'comprado'].includes(request.status?.toLowerCase())
-      );
-    } else if (!['Administrador', 'Técnico'].includes(userRole)) {
-      // Otros roles solo ven sus propias solicitudes
+    // Permission-based filtering
+    if (!checkPermission('purchase_requests', 'view_all')) {
+      // Si no tiene permiso para ver todas, solo ver sus propias solicitudes
       filtered = filtered.filter(request => request.userId === user?.id);
     }
-    // Administrador y Técnico ven todas las solicitudes
 
     if (searchTerm) {
       filtered = filtered.filter(request =>
@@ -190,35 +176,17 @@ const PurchaseRequests = () => {
   const calculateStats = () => {
     if (!Array.isArray(requests)) return { total: 0, solicitado: 0, aprobadoCoordinadora: 0, aprobadoJefe: 0, enCompras: 0, completado: 0 };
 
-    // Role-based stats
-    if (userRole === 'Coordinadora Administrativa') {
-      const pendientes = requests.filter(r => ['solicitado', 'pendiente_coordinadora'].includes(r.status?.toLowerCase())).length;
-      const aprobados = requests.filter(r => r.status?.toLowerCase() === 'aprobado_coordinadora').length;
-      const rechazados = requests.filter(r => r.status?.toLowerCase() === 'rechazado').length;
-      return { pendientes, aprobados, rechazados };
-    } else if (userRole === 'Jefe') {
-      const pendientes = requests.filter(r => ['aprobado_coordinadora', 'pendiente_jefe'].includes(r.status?.toLowerCase())).length;
-      const aprobados = requests.filter(r => r.status?.toLowerCase() === 'aprobado_jefe').length;
-      const rechazados = requests.filter(r => r.status?.toLowerCase() === 'rechazado').length;
-      return { pendientes, aprobados, rechazados };
-    } else if (userRole === 'Compras') {
-      const enProceso = requests.filter(r => ['aprobado_jefe', 'en_compras'].includes(r.status?.toLowerCase())).length;
-      const comprados = requests.filter(r => r.status?.toLowerCase() === 'comprado').length;
-      const entregados = requests.filter(r => r.status?.toLowerCase() === 'entregado').length;
-      return { enProceso, comprados, entregados };
-    } else {
-      // Admin/Técnico/Empleado - todas las estadísticas
-      const total = requests.length;
-      const solicitado = requests.filter(r => r.status?.toLowerCase() === 'solicitado').length;
-      const aprobadoCoordinadora = requests.filter(r => r.status?.toLowerCase() === 'aprobado_coordinadora').length;
-      const aprobadoJefe = requests.filter(r => r.status?.toLowerCase() === 'aprobado_jefe').length;
-      const enCompras = requests.filter(r => r.status?.toLowerCase() === 'en_compras').length;
-      const completado = requests.filter(r =>
-        r.status?.toLowerCase() === 'comprado' || r.status?.toLowerCase() === 'entregado'
-      ).length;
+    // Permission-based stats - todos ven las mismas estadísticas basadas en los datos filtrados
+    const total = requests.length;
+    const solicitado = requests.filter(r => r.status?.toLowerCase() === 'solicitado').length;
+    const aprobadoCoordinadora = requests.filter(r => r.status?.toLowerCase() === 'aprobado_coordinadora').length;
+    const aprobadoJefe = requests.filter(r => r.status?.toLowerCase() === 'aprobado_jefe').length;
+    const enCompras = requests.filter(r => r.status?.toLowerCase() === 'en_compras').length;
+    const completado = requests.filter(r =>
+      r.status?.toLowerCase() === 'comprado' || r.status?.toLowerCase() === 'entregado'
+    ).length;
 
-      return { total, solicitado, aprobadoCoordinadora, aprobadoJefe, enCompras, completado };
-    }
+    return { total, solicitado, aprobadoCoordinadora, aprobadoJefe, enCompras, completado };
   };
 
   const stats = calculateStats();
@@ -439,22 +407,26 @@ const PurchaseRequests = () => {
             </div>
 
             <div className="flex flex-wrap gap-2 sm:gap-3">
-              {(userRole === 'Administrador' || userRole === 'Técnico') && (
+              {(checkPermission('purchase_requests', 'view_stats') || checkPermission('purchase_requests', 'export')) && (
                 <>
-                  <button
-                    onClick={() => setShowStats(!showStats)}
-                    className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base"
-                  >
-                    <FaChartBar className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">Estadísticas</span>
-                  </button>
-                  <button
-                    onClick={exportToExcel}
-                    className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base"
-                  >
-                    <FaDownload className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">Exportar</span>
-                  </button>
+                  {checkPermission('purchase_requests', 'view_stats') && (
+                    <button
+                      onClick={() => setShowStats(!showStats)}
+                      className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base"
+                    >
+                      <FaChartBar className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="hidden sm:inline">Estadísticas</span>
+                    </button>
+                  )}
+                  {checkPermission('purchase_requests', 'export') && (
+                    <button
+                      onClick={exportToExcel}
+                      className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base"
+                    >
+                      <FaDownload className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="hidden sm:inline">Exportar</span>
+                    </button>
+                  )}
                 </>
               )}
               {canCreate && (

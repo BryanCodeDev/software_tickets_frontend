@@ -88,21 +88,21 @@ const ActaEntregaCard = ({ acta, onEdit, onDelete, canEdit, canDelete }) => {
                 <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[120px]">
                   <button
                     onClick={() => handleExport('pdf')}
-                    className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm"
+                    className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm text-gray-700"
                   >
                     <FaFilePdf className="w-4 h-4 text-red-500" />
                     PDF
                   </button>
                   <button
                     onClick={() => handleExport('word')}
-                    className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm"
+                    className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm text-gray-700"
                   >
                     <FaFileWord className="w-4 h-4 text-blue-500" />
                     Word
                   </button>
                   <button
                     onClick={() => handleExport('print')}
-                    className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm"
+                    className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm text-gray-700"
                   >
                     <FaPrint className="w-4 h-4 text-gray-500" />
                     Imprimir

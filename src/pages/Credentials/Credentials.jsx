@@ -27,7 +27,7 @@ const Credentials = () => {
   const [loadingFolders, setLoadingFolders] = useState(true);
   const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
-  const { user } = useContext(AuthContext);
+  const { user, checkPermission } = useContext(AuthContext);
 
   // NUEVAS FUNCIONALIDADES: Estados para búsqueda, filtros y ordenamiento
   const [searchTerm, setSearchTerm] = useState('');
@@ -385,7 +385,7 @@ const Credentials = () => {
     setConfirmDialog(null);
   };
 
-  if (!user || (user.role?.name !== 'Administrador' && user.role?.name !== 'Técnico')) {
+  if (!checkPermission('credentials', 'view')) {
     return <div className="container mx-auto p-6">Acceso Denegado</div>;
   }
 
@@ -433,21 +433,25 @@ const Credentials = () => {
                 </button>
               )}
               {currentFolder ? (
-                <button
-                  onClick={handleCreate}
-                  className="flex items-center justify-center space-x-2 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto text-sm sm:text-base"
-                >
-                  <FaPlus className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
-                  <span>Nueva Credencial</span>
-                </button>
+                checkPermission('credentials', 'create') && (
+                  <button
+                    onClick={handleCreate}
+                    className="flex items-center justify-center space-x-2 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto text-sm sm:text-base"
+                  >
+                    <FaPlus className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
+                    <span>Nueva Credencial</span>
+                  </button>
+                )
               ) : (
-                <button
-                  onClick={handleCreateFolder}
-                  className="flex items-center justify-center space-x-2 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto text-sm sm:text-base"
-                >
-                  <FaPlus className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
-                  <span>Nueva Carpeta</span>
-                </button>
+                checkPermission('credentials', 'manage_folders') && (
+                  <button
+                    onClick={handleCreateFolder}
+                    className="flex items-center justify-center space-x-2 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto text-sm sm:text-base"
+                  >
+                    <FaPlus className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
+                    <span>Nueva Carpeta</span>
+                  </button>
+                )
               )}
             </div>
           </div>
@@ -563,14 +567,16 @@ const Credentials = () => {
                         )}
                       </div>
                       <div className="flex flex-col sm:flex-row gap-2">
-                        <button
-                          onClick={() => handleEdit(cred)}
-                          className="flex items-center justify-center space-x-1 px-3 sm:px-3 md:px-4 py-2 sm:py-2 md:py-3 bg-blue-100 text-blue-700 text-sm sm:text-sm font-medium rounded-lg hover:bg-blue-200 transition-colors"
-                        >
-                          <FaEdit className="w-4 h-4 sm:w-4 md:w-4" />
-                          <span>Editar</span>
-                        </button>
-                        {user.role?.name === 'Administrador' && (
+                        {checkPermission('credentials', 'edit') && (
+                          <button
+                            onClick={() => handleEdit(cred)}
+                            className="flex items-center justify-center space-x-1 px-3 sm:px-3 md:px-4 py-2 sm:py-2 md:py-3 bg-blue-100 text-blue-700 text-sm sm:text-sm font-medium rounded-lg hover:bg-blue-200 transition-colors"
+                          >
+                            <FaEdit className="w-4 h-4 sm:w-4 md:w-4" />
+                            <span>Editar</span>
+                          </button>
+                        )}
+                        {checkPermission('credentials', 'delete') && (
                           <button
                             onClick={() => handleDelete(cred.id)}
                             className="flex items-center justify-center space-x-1 px-3 sm:px-3 md:px-4 py-2 sm:py-2 md:py-3 bg-red-100 text-red-700 text-sm sm:text-sm font-medium rounded-lg hover:bg-red-200 transition-colors"
@@ -625,17 +631,19 @@ const Credentials = () => {
                           </div>
                         </div>
                         <div className="flex flex-row sm:flex-col gap-1.5 sm:gap-2">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEditFolder(folder);
-                            }}
-                            className="p-1.5 sm:p-1.5 md:p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                            title="Editar carpeta"
-                          >
-                            <FaEdit className="w-4 h-4 sm:w-4" />
-                          </button>
-                          {user.role?.name === 'Administrador' && (
+                          {checkPermission('credentials', 'manage_folders') && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditFolder(folder);
+                              }}
+                              className="p-1.5 sm:p-1.5 md:p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              title="Editar carpeta"
+                            >
+                              <FaEdit className="w-4 h-4 sm:w-4" />
+                            </button>
+                          )}
+                          {checkPermission('credentials', 'delete') && (
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();

@@ -64,7 +64,7 @@ const createSocket = () => {
   return socket;
 };
 
-const getSocket = () => {
+export const getSocket = () => {
   if (!socket) {
     socket = createSocket();
   }
