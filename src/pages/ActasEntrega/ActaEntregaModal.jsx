@@ -115,6 +115,38 @@ const ActaEntregaModal = ({
                               setFormData({ ...formData, equipo_id: equipo.id });
                               setSearchEquipo('');
                               setShowEquipoDropdown(false);
+
+                              // Autollenar campos según el tipo de equipo seleccionado
+                              if (equipo.tipo === 'inventory' && equipo.data) {
+                                const inventoryData = equipo.data;
+                                setFormData(prev => ({
+                                  ...prev,
+                                  marca: inventoryData.marca || '',
+                                  modelo_equipo: inventoryData.it || '',
+                                  serial_imei: inventoryData.serial || '',
+                                  sistema_operativo: inventoryData.sistema_operativo || '',
+                                  procesador: inventoryData.procesador || '',
+                                  ram: inventoryData.ram || '',
+                                  almacenamiento: inventoryData.almacenamiento || '',
+                                  accesorio_cargador: true,
+                                  accesorio_teclado: true,
+                                  accesorio_office: true,
+                                  accesorio_antivirus: true,
+                                  accesorio_ssd: true,
+                                  accesorio_hdd: true
+                                }));
+                              } else if (equipo.tipo === 'corporate_phone' && equipo.data) {
+                                const phoneData = equipo.data;
+                                setFormData(prev => ({
+                                  ...prev,
+                                  marca: phoneData.marca || '',
+                                  modelo_equipo: phoneData.equipo_celular || '',
+                                  serial_imei: phoneData.imei || '',
+                                  linea_telefonica: phoneData.numero_celular || '',
+                                  accesorio_cargador: true,
+                                  accesorio_antivirus: true
+                                }));
+                              }
                             }}
                           >
                             <div className="font-medium text-gray-900">{equipo.nombre}</div>
@@ -344,6 +376,32 @@ const ActaEntregaModal = ({
                         placeholder="Número de línea"
                         value={formData.linea_telefonica || ''}
                         onChange={(e) => setFormData({ ...formData, linea_telefonica: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Operador
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Ej: Claro, Movistar, Tigo"
+                        value={formData.operador || ''}
+                        onChange={(e) => setFormData({ ...formData, operador: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Plan de Datos
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Ej: 10GB, Ilimitado"
+                        value={formData.plan_datos || ''}
+                        onChange={(e) => setFormData({ ...formData, plan_datos: e.target.value })}
                         className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       />
                     </div>

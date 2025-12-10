@@ -48,7 +48,9 @@ const ActasEntrega = () => {
     accesorio_ssd: false,
     accesorio_hdd: false,
     observaciones_equipo: '',
-    linea_telefonica: ''
+    linea_telefonica: '',
+    operador: '',
+    plan_datos: ''
   });
   const [formLoading, setFormLoading] = useState(false);
   const [notification, setNotification] = useState(null);
@@ -300,7 +302,9 @@ const ActasEntrega = () => {
       accesorio_ssd: false,
       accesorio_hdd: false,
       observaciones_equipo: '',
-      linea_telefonica: ''
+      linea_telefonica: '',
+      operador: '',
+      plan_datos: ''
     });
     setShowModal(true);
   };
@@ -337,7 +341,9 @@ const ActasEntrega = () => {
       accesorio_ssd: acta.accesorio_ssd || false,
       accesorio_hdd: acta.accesorio_hdd || false,
       observaciones_equipo: acta.observaciones_equipo || '',
-      linea_telefonica: acta.linea_telefonica || ''
+      linea_telefonica: acta.linea_telefonica || '',
+      operador: acta.operador || '',
+      plan_datos: acta.plan_datos || ''
     });
     setShowModal(true);
   };
