@@ -456,23 +456,6 @@ const ActaEntregaModal = ({
                 </div>
               </div>
 
-              {/* Tipo de equipo detallado */}
-              <div className="mt-4">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Tipo de Equipo Detallado
-                </label>
-                <select
-                  value={formData.tipo_equipo_detallado || ''}
-                  onChange={(e) => setFormData({ ...formData, tipo_equipo_detallado: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                >
-                  <option value="">Seleccionar tipo</option>
-                  <option value="celular">Celular</option>
-                  <option value="pc">PC</option>
-                  <option value="laptop">Laptop</option>
-                </select>
-              </div>
-
               <div className="mt-4">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Observaciones del Equipo
