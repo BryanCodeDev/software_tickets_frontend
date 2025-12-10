@@ -321,7 +321,23 @@ const ActasEntrega = () => {
       fecha_devolucion: acta.fecha_devolucion ? acta.fecha_devolucion.split('T')[0] : '',
       estado_equipo_devolucion: acta.estado_equipo_devolucion || '',
       observaciones_devolucion: acta.observaciones_devolucion || '',
-      firma_entrega_devolucion: acta.firma_entrega || ''
+      firma_entrega_devolucion: acta.firma_entrega || '',
+      // Campos adicionales para información detallada del equipo
+      marca: acta.marca || '',
+      modelo_equipo: acta.modelo_equipo || '',
+      serial_imei: acta.serial_imei || '',
+      sistema_operativo: acta.sistema_operativo || '',
+      procesador: acta.procesador || '',
+      ram: acta.ram || '',
+      almacenamiento: acta.almacenamiento || '',
+      accesorio_cargador: acta.accesorio_cargador || false,
+      accesorio_teclado: acta.accesorio_teclado || false,
+      accesorio_office: acta.accesorio_office || false,
+      accesorio_antivirus: acta.accesorio_antivirus || false,
+      accesorio_ssd: acta.accesorio_ssd || false,
+      accesorio_hdd: acta.accesorio_hdd || false,
+      observaciones_equipo: acta.observaciones_equipo || '',
+      linea_telefonica: acta.linea_telefonica || ''
     });
     setShowModal(true);
   };
