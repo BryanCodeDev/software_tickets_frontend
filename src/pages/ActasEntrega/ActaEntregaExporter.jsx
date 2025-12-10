@@ -626,15 +626,16 @@ const generateActaHTML = (acta, equipo) => {
         .page {
           width: 210mm;
           min-height: 297mm;
-          padding: 15mm;
+          padding: 10mm;
           margin: 0 auto;
           background: white;
+          page-break-after: auto;
         }
         .header {
           background: linear-gradient(135deg, #662d91 0%, #8e4dbf 100%);
           color: white;
-          padding: 20px;
-          margin: -15mm -15mm 15px -15mm;
+          padding: 15px;
+          margin: -10mm -10mm 10px -10mm;
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -654,16 +655,16 @@ const generateActaHTML = (acta, equipo) => {
         }
         .title {
           text-align: center;
-          margin: 20px 0;
+          margin: 15px 0;
           color: #34495e;
         }
         .title h2 {
-          font-size: 18px;
+          font-size: 16px;
           font-weight: bold;
-          margin-bottom: 5px;
+          margin-bottom: 4px;
         }
         .title p {
-          font-size: 14px;
+          font-size: 12px;
           color: #7f8c8d;
         }
         .divider {
@@ -674,10 +675,10 @@ const generateActaHTML = (acta, equipo) => {
         }
         .info-box {
           background: #f8f9fa;
-          padding: 12px;
-          border-radius: 8px;
-          margin-bottom: 15px;
-          border-left: 4px solid #662d91;
+          padding: 8px;
+          border-radius: 4px;
+          margin-bottom: 10px;
+          border-left: 3px solid #662d91;
         }
         .info-row {
           display: grid;
@@ -696,7 +697,8 @@ const generateActaHTML = (acta, equipo) => {
           font-weight: 600;
         }
         .section {
-          margin-bottom: 15px;
+          margin-bottom: 10px;
+          page-break-inside: avoid;
         }
         .section-title {
           font-size: 13px;
@@ -709,8 +711,8 @@ const generateActaHTML = (acta, equipo) => {
         .equipment-table {
           width: 100%;
           border-collapse: collapse;
-          font-size: 10px;
-          margin-bottom: 10px;
+          font-size: 9px;
+          margin-bottom: 8px;
         }
         .equipment-table td {
           padding: 6px;
@@ -729,9 +731,9 @@ const generateActaHTML = (acta, equipo) => {
         .accessories {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 8px;
-          font-size: 10px;
-          margin-top: 8px;
+          gap: 6px;
+          font-size: 9px;
+          margin-top: 6px;
         }
         .checkbox-item {
           display: flex;
@@ -754,11 +756,11 @@ const generateActaHTML = (acta, equipo) => {
         }
         .policies {
           background: #f8f9fa;
-          padding: 10px;
-          border-radius: 6px;
-          font-size: 9px;
-          line-height: 1.5;
-          margin-top: 8px;
+          padding: 8px;
+          border-radius: 4px;
+          font-size: 8px;
+          line-height: 1.4;
+          margin-top: 6px;
         }
         .policies ul {
           margin: 5px 0;
@@ -778,8 +780,9 @@ const generateActaHTML = (acta, equipo) => {
         .signatures {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 40px;
-          margin-top: 20px;
+          gap: 20px;
+          margin-top: 15px;
+          page-break-inside: avoid;
         }
         .signature-box {
           text-align: center;
@@ -791,8 +794,8 @@ const generateActaHTML = (acta, equipo) => {
           color: #662d91;
         }
         .signature-line {
-          border-bottom: 2px solid #662d91;
-          margin: 25px 20px 10px 20px;
+          border-bottom: 1px solid #662d91;
+          margin: 15px 15px 8px 15px;
         }
         .signature-name {
           font-size: 10px;
@@ -805,18 +808,23 @@ const generateActaHTML = (acta, equipo) => {
         .footer {
           background: linear-gradient(135deg, #662d91 0%, #8e4dbf 100%);
           color: white;
-          padding: 12px;
-          margin: 20px -15mm -15mm -15mm;
+          padding: 8px;
+          margin: 15px -10mm 0 -10mm;
           text-align: center;
-          font-size: 9px;
+          font-size: 8px;
+          position: fixed;
+          bottom: 0;
+          width: 100%;
         }
         .devolution-page {
           page-break-before: always;
         }
         @media print {
           body { margin: 0; }
-          .page { margin: 0; padding: 15mm; }
-          @page { margin: 0; }
+          .page { margin: 0; padding: 10mm; page-break-after: auto; }
+          @page { margin: 5mm; size: A4; }
+          .devolution-page { page-break-before: always; }
+          .footer { position: fixed; bottom: 0; width: 100%; }
         }
       </style>
     </head>
