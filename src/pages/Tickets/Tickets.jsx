@@ -205,7 +205,9 @@ const Tickets = () => {
     let filtered = [...tickets];
 
     // Permission-based filtering
-    if (!checkPermission('tickets', 'view_all')) {
+    // Roles con acceso completo: Administrador, Técnico, Calidad, Coordinadora Administrativa
+    const privilegedRoles = ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa'];
+    if (!privilegedRoles.includes(userRole) && !checkPermission('tickets', 'view_all')) {
       // Si no tiene permiso para ver todos, solo ver sus propios tickets
       filtered = filtered.filter(ticket => ticket.userId === user?.id);
     }
@@ -561,10 +563,15 @@ const Tickets = () => {
     showNotification('Tickets exportados exitosamente', 'success');
   };
 
-  const canCreate = checkPermission('tickets', 'create');
+  const canCreate = checkPermission('tickets', 'create') ||
+                   ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa'].includes(userRole);
 
   // Funciones helper para verificar permisos por ticket específico
   const canEditTicket = (ticket) => {
+    // Roles con acceso completo: Administrador, Técnico, Calidad, Coordinadora Administrativa
+    const privilegedRoles = ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa'];
+    if (privilegedRoles.includes(userRole)) return true;
+
     // Si tiene permiso de edición general
     if (checkPermission('tickets', 'edit')) return true;
 
@@ -577,6 +584,10 @@ const Tickets = () => {
   };
 
   const canDeleteTicket = (ticket) => {
+    // Roles con acceso completo: Administrador, Técnico, Calidad, Coordinadora Administrativa
+    const privilegedRoles = ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa'];
+    if (privilegedRoles.includes(userRole)) return true;
+
     // Si tiene permiso de eliminación general
     if (checkPermission('tickets', 'delete')) return true;
 
@@ -589,6 +600,10 @@ const Tickets = () => {
   };
 
   const canSendMessage = (ticket) => {
+    // Roles con acceso completo: Administrador, Técnico, Calidad, Coordinadora Administrativa
+    const privilegedRoles = ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa'];
+    if (privilegedRoles.includes(userRole)) return true;
+
     // Si tiene permiso de comentar en general
     if (checkPermission('tickets', 'comment')) return true;
 
