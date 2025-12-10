@@ -249,6 +249,7 @@ const ActaEntregaModal = ({
             <div className="mt-6 p-4 bg-gray-50 rounded-lg">
               <h4 className="font-semibold text-gray-900 mb-4">Información Detallada del Equipo</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Campos comunes para ambos tipos de dispositivos */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Marca
@@ -275,58 +276,81 @@ const ActaEntregaModal = ({
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Serial/IMEI
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Número de serie o IMEI"
-                    value={formData.serial_imei || ''}
-                    onChange={(e) => setFormData({ ...formData, serial_imei: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                  />
-                </div>
+                {/* Campos específicos según tipo de dispositivo */}
+                {formData.tipo_equipo === 'inventory' && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Serial
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Número de serie"
+                        value={formData.serial_imei || ''}
+                        onChange={(e) => setFormData({ ...formData, serial_imei: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      />
+                    </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Línea Telefónica
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Número de línea si aplica"
-                    value={formData.linea_telefonica || ''}
-                    onChange={(e) => setFormData({ ...formData, linea_telefonica: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                  />
-                </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Sistema Operativo
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Ej: Windows 11, macOS"
+                        value={formData.sistema_operativo || ''}
+                        onChange={(e) => setFormData({ ...formData, sistema_operativo: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      />
+                    </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Sistema Operativo
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: Android 14, Windows 11"
-                    value={formData.sistema_operativo || ''}
-                    onChange={(e) => setFormData({ ...formData, sistema_operativo: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                  />
-                </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Procesador
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Ej: Intel i7, AMD Ryzen"
+                        value={formData.procesador || ''}
+                        onChange={(e) => setFormData({ ...formData, procesador: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      />
+                    </div>
+                  </>
+                )}
 
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Procesador
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: SnapDragon, Intel i7"
-                    value={formData.procesador || ''}
-                    onChange={(e) => setFormData({ ...formData, procesador: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                  />
-                </div>
+                {formData.tipo_equipo === 'corporate_phone' && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        IMEI
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Número IMEI"
+                        value={formData.serial_imei || ''}
+                        onChange={(e) => setFormData({ ...formData, serial_imei: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      />
+                    </div>
 
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Línea Telefónica
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Número de línea"
+                        value={formData.linea_telefonica || ''}
+                        onChange={(e) => setFormData({ ...formData, linea_telefonica: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* Campos comunes para ambos tipos de dispositivos */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     RAM
@@ -358,6 +382,7 @@ const ActaEntregaModal = ({
               <div className="mt-6">
                 <h4 className="font-semibold text-gray-900 mb-3">Accesorios Incluidos</h4>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {/* Accesorios comunes para ambos tipos */}
                   <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
@@ -372,28 +397,6 @@ const ActaEntregaModal = ({
                   <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      id="accesorio_teclado"
-                      checked={formData.accesorio_teclado || false}
-                      onChange={(e) => setFormData({ ...formData, accesorio_teclado: e.target.checked })}
-                      className="w-4 h-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
-                    />
-                    <label htmlFor="accesorio_teclado" className="text-sm text-gray-700">Teclado</label>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="accesorio_office"
-                      checked={formData.accesorio_office || false}
-                      onChange={(e) => setFormData({ ...formData, accesorio_office: e.target.checked })}
-                      className="w-4 h-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
-                    />
-                    <label htmlFor="accesorio_office" className="text-sm text-gray-700">Office</label>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
                       id="accesorio_antivirus"
                       checked={formData.accesorio_antivirus || false}
                       onChange={(e) => setFormData({ ...formData, accesorio_antivirus: e.target.checked })}
@@ -402,27 +405,54 @@ const ActaEntregaModal = ({
                     <label htmlFor="accesorio_antivirus" className="text-sm text-gray-700">Antivirus</label>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="accesorio_ssd"
-                      checked={formData.accesorio_ssd || false}
-                      onChange={(e) => setFormData({ ...formData, accesorio_ssd: e.target.checked })}
-                      className="w-4 h-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
-                    />
-                    <label htmlFor="accesorio_ssd" className="text-sm text-gray-700">SSD</label>
-                  </div>
+                  {/* Accesorios específicos para computadora/laptop */}
+                  {formData.tipo_equipo === 'inventory' && (
+                    <>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="accesorio_teclado"
+                          checked={formData.accesorio_teclado || false}
+                          onChange={(e) => setFormData({ ...formData, accesorio_teclado: e.target.checked })}
+                          className="w-4 h-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
+                        />
+                        <label htmlFor="accesorio_teclado" className="text-sm text-gray-700">Teclado</label>
+                      </div>
 
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="accesorio_hdd"
-                      checked={formData.accesorio_hdd || false}
-                      onChange={(e) => setFormData({ ...formData, accesorio_hdd: e.target.checked })}
-                      className="w-4 h-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
-                    />
-                    <label htmlFor="accesorio_hdd" className="text-sm text-gray-700">HDD</label>
-                  </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="accesorio_office"
+                          checked={formData.accesorio_office || false}
+                          onChange={(e) => setFormData({ ...formData, accesorio_office: e.target.checked })}
+                          className="w-4 h-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
+                        />
+                        <label htmlFor="accesorio_office" className="text-sm text-gray-700">Office</label>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="accesorio_ssd"
+                          checked={formData.accesorio_ssd || false}
+                          onChange={(e) => setFormData({ ...formData, accesorio_ssd: e.target.checked })}
+                          className="w-4 h-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
+                        />
+                        <label htmlFor="accesorio_ssd" className="text-sm text-gray-700">SSD</label>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="accesorio_hdd"
+                          checked={formData.accesorio_hdd || false}
+                          onChange={(e) => setFormData({ ...formData, accesorio_hdd: e.target.checked })}
+                          className="w-4 h-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
+                        />
+                        <label htmlFor="accesorio_hdd" className="text-sm text-gray-700">HDD</label>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 

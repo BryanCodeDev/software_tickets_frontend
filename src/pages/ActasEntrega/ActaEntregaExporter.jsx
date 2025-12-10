@@ -8,7 +8,7 @@ export const exportToPDF = async (acta, equipo) => {
   const contentWidth = pageWidth - (margin * 2);
 
   // Colores corporativos
-  const primaryColor = [41, 128, 185]; // Azul profesional
+  const primaryColor = [102, 45, 145]; // Morado corporativo (#662d91)
   const secondaryColor = [52, 73, 94]; // Gris oscuro
   const accentColor = [149, 165, 166]; // Gris claro
 
@@ -339,7 +339,7 @@ export const exportToWord = async (acta, equipo) => {
           width: { size: 100, type: WidthType.PERCENTAGE },
           borders: {
             top: { style: BorderStyle.NONE },
-            bottom: { style: BorderStyle.SINGLE, size: 20, color: "2980B9" },
+            bottom: { style: BorderStyle.SINGLE, size: 20, color: "662D91" },
             left: { style: BorderStyle.NONE },
             right: { style: BorderStyle.NONE },
           },
@@ -350,7 +350,7 @@ export const exportToWord = async (acta, equipo) => {
                   children: [
                     new Paragraph({
                       children: [
-                        new TextRun({ text: "DuvyClass S.A.S", bold: true, size: 32, color: "2980B9" }),
+                        new TextRun({ text: "DuvyClass S.A.S", bold: true, size: 32, color: "662D91" }),
                       ],
                     }),
                     new Paragraph({
@@ -402,7 +402,7 @@ export const exportToWord = async (acta, equipo) => {
               text: "ACTA DE ENTREGA DE EQUIPOS",
               bold: true,
               size: 28,
-              color: "34495E",
+              color: "662D91",
             }),
           ],
           alignment: AlignmentType.CENTER,
@@ -412,7 +412,7 @@ export const exportToWord = async (acta, equipo) => {
             new TextRun({
               text: "Comunicación y Cómputo",
               size: 22,
-              color: "34495E",
+              color: "662D91",
             }),
           ],
           alignment: AlignmentType.CENTER,
@@ -461,7 +461,7 @@ export const exportToWord = async (acta, equipo) => {
 
         // Información del equipo
         new Paragraph({
-          children: [new TextRun({ text: "INFORMACIÓN DEL EQUIPO", bold: true, size: 24, color: "2980B9" })],
+          children: [new TextRun({ text: "INFORMACIÓN DEL EQUIPO", bold: true, size: 24, color: "662D91" })],
         }),
         
         new Table({
@@ -506,7 +506,7 @@ export const exportToWord = async (acta, equipo) => {
 
         // Accesorios
         new Paragraph({
-          children: [new TextRun({ text: "ACCESORIOS", bold: true, size: 20, color: "2980B9" })],
+          children: [new TextRun({ text: "ACCESORIOS", bold: true, size: 20, color: "662D91" })],
         }),
         new Paragraph(`☑ Cargador: ${acta.accesorio_cargador ? 'Sí' : 'No'}  |  ☑ Teclado: ${acta.accesorio_teclado ? 'Sí' : 'No'}  |  ☑ Office: ${acta.accesorio_office ? 'Sí' : 'No'}`),
         new Paragraph(`☑ Antivirus: ${acta.accesorio_antivirus ? 'Sí' : 'No'}  |  ☑ SSD: ${acta.accesorio_ssd ? 'Sí' : 'No'}  |  ☑ HDD: ${acta.accesorio_hdd ? 'Sí' : 'No'}`),
@@ -524,7 +524,7 @@ export const exportToWord = async (acta, equipo) => {
 
         // Políticas resumidas
         new Paragraph({
-          children: [new TextRun({ text: "POLÍTICAS DE USO", bold: true, size: 20, color: "2980B9" })],
+          children: [new TextRun({ text: "POLÍTICAS DE USO", bold: true, size: 20, color: "662D91" })],
         }),
         new Paragraph("El equipo es de uso exclusivo para funciones laborales. El usuario es responsable de su cuidado, mantenimiento y seguridad."),
         new Paragraph("• Verificar estado inicial • Reportar daños/robos al IT • No instalar software no autorizado"),
@@ -631,7 +631,7 @@ const generateActaHTML = (acta, equipo) => {
           background: white;
         }
         .header {
-          background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+          background: linear-gradient(135deg, #662d91 0%, #8e4dbf 100%);
           color: white;
           padding: 20px;
           margin: -15mm -15mm 15px -15mm;
@@ -668,7 +668,7 @@ const generateActaHTML = (acta, equipo) => {
         }
         .divider {
           height: 3px;
-          background: linear-gradient(90deg, transparent, #2980b9, transparent);
+          background: linear-gradient(90deg, transparent, #662d91, transparent);
           margin: 10px auto;
           width: 60%;
         }
@@ -677,7 +677,7 @@ const generateActaHTML = (acta, equipo) => {
           padding: 12px;
           border-radius: 8px;
           margin-bottom: 15px;
-          border-left: 4px solid #2980b9;
+          border-left: 4px solid #662d91;
         }
         .info-row {
           display: grid;
@@ -701,7 +701,7 @@ const generateActaHTML = (acta, equipo) => {
         .section-title {
           font-size: 13px;
           font-weight: bold;
-          color: #2980b9;
+          color: #662d91;
           margin-bottom: 8px;
           padding-bottom: 5px;
           border-bottom: 2px solid #ecf0f1;
@@ -748,7 +748,7 @@ const generateActaHTML = (acta, equipo) => {
           border-radius: 3px;
         }
         .checkbox.checked {
-          background: #2980b9;
+          background: #662d91;
           color: white;
           font-weight: bold;
         }
@@ -788,10 +788,10 @@ const generateActaHTML = (acta, equipo) => {
           font-weight: bold;
           font-size: 11px;
           margin-bottom: 5px;
-          color: #2980b9;
+          color: #662d91;
         }
         .signature-line {
-          border-bottom: 2px solid #34495e;
+          border-bottom: 2px solid #662d91;
           margin: 25px 20px 10px 20px;
         }
         .signature-name {
@@ -803,7 +803,7 @@ const generateActaHTML = (acta, equipo) => {
           color: #7f8c8d;
         }
         .footer {
-          background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+          background: linear-gradient(135deg, #662d91 0%, #8e4dbf 100%);
           color: white;
           padding: 12px;
           margin: 20px -15mm -15mm -15mm;
