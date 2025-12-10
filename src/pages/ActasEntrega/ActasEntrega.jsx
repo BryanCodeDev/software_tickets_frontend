@@ -32,7 +32,23 @@ const ActasEntrega = () => {
     fecha_devolucion: '',
     estado_equipo_devolucion: '',
     observaciones_devolucion: '',
-    firma_entrega_devolucion: ''
+    firma_entrega_devolucion: '',
+    // Campos adicionales para información detallada del equipo
+    marca: '',
+    modelo_equipo: '',
+    serial_imei: '',
+    sistema_operativo: '',
+    procesador: '',
+    ram: '',
+    almacenamiento: '',
+    accesorio_cargador: false,
+    accesorio_teclado: false,
+    accesorio_office: false,
+    accesorio_antivirus: false,
+    accesorio_ssd: false,
+    accesorio_hdd: false,
+    observaciones_equipo: '',
+    linea_telefonica: ''
   });
   const [formLoading, setFormLoading] = useState(false);
   const [notification, setNotification] = useState(null);
@@ -268,7 +284,23 @@ const ActasEntrega = () => {
       fecha_devolucion: '',
       estado_equipo_devolucion: '',
       observaciones_devolucion: '',
-      firma_entrega_devolucion: ''
+      firma_entrega_devolucion: '',
+      // Campos adicionales para información detallada del equipo
+      marca: '',
+      modelo_equipo: '',
+      serial_imei: '',
+      sistema_operativo: '',
+      procesador: '',
+      ram: '',
+      almacenamiento: '',
+      accesorio_cargador: false,
+      accesorio_teclado: false,
+      accesorio_office: false,
+      accesorio_antivirus: false,
+      accesorio_ssd: false,
+      accesorio_hdd: false,
+      observaciones_equipo: '',
+      linea_telefonica: ''
     });
     setShowModal(true);
   };
