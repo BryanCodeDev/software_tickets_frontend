@@ -8,120 +8,227 @@ export const exportToPDF = async (acta, equipo) => {
   // Configurar fuente
   pdf.setFont('helvetica');
 
-  // Título
+  // Encabezado con logo y título
+  pdf.setFontSize(10);
+  pdf.setFont('helvetica', 'normal');
+  pdf.text('DuvyClass S.A.S', 20, 20);
+  pdf.text('NIT: 901.456.789-1', 20, 25);
+  pdf.text(`Fecha de generación: ${new Date().toLocaleDateString('es-ES')}`, 160, 20);
+  pdf.text(`Hora: ${new Date().toLocaleTimeString('es-ES')}`, 160, 25);
+
+  // Línea separadora
+  pdf.setDrawColor(0, 0, 0);
+  pdf.setLineWidth(0.5);
+  pdf.line(20, 30, 190, 30);
+
+  // Título principal
   pdf.setFontSize(20);
   pdf.setFont('helvetica', 'bold');
-  pdf.text('ACTA DE ENTREGA DE EQUIPOS CORPORATIVOS', 105, 30, { align: 'center' });
+  pdf.text('ACTA DE ENTREGA DE EQUIPOS DE COMUNICACIÓN Y DE CÓMPUTO', 105, 45, { align: 'center' });
 
-  // Información del receptor
+  // Información del receptor y fecha
   pdf.setFontSize(12);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('INFORMACIÓN DEL RECEPTOR', 20, 60);
   pdf.setFont('helvetica', 'normal');
-  pdf.text(`Nombre: ${acta.usuarioRecibe?.name || 'N/A'}`, 20, 75);
-  pdf.text(`Cargo: ${acta.cargo_recibe || 'N/A'}`, 20, 85);
+  pdf.text(`Nombre: ${acta.usuarioRecibe?.name || 'N/A'}`, 20, 60);
+  pdf.text(`Cargo: ${acta.cargo_recibe || 'N/A'}`, 20, 68);
+  pdf.text(`Fecha: ${new Date(acta.fecha_entrega).toLocaleDateString('es-ES')}`, 160, 60);
 
-  // Información del entregador
+  // Información del equipo con formato de tabla
   pdf.setFont('helvetica', 'bold');
-  pdf.text('INFORMACIÓN DEL ENTREGADOR', 110, 60);
-  pdf.setFont('helvetica', 'normal');
-  pdf.text(`Nombre: ${acta.usuarioEntrega?.name || 'N/A'}`, 110, 75);
-  pdf.text(`Cargo: ${acta.usuarioEntrega?.role?.name || 'N/A'}`, 110, 85);
-
-  // Detalles del equipo
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('DETALLES DEL EQUIPO', 20, 110);
+  pdf.text('INFORMACIÓN DEL EQUIPO', 20, 85);
   pdf.setFont('helvetica', 'normal');
 
-  let yPos = 125;
-  if (equipo) {
-    if (acta.tipo_equipo === 'inventory') {
-      pdf.text(`Tipo: Computadora/Laptop`, 20, yPos);
-      pdf.text(`Marca: ${equipo.marca || 'N/A'}`, 20, yPos + 10);
-      pdf.text(`Modelo: ${equipo.propiedad || 'N/A'}`, 20, yPos + 20);
-      pdf.text(`Serial: ${equipo.serial || 'N/A'}`, 20, yPos + 30);
-      pdf.text(`Procesador: ${equipo.it || 'N/A'}`, 20, yPos + 40);
-      pdf.text(`RAM: ${equipo.ram || 'N/A'}`, 20, yPos + 50);
-      pdf.text(`Almacenamiento: ${equipo.capacidad || 'N/A'}`, 20, yPos + 60);
-      yPos += 80;
-    } else {
-      pdf.text(`Tipo: Teléfono Celular`, 20, yPos);
-      pdf.text(`Marca/Modelo: ${equipo.equipo_celular || 'N/A'}`, 20, yPos + 10);
-      pdf.text(`IMEI: ${equipo.imei || 'N/A'}`, 20, yPos + 20);
-      pdf.text(`Número: ${equipo.numero_celular || 'N/A'}`, 20, yPos + 30);
-      yPos += 50;
-    }
-  }
+  let yPos = 95;
 
-  // Fecha y motivo
-  pdf.text(`Fecha de Entrega: ${new Date(acta.fecha_entrega).toLocaleDateString('es-ES')}`, 20, yPos);
-  pdf.text(`Motivo: ${acta.motivo_entrega}`, 20, yPos + 10);
-  yPos += 30;
+  // Usar los nuevos campos del modelo extendido
+  pdf.text(`Marca: ${acta.marca || equipo?.marca || 'N/A'}`, 20, yPos);
+  pdf.text(`SERIAL/IMEI: ${acta.serial_imei || equipo?.serial || equipo?.imei || 'N/A'}`, 120, yPos);
+  yPos += 10;
 
-  // Estado del equipo
+  pdf.text(`Procesador: ${acta.procesador || equipo?.it || 'N/A'}`, 20, yPos);
+  pdf.text(`MODELO: ${acta.modelo_equipo || equipo?.propiedad || equipo?.equipo_celular || 'N/A'}`, 120, yPos);
+  yPos += 10;
+
+  pdf.text(`LÍNEA TELEFÓNICA: ${acta.linea_telefonica || 'N/A'}`, 20, yPos);
+  pdf.text(`CELULAR: ${acta.tipo_equipo_detallado === 'celular' ? 'X' : ''}`, 120, yPos);
+  yPos += 10;
+
+  pdf.text(`ALMACENAMIENTO: ${acta.almacenamiento || equipo?.capacidad || 'N/A'}`, 20, yPos);
+  pdf.text(`RAM: ${acta.ram || equipo?.ram || 'N/A'}`, 120, yPos);
+  yPos += 10;
+
+  pdf.text(`S.O: ${acta.sistema_operativo || 'N/A'}`, 20, yPos);
+  pdf.text(`IMEI: ${acta.serial_imei || equipo?.imei || 'N/A'}`, 120, yPos);
+  yPos += 10;
+
+  // Accesorios
   pdf.setFont('helvetica', 'bold');
-  pdf.text('ESTADO DEL EQUIPO AL ENTREGAR', 20, yPos);
+  pdf.text('ACCESORIOS:', 20, yPos);
   pdf.setFont('helvetica', 'normal');
-  const estadoLines = pdf.splitTextToSize(acta.estado_equipo_entrega, 170);
-  pdf.text(estadoLines, 20, yPos + 15);
+  yPos += 10;
 
-  // Políticas
-  yPos += 40;
+  const accesorioCargador = acta.accesorio_cargador ? 'X' : '';
+  const accesorioTeclado = acta.accesorio_teclado ? 'X' : '';
+  const accesorioOffice = acta.accesorio_office ? 'X' : '';
+  const accesorioAntivirus = acta.accesorio_antivirus ? 'X' : '';
+  const accesorioSsd = acta.accesorio_ssd ? 'X' : '';
+  const accesorioHdd = acta.accesorio_hdd ? 'X' : '';
+
+  pdf.text(`Cargador: ${accesorioCargador}`, 20, yPos);
+  pdf.text(`Teclado: ${accesorioTeclado}`, 120, yPos);
+  yPos += 10;
+
+  pdf.text(`OFFICE: ${accesorioOffice}`, 20, yPos);
+  pdf.text(`ANTIVIRUS: ${accesorioAntivirus}`, 120, yPos);
+  yPos += 10;
+
+  pdf.text(`SSD: ${accesorioSsd}`, 20, yPos);
+  pdf.text(`HDD: ${accesorioHdd}`, 120, yPos);
+  yPos += 10;
+
+  // Observaciones del equipo
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('OBSERVACIONES DEL EQUIPO:', 20, yPos);
+  pdf.setFont('helvetica', 'normal');
+  yPos += 10;
+
+  const observacionesLines = pdf.splitTextToSize(acta.observaciones_equipo || 'N/A', 170);
+  pdf.text(observacionesLines, 20, yPos);
+  yPos += 20;
+
+  // Políticas completas
   pdf.setFont('helvetica', 'bold');
   pdf.text('POLÍTICAS DE USO', 20, yPos);
   pdf.setFont('helvetica', 'normal');
+  yPos += 10;
+
   const politicas = [
-    '• Usar el equipo exclusivamente para fines laborales',
-    '• No instalar software malicioso sin autorización',
-    '• Reportar inmediatamente pérdidas, daños o robos',
-    '• Realizar copias de seguridad en rutas designadas',
-    '• Navegar solo por sitios permitidos por la compañía',
-    '• No compartir información confidencial'
+    'De los equipos de cómputo:',
+    'Es importante: utilizar los equipos especialmente para desempeñar sus funciones dentro de la empresa,',
+    'el equipo recibido queda bajo la responsabilidad de cada usuario, teniendo en cuenta las siguientes instrucciones:',
+    '• Verificar el estado en el que es entregado el equipo',
+    '• Cuidar: mantener en buen estado los elementos asignados',
+    '• No instalar software ni aplicaciones maliciosas teniendo en cuenta que si se requieren para el uso de actividad diaria debe ser autorizado por el área de IT',
+    '• En caso de pérdida, daño, o robo se debe reportar al área de IT para el respectivo bloqueo y remplazo del mismo.',
+    '• Salvo guardar la información entregada y la generada: realizando copias de seguridad en las rutas designadas por el área de IT o el encargado del área.',
+    '• Navegar por las páginas permitidas por la compañía.',
+    '• Verificar la información enviada: para evitar ataques de intrusión o de virus en el dispositivo.',
+    '• No Modificar: los accesos o cuentas entregadas en los dispositivos.',
+    '• Mantener la privacidad: de la información en custodia, (No compartir a menos de que sea requerido.)',
+    '• En caso de retiro de la compañía: se debe realizar la entrega de todas las herramientas asignadas al área de IT para su respectiva revisión, si entregan a otra área debe ser informado',
+    '',
+    'De los equipos de comunicación:',
+    '• Verificar el estado de entrega de equipo',
+    '• Cuidar y mantener en buen estado los elementos asignados',
+    '• En caso de pérdida, daño, o robo se debe reportar al área de IT para el respectivo bloqueo y remplazo del mismo'
   ];
+
   politicas.forEach((politica, index) => {
-    pdf.text(politica, 20, yPos + 15 + (index * 8));
+    pdf.text(politica, 20, yPos + (index * 7));
   });
 
-  // Firmas
-  yPos += 80;
+  yPos += politicas.length * 7 + 10;
+
+  // Aceptación de políticas
   pdf.setFont('helvetica', 'bold');
-  pdf.text('FIRMAS', 20, yPos);
-  pdf.line(20, yPos + 50, 90, yPos + 50); // Línea para firma receptor
-  pdf.line(110, yPos + 50, 180, yPos + 50); // Línea para firma entregador
+  pdf.text('Yo _____________________________ Acepto y entiendo la POLÍTICA DE ASIGNACION Y ENTREGA DE EQUIPOS Y HERRAMIENTAS DE COMPUTO:', 20, yPos);
+  yPos += 10;
+
+  pdf.text(`SI: ${acta.acepta_politica ? 'X' : ''}`, 20, yPos);
+  pdf.text(`NO: ${!acta.acepta_politica ? 'X' : ''}`, 80, yPos);
+  yPos += 20;
+
+  // Entrega del equipo
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('Entrega del equipo', 20, yPos);
   pdf.setFont('helvetica', 'normal');
-  pdf.setFontSize(10);
-  pdf.text('Firma del Receptor', 35, yPos + 60);
-  pdf.text('Firma del Entregador', 125, yPos + 60);
+  yPos += 10;
+
+  pdf.text(`Usuario quien recibe: ${acta.usuarioRecibe?.name || 'N/A'}`, 20, yPos);
+  pdf.text(`Fecha: ${new Date(acta.fecha_entrega).toLocaleDateString('es-ES')}`, 160, yPos);
+  yPos += 10;
+
+  pdf.text(`Estado: ${acta.estado_equipo_entrega || 'N/A'}`, 20, yPos);
+  yPos += 10;
+
+  pdf.text(`Observaciones: ${acta.observaciones_entrega || 'N/A'}`, 20, yPos);
+  yPos += 20;
+
+  // Firmas de entrega
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('FIRMAS:', 20, yPos);
+  pdf.setFont('helvetica', 'normal');
+  yPos += 10;
+
+  pdf.text('Firma de quien recibe: ____________________', 20, yPos);
+  pdf.text('Firma de quien entrega: ____________________', 120, yPos);
+  yPos += 15;
+
+  pdf.text(`Cargo de quien recibe: ${acta.cargo_recibe || 'N/A'}`, 20, yPos);
+  pdf.text(`Cargo de quien entrega: ${acta.usuarioEntrega?.role?.name || 'N/A'}`, 120, yPos);
+  yPos += 20;
 
   // Devolución si existe
   if (acta.fecha_devolucion) {
     pdf.addPage();
+
+    // Encabezado en página de devolución
+    pdf.setFontSize(10);
+    pdf.text('DuvyClass S.A.S', 20, 20);
+    pdf.text('NIT: 901.456.789-1', 20, 25);
+    pdf.text(`Fecha de generación: ${new Date().toLocaleDateString('es-ES')}`, 160, 20);
+    pdf.text(`Hora: ${new Date().toLocaleTimeString('es-ES')}`, 160, 25);
+    pdf.line(20, 30, 190, 30);
+
     pdf.setFontSize(16);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('DEVOLUCIÓN DEL EQUIPO', 105, 30, { align: 'center' });
+    pdf.text('DEVOLUCIÓN DEL EQUIPO', 105, 45, { align: 'center' });
 
     pdf.setFontSize(12);
-    pdf.text(`Fecha de Devolución: ${new Date(acta.fecha_devolucion).toLocaleDateString('es-ES')}`, 20, 60);
-    pdf.text('Estado del Equipo al Devolver:', 20, 80);
-    const devolucionLines = pdf.splitTextToSize(acta.estado_equipo_devolucion || 'N/A', 170);
-    pdf.text(devolucionLines, 20, 90);
+    pdf.setFont('helvetica', 'normal');
+
+    pdf.text(`Serial: ${acta.serial_imei || equipo?.serial || equipo?.imei || 'N/A'}`, 20, 60);
+    pdf.text(`Marca: ${acta.marca || equipo?.marca || 'N/A'}`, 120, 60);
+
+    pdf.text(`ALMACENAMIENTO: ${acta.almacenamiento || equipo?.capacidad || 'N/A'}`, 20, 70);
+    pdf.text(`RAM: ${acta.ram || equipo?.ram || 'N/A'}`, 120, 70);
+
+    pdf.text(`Usuario quien recibe: ${acta.usuarioEntrega?.name || 'N/A'}`, 20, 80);
+    pdf.text(`Fecha: ${new Date(acta.fecha_devolucion).toLocaleDateString('es-ES')}`, 160, 80);
+
+    pdf.text(`Estado: ${acta.estado_equipo_devolucion || 'N/A'}`, 20, 90);
+    yPos = 100;
 
     if (acta.observaciones_devolucion) {
-      pdf.text('Observaciones:', 20, 120);
-      const obsLines = pdf.splitTextToSize(acta.observaciones_devolucion, 170);
-      pdf.text(obsLines, 20, 130);
+      pdf.text(`Observaciones: ${acta.observaciones_devolucion}`, 20, yPos);
+      yPos += 10;
     }
 
-    // Firmas devolución
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('FIRMAS DE DEVOLUCIÓN', 20, 180);
-    pdf.line(20, yPos + 50, 90, yPos + 50);
-    pdf.line(110, yPos + 50, 180, yPos + 50);
-    pdf.setFont('helvetica', 'normal');
+    yPos += 10;
+    pdf.text('Firma de quien recibe: ____________________', 20, yPos);
+    pdf.text('Firma de quien entrega: ____________________', 120, yPos);
+    yPos += 15;
+
+    pdf.text(`Cargo de quien recibe: ${acta.usuarioEntrega?.role?.name || 'N/A'}`, 20, yPos);
+    pdf.text(`Cargo de quien entrega: ${acta.cargo_recibe || 'N/A'}`, 120, yPos);
+    yPos += 20;
+
     pdf.setFontSize(10);
-    pdf.text('Firma del Receptor', 35, yPos + 60);
-    pdf.text('Firma del Entregador', 125, yPos + 60);
+    pdf.setFont('helvetica', 'italic');
+    pdf.text('*Este recuadro será diligenciado una vez el usuario asignado se retire de la compañía', 20, yPos);
   }
+
+  // Pie de página
+  pdf.setFontSize(10);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('Elabora: _____________________', 20, 280);
+  pdf.text('Revisa: _____________________', 80, 280);
+  pdf.text('Aprueba: _____________________', 140, 280);
+
+  pdf.setFont('helvetica', 'normal');
+  pdf.text('Cargo: _____________________', 20, 285);
+  pdf.text('Cargo: _____________________', 80, 285);
+  pdf.text('Cargo: _____________________', 140, 285);
 
   // Guardar PDF
   pdf.save(`acta-entrega-${acta.id}.pdf`);
@@ -132,115 +239,139 @@ export const exportToWord = async (acta, equipo) => {
     sections: [{
       properties: {},
       children: [
+        // Encabezado
         new Paragraph({
-          text: 'ACTA DE ENTREGA DE EQUIPOS CORPORATIVOS',
+          text: 'DuvyClass S.A.S',
+          alignment: 'left',
+          size: 20
+        }),
+        new Paragraph({
+          text: 'NIT: 901.456.789-1',
+          alignment: 'left',
+          size: 20
+        }),
+        new Paragraph({
+          text: `Fecha de generación: ${new Date().toLocaleDateString('es-ES')}`,
+          alignment: 'right',
+          size: 20
+        }),
+        new Paragraph({
+          text: `Hora: ${new Date().toLocaleTimeString('es-ES')}`,
+          alignment: 'right',
+          size: 20
+        }),
+        new Paragraph({ text: '' }),
+
+        // Título principal
+        new Paragraph({
+          text: 'ACTA DE ENTREGA DE EQUIPOS DE COMUNICACIÓN Y DE CÓMPUTO',
           heading: HeadingLevel.TITLE,
           alignment: 'center'
         }),
         new Paragraph({ text: '' }),
 
-        // Información del receptor y entregador
-        new Paragraph({
-          children: [
-            new TextRun({ text: 'INFORMACIÓN DEL RECEPTOR', bold: true }),
-          ]
-        }),
+        // Información del receptor y fecha
         new Paragraph(`Nombre: ${acta.usuarioRecibe?.name || 'N/A'}`),
         new Paragraph(`Cargo: ${acta.cargo_recibe || 'N/A'}`),
+        new Paragraph(`Fecha: ${new Date(acta.fecha_entrega).toLocaleDateString('es-ES')}`),
         new Paragraph({ text: '' }),
 
+        // Información del equipo con formato extendido
         new Paragraph({
           children: [
-            new TextRun({ text: 'INFORMACIÓN DEL ENTREGADOR', bold: true }),
+            new TextRun({ text: 'INFORMACIÓN DEL EQUIPO', bold: true }),
           ]
         }),
-        new Paragraph(`Nombre: ${acta.usuarioEntrega?.name || 'N/A'}`),
-        new Paragraph(`Cargo: ${acta.usuarioEntrega?.role?.name || 'N/A'}`),
         new Paragraph({ text: '' }),
 
-        // Detalles del equipo
+        new Paragraph(`Marca: ${acta.marca || equipo?.marca || 'N/A'}`),
+        new Paragraph(`SERIAL/IMEI: ${acta.serial_imei || equipo?.serial || equipo?.imei || 'N/A'}`),
+        new Paragraph(`Procesador: ${acta.procesador || equipo?.it || 'N/A'}`),
+        new Paragraph(`MODELO: ${acta.modelo_equipo || equipo?.propiedad || equipo?.equipo_celular || 'N/A'}`),
+        new Paragraph(`LÍNEA TELEFÓNICA: ${acta.linea_telefonica || 'N/A'}`),
+        new Paragraph(`CELULAR: ${acta.tipo_equipo_detallado === 'celular' ? 'X' : ''}`),
+        new Paragraph(`ALMACENAMIENTO: ${acta.almacenamiento || equipo?.capacidad || 'N/A'}`),
+        new Paragraph(`RAM: ${acta.ram || equipo?.ram || 'N/A'}`),
+        new Paragraph(`S.O: ${acta.sistema_operativo || 'N/A'}`),
+        new Paragraph(`IMEI: ${acta.serial_imei || equipo?.imei || 'N/A'}`),
+        new Paragraph({ text: '' }),
+
+        // Accesorios
         new Paragraph({
           children: [
-            new TextRun({ text: 'DETALLES DEL EQUIPO', bold: true }),
+            new TextRun({ text: 'ACCESORIOS:', bold: true }),
           ]
         }),
-
-        ...(equipo ? (acta.tipo_equipo === 'inventory' ? [
-          new Paragraph(`Tipo: Computadora/Laptop`),
-          new Paragraph(`Marca: ${equipo.marca || 'N/A'}`),
-          new Paragraph(`Modelo: ${equipo.propiedad || 'N/A'}`),
-          new Paragraph(`Serial: ${equipo.serial || 'N/A'}`),
-          new Paragraph(`Procesador: ${equipo.it || 'N/A'}`),
-          new Paragraph(`RAM: ${equipo.ram || 'N/A'}`),
-          new Paragraph(`Almacenamiento: ${equipo.capacidad || 'N/A'}`)
-        ] : [
-          new Paragraph(`Tipo: Teléfono Celular`),
-          new Paragraph(`Marca/Modelo: ${equipo.equipo_celular || 'N/A'}`),
-          new Paragraph(`IMEI: ${equipo.imei || 'N/A'}`),
-          new Paragraph(`Número: ${equipo.numero_celular || 'N/A'}`)
-        ]) : []),
-
-        new Paragraph(`Fecha de Entrega: ${new Date(acta.fecha_entrega).toLocaleDateString('es-ES')}`),
-        new Paragraph(`Motivo: ${acta.motivo_entrega}`),
+        new Paragraph(`CARGADOR: ${acta.accesorio_cargador ? 'X' : ''}`),
+        new Paragraph(`Teclado: ${acta.accesorio_teclado ? 'X' : ''}`),
+        new Paragraph(`OFFICE: ${acta.accesorio_office ? 'X' : ''}`),
+        new Paragraph(`ANTIVIRUS: ${acta.accesorio_antivirus ? 'X' : ''}`),
+        new Paragraph(`SSD: ${acta.accesorio_ssd ? 'X' : ''}`),
+        new Paragraph(`HDD: ${acta.accesorio_hdd ? 'X' : ''}`),
         new Paragraph({ text: '' }),
 
-        // Estado del equipo
+        // Observaciones del equipo
         new Paragraph({
           children: [
-            new TextRun({ text: 'ESTADO DEL EQUIPO AL ENTREGAR', bold: true }),
+            new TextRun({ text: 'OBSERVACIONES DEL EQUIPO:', bold: true }),
           ]
         }),
-        new Paragraph(acta.estado_equipo_entrega),
+        new Paragraph(acta.observaciones_equipo || 'N/A'),
         new Paragraph({ text: '' }),
 
-        // Políticas
+        // Políticas completas
         new Paragraph({
           children: [
             new TextRun({ text: 'POLÍTICAS DE USO', bold: true }),
           ]
         }),
-        new Paragraph('• Usar el equipo exclusivamente para fines laborales'),
-        new Paragraph('• No instalar software malicioso sin autorización'),
-        new Paragraph('• Reportar inmediatamente pérdidas, daños o robos'),
-        new Paragraph('• Realizar copias de seguridad en rutas designadas'),
-        new Paragraph('• Navegar solo por sitios permitidos por la compañía'),
-        new Paragraph('• No compartir información confidencial'),
+        new Paragraph('De los equipos de cómputo:'),
+        new Paragraph('Es importante: utilizar los equipos especialmente para desempeñar sus funciones dentro de la empresa,'),
+        new Paragraph('el equipo recibido queda bajo la responsabilidad de cada usuario, teniendo en cuenta las siguientes instrucciones:'),
+        new Paragraph('• Verificar el estado en el que es entregado el equipo'),
+        new Paragraph('• Cuidar: mantener en buen estado los elementos asignados'),
+        new Paragraph('• No instalar software ni aplicaciones maliciosas teniendo en cuenta que si se requieren para el uso de actividad diaria debe ser autorizado por el área de IT'),
+        new Paragraph('• En caso de pérdida, daño, o robo se debe reportar al área de IT para el respectivo bloqueo y remplazo del mismo.'),
+        new Paragraph('• Salvo guardar la información entregada y la generada: realizando copias de seguridad en las rutas designadas por el área de IT o el encargado del área.'),
+        new Paragraph('• Navegar por las páginas permitidas por la compañía.'),
+        new Paragraph('• Verificar la información enviada: para evitar ataques de intrusión o de virus en el dispositivo.'),
+        new Paragraph('• No Modificar: los accesos o cuentas entregadas en los dispositivos.'),
+        new Paragraph('• Mantener la privacidad: de la información en custodia, (No compartir a menos de que sea requerido.)'),
+        new Paragraph('• En caso de retiro de la compañía: se debe realizar la entrega de todas las herramientas asignadas al área de IT para su respectiva revisión, si entregan a otra área debe ser informado'),
+        new Paragraph(''),
+        new Paragraph('De los equipos de comunicación:'),
+        new Paragraph('• Verificar el estado de entrega de equipo'),
+        new Paragraph('• Cuidar y mantener en buen estado los elementos asignados'),
+        new Paragraph('• En caso de pérdida, daño, o robo se debe reportar al área de IT para el respectivo bloqueo y remplazo del mismo'),
         new Paragraph({ text: '' }),
 
-        // Firmas
+        // Aceptación de políticas
+        new Paragraph(`Yo _____________________________ Acepto y entiendo la POLÍTICA DE ASIGNACION Y ENTREGA DE EQUIPOS Y HERRAMIENTAS DE COMPUTO: SI: ${acta.acepta_politica ? 'X' : ''} NO: ${!acta.acepta_politica ? 'X' : ''}`),
+        new Paragraph({ text: '' }),
+
+        // Entrega del equipo
         new Paragraph({
           children: [
-            new TextRun({ text: 'FIRMAS', bold: true }),
+            new TextRun({ text: 'Entrega del equipo', bold: true }),
           ]
         }),
-        new Table({
-          width: {
-            size: 100,
-            type: WidthType.PERCENTAGE,
-          },
-          rows: [
-            new TableRow({
-              children: [
-                new TableCell({
-                  children: [new Paragraph('Firma del Receptor: ____________________')],
-                }),
-                new TableCell({
-                  children: [new Paragraph('Firma del Entregador: ____________________')],
-                }),
-              ],
-            }),
-            new TableRow({
-              children: [
-                new TableCell({
-                  children: [new Paragraph(`Cargo: ${acta.cargo_recibe || 'N/A'}`)],
-                }),
-                new TableCell({
-                  children: [new Paragraph(`Cargo: ${acta.usuarioEntrega?.role?.name || 'N/A'}`)],
-                }),
-              ],
-            }),
-          ],
+        new Paragraph(`Usuario quien recibe: ${acta.usuarioRecibe?.name || 'N/A'}`),
+        new Paragraph(`Fecha: ${new Date(acta.fecha_entrega).toLocaleDateString('es-ES')}`),
+        new Paragraph(`Estado: ${acta.estado_equipo_entrega || 'N/A'}`),
+        new Paragraph(`Observaciones: ${acta.observaciones_entrega || 'N/A'}`),
+        new Paragraph({ text: '' }),
+
+        // Firmas de entrega
+        new Paragraph({
+          children: [
+            new TextRun({ text: 'FIRMAS:', bold: true }),
+          ]
         }),
+        new Paragraph('Firma de quien recibe: ____________________'),
+        new Paragraph('Firma de quien entrega: ____________________'),
+        new Paragraph(`Cargo de quien recibe: ${acta.cargo_recibe || 'N/A'}`),
+        new Paragraph(`Cargo de quien entrega: ${acta.usuarioEntrega?.role?.name || 'N/A'}`),
+        new Paragraph({ text: '' }),
 
         // Devolución si existe
         ...(acta.fecha_devolucion ? [
@@ -250,37 +381,62 @@ export const exportToWord = async (acta, equipo) => {
             heading: HeadingLevel.HEADING_1,
             alignment: 'center'
           }),
-          new Paragraph(`Fecha de Devolución: ${new Date(acta.fecha_devolucion).toLocaleDateString('es-ES')}`),
-          new Paragraph('Estado del Equipo al Devolver:'),
-          new Paragraph(acta.estado_equipo_devolucion || 'N/A'),
+          new Paragraph({ text: '' }),
+
+          // Encabezado en página de devolución
+          new Paragraph({
+            text: 'DuvyClass S.A.S',
+            alignment: 'left',
+            size: 20
+          }),
+          new Paragraph({
+            text: 'NIT: 901.456.789-1',
+            alignment: 'left',
+            size: 20
+          }),
+          new Paragraph({
+            text: `Fecha de generación: ${new Date().toLocaleDateString('es-ES')}`,
+            alignment: 'right',
+            size: 20
+          }),
+          new Paragraph({
+            text: `Hora: ${new Date().toLocaleTimeString('es-ES')}`,
+            alignment: 'right',
+            size: 20
+          }),
+          new Paragraph({ text: '' }),
+
+          new Paragraph(`Serial: ${acta.serial_imei || equipo?.serial || equipo?.imei || 'N/A'}`),
+          new Paragraph(`Marca: ${acta.marca || equipo?.marca || 'N/A'}`),
+          new Paragraph(`ALMACENAMIENTO: ${acta.almacenamiento || equipo?.capacidad || 'N/A'}`),
+          new Paragraph(`RAM: ${acta.ram || equipo?.ram || 'N/A'}`),
+          new Paragraph(`Usuario quien recibe: ${acta.usuarioEntrega?.name || 'N/A'}`),
+          new Paragraph(`Fecha: ${new Date(acta.fecha_devolucion).toLocaleDateString('es-ES')}`),
+          new Paragraph(`Estado: ${acta.estado_equipo_devolucion || 'N/A'}`),
           ...(acta.observaciones_devolucion ? [
-            new Paragraph('Observaciones:'),
-            new Paragraph(acta.observaciones_devolucion)
+            new Paragraph(`Observaciones: ${acta.observaciones_devolucion}`)
           ] : []),
           new Paragraph({ text: '' }),
+
+          new Paragraph('Firma de quien recibe: ____________________'),
+          new Paragraph('Firma de quien entrega: ____________________'),
+          new Paragraph(`Cargo de quien recibe: ${acta.usuarioEntrega?.role?.name || 'N/A'}`),
+          new Paragraph(`Cargo de quien entrega: ${acta.cargo_recibe || 'N/A'}`),
+          new Paragraph({ text: '' }),
+
           new Paragraph({
-            children: [
-              new TextRun({ text: 'FIRMAS DE DEVOLUCIÓN', bold: true }),
-            ]
+            text: '*Este recuadro será diligenciado una vez el usuario asignado se retire de la compañía',
+            italics: true
           }),
-          new Table({
-            width: {
-              size: 100,
-              type: WidthType.PERCENTAGE,
-            },
-            rows: [
-              new TableRow({
-                children: [
-                  new TableCell({
-                    children: [new Paragraph('Firma del Receptor: ____________________')],
-                  }),
-                  new TableCell({
-                    children: [new Paragraph('Firma del Entregador: ____________________')],
-                  }),
-                ],
-              }),
-            ],
-          })
+
+          new Paragraph({ text: '' }),
+          new Paragraph('Elabora: _____________________'),
+          new Paragraph('Revisa: _____________________'),
+          new Paragraph('Aprueba: _____________________'),
+          new Paragraph({ text: '' }),
+          new Paragraph('Cargo: _____________________'),
+          new Paragraph('Cargo: _____________________'),
+          new Paragraph('Cargo: _____________________')
         ] : [])
       ],
     }],
@@ -323,105 +479,196 @@ const generateActaHTML = (acta, equipo) => {
         .politicas { background: #f9f9f9; padding: 15px; border-radius: 5px; }
         .politicas ul { margin: 0; padding-left: 20px; }
         @media print { body { margin: 0; } }
+        .encabezado { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 12px; }
+        .pie-pagina { display: flex; justify-content: space-between; margin-top: 50px; font-size: 12px; }
       </style>
     </head>
     <body>
+      <div class="encabezado">
+        <div>
+          <p>DuvyClass S.A.S</p>
+          <p>NIT: 901.456.789-1</p>
+        </div>
+        <div>
+          <p>Fecha de generación: ${new Date().toLocaleDateString('es-ES')}</p>
+          <p>Hora: ${new Date().toLocaleTimeString('es-ES')}</p>
+        </div>
+      </div>
+
       <div class="header">
-        <h1>ACTA DE ENTREGA DE EQUIPOS CORPORATIVOS</h1>
+        <h1>ACTA DE ENTREGA DE EQUIPOS DE COMUNICACIÓN Y DE CÓMPUTO</h1>
       </div>
 
       <div class="section">
-        <h3>INFORMACIÓN DEL RECEPTOR</h3>
         <p><strong>Nombre:</strong> ${acta.usuarioRecibe?.name || 'N/A'}</p>
         <p><strong>Cargo:</strong> ${acta.cargo_recibe || 'N/A'}</p>
+        <p><strong>Fecha:</strong> ${new Date(acta.fecha_entrega).toLocaleDateString('es-ES')}</p>
       </div>
 
       <div class="section">
-        <h3>INFORMACIÓN DEL ENTREGADOR</h3>
-        <p><strong>Nombre:</strong> ${acta.usuarioEntrega?.name || 'N/A'}</p>
-        <p><strong>Cargo:</strong> ${acta.usuarioEntrega?.role?.name || 'N/A'}</p>
+        <h3>INFORMACIÓN DEL EQUIPO</h3>
+        <p><strong>Marca:</strong> ${acta.marca || equipo?.marca || 'N/A'}</p>
+        <p><strong>SERIAL/IMEI:</strong> ${acta.serial_imei || equipo?.serial || equipo?.imei || 'N/A'}</p>
+        <p><strong>Procesador:</strong> ${acta.procesador || equipo?.it || 'N/A'}</p>
+        <p><strong>MODELO:</strong> ${acta.modelo_equipo || equipo?.propiedad || equipo?.equipo_celular || 'N/A'}</p>
+        <p><strong>LÍNEA TELEFÓNICA:</strong> ${acta.linea_telefonica || 'N/A'}</p>
+        <p><strong>CELULAR:</strong> ${acta.tipo_equipo_detallado === 'celular' ? 'X' : ''}</p>
+        <p><strong>ALMACENAMIENTO:</strong> ${acta.almacenamiento || equipo?.capacidad || 'N/A'}</p>
+        <p><strong>RAM:</strong> ${acta.ram || equipo?.ram || 'N/A'}</p>
+        <p><strong>S.O:</strong> ${acta.sistema_operativo || 'N/A'}</p>
+        <p><strong>IMEI:</strong> ${acta.serial_imei || equipo?.imei || 'N/A'}</p>
       </div>
 
       <div class="section">
-        <h3>DETALLES DEL EQUIPO</h3>
-        ${equipo ? (acta.tipo_equipo === 'inventory' ? `
-          <p><strong>Tipo:</strong> Computadora/Laptop</p>
-          <p><strong>Marca:</strong> ${equipo.marca || 'N/A'}</p>
-          <p><strong>Modelo:</strong> ${equipo.propiedad || 'N/A'}</p>
-          <p><strong>Serial:</strong> ${equipo.serial || 'N/A'}</p>
-          <p><strong>Procesador:</strong> ${equipo.it || 'N/A'}</p>
-          <p><strong>RAM:</strong> ${equipo.ram || 'N/A'}</p>
-          <p><strong>Almacenamiento:</strong> ${equipo.capacidad || 'N/A'}</p>
-        ` : `
-          <p><strong>Tipo:</strong> Teléfono Celular</p>
-          <p><strong>Marca/Modelo:</strong> ${equipo.equipo_celular || 'N/A'}</p>
-          <p><strong>IMEI:</strong> ${equipo.imei || 'N/A'}</p>
-          <p><strong>Número:</strong> ${equipo.numero_celular || 'N/A'}</p>
-        `) : ''}
-        <p><strong>Fecha de Entrega:</strong> ${new Date(acta.fecha_entrega).toLocaleDateString('es-ES')}</p>
-        <p><strong>Motivo:</strong> ${acta.motivo_entrega}</p>
+        <h3>ACCESORIOS</h3>
+        <p><strong>CARGADOR:</strong> ${acta.accesorio_cargador ? 'X' : ''}</p>
+        <p><strong>Teclado:</strong> ${acta.accesorio_teclado ? 'X' : ''}</p>
+        <p><strong>OFFICE:</strong> ${acta.accesorio_office ? 'X' : ''}</p>
+        <p><strong>ANTIVIRUS:</strong> ${acta.accesorio_antivirus ? 'X' : ''}</p>
+        <p><strong>SSD:</strong> ${acta.accesorio_ssd ? 'X' : ''}</p>
+        <p><strong>HDD:</strong> ${acta.accesorio_hdd ? 'X' : ''}</p>
       </div>
 
       <div class="section">
-        <h3>ESTADO DEL EQUIPO AL ENTREGAR</h3>
-        <p>${acta.estado_equipo_entrega}</p>
+        <h3>OBSERVACIONES DEL EQUIPO</h3>
+        <p>${acta.observaciones_equipo || 'N/A'}</p>
       </div>
 
       <div class="section">
         <h3>POLÍTICAS DE USO</h3>
         <div class="politicas">
+          <p>De los equipos de cómputo:</p>
+          <p>Es importante: utilizar los equipos especialmente para desempeñar sus funciones dentro de la empresa,</p>
+          <p>el equipo recibido queda bajo la responsabilidad de cada usuario, teniendo en cuenta las siguientes instrucciones:</p>
           <ul>
-            <li>Usar el equipo exclusivamente para fines laborales</li>
-            <li>No instalar software malicioso sin autorización</li>
-            <li>Reportar inmediatamente pérdidas, daños o robos</li>
-            <li>Realizar copias de seguridad en rutas designadas</li>
-            <li>Navegar solo por sitios permitidos por la compañía</li>
-            <li>No compartir información confidencial</li>
+            <li>Verificar el estado en el que es entregado el equipo</li>
+            <li>Cuidar: mantener en buen estado los elementos asignados</li>
+            <li>No instalar software ni aplicaciones maliciosas teniendo en cuenta que si se requieren para el uso de actividad diaria debe ser autorizado por el área de IT</li>
+            <li>En caso de pérdida, daño, o robo se debe reportar al área de IT para el respectivo bloqueo y remplazo del mismo.</li>
+            <li>Salvo guardar la información entregada y la generada: realizando copias de seguridad en las rutas designadas por el área de IT o el encargado del área.</li>
+            <li>Navegar por las páginas permitidas por la compañía.</li>
+            <li>Verificar la información enviada: para evitar ataques de intrusión o de virus en el dispositivo.</li>
+            <li>No Modificar: los accesos o cuentas entregadas en los dispositivos.</li>
+            <li>Mantener la privacidad: de la información en custodia, (No compartir a menos de que sea requerido.)</li>
+            <li>En caso de retiro de la compañía: se debe realizar la entrega de todas las herramientas asignadas al área de IT para su respectiva revisión, si entregan a otra área debe ser informado</li>
+          </ul>
+          <p>De los equipos de comunicación:</p>
+          <ul>
+            <li>Verificar el estado de entrega de equipo</li>
+            <li>Cuidar y mantener en buen estado los elementos asignados</li>
+            <li>En caso de pérdida, daño, o robo se debe reportar al área de IT para el respectivo bloqueo y remplazo del mismo</li>
           </ul>
         </div>
       </div>
 
-      <div class="firmas">
-        <div class="firma">
-          <div class="firma-line"></div>
-          <p><strong>Firma del Receptor</strong></p>
-          <p>Cargo: ${acta.cargo_recibe || 'N/A'}</p>
-        </div>
-        <div class="firma">
-          <div class="firma-line"></div>
-          <p><strong>Firma del Entregador</strong></p>
-          <p>Cargo: ${acta.usuarioEntrega?.role?.name || 'N/A'}</p>
+      <div class="section">
+        <p>Yo _____________________________ Acepto y entiendo la POLÍTICA DE ASIGNACION Y ENTREGA DE EQUIPOS Y HERRAMIENTAS DE COMPUTO:</p>
+        <p>SI: ${acta.acepta_politica ? 'X' : ''} NO: ${!acta.acepta_politica ? 'X' : ''}</p>
+      </div>
+
+      <div class="section">
+        <h3>Entrega del equipo</h3>
+        <p><strong>Usuario quien recibe:</strong> ${acta.usuarioRecibe?.name || 'N/A'}</p>
+        <p><strong>Fecha:</strong> ${new Date(acta.fecha_entrega).toLocaleDateString('es-ES')}</p>
+        <p><strong>Estado:</strong> ${acta.estado_equipo_entrega || 'N/A'}</p>
+        <p><strong>Observaciones:</strong> ${acta.observaciones_entrega || 'N/A'}</p>
+      </div>
+
+      <div class="section">
+        <h3>FIRMAS</h3>
+        <div class="firmas">
+          <div class="firma">
+            <div class="firma-line"></div>
+            <p><strong>Firma de quien recibe</strong></p>
+            <p>Cargo: ${acta.cargo_recibe || 'N/A'}</p>
+          </div>
+          <div class="firma">
+            <div class="firma-line"></div>
+            <p><strong>Firma de quien entrega</strong></p>
+            <p>Cargo: ${acta.usuarioEntrega?.role?.name || 'N/A'}</p>
+          </div>
         </div>
       </div>
 
       ${acta.fecha_devolucion ? `
         <div style="page-break-before: always;">
+          <div class="encabezado">
+            <div>
+              <p>DuvyClass S.A.S</p>
+              <p>NIT: 901.456.789-1</p>
+            </div>
+            <div>
+              <p>Fecha de generación: ${new Date().toLocaleDateString('es-ES')}</p>
+              <p>Hora: ${new Date().toLocaleTimeString('es-ES')}</p>
+            </div>
+          </div>
+
           <div class="header">
             <h1>DEVOLUCIÓN DEL EQUIPO</h1>
           </div>
 
           <div class="section">
-            <p><strong>Fecha de Devolución:</strong> ${new Date(acta.fecha_devolucion).toLocaleDateString('es-ES')}</p>
-            <h3>Estado del Equipo al Devolver</h3>
-            <p>${acta.estado_equipo_devolucion || 'N/A'}</p>
+            <p><strong>Serial:</strong> ${acta.serial_imei || equipo?.serial || equipo?.imei || 'N/A'}</p>
+            <p><strong>Marca:</strong> ${acta.marca || equipo?.marca || 'N/A'}</p>
+            <p><strong>ALMACENAMIENTO:</strong> ${acta.almacenamiento || equipo?.capacidad || 'N/A'}</p>
+            <p><strong>RAM:</strong> ${acta.ram || equipo?.ram || 'N/A'}</p>
+            <p><strong>Usuario quien recibe:</strong> ${acta.usuarioEntrega?.name || 'N/A'}</p>
+            <p><strong>Fecha:</strong> ${new Date(acta.fecha_devolucion).toLocaleDateString('es-ES')}</p>
+            <p><strong>Estado:</strong> ${acta.estado_equipo_devolucion || 'N/A'}</p>
             ${acta.observaciones_devolucion ? `
-              <h3>Observaciones</h3>
-              <p>${acta.observaciones_devolucion}</p>
+              <p><strong>Observaciones:</strong> ${acta.observaciones_devolucion}</p>
             ` : ''}
           </div>
 
-          <div class="firmas">
-            <div class="firma">
-              <div class="firma-line"></div>
-              <p><strong>Firma del Receptor</strong></p>
+          <div class="section">
+            <h3>FIRMAS DE DEVOLUCIÓN</h3>
+            <div class="firmas">
+              <div class="firma">
+                <div class="firma-line"></div>
+                <p><strong>Firma de quien recibe</strong></p>
+              </div>
+              <div class="firma">
+                <div class="firma-line"></div>
+                <p><strong>Firma de quien entrega</strong></p>
+              </div>
             </div>
-            <div class="firma">
-              <div class="firma-line"></div>
-              <p><strong>Firma del Entregador</strong></p>
+          </div>
+
+          <div class="section">
+            <p><em>*Este recuadro será diligenciado una vez el usuario asignado se retire de la compañía</em></p>
+          </div>
+
+          <div class="pie-pagina">
+            <div>
+              <p>Elabora: _____________________</p>
+              <p>Cargo: _____________________</p>
+            </div>
+            <div>
+              <p>Revisa: _____________________</p>
+              <p>Cargo: _____________________</p>
+            </div>
+            <div>
+              <p>Aprueba: _____________________</p>
+              <p>Cargo: _____________________</p>
             </div>
           </div>
         </div>
       ` : ''}
+
+      <div class="pie-pagina">
+        <div>
+          <p>Elabora: _____________________</p>
+          <p>Cargo: _____________________</p>
+        </div>
+        <div>
+          <p>Revisa: _____________________</p>
+          <p>Cargo: _____________________</p>
+        </div>
+        <div>
+          <p>Aprueba: _____________________</p>
+          <p>Cargo: _____________________</p>
+        </div>
+      </div>
     </body>
     </html>
   `;

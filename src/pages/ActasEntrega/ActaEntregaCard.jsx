@@ -166,7 +166,7 @@ const ActaEntregaCard = ({ acta, onEdit, onDelete, canEdit, canDelete }) => {
 
           <div className="pt-3 border-t border-gray-100">
             <p className="text-xs text-gray-500 font-medium mb-1">Estado del Equipo</p>
-            <p className="text-xs bg-gray-50 px-3 py-2 rounded-lg text-gray-700 break-words">
+            <p className="text-xs bg-gray-50 px-3 py-2 rounded-lg text-gray-700 wrap-break-word">
               {acta.estado_equipo_entrega}
             </p>
           </div>
