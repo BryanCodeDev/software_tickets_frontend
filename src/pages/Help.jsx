@@ -306,7 +306,16 @@ const Help = () => {
     {
       question: '¿Cómo funcionan los nuevos permisos basados en roles para estadísticas y exportación?',
       answer: 'El sistema ahora permite que ciertos roles accedan automáticamente a las estadísticas y exportación sin necesidad de permisos específicos. Esto simplifica la gestión de permisos y asegura que los usuarios clave siempre tengan acceso a la información que necesitan para tomar decisiones.'
+    },
+    {
+      question: '¿Cómo seleccionar el área correcta en las actas de entrega?',
+      answer: 'Al crear una acta de entrega, el campo "Área que Recibe" ahora incluye todas las áreas disponibles en el sistema organizadas en 9 categorías: Producción y Operaciones, Calidad y Laboratorio, Administración y Finanzas, Ventas y Mercadeo, Recursos Humanos, Gerencia y Dirección, Servicios Generales, Sistemas y Tecnología, y Control y Auditoría. Seleccione el área apropiada del empleado que recibe el equipo para mantener la consistencia con el inventario.'
+    },
+    {
+      question: '¿Qué áreas están disponibles para seleccionar en las actas de entrega?',
+      answer: 'Las actas de entrega incluyen las mismas 39 áreas del sistema de inventario: Materia Prima, Producción, Empaque, Bodega, Control de Calidad, Laboratorio, Aseguramiento de Calidad, Metrología, Contabilidad, Tesorería, Presupuesto, Compras, Almacén, Facturación, Ventas, Servicio al Cliente, Mercadeo, Comercio Exterior, Publicidad, Reclutamiento, Nómina, Bienestar Social, Gerencia General, Gerencia de Producción, Gerencia Comercial, Gerencia Administrativa, Gerencia Financiera, Mantenimiento, Transporte, Aseo, Seguridad Industrial, Sistemas, Telemática, Auditoría, Revisor Fiscal, Presupuestos, Planeación, y Control de Gestión.'
     }
+
   ];
 
   const contactInfo = [
@@ -702,10 +711,58 @@ const Help = () => {
                                 <li>• Seleccione tipo de equipo: Computadora/Laptop o Teléfono Celular</li>
                                 <li>• Elija el equipo disponible del inventario</li>
                                 <li>• Asigne el usuario que recibe el equipo</li>
+                                <li>• <strong>Seleccione el área correspondiente del empleado receptor</strong> (campo "Área que Recibe")</li>
                                 <li>• Defina la fecha de entrega y estado del equipo</li>
                                 <li>• Agregue observaciones y acepte las políticas</li>
                                 <li>• Registre firma y cargo del receptor</li>
                               </ul>
+                            </div>
+                            <div>
+                              <h7 className="font-medium text-sm">Selección de Áreas en Actas de Entrega</h7>
+                              <div className="bg-white p-3 rounded border mb-3">
+                                <p className="text-sm mb-2">El sistema ahora incluye todas las áreas del inventario organizadas en 9 categorías para mantener la consistencia:</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                                  <div className="bg-blue-50 p-2 rounded">
+                                    <div className="font-medium text-blue-800">1. Producción y Operaciones</div>
+                                    <div className="text-blue-600">Materia Prima, Producción, Empaque, Bodega</div>
+                                  </div>
+                                  <div className="bg-green-50 p-2 rounded">
+                                    <div className="font-medium text-green-800">2. Calidad y Laboratorio</div>
+                                    <div className="text-green-600">Control de Calidad, Laboratorio, Aseguramiento de Calidad, Metrología</div>
+                                  </div>
+                                  <div className="bg-yellow-50 p-2 rounded">
+                                    <div className="font-medium text-yellow-800">3. Administración y Finanzas</div>
+                                    <div className="text-yellow-600">Contabilidad, Tesorería, Presupuesto, Compras, Almacén, Facturación</div>
+                                  </div>
+                                  <div className="bg-purple-50 p-2 rounded">
+                                    <div className="font-medium text-purple-800">4. Ventas y Mercadeo</div>
+                                    <div className="text-purple-600">Ventas, Servicio al Cliente, Mercadeo, Comercio Exterior, Publicidad</div>
+                                  </div>
+                                  <div className="bg-pink-50 p-2 rounded">
+                                    <div className="font-medium text-pink-800">5. Recursos Humanos</div>
+                                    <div className="text-pink-600">Reclutamiento, Nómina, Bienestar Social</div>
+                                  </div>
+                                  <div className="bg-red-50 p-2 rounded">
+                                    <div className="font-medium text-red-800">6. Gerencia y Dirección</div>
+                                    <div className="text-red-600">Gerencia General, Gerencia de Producción, Gerencia Comercial, Gerencia Administrativa, Gerencia Financiera</div>
+                                  </div>
+                                  <div className="bg-indigo-50 p-2 rounded">
+                                    <div className="font-medium text-indigo-800">7. Servicios Generales</div>
+                                    <div className="text-indigo-600">Mantenimiento, Transporte, Aseo, Seguridad Industrial</div>
+                                  </div>
+                                  <div className="bg-cyan-50 p-2 rounded">
+                                    <div className="font-medium text-cyan-800">8. Sistemas y Tecnología</div>
+                                    <div className="text-cyan-600">Sistemas, Telemática</div>
+                                  </div>
+                                  <div className="bg-orange-50 p-2 rounded">
+                                    <div className="font-medium text-orange-800">9. Control y Auditoría</div>
+                                    <div className="text-orange-600">Auditoría, Revisor Fiscal, Presupuestos, Planeación, Control de Gestión</div>
+                                  </div>
+                                </div>
+                                <div className="mt-2 text-xs text-gray-600">
+                                  <strong>Total: 39 áreas disponibles</strong> - Seleccione el área correspondiente al empleado que recibe el equipo para mantener la trazabilidad completa.
+                                </div>
+                              </div>
                             </div>
                             <div>
                               <h7 className="font-medium text-sm">Registro de Devoluciones</h7>
