@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { usersAPI, authAPI } from '../../api';
 import { inventoryAPI } from '../../api';
+import { corporatePhoneAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSearch, FaFilter, FaUserShield, FaUserCog, FaUser, FaChartBar, FaDownload, FaSortAmountDown, FaSortAmountUp, FaClock, FaEnvelope, FaKey, FaToggleOn, FaToggleOff, FaBan, FaShieldAlt, FaCrown, FaClipboardList } from 'react-icons/fa';
 import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
@@ -18,6 +19,9 @@ const Users = () => {
   const [inventoryItems, setInventoryItems] = useState([]);
   const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
+  const [availablePhones, setAvailablePhones] = useState([]);
+  const [searchPhone, setSearchPhone] = useState('');
+  const [showPhoneDropdown, setShowPhoneDropdown] = useState(false);
   const { user } = useContext(AuthContext);
 
   // NUEVAS FUNCIONALIDADES: Estados para búsqueda, filtros y ordenamiento
@@ -34,6 +38,7 @@ const Users = () => {
       fetchUsers();
       fetchUniqueITs();
       fetchInventoryItems();
+      fetchAvailablePhones();
     }
   }, [user]);
 
@@ -82,6 +87,17 @@ const Users = () => {
       const data = await inventoryAPI.fetchInventory();
       setInventoryItems(data);
     } catch (err) {
+    }
+  };
+
+  const fetchAvailablePhones = async () => {
+    try {
+      const phones = await corporatePhoneAPI.fetchCorporatePhones();
+      // Filtrar solo los teléfonos activos
+      const activePhones = phones.filter(phone => phone.status === 'activo');
+      setAvailablePhones(activePhones);
+    } catch (err) {
+      console.error('Error al cargar teléfonos corporativos:', err);
     }
   };
 
@@ -149,6 +165,17 @@ const Users = () => {
   };
 
   const stats = calculateStats();
+
+  // Encontrar el teléfono seleccionado
+  const selectedPhone = availablePhones.find(phone => phone.numero_celular === formData.corporatePhone);
+
+  // Filtrar teléfonos por búsqueda
+  const phonesFiltered = availablePhones.filter(phone =>
+    searchPhone === '' ||
+    phone.numero_celular.toLowerCase().includes(searchPhone.toLowerCase()) ||
+    phone.nombre.toLowerCase().includes(searchPhone.toLowerCase()) ||
+    phone.category.toLowerCase().includes(searchPhone.toLowerCase())
+  );
 
   // NUEVA FUNCIONALIDAD: Verificar fortaleza de contraseña
   const checkPasswordStrength = (password) => {
@@ -827,7 +854,10 @@ const Users = () => {
                         type="radio"
                         name="hasCorporatePhone"
                         checked={formData.hasCorporatePhone === false}
-                        onChange={() => setFormData({ ...formData, hasCorporatePhone: false, corporatePhone: '' })}
+                        onChange={() => {
+                          setFormData({ ...formData, hasCorporatePhone: false, corporatePhone: '' });
+                          setSearchPhone('');
+                        }}
                         className="mr-2"
                       />
                       No
@@ -840,14 +870,47 @@ const Users = () => {
                     <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                       Número Corporativo
                     </label>
-                    <input
-                      type="text"
-                      name="corporatePhone"
-                      value={formData.corporatePhone}
-                      onChange={(e) => setFormData({ ...formData, corporatePhone: e.target.value })}
-                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
-                      placeholder="Ej: 300 123 4567"
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder={`Buscar y seleccionar teléfono... (${availablePhones.length} disponibles)`}
+                        value={selectedPhone ? `${selectedPhone.numero_celular} - ${selectedPhone.nombre} (${selectedPhone.category})` : searchPhone}
+                        onChange={(e) => {
+                          setSearchPhone(e.target.value);
+                          setFormData({ ...formData, corporatePhone: '' });
+                          setShowPhoneDropdown(true);
+                        }}
+                        onFocus={() => setShowPhoneDropdown(true)}
+                        onBlur={() => setTimeout(() => setShowPhoneDropdown(false), 200)}
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                      />
+                      {showPhoneDropdown && (
+                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg sm:rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                          {phonesFiltered.length > 0 ? (
+                            phonesFiltered.map(phone => (
+                              <div
+                                key={phone.id}
+                                className="px-3 sm:px-4 py-2 sm:py-2.5 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                                onClick={() => {
+                                  setFormData({ ...formData, corporatePhone: phone.numero_celular });
+                                  setSearchPhone('');
+                                  setShowPhoneDropdown(false);
+                                }}
+                              >
+                                <div className="font-medium text-gray-900">{phone.numero_celular}</div>
+                                <div className="text-sm text-gray-600">{phone.nombre} ({phone.category})</div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="px-3 sm:px-4 py-2 sm:py-2.5 text-gray-500 text-center">
+                              {availablePhones.length === 0
+                                ? 'No hay teléfonos disponibles'
+                                : 'No se encontraron teléfonos con esa búsqueda'}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>

@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import AuthContext from '../context/AuthContext.jsx';
 import { usersAPI, inventoryAPI } from '../api';
+import { corporatePhoneAPI } from '../api';
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { onUserUpdated, offUserUpdated } from '../api/socket';
 
@@ -17,6 +18,9 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState(null);
   const [uniqueITs, setUniqueITs] = useState([]);
+  const [availablePhones, setAvailablePhones] = useState([]);
+  const [searchPhone, setSearchPhone] = useState('');
+  const [showPhoneDropdown, setShowPhoneDropdown] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -30,7 +34,19 @@ const Profile = () => {
       });
     }
     fetchUniqueITs();
+    fetchAvailablePhones();
   }, [user]);
+
+  // Encontrar el teléfono seleccionado
+  const selectedPhone = availablePhones.find(phone => phone.numero_celular === formData.corporatePhone);
+
+  // Filtrar teléfonos por búsqueda
+  const phonesFiltered = availablePhones.filter(phone =>
+    searchPhone === '' ||
+    phone.numero_celular.toLowerCase().includes(searchPhone.toLowerCase()) ||
+    phone.nombre.toLowerCase().includes(searchPhone.toLowerCase()) ||
+    phone.category.toLowerCase().includes(searchPhone.toLowerCase())
+  );
 
   // Socket listener for real-time updates
   useEffect(() => {
@@ -62,6 +78,17 @@ const Profile = () => {
       const data = await inventoryAPI.fetchUniqueITs();
       setUniqueITs(data);
     } catch (err) {
+    }
+  };
+
+  const fetchAvailablePhones = async () => {
+    try {
+      const phones = await corporatePhoneAPI.fetchCorporatePhones();
+      // Filtrar solo los teléfonos activos
+      const activePhones = phones.filter(phone => phone.status === 'activo');
+      setAvailablePhones(activePhones);
+    } catch (err) {
+      console.error('Error al cargar teléfonos corporativos:', err);
     }
   };
 
@@ -211,7 +238,10 @@ const Profile = () => {
                     type="radio"
                     name="hasCorporatePhone"
                     checked={formData.hasCorporatePhone === false}
-                    onChange={() => setFormData({ ...formData, hasCorporatePhone: false, corporatePhone: '' })}
+                    onChange={() => {
+                      setFormData({ ...formData, hasCorporatePhone: false, corporatePhone: '' });
+                      setSearchPhone('');
+                    }}
                     className="mr-2"
                   />
                   No
@@ -224,14 +254,47 @@ const Profile = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Número Corporativo
                 </label>
-                <input
-                  type="text"
-                  name="corporatePhone"
-                  value={formData.corporatePhone}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#662d91] focus:border-transparent"
-                  placeholder="Ej: 300 123 4567"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder={`Buscar y seleccionar teléfono... (${availablePhones.length} disponibles)`}
+                    value={selectedPhone ? `${selectedPhone.numero_celular} - ${selectedPhone.nombre} (${selectedPhone.category})` : searchPhone}
+                    onChange={(e) => {
+                      setSearchPhone(e.target.value);
+                      setFormData({ ...formData, corporatePhone: '' });
+                      setShowPhoneDropdown(true);
+                    }}
+                    onFocus={() => setShowPhoneDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowPhoneDropdown(false), 200)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#662d91] focus:border-transparent"
+                  />
+                  {showPhoneDropdown && (
+                    <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                      {phonesFiltered.length > 0 ? (
+                        phonesFiltered.map(phone => (
+                          <div
+                            key={phone.id}
+                            className="px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                            onClick={() => {
+                              setFormData({ ...formData, corporatePhone: phone.numero_celular });
+                              setSearchPhone('');
+                              setShowPhoneDropdown(false);
+                            }}
+                          >
+                            <div className="font-medium text-gray-900">{phone.numero_celular}</div>
+                            <div className="text-sm text-gray-600">{phone.nombre} ({phone.category})</div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="px-3 py-2 text-gray-500 text-center">
+                          {availablePhones.length === 0
+                            ? 'No hay teléfonos disponibles'
+                            : 'No se encontraron teléfonos con esa búsqueda'}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
