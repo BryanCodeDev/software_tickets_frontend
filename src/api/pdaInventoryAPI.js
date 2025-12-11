@@ -138,6 +138,15 @@ const pdaInventoryAPI = {
       throw error;
     }
   },
+
+  getHistory: async (id) => {
+    try {
+      const response = await api.get(`/pda-inventory/${id}/history`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default pdaInventoryAPI;

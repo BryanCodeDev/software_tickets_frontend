@@ -13,12 +13,15 @@ import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../.
 import ActaEntregaCard from './ActaEntregaCard';
 import ActaEntregaTable from './ActaEntregaTable';
 import ActaEntregaModal from './ActaEntregaModal';
+import ActaEntregaHistoryModal from './ActaEntregaHistoryModal';
 
 const ActasEntrega = () => {
   const [actas, setActas] = useState([]);
   const [filteredActas, setFilteredActas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [historyActaId, setHistoryActaId] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState({
     tipo_equipo: 'inventory',
@@ -375,6 +378,11 @@ const ActasEntrega = () => {
     });
   };
 
+  const handleHistory = (actaId) => {
+    setHistoryActaId(actaId);
+    setShowHistoryModal(true);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormLoading(true);
@@ -642,6 +650,7 @@ const ActasEntrega = () => {
                     acta={acta}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
+                    onHistory={handleHistory}
                     canEdit={canEdit}
                     canDelete={canDelete}
                   />
@@ -655,6 +664,7 @@ const ActasEntrega = () => {
                 actas={filteredActas}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                onHistory={handleHistory}
                 canEdit={canEdit}
                 canDelete={canDelete}
               />
@@ -674,6 +684,16 @@ const ActasEntrega = () => {
         onSubmit={handleSubmit}
         equiposDisponibles={equiposDisponibles}
         usuarios={usuarios}
+      />
+
+      {/* Modal de Historial */}
+      <ActaEntregaHistoryModal
+        showModal={showHistoryModal}
+        onClose={() => {
+          setShowHistoryModal(false);
+          setHistoryActaId(null);
+        }}
+        actaId={historyActaId}
       />
 
       <style>{`

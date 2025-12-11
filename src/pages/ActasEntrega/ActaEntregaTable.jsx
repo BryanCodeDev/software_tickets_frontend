@@ -1,7 +1,66 @@
-import React from 'react';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import React, { useState, useRef } from 'react';
+import { FaEdit, FaTrash, FaHistory, FaFilePdf, FaFileWord, FaPrint, FaDownload } from 'react-icons/fa';
+import { exportToPDF, exportToWord, printActa } from './ActaEntregaExporter';
 
-const ActaEntregaTable = ({ actas, onEdit, onDelete, canEdit, canDelete }) => {
+const ActaEntregaTable = ({
+  actas,
+  onEdit,
+  onDelete,
+  canEdit,
+  canDelete,
+  onHistory,
+  onExport
+}) => {
+  const [exportMenuVisible, setExportMenuVisible] = useState(null);
+  const menuRefs = useRef({});
+
+  const handleExport = async (acta, type) => {
+    try {
+      // Obtener información del equipo
+      let equipo = null;
+      try {
+        const response = await fetch(`/api/actas-entrega/${acta.id}`);
+        const actaData = await response.json();
+        // Aquí podrías obtener los datos del equipo desde la respuesta
+        // Por ahora usamos datos básicos
+        equipo = actaData;
+      } catch (err) {
+        console.log('Usando datos básicos del acta para exportación');
+      }
+
+      switch (type) {
+        case 'pdf':
+          await exportToPDF(acta, equipo);
+          break;
+        case 'word':
+          await exportToWord(acta, equipo);
+          break;
+        case 'print':
+          printActa(acta, equipo);
+          break;
+      }
+    } catch (error) {
+      console.error('Error en exportación:', error);
+    }
+    setExportMenuVisible(null);
+  };
+
+  const toggleExportMenu = (actaId) => {
+    setExportMenuVisible(exportMenuVisible === actaId ? null : actaId);
+  };
+
+  // Cerrar menús al hacer clic fuera
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (exportMenuVisible && !event.target.closest(`[data-acta-id="${exportMenuVisible}"]`)) {
+        setExportMenuVisible(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [exportMenuVisible]);
+
   return (
     <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden">
       <div className="overflow-x-auto">
@@ -14,9 +73,7 @@ const ActaEntregaTable = ({ actas, onEdit, onDelete, canEdit, canDelete }) => {
               <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Fecha Entrega</th>
               <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Estado</th>
               <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Motivo</th>
-              {(canEdit || canDelete) && (
-                <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Acciones</th>
-              )}
+              <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Acciones</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -57,30 +114,77 @@ const ActaEntregaTable = ({ actas, onEdit, onDelete, canEdit, canDelete }) => {
                     return motivos[acta.motivo_entrega] || acta.motivo_entrega;
                   })()}
                 </td>
-                {(canEdit || canDelete) && (
-                  <td className="px-4 py-4">
-                    <div className="flex gap-2">
-                      {canEdit && (
-                        <button
-                          onClick={() => onEdit(acta)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                          title="Editar"
-                        >
-                          <FaEdit className="w-4 h-4" />
-                        </button>
-                      )}
-                      {canDelete && (
-                        <button
-                          onClick={() => onDelete(acta.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                          title="Eliminar"
-                        >
-                          <FaTrash className="w-4 h-4" />
-                        </button>
+                <td className="px-4 py-4">
+                  <div className="flex gap-1">
+                    {/* Botón de exportar con menú desplegable */}
+                    <div className="relative" data-acta-id={acta.id}>
+                      <button
+                        onClick={() => toggleExportMenu(acta.id)}
+                        className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-all"
+                        title="Exportar"
+                      >
+                        <FaDownload className="w-4 h-4" />
+                      </button>
+
+                      {exportMenuVisible === acta.id && (
+                        <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[120px]">
+                          <button
+                            onClick={() => handleExport(acta, 'pdf')}
+                            className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm text-gray-700"
+                          >
+                            <FaFilePdf className="w-4 h-4 text-red-500" />
+                            PDF
+                          </button>
+                          <button
+                            onClick={() => handleExport(acta, 'word')}
+                            className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm text-gray-700"
+                          >
+                            <FaFileWord className="w-4 h-4 text-blue-500" />
+                            Word
+                          </button>
+                          <button
+                            onClick={() => handleExport(acta, 'print')}
+                            className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm text-gray-700"
+                          >
+                            <FaPrint className="w-4 h-4 text-gray-500" />
+                            Imprimir
+                          </button>
+                        </div>
                       )}
                     </div>
-                  </td>
-                )}
+
+                    {/* Botón de historial */}
+                    <button
+                      onClick={() => onHistory(acta.id)}
+                      className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-all"
+                      title="Historial"
+                    >
+                      <FaHistory className="w-4 h-4" />
+                    </button>
+
+                    {/* Botón de editar */}
+                    {canEdit && (
+                      <button
+                        onClick={() => onEdit(acta)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                        title="Editar"
+                      >
+                        <FaEdit className="w-4 h-4" />
+                      </button>
+                    )}
+
+                    {/* Botón de eliminar */}
+                    {canDelete && (
+                      <button
+                        onClick={() => onDelete(acta.id)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                        title="Eliminar"
+                      >
+                        <FaTrash className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>

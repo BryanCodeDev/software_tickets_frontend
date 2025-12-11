@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect, useContext } from 'react';
-import { FaMobile, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory, FaIndustry, FaFlask, FaCalculator, FaShoppingCart, FaUsers, FaBuilding, FaTools, FaLaptop, FaClipboardCheck } from 'react-icons/fa';
+import { FaMobile, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory, FaIndustry, FaFlask, FaCalculator, FaShoppingCart, FaUsers, FaBuilding, FaTools, FaLaptop, FaClipboardCheck, FaEye } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
 import { corporatePhoneAPI } from '../../api';
 import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
+import ActaEntregaHistoryModal from '../../components/ActasEntrega/ActaEntregaHistoryModal';
 
 const CorporatePhones = () => {
   const [corporatePhones, setCorporatePhones] = useState([]);
@@ -44,6 +45,9 @@ const CorporatePhones = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [viewMode, setViewMode] = useState('cards'); // 'cards' or 'table'
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [historyItem, setHistoryItem] = useState(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const { user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
 
@@ -191,6 +195,22 @@ const CorporatePhones = () => {
         showNotification('Error al eliminar el teléfono corporativo. Por favor, inténtalo de nuevo.', 'error');
       }
     });
+  };
+
+  const handleHistory = async (item) => {
+    setHistoryItem(item);
+    setHistoryLoading(true);
+    setShowHistoryModal(true);
+    
+    try {
+      const history = await corporatePhoneAPI.getHistory(item.id);
+      // El modal manejará la carga de datos internamente
+    } catch (err) {
+      showNotification('Error al cargar el historial. Por favor, inténtalo de nuevo.', 'error');
+      setShowHistoryModal(false);
+    } finally {
+      setHistoryLoading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -565,8 +585,15 @@ const CorporatePhones = () => {
                           <p className="text-xs lg:text-sm opacity-90 truncate">{item.nombre}</p>
                           <p className="text-xs opacity-75 truncate">{getCategoryLabel(item.category)}</p>
                         </div>
-                        {canEdit && (
-                          <div className="flex gap-1 lg:gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                        <div className="flex gap-1 lg:gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                          <button
+                            onClick={() => handleHistory(item)}
+                            className="p-1.5 lg:p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all touch-manipulation"
+                            title="Historial"
+                          >
+                            <FaHistory className="w-3 h-3 lg:w-4 lg:h-4" />
+                          </button>
+                          {canEdit && (
                             <button
                               onClick={() => handleEdit(item)}
                               className="p-1.5 lg:p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all touch-manipulation"
@@ -574,10 +601,8 @@ const CorporatePhones = () => {
                             >
                               <FaEdit className="w-3 h-3 lg:w-4 lg:h-4" />
                             </button>
-                          </div>
-                        )}
-                        {canDelete && (
-                          <div className="flex gap-1 lg:gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                          )}
+                          {canDelete && (
                             <button
                               onClick={() => handleDelete(item.id)}
                               className="p-1.5 lg:p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all touch-manipulation"
@@ -585,8 +610,8 @@ const CorporatePhones = () => {
                             >
                               <FaTrash className="w-3 h-3 lg:w-4 lg:h-4" />
                             </button>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
                     </div>
 
@@ -638,9 +663,7 @@ const CorporatePhones = () => {
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Plan</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Equipo</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Estado</th>
-                        {(canEdit || canDelete) && (
-                          <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Acciones</th>
-                        )}
+                        <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Acciones</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -658,30 +681,35 @@ const CorporatePhones = () => {
                               {item.status}
                             </span>
                           </td>
-                          {(canEdit || canDelete) && (
-                            <td className="px-4 py-4">
-                              <div className="flex gap-2">
-                                {canEdit && (
-                                  <button
-                                    onClick={() => handleEdit(item)}
-                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                                    title="Editar"
-                                  >
-                                    <FaEdit className="w-4 h-4" />
-                                  </button>
-                                )}
-                                {canDelete && (
-                                  <button
-                                    onClick={() => handleDelete(item.id)}
-                                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                                    title="Eliminar"
-                                  >
-                                    <FaTrash className="w-4 h-4" />
-                                  </button>
-                                )}
-                              </div>
-                            </td>
-                          )}
+                          <td className="px-4 py-4">
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleHistory(item)}
+                                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all"
+                                title="Historial"
+                              >
+                                <FaHistory className="w-4 h-4" />
+                              </button>
+                              {canEdit && (
+                                <button
+                                  onClick={() => handleEdit(item)}
+                                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                  title="Editar"
+                                >
+                                  <FaEdit className="w-4 h-4" />
+                                </button>
+                              )}
+                              {canDelete && (
+                                <button
+                                  onClick={() => handleDelete(item.id)}
+                                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                  title="Eliminar"
+                                >
+                                  <FaTrash className="w-4 h-4" />
+                                </button>
+                              )}
+                            </div>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -1029,6 +1057,19 @@ const CorporatePhones = () => {
         </div>
       )}
 
+      {/* History Modal */}
+      {showHistoryModal && historyItem && (
+        <ActaEntregaHistoryModal
+          show={showHistoryModal}
+          onClose={() => setShowHistoryModal(false)}
+          title={`Historial - Teléfono ${historyItem.numero_celular}`}
+          item={historyItem}
+          loading={historyLoading}
+          apiCall={() => corporatePhoneAPI.getHistory(historyItem.id)}
+          moduleName="telefono corporativo"
+        />
+      )}
+
       <style>{`
         @keyframes fade-in {
           from {
@@ -1063,4 +1104,3 @@ const CorporatePhones = () => {
 };
 
 export default CorporatePhones;
-

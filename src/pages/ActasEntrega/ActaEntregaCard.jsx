@@ -4,11 +4,9 @@ import { exportToPDF, exportToWord, printActa } from './ActaEntregaExporter';
 import actaEntregaAPI from '../../api/actaEntregaAPI';
 import inventoryAPI from '../../api/inventoryAPI';
 import corporatePhoneAPI from '../../api/corporatePhoneAPI';
-import ActaEntregaHistoryModal from './ActaEntregaHistoryModal';
 
-const ActaEntregaCard = ({ acta, onEdit, onDelete, canEdit, canDelete }) => {
+const ActaEntregaCard = ({ acta, onEdit, onDelete, onHistory, canEdit, canDelete }) => {
   const [showExportMenu, setShowExportMenu] = useState(false);
-  const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [equipo, setEquipo] = useState(null);
   const menuRef = useRef(null);
 
@@ -114,7 +112,7 @@ const ActaEntregaCard = ({ acta, onEdit, onDelete, canEdit, canDelete }) => {
             </div>
 
             <button
-              onClick={() => setShowHistoryModal(true)}
+              onClick={() => onHistory(acta.id)}
               className="p-1.5 lg:p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all touch-manipulation"
               title="Historial"
             >
@@ -182,13 +180,6 @@ const ActaEntregaCard = ({ acta, onEdit, onDelete, canEdit, canDelete }) => {
           </div>
         </div>
       </div>
-
-      {/* Modal de Historial */}
-      <ActaEntregaHistoryModal
-        showModal={showHistoryModal}
-        onClose={() => setShowHistoryModal(false)}
-        actaId={acta.id}
-      />
     </div>
   );
 };

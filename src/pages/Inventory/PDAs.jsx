@@ -5,6 +5,7 @@ import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
 import pdaInventoryAPI from '../../api/pdaInventoryAPI';
 import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
+import ActaEntregaHistoryModal from '../../components/ActasEntrega/ActaEntregaHistoryModal';
 
 const PDAs = () => {
   const [pdas, setPdas] = useState([]);
@@ -41,6 +42,9 @@ const PDAs = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [viewMode, setViewMode] = useState('cards'); // 'cards' or 'table'
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [historyItem, setHistoryItem] = useState(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const { user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
 
@@ -195,6 +199,22 @@ const PDAs = () => {
     });
   };
 
+  const handleHistory = async (item) => {
+    setHistoryItem(item);
+    setHistoryLoading(true);
+    setShowHistoryModal(true);
+    
+    try {
+      const history = await pdaInventoryAPI.getHistory(item.id);
+      // El modal manejará la carga de datos internamente
+    } catch (err) {
+      showNotification('Error al cargar el historial. Por favor, inténtalo de nuevo.', 'error');
+      setShowHistoryModal(false);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormLoading(true);
@@ -323,7 +343,7 @@ const PDAs = () => {
     if (diffDays <= 90) return { status: 'warning', days: diffDays };
     return { status: 'good', days: diffDays };
   };
-
+  
   if (loading) return (
     <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4">
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -665,8 +685,15 @@ const PDAs = () => {
                             <p className="text-xs lg:text-sm opacity-90 truncate">{item.marca}</p>
                             <p className="text-xs opacity-75 truncate">{item.propiedad}</p>
                           </div>
-                          {canEdit && (
-                            <div className="flex gap-1 lg:gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                          <div className="flex gap-1 lg:gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                            <button
+                              onClick={() => handleHistory(item)}
+                              className="p-1.5 lg:p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all touch-manipulation"
+                              title="Historial"
+                            >
+                              <FaHistory className="w-3 h-3 lg:w-4 lg:h-4" />
+                            </button>
+                            {canEdit && (
                               <button
                                 onClick={() => handleEdit(item)}
                                 className="p-1.5 lg:p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all touch-manipulation"
@@ -674,10 +701,8 @@ const PDAs = () => {
                               >
                                 <FaEdit className="w-3 h-3 lg:w-4 lg:h-4" />
                               </button>
-                            </div>
-                          )}
-                          {canDelete && (
-                            <div className="flex gap-1 lg:gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                            )}
+                            {canDelete && (
                               <button
                                 onClick={() => handleDelete(item.id)}
                                 className="p-1.5 lg:p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all touch-manipulation"
@@ -685,8 +710,8 @@ const PDAs = () => {
                               >
                                 <FaTrash className="w-3 h-3 lg:w-4 lg:h-4" />
                               </button>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
                       </div>
 
@@ -774,24 +799,33 @@ const PDAs = () => {
                               <p className="text-xs text-gray-500 truncate">{item.marca}</p>
                               <p className="text-xs text-blue-600 font-medium truncate">{item.propiedad}</p>
                             </div>
-                            {canEdit && (
+                            <div className="flex gap-2">
                               <button
-                                onClick={() => handleEdit(item)}
-                                className="p-2 text-[#662d91] hover:bg-[#f3ebf9] rounded-lg transition-all touch-manipulation"
-                                title="Editar"
+                                onClick={() => handleHistory(item)}
+                                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all touch-manipulation"
+                                title="Historial"
                               >
-                                <FaEdit className="w-4 h-4" />
+                                <FaHistory className="w-4 h-4" />
                               </button>
-                            )}
-                            {canDelete && (
-                              <button
-                                onClick={() => handleDelete(item.id)}
-                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all touch-manipulation"
-                                title="Eliminar"
-                              >
-                                <FaTrash className="w-4 h-4" />
-                              </button>
-                            )}
+                              {canEdit && (
+                                <button
+                                  onClick={() => handleEdit(item)}
+                                  className="p-2 text-[#662d91] hover:bg-[#f3ebf9] rounded-lg transition-all touch-manipulation"
+                                  title="Editar"
+                                >
+                                  <FaEdit className="w-4 h-4" />
+                                </button>
+                              )}
+                              {canDelete && (
+                                <button
+                                  onClick={() => handleDelete(item.id)}
+                                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all touch-manipulation"
+                                  title="Eliminar"
+                                >
+                                  <FaTrash className="w-4 h-4" />
+                                </button>
+                              )}
+                            </div>
                           </div>
                           <div className="text-xs text-gray-600">
                             <span className="font-medium">Área:</span>
@@ -911,6 +945,13 @@ const PDAs = () => {
                             {(canEdit || canDelete) && (
                               <td className="px-4 py-4">
                                 <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleHistory(item)}
+                                    className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all"
+                                    title="Historial"
+                                  >
+                                    <FaHistory className="w-4 h-4" />
+                                  </button>
                                   {canEdit && (
                                     <button
                                       onClick={() => handleEdit(item)}
@@ -1326,6 +1367,19 @@ const PDAs = () => {
             </form>
           </div>
         </div>
+      )}
+
+      {/* History Modal */}
+      {showHistoryModal && historyItem && (
+        <ActaEntregaHistoryModal
+          show={showHistoryModal}
+          onClose={() => setShowHistoryModal(false)}
+          title={`Historial - PDA ${historyItem.it}`}
+          item={historyItem}
+          loading={historyLoading}
+          apiCall={() => pdaInventoryAPI.getHistory(historyItem.id)}
+          moduleName="pda"
+        />
       )}
 
       <style>{`
