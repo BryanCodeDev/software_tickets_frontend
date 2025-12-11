@@ -250,7 +250,7 @@ const PDAs = () => {
         if (row === 0) {
           ws[cellAddress].s = {
             font: { bold: true, color: { rgb: 'FFFFFF' } },
-            fill: { fgColor: { rgb: '1E40AF' } }, // Color azul
+            fill: { fgColor: { rgb: '6B46C1' } }, // Color púrpura
             alignment: { horizontal: 'center' }
           };
         } else {
@@ -325,10 +325,10 @@ const PDAs = () => {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 px-4">
+    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4">
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#662d91] mx-auto mb-4"></div>
           <p className="text-lg text-gray-600 font-medium">Cargando PDAs...</p>
         </div>
       </div>
@@ -336,7 +336,7 @@ const PDAs = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-4 px-3 sm:py-6 sm:px-4 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8">
       {/* Notification */}
       <NotificationSystem
         notification={notification}
@@ -356,7 +356,7 @@ const PDAs = () => {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 lg:gap-4 mb-3">
-                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl shrink-0">
+                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-2xl flex items-center justify-center shadow-xl shrink-0">
                   <FaMobile className="text-white text-xl lg:text-2xl" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -388,7 +388,7 @@ const PDAs = () => {
               {canCreate && (
                 <button
                   onClick={handleCreate}
-                  className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
+                  className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
                 >
                   <FaPlus className="w-4 h-4" />
                   <span>Nueva PDA</span>
@@ -409,7 +409,7 @@ const PDAs = () => {
                 label: 'Total PDAs',
                 description: 'Inventario completo',
                 icon: FaMobile,
-                gradient: 'from-blue-500 to-blue-600',
+                gradient: 'from-[#662d91] to-[#8e4dbf]',
                 loading: loading
               },
               {
@@ -425,7 +425,7 @@ const PDAs = () => {
                 label: 'Tasa de Uso',
                 description: `${stats.enUso} PDAs activas`,
                 icon: FaChartBar,
-                gradient: 'from-blue-600 to-indigo-600',
+                gradient: 'from-[#662d91] to-[#8e4dbf]',
                 loading: loading,
                 formatter: (value) => `${value}%`
               },
@@ -581,14 +581,14 @@ const PDAs = () => {
         {/* Results Summary */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <p className="text-sm text-gray-600 font-medium">
-            Mostrando <span className="font-bold text-blue-600">{filteredPdas.length}</span> de <span className="font-bold">{pdas.length}</span> PDAs
+            Mostrando <span className="font-bold text-[#662d91]">{filteredPdas.length}</span> de <span className="font-bold">{pdas.length}</span> PDAs
           </p>
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode('cards')}
               className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
                 viewMode === 'cards'
-                  ? 'bg-blue-600 text-white shadow-md'
+                  ? 'bg-[#662d91] text-white shadow-md'
                   : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >
@@ -599,7 +599,7 @@ const PDAs = () => {
               onClick={() => setViewMode('table')}
               className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
                 viewMode === 'table'
-                  ? 'bg-blue-600 text-white shadow-md'
+                  ? 'bg-[#662d91] text-white shadow-md'
                   : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >
@@ -612,8 +612,8 @@ const PDAs = () => {
         {/* Main Content */}
         {filteredPdas.length === 0 ? (
           <div className="bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center">
-            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FaMobile className="w-8 h-8 lg:w-10 lg:h-10 text-blue-600" />
+            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaMobile className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
             </div>
             <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2">
               {searchTerm || filterStatus !== 'all' || filterArea !== 'all'
@@ -628,7 +628,7 @@ const PDAs = () => {
             {canCreate && !searchTerm && filterStatus === 'all' && filterArea === 'all' && filterPropiedad === 'all' && (
               <button
                 onClick={handleCreate}
-                className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
+                className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
               >
                 <FaPlus className="w-4 h-4" />
                 Agregar Primera PDA
@@ -645,10 +645,10 @@ const PDAs = () => {
                   return (
                     <div
                       key={item.id}
-                      className="bg-white rounded-xl lg:rounded-2xl border-2 border-gray-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                      className="bg-white rounded-xl lg:rounded-2xl border-2 border-gray-200 hover:border-[#8e4dbf] hover:shadow-xl transition-all duration-300 overflow-hidden group"
                     >
                       {/* Card Header */}
-                      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-3 lg:p-4 text-white">
+                      <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-3 lg:p-4 text-white">
                         <div className="flex items-start justify-between">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
@@ -694,8 +694,8 @@ const PDAs = () => {
                       <div className="p-4 lg:p-5">
                         <div className="space-y-3">
                           <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
-                            <div className="w-8 h-8 lg:w-10 lg:h-10 bg-blue-50 rounded-lg flex items-center justify-center shrink-0">
-                              <FaMobile className="w-4 h-4 lg:w-5 lg:h-5 text-blue-600" />
+                            <div className="w-8 h-8 lg:w-10 lg:h-10 bg-[#f3ebf9] rounded-lg flex items-center justify-center shrink-0">
+                              <FaMobile className="w-4 h-4 lg:w-5 lg:h-5 text-[#662d91]" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-xs text-gray-500 font-medium">Responsable</p>
@@ -756,11 +756,11 @@ const PDAs = () => {
                     {filteredPdas.map((item) => {
                       const warranty = getWarrantyStatus(item.warrantyExpiry);
                       return (
-                        <div key={item.id} className="p-4 hover:bg-blue-50 transition-colors">
+                        <div key={item.id} className="p-4 hover:bg-[#f3ebf9] transition-colors">
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="font-bold text-blue-600">{item.it}</span>
+                                <span className="font-bold text-[#662d91]">{item.it}</span>
                                 <span className={`px-2 py-1 text-xs font-bold rounded-full ${
                                   item.status === 'disponible' ? 'bg-green-100 text-green-700' :
                                   item.status === 'en uso' ? 'bg-blue-100 text-blue-700' :
@@ -777,7 +777,7 @@ const PDAs = () => {
                             {canEdit && (
                               <button
                                 onClick={() => handleEdit(item)}
-                                className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation"
+                                className="p-2 text-[#662d91] hover:bg-[#f3ebf9] rounded-lg transition-all touch-manipulation"
                                 title="Editar"
                               >
                                 <FaEdit className="w-4 h-4" />
@@ -831,7 +831,7 @@ const PDAs = () => {
                 {/* Desktop Table View */}
                 <div className="hidden md:block overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+                    <thead className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white">
                       <tr>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">IT</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Propiedad</th>
@@ -853,15 +853,15 @@ const PDAs = () => {
                       {filteredPdas.map((item) => {
                         const warranty = getWarrantyStatus(item.warrantyExpiry);
                         return (
-                          <tr key={item.id} className="hover:bg-blue-50 transition-colors">
+                          <tr key={item.id} className="hover:bg-[#f3ebf9] transition-colors">
                             <td className="px-4 py-4">
-                              <span className="font-bold text-blue-600">{item.it}</span>
+                              <span className="font-bold text-[#662d91]">{item.it}</span>
                             </td>
                             <td className="px-4 py-4">
                               <span className={`px-2 py-1 text-xs font-bold rounded-full ${
                                 item.propiedad === 'PROPIO' ? 'bg-green-100 text-green-700' :
                                 item.propiedad === 'MILENIO ARQUILER' ? 'bg-blue-100 text-blue-700' :
-                                'bg-blue-50 text-blue-600'
+                                'bg-[#f3ebf9] text-[#662d91]'
                               }`}>
                                 {item.propiedad}
                               </span>
@@ -914,7 +914,7 @@ const PDAs = () => {
                                   {canEdit && (
                                     <button
                                       onClick={() => handleEdit(item)}
-                                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                      className="p-2 text-[#662d91] hover:bg-[#f3ebf9] rounded-lg transition-all"
                                       title="Editar"
                                     >
                                       <FaEdit className="w-4 h-4" />
@@ -948,7 +948,7 @@ const PDAs = () => {
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
           <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">
                   {editingItem ? 'Editar PDA' : 'Nueva PDA'}
@@ -966,8 +966,8 @@ const PDAs = () => {
               {/* Información Básica */}
               <div>
                 <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <div className="w-6 h-6 lg:w-8 lg:h-8 bg-blue-50 rounded-lg flex items-center justify-center">
-                    <FaMobile className="w-3 h-3 lg:w-4 lg:h-4 text-blue-600" />
+                  <div className="w-6 h-6 lg:w-8 lg:h-8 bg-[#f3ebf9] rounded-lg flex items-center justify-center">
+                    <FaMobile className="w-3 h-3 lg:w-4 lg:h-4 text-[#662d91]" />
                   </div>
                   Información Básica
                 </h3>
@@ -981,7 +981,7 @@ const PDAs = () => {
                       placeholder="Ej: PDA001"
                       value={formData.it}
                       onChange={(e) => setFormData({ ...formData, it: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     />
                   </div>
@@ -993,7 +993,7 @@ const PDAs = () => {
                     <select
                       value={formData.propiedad}
                       onChange={(e) => setFormData({ ...formData, propiedad: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     >
                       <option value="">Seleccionar</option>
@@ -1010,7 +1010,7 @@ const PDAs = () => {
                     <select
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     >
                       <option value="disponible">Disponible</option>
@@ -1040,7 +1040,7 @@ const PDAs = () => {
                       placeholder="Nombre completo"
                       value={formData.responsable}
                       onChange={(e) => setFormData({ ...formData, responsable: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     />
                   </div>
@@ -1052,7 +1052,7 @@ const PDAs = () => {
                     <select
                       value={formData.area}
                       onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white"
                       required
                     >
                       <option value="">Seleccionar área</option>
@@ -1154,7 +1154,7 @@ const PDAs = () => {
                       placeholder="Ej: Zebra"
                       value={formData.marca}
                       onChange={(e) => setFormData({ ...formData, marca: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                       required
                     />
                   </div>
@@ -1168,7 +1168,7 @@ const PDAs = () => {
                       placeholder="Ej: MC40"
                       value={formData.modelo}
                       onChange={(e) => setFormData({ ...formData, modelo: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
 
@@ -1181,7 +1181,7 @@ const PDAs = () => {
                       placeholder="Número de serie"
                       value={formData.serial}
                       onChange={(e) => setFormData({ ...formData, serial: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all font-mono text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-mono text-sm lg:text-base"
                       required
                     />
                   </div>
@@ -1193,7 +1193,7 @@ const PDAs = () => {
                     <select
                       value={formData.tipo_conectividad}
                       onChange={(e) => setFormData({ ...formData, tipo_conectividad: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     >
                       <option value="">Seleccionar</option>
                       <option value="WiFi">WiFi</option>
@@ -1213,7 +1213,7 @@ const PDAs = () => {
                       placeholder="Separar por comas: SAP, inventario, WMS..."
                       value={formData.aplicaciones}
                       onChange={(e) => setFormData({ ...formData, aplicaciones: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
 
@@ -1226,7 +1226,7 @@ const PDAs = () => {
                       placeholder="Ej: Windows Mobile, Android..."
                       value={formData.sistema_operativo}
                       onChange={(e) => setFormData({ ...formData, sistema_operativo: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
                 </div>
@@ -1249,7 +1249,7 @@ const PDAs = () => {
                       type="date"
                       value={formData.purchaseDate}
                       onChange={(e) => setFormData({ ...formData, purchaseDate: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
 
@@ -1261,7 +1261,7 @@ const PDAs = () => {
                       type="date"
                       value={formData.warrantyExpiry}
                       onChange={(e) => setFormData({ ...formData, warrantyExpiry: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
 
@@ -1273,7 +1273,7 @@ const PDAs = () => {
                       type="date"
                       value={formData.lastMaintenance}
                       onChange={(e) => setFormData({ ...formData, lastMaintenance: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
 
@@ -1286,7 +1286,7 @@ const PDAs = () => {
                       placeholder="0"
                       value={formData.cost}
                       onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
                     />
                   </div>
                 </div>
@@ -1304,7 +1304,7 @@ const PDAs = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 lg:px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-sm lg:text-base"
+                  className="flex-1 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-sm lg:text-base"
                   disabled={formLoading}
                 >
                   {formLoading ? (

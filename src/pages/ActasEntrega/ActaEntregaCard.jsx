@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaEdit, FaTrash, FaUser, FaCalendarAlt, FaFilePdf, FaFileWord, FaPrint, FaDownload } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaUser, FaCalendarAlt, FaFilePdf, FaFileWord, FaPrint, FaDownload, FaHistory } from 'react-icons/fa';
 import { exportToPDF, exportToWord, printActa } from './ActaEntregaExporter';
 import actaEntregaAPI from '../../api/actaEntregaAPI';
 import inventoryAPI from '../../api/inventoryAPI';
 import corporatePhoneAPI from '../../api/corporatePhoneAPI';
+import ActaEntregaHistoryModal from './ActaEntregaHistoryModal';
 
 const ActaEntregaCard = ({ acta, onEdit, onDelete, canEdit, canDelete }) => {
   const [showExportMenu, setShowExportMenu] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [equipo, setEquipo] = useState(null);
   const menuRef = useRef(null);
 
@@ -111,6 +113,14 @@ const ActaEntregaCard = ({ acta, onEdit, onDelete, canEdit, canDelete }) => {
               )}
             </div>
 
+            <button
+              onClick={() => setShowHistoryModal(true)}
+              className="p-1.5 lg:p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all touch-manipulation"
+              title="Historial"
+            >
+              <FaHistory className="w-3 h-3 lg:w-4 lg:h-4" />
+            </button>
+
             {canEdit && (
               <button
                 onClick={() => onEdit(acta)}
@@ -172,6 +182,13 @@ const ActaEntregaCard = ({ acta, onEdit, onDelete, canEdit, canDelete }) => {
           </div>
         </div>
       </div>
+
+      {/* Modal de Historial */}
+      <ActaEntregaHistoryModal
+        showModal={showHistoryModal}
+        onClose={() => setShowHistoryModal(false)}
+        actaId={acta.id}
+      />
     </div>
   );
 };

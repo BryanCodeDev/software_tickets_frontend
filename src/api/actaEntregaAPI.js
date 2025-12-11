@@ -29,7 +29,10 @@ const actaEntregaAPI = {
   exportWord: (id) => api.get(`/actas-entrega/${id}/export/word`, { responseType: 'blob' }),
 
   // Imprimir (obtener HTML para impresión)
-  getForPrint: (id) => api.get(`/actas-entrega/${id}/print`)
+  getForPrint: (id) => api.get(`/actas-entrega/${id}/print`),
+
+  // Obtener historial de cambios del acta
+  getHistory: (id) => api.get(`/actas-entrega/${id}/history`)
 };
 
 export default actaEntregaAPI;
