@@ -30,20 +30,38 @@ const pdaInventoryAPI = {
 
   createPDAInventoryItem: async (itemData) => {
     try {
-      const { propiedad, it, area, responsable, serial, capacidad_almacenamiento, ram, marca, modelo, pantalla, sistema_operativo, conectividad, aplicaciones, status, warrantyExpiry, purchaseDate, lastMaintenance, cost } = itemData;
+      const {
+        propiedad,
+        it,
+        area,
+        responsable,
+        serial,
+        tipo_conectividad,
+        capacidad_almacenamiento,
+        ram,
+        marca,
+        modelo,
+        sistema_operativo,
+        aplicaciones,
+        status,
+        warrantyExpiry,
+        purchaseDate,
+        lastMaintenance,
+        cost
+      } = itemData;
+      
       const response = await api.post('/pda-inventory', {
         propiedad,
         it,
         area,
         responsable,
         serial,
+        tipo_conectividad,
         capacidad_almacenamiento,
         ram,
         marca,
         modelo,
-        pantalla,
         sistema_operativo,
-        conectividad,
         aplicaciones,
         status,
         warrantyExpiry,
@@ -59,20 +77,38 @@ const pdaInventoryAPI = {
 
   updatePDAInventoryItem: async (id, itemData) => {
     try {
-      const { propiedad, it, area, responsable, serial, capacidad_almacenamiento, ram, marca, modelo, pantalla, sistema_operativo, conectividad, aplicaciones, status, warrantyExpiry, purchaseDate, lastMaintenance, cost } = itemData;
+      const {
+        propiedad,
+        it,
+        area,
+        responsable,
+        serial,
+        tipo_conectividad,
+        capacidad_almacenamiento,
+        ram,
+        marca,
+        modelo,
+        sistema_operativo,
+        aplicaciones,
+        status,
+        warrantyExpiry,
+        purchaseDate,
+        lastMaintenance,
+        cost
+      } = itemData;
+      
       const response = await api.put(`/pda-inventory/${id}`, {
         propiedad,
         it,
         area,
         responsable,
         serial,
+        tipo_conectividad,
         capacidad_almacenamiento,
         ram,
         marca,
         modelo,
-        pantalla,
         sistema_operativo,
-        conectividad,
         aplicaciones,
         status,
         warrantyExpiry,
