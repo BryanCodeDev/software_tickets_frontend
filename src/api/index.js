@@ -12,4 +12,6 @@ export { default as qualityMessagesAPI } from './qualityMessagesAPI';
 export { default as usersAPI } from './usersAPI';
 export { default as rolesAPI } from './rolesAPI';
 export { default as actaEntregaAPI } from './actaEntregaAPI';
+export { default as tabletInventoryAPI } from './tabletInventoryAPI';
+export { default as pdaInventoryAPI } from './pdaInventoryAPI';
 export { getServerBaseURL } from './api';

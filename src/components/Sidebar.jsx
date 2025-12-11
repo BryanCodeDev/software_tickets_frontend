@@ -79,6 +79,26 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             description: 'Gestión de teléfonos corporativos'
           },
           {
+            path: '/tablets',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            ),
+            label: 'Tablets',
+            description: 'Inventario de tablets corporativas'
+          },
+          {
+            path: '/pdas',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            ),
+            label: 'PDAs',
+            description: 'Inventario de PDAs corporativas'
+          },
+          {
             path: '/actas-entrega',
             icon: (
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -196,6 +216,26 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             ),
             label: 'Celulares Corporativos',
             description: 'Gestión de teléfonos corporativos'
+          },
+          {
+            path: '/tablets',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            ),
+            label: 'Tablets',
+            description: 'Inventario de tablets corporativas'
+          },
+          {
+            path: '/pdas',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            ),
+            label: 'PDAs',
+            description: 'Inventario de PDAs corporativas'
           },
           {
             path: '/actas-entrega',
@@ -389,6 +429,26 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             ),
             label: 'Celulares Corporativos',
             description: 'Gestión de teléfonos corporativos'
+          },
+          {
+            path: '/tablets',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            ),
+            label: 'Tablets',
+            description: 'Inventario de tablets corporativas'
+          },
+          {
+            path: '/pdas',
+            icon: (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            ),
+            label: 'PDAs',
+            description: 'Inventario de PDAs corporativas'
           },
           {
             path: '/actas-entrega',

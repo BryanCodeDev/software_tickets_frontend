@@ -27,7 +27,6 @@ const createSocket = () => {
 
   const token = getAuthToken();
   if (!token) {
-    console.warn('No auth token available, socket will not connect');
     return null;
   }
 
@@ -48,7 +47,6 @@ const createSocket = () => {
 
   // Add error handling
   socket.on('connect_error', (error) => {
-    console.error('Socket connection error:', error);
     // Intentar reconectar después de un error
     setTimeout(() => {
       if (socket && !socket.connected) {
@@ -58,11 +56,10 @@ const createSocket = () => {
   });
 
   socket.on('connect', () => {
-    console.log('Socket connected successfully');
+    // Socket connected successfully
   });
 
   socket.on('disconnect', (reason) => {
-    console.log('Socket disconnected:', reason);
     // Intentar reconectar automáticamente
     if (reason !== 'io client disconnect' && reason !== 'io server disconnect') {
       setTimeout(() => {
@@ -75,7 +72,6 @@ const createSocket = () => {
 
   // Handle authentication errors
   socket.on('unauthorized', (error) => {
-    console.error('Socket authentication error:', error);
     // Optionally, redirect to login or refresh token
   });
 
@@ -101,8 +97,6 @@ export const joinTicketRoom = (ticketId) => {
   const sock = getSocket();
   if (sock && sock.connected) {
     sock.emit('join-ticket', ticketId);
-  } else {
-    console.warn('Socket not available or not connected, cannot join ticket room');
   }
 };
 
@@ -110,8 +104,6 @@ export const leaveTicketRoom = (ticketId) => {
   const sock = getSocket();
   if (sock && sock.connected) {
     sock.emit('leave-ticket', ticketId);
-  } else {
-    console.warn('Socket not available or not connected, cannot leave ticket room');
   }
 };
 
@@ -321,8 +313,6 @@ export const joinPurchaseRequestRoom = (requestId) => {
   const sock = getSocket();
   if (sock && sock.connected) {
     sock.emit('join-purchase-request', requestId);
-  } else {
-    console.warn('Socket not available or not connected, cannot join purchase request room');
   }
 };
 
@@ -330,8 +320,6 @@ export const leavePurchaseRequestRoom = (requestId) => {
   const sock = getSocket();
   if (sock && sock.connected) {
     sock.emit('leave-purchase-request', requestId);
-  } else {
-    console.warn('Socket not available or not connected, cannot leave purchase request room');
   }
 };
 

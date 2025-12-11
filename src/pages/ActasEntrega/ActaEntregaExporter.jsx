@@ -66,7 +66,7 @@ export const exportToPDF = async (acta, equipo) => {
   pdf.setFont('helvetica', 'bold');
   pdf.text('CARGO:', margin + 3, yPos + 11);
   pdf.setFont('helvetica', 'normal');
-  pdf.text(acta.cargo_recibe || 'N/A', margin + 30, yPos + 11);
+  pdf.text(acta.area_recibe || 'N/A', margin + 30, yPos + 11);
 
   pdf.setFont('helvetica', 'bold');
   pdf.text('FECHA:', pageWidth - margin - 50, yPos + 5);
@@ -231,7 +231,7 @@ export const exportToPDF = async (acta, equipo) => {
   pdf.text(acta.usuarioRecibe?.name || 'N/A', firma1X, yPos);
   pdf.text(acta.usuarioEntrega?.name || 'N/A', firma2X, yPos);
   yPos += 3;
-  pdf.text(acta.cargo_recibe || 'N/A', firma1X, yPos);
+  pdf.text(acta.area_recibe || 'N/A', firma1X, yPos);
   pdf.text(acta.usuarioEntrega?.role?.name || 'N/A', firma2X, yPos);
 
   // Pie de página moderno
@@ -451,7 +451,7 @@ export const exportToWord = async (acta, equipo) => {
                   shading: { fill: "F5F5F5" },
                 }),
                 new TableCell({
-                  children: [new Paragraph(acta.cargo_recibe || 'N/A')],
+                  children: [new Paragraph(acta.area_recibe || 'N/A')],
                   columnSpan: 3,
                 }),
               ],
@@ -560,7 +560,7 @@ export const exportToWord = async (acta, equipo) => {
                     new Paragraph({ text: "" }),
                     new Paragraph({ text: "____________________", alignment: AlignmentType.CENTER }),
                     new Paragraph({ text: acta.usuarioRecibe?.name || 'N/A', alignment: AlignmentType.CENTER }),
-                    new Paragraph({ text: acta.cargo_recibe || 'N/A', alignment: AlignmentType.CENTER }),
+                    new Paragraph({ text: acta.area_recibe || 'N/A', alignment: AlignmentType.CENTER }),
                   ],
                 }),
                 new TableCell({
@@ -869,7 +869,7 @@ const generateActaHTML = (acta, equipo) => {
           </div>
           <div class="info-row">
             <div class="info-item">
-              <strong>CARGO:</strong> ${acta.cargo_recibe || 'N/A'}
+              <strong>ÁREA:</strong> ${acta.area_recibe || 'N/A'}
             </div>
             <div class="info-item">
               <strong>ESTADO:</strong> ${acta.estado_equipo_entrega || 'N/A'}
@@ -989,7 +989,7 @@ const generateActaHTML = (acta, equipo) => {
             <div class="signature-title">RECIBE</div>
             <div class="signature-line"></div>
             <div class="signature-name">${acta.usuarioRecibe?.name || 'N/A'}</div>
-            <div class="signature-role">${acta.cargo_recibe || 'N/A'}</div>
+            <div class="signature-role">${acta.area_recibe || 'N/A'}</div>
           </div>
           <div class="signature-box">
             <div class="signature-title">ENTREGA</div>
@@ -1072,7 +1072,7 @@ const generateActaHTML = (acta, equipo) => {
               <div class="signature-title">ENTREGA</div>
               <div class="signature-line"></div>
               <div class="signature-name">${acta.usuarioRecibe?.name || 'N/A'}</div>
-              <div class="signature-role">${acta.cargo_recibe || 'N/A'}</div>
+              <div class="signature-role">${acta.area_recibe || 'N/A'}</div>
             </div>
           </div>
 

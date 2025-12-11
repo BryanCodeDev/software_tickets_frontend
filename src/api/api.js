@@ -31,26 +31,9 @@ api.interceptors.request.use((config) => {
 });
 
 const handleApiError = (error) => {
-  console.error('API Error:', {
-    url: error.config?.url,
-    method: error.config?.method,
-    status: error.response?.status,
-    statusText: error.response?.statusText,
-    data: error.response?.data,
-    message: error.message
-  });
-  
-  // Enhanced error logging for debugging
+  // Enhanced error handling for debugging
   if (error.response?.status === 403) {
-    console.error('403 Forbidden Error Details:', {
-      url: error.config?.url,
-      headers: error.config?.headers,
-      userAgent: navigator.userAgent,
-      localStorage: {
-        hasToken: !!localStorage.getItem('token'),
-        hasUser: !!localStorage.getItem('user')
-      }
-    });
+    // Handle 403 Forbidden errors
   }
   
   return Promise.reject(error);
@@ -62,7 +45,6 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Token expired or invalid, redirect to login
-      console.log('Token expired or invalid, redirecting to login');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       localStorage.removeItem('token_timestamp');

@@ -82,6 +82,8 @@ const ActaEntregaModal = ({
                 >
                   <option value="inventory">Computadora/Laptop</option>
                   <option value="corporate_phone">Teléfono Celular</option>
+                  <option value="tablet">Tablet</option>
+                  <option value="pda">PDA</option>
                 </select>
               </div>
 
@@ -143,6 +145,32 @@ const ActaEntregaModal = ({
                                   modelo_equipo: phoneData.equipo_celular || '',
                                   serial_imei: phoneData.imei || '',
                                   linea_telefonica: phoneData.numero_celular || '',
+                                  accesorio_cargador: true,
+                                  accesorio_antivirus: true
+                                }));
+                              } else if (equipo.tipo === 'tablet' && equipo.data) {
+                                const tabletData = equipo.data;
+                                setFormData(prev => ({
+                                  ...prev,
+                                  marca: tabletData.marca || '',
+                                  modelo_equipo: tabletData.modelo || '',
+                                  serial_imei: tabletData.serial || '',
+                                  almacenamiento: tabletData.capacidad_almacenamiento || '',
+                                  ram: tabletData.ram || '',
+                                  sistema_operativo: tabletData.sistema_operativo || '',
+                                  accesorio_cargador: true,
+                                  accesorio_antivirus: true
+                                }));
+                              } else if (equipo.tipo === 'pda' && equipo.data) {
+                                const pdaData = equipo.data;
+                                setFormData(prev => ({
+                                  ...prev,
+                                  marca: pdaData.marca || '',
+                                  modelo_equipo: pdaData.modelo || '',
+                                  serial_imei: pdaData.serial || '',
+                                  almacenamiento: pdaData.almacenamiento || '',
+                                  ram: pdaData.ram || '',
+                                  sistema_operativo: pdaData.sistema_operativo || '',
                                   accesorio_cargador: true,
                                   accesorio_antivirus: true
                                 }));
@@ -223,15 +251,91 @@ const ActaEntregaModal = ({
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Cargo del Receptor
+                  Área *
                 </label>
-                <input
-                  type="text"
-                  placeholder="Ej: Analista de Sistemas"
-                  value={formData.cargo_recibe}
-                  onChange={(e) => setFormData({ ...formData, cargo_recibe: e.target.value })}
+                <select
+                  value={formData.area_recibe}
+                  onChange={(e) => setFormData({ ...formData, area_recibe: e.target.value })}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
-                />
+                  required
+                >
+                  <option value="">Seleccionar área</option>
+
+                  {/* Producción y Operaciones */}
+                  <optgroup label="Producción y Operaciones">
+                    <option value="MATERIA PRIMA">Materia Prima</option>
+                    <option value="PRODUCCION">Producción</option>
+                    <option value="PRODUCTO TERMINADO">Producto Terminado</option>
+                    <option value="DESPACHOS">Despachos</option>
+                    <option value="DEVOLUCIONES">Devoluciones</option>
+                    <option value="BODEGA">Bodega</option>
+                    <option value="RECEPCION">Recepción</option>
+                    <option value="ALMACENISTA">Almacenista</option>
+                  </optgroup>
+  
+                  {/* Calidad y Laboratorio */}
+                  <optgroup label="Calidad y Laboratorio">
+                    <option value="CALIDAD">Calidad</option>
+                    <option value="CALIDAD OROCCO">Calidad Orocco</option>
+                    <option value="LABORATORIO">Laboratorio</option>
+                    <option value="INVESTIGACION">Investigación</option>
+                  </optgroup>
+  
+                  {/* Administración y Finanzas */}
+                  <optgroup label="Administración y Finanzas">
+                    <option value="CONTABILIDAD">Contabilidad</option>
+                    <option value="COSTOS">Costos</option>
+                    <option value="TESORERIA">Tesorería</option>
+                    <option value="CARTERA">Cartera</option>
+                    <option value="FACTURACION">Facturación</option>
+                    <option value="COMPRAS">Compras</option>
+                    <option value="JEFE COMPRAS">Jefe Compras</option>
+                  </optgroup>
+  
+                  {/* Ventas y Mercadeo */}
+                  <optgroup label="Ventas y Mercadeo">
+                    <option value="VENTAS">Ventas</option>
+                    <option value="MERCADEO">Mercadeo</option>
+                    <option value="DIRECCION VENTAS">Dirección Ventas</option>
+                    <option value="CALL CENTER">Call Center</option>
+                    <option value="SAC">SAC</option>
+                  </optgroup>
+  
+                  {/* Recursos Humanos */}
+                  <optgroup label="Recursos Humanos">
+                    <option value="RH">Recursos Humanos</option>
+                    <option value="ADMINISTRATIVO">Administrativo</option>
+                  </optgroup>
+  
+                  {/* Gerencia y Dirección */}
+                  <optgroup label="Gerencia y Dirección">
+                    <option value="GERENCIA">Gerencia</option>
+                    <option value="SUB GERENCIA">Sub Gerencia</option>
+                    <option value="EJECUTIVA">Ejecutiva</option>
+                    <option value="COORDINADOR">Coordinador</option>
+                    <option value="PLANEACION">Planeación</option>
+                  </optgroup>
+  
+                  {/* Servicios Generales */}
+                  <optgroup label="Servicios Generales">
+                    <option value="MANTENIMIENTO">Mantenimiento</option>
+                    <option value="REPARACION">Reparación</option>
+                    <option value="SERVICIO GENERAL">Servicio General</option>
+                    <option value="AMBIENTAL Y SST">Ambiental y SST</option>
+                  </optgroup>
+  
+                  {/* Sistemas y Tecnología */}
+                  <optgroup label="Sistemas y Tecnología">
+                    <option value="SISTEMAS">Sistemas</option>
+                    <option value="DESARROLLO">Desarrollo</option>
+                  </optgroup>
+  
+                  {/* Control y Auditoría */}
+                  <optgroup label="Control y Auditoría">
+                    <option value="AUDITORIA">Auditoría</option>
+                    <option value="ARCHIVO">Archivo</option>
+                  </optgroup>
+                </select>
               </div>
             </div>
           </div>
@@ -408,7 +512,106 @@ const ActaEntregaModal = ({
                   </>
                 )}
 
-                {/* Campos comunes para ambos tipos de dispositivos */}
+                {formData.tipo_equipo === 'tablet' && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Serial
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Número de serie"
+                        value={formData.serial_imei || ''}
+                        onChange={(e) => setFormData({ ...formData, serial_imei: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Sistema Operativo
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Ej: Android 12, iPadOS"
+                        value={formData.sistema_operativo || ''}
+                        onChange={(e) => setFormData({ ...formData, sistema_operativo: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Tamaño de Pantalla
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Ej: 10.4 pulgadas"
+                        value={formData.tamano_pantalla || ''}
+                        onChange={(e) => setFormData({ ...formData, tamano_pantalla: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {formData.tipo_equipo === 'pda' && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Serial
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Número de serie"
+                        value={formData.serial_imei || ''}
+                        onChange={(e) => setFormData({ ...formData, serial_imei: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Sistema Operativo
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Ej: Windows Mobile, Android"
+                        value={formData.sistema_operativo || ''}
+                        onChange={(e) => setFormData({ ...formData, sistema_operativo: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Tipo de Conectividad
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Ej: WiFi, 4G, Bluetooth"
+                        value={formData.tipo_conectividad || ''}
+                        onChange={(e) => setFormData({ ...formData, tipo_conectividad: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Aplicaciones Instaladas
+                      </label>
+                      <textarea
+                        placeholder="Ej: SAP, WMS, Scanner de códigos"
+                        value={formData.aplicaciones_instaladas || ''}
+                        onChange={(e) => setFormData({ ...formData, aplicaciones_instaladas: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none"
+                        rows="2"
+                      />
+                    </div>
+                  </>
+                )}
+                
+                {/* Campos comunes para todos los tipos de dispositivos */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     RAM

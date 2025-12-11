@@ -83,6 +83,10 @@ const ActasEntrega = () => {
     // Función para configurar los listeners de WebSocket
     const setupWebSocketListeners = () => {
       if (socket && socket.connected) {
+
+
+
+
         onActaEntregaCreated((acta) => {
           fetchActas();
         });
@@ -133,6 +137,7 @@ const ActasEntrega = () => {
       const actasData = Array.isArray(response.data) ? response.data : [];
       setActas(actasData);
     } catch (err) {
+      console.error('Error fetching actas:', err);
       if (err.response && err.response.status === 403) {
         showNotification('No tienes permisos para ver las actas de entrega.', 'error');
       } else {
@@ -198,6 +203,7 @@ const ActasEntrega = () => {
       }
 
     } catch (err) {
+      console.error('Error fetching equipos disponibles:', err);
       setEquiposDisponibles([]);
       
       let errorMessage = 'Error al cargar los equipos disponibles.';
@@ -218,6 +224,7 @@ const ActasEntrega = () => {
       const data = await usersAPI.fetchUsers();
       setUsuarios(data || []);
     } catch (err) {
+      console.error('Error fetching usuarios:', err);
     }
   };
 
@@ -393,6 +400,7 @@ const ActasEntrega = () => {
       // Cerrar modal después de recargar datos
       setShowModal(false);
     } catch (err) {
+      console.error('Error detallado:', err);
       let errorMessage = 'Error al guardar el acta. Por favor, verifica los datos e inténtalo de nuevo.';
       if (err.response && err.response.data && err.response.data.error) {
         errorMessage = err.response.data.error;
