@@ -29,6 +29,16 @@ const Credentials = () => {
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user, checkPermission } = useContext(AuthContext);
 
+  // Función helper para verificar permisos incluyendo rol de administrador
+  const hasPermission = (module, action) => {
+    // Los administradores tienen acceso completo
+    if (user?.role?.name === 'Administrador') {
+      return true;
+    }
+    // Para otros roles, usar la verificación normal de permisos
+    return checkPermission(module, action);
+  };
+
   // NUEVAS FUNCIONALIDADES: Estados para búsqueda, filtros y ordenamiento
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -67,7 +77,7 @@ const Credentials = () => {
     }
   };
 
-  // NUEVA FUNCIONALIDAD: Filtrado y ordenamiento
+  // NUEVA FUNCIONALIDAD: Filtrado y ordenamiento mejorado
   const filterAndSortCredentials = () => {
     let filtered = [...credentials];
 
@@ -109,10 +119,98 @@ const Credentials = () => {
     return filtered;
   };
 
-  // Filtrar carpetas de la raíz (solo cuando no hay carpeta actual)
+  // NUEVA FUNCIONALIDAD: Filtrado global de credenciales (sin importar carpetas)
+  const filterCredentialsGlobally = () => {
+    let filtered = [...credentials];
+
+    // Búsqueda global en TODAS las credenciales
+    if (searchTerm) {
+      filtered = filtered.filter(cred =>
+        cred.service?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cred.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cred.area?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cred.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Ordenamiento
+    filtered.sort((a, b) => {
+      let aVal = a[sortBy];
+      let bVal = b[sortBy];
+
+      if (sortBy === 'createdAt') {
+        aVal = new Date(aVal || 0);
+        bVal = new Date(bVal || 0);
+      } else if (typeof aVal === 'string') {
+        aVal = aVal?.toLowerCase() || '';
+        bVal = bVal?.toLowerCase() || '';
+      }
+
+      if (sortOrder === 'asc') {
+        return aVal > bVal ? 1 : -1;
+      } else {
+        return aVal < bVal ? 1 : -1;
+      }
+    });
+
+    return filtered;
+  };
+
+  // Obtener elementos filtrados según el contexto
+  const getFilteredItems = () => {
+    if (currentFolder) {
+      return filterAndSortCredentials();
+    } else {
+      // En la vista de carpetas, si hay búsqueda, mostrar credenciales globales
+      // Si no hay búsqueda, mostrar carpetas normales
+      if (searchTerm.trim()) {
+        return filterCredentialsGlobally();
+      } else {
+        return folders.filter(folder => !folder.parentFolderId);
+      }
+    }
+  };
+
+  // Obtener opciones de ordenamiento según el contexto
+  const getSortOptions = () => {
+    if (currentFolder || (searchTerm && !currentFolder)) {
+      // Para vista de credenciales (dentro de carpeta o búsqueda global)
+      return [
+        { value: 'service', label: 'Servicio' },
+        { value: 'username', label: 'Usuario' },
+        { value: 'createdAt', label: 'Fecha de creación' }
+      ];
+    } else {
+      // Para vista de carpetas sin búsqueda
+      return [
+        { value: 'name', label: 'Nombre' },
+        { value: 'createdAt', label: 'Fecha de creación' }
+      ];
+    }
+  };
+
+  // Obtener el valor de ordenamiento por defecto según el contexto
+  const getDefaultSortBy = () => {
+    if (currentFolder || (searchTerm && !currentFolder)) {
+      return 'service';
+    } else {
+      return 'name';
+    }
+  };
+
+  // Actualizar sortBy cuando cambie el contexto
+  useEffect(() => {
+    if (sortBy !== getDefaultSortBy()) {
+      setSortBy(getDefaultSortBy());
+    }
+  }, [currentFolder, searchTerm]);
+
+  // Filtrar carpetas de la raíz (solo cuando no hay carpeta actual y no hay búsqueda)
   const rootFolders = folders.filter(folder => !folder.parentFolderId);
 
   const filteredCredentials = filterAndSortCredentials();
+  const filteredGlobalCredentials = filterCredentialsGlobally();
+  const filteredItems = getFilteredItems();
 
   // NUEVA FUNCIONALIDAD: Verificar fortaleza de contraseña
   const checkPasswordStrength = (password) => {
@@ -385,11 +483,20 @@ const Credentials = () => {
     setConfirmDialog(null);
   };
 
+  // Función para obtener el nombre de la carpeta de una credencial
+  const getFolderName = (cred) => {
+    if (!cred.credentialFolderId) return 'Sin carpeta';
+    const folder = folders.find(f => f.id === cred.credentialFolderId);
+    return folder ? folder.name : 'Carpeta desconocida';
+  };
+
   if (!checkPermission('credentials', 'view')) {
     return <div className="container mx-auto p-6">Acceso Denegado</div>;
   }
 
   if (loading) return <div>Cargando...</div>;
+
+  const isGlobalSearch = searchTerm && !currentFolder;
 
   return (
     <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 sm:py-6 md:py-8 px-2 sm:px-4 md:px-6 lg:px-8">
@@ -416,10 +523,15 @@ const Credentials = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                 </div>
-                {currentFolder ? `Carpeta: ${currentFolder.name}` : 'Credenciales'}
+                {currentFolder ? `Carpeta: ${currentFolder.name}` : (isGlobalSearch ? 'Búsqueda Global de Credenciales' : 'Credenciales')}
               </h1>
               <p className="mt-2 text-xs sm:text-sm md:text-base text-gray-600">
-                {currentFolder ? (currentFolder.description || 'Gestiona las credenciales de esta carpeta') : 'Gestiona las credenciales internas del sistema'}
+                {currentFolder 
+                  ? (currentFolder.description || 'Gestiona las credenciales de esta carpeta')
+                  : (isGlobalSearch 
+                      ? 'Buscando en todas las credenciales del sistema' 
+                      : 'Gestiona las credenciales internas del sistema')
+                }
               </p>
             </div>
             <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
@@ -433,7 +545,7 @@ const Credentials = () => {
                 </button>
               )}
               {currentFolder ? (
-                checkPermission('credentials', 'create') && (
+                hasPermission('credentials', 'create') && (
                   <button
                     onClick={handleCreate}
                     className="flex items-center justify-center space-x-2 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto text-sm sm:text-base"
@@ -443,7 +555,7 @@ const Credentials = () => {
                   </button>
                 )
               ) : (
-                checkPermission('credentials', 'manage_folders') && (
+                hasPermission('credentials', 'manage_folders') && !isGlobalSearch && (
                   <button
                     onClick={handleCreateFolder}
                     className="flex items-center justify-center space-x-2 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto text-sm sm:text-base"
@@ -468,33 +580,42 @@ const Credentials = () => {
           sortOrder={sortOrder}
           onSortChange={setSortBy}
           onSortOrderChange={(order) => setSortOrder(order)}
-          sortOptions={[
-            { value: 'service', label: 'Servicio' },
-            { value: 'username', label: 'Usuario' },
-            { value: 'createdAt', label: 'Fecha de creación' }
-          ]}
+          sortOptions={getSortOptions()}
         />
 
         {/* Resumen de resultados */}
         <div className="flex items-center justify-between mb-3 sm:mb-4">
           <p className="text-xs sm:text-sm text-gray-600 font-medium">
             {currentFolder
-              ? `Mostrando ${filteredCredentials.length} credenciales en esta carpeta`
-              : `Mostrando ${rootFolders.length} carpetas`
+              ? `Mostrando ${filteredItems.length} credenciales en esta carpeta`
+              : (isGlobalSearch 
+                  ? `Mostrando ${filteredItems.length} credenciales en todo el sistema`
+                  : `Mostrando ${rootFolders.length} carpetas`
+                )
             }
+            {searchTerm && (
+              <span className="ml-2 text-blue-600">
+                • Filtrado por: "{searchTerm}"
+              </span>
+            )}
           </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
           <div className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 border-b border-gray-200 bg-gray-50">
             <h2 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900">
-              {currentFolder ? 'Credenciales de la Carpeta' : 'Carpetas de Credenciales'}
+              {currentFolder 
+                ? 'Credenciales de la Carpeta' 
+                : (isGlobalSearch 
+                    ? 'Resultados de Búsqueda Global' 
+                    : 'Carpetas de Credenciales')
+              }
             </h2>
           </div>
           <div className="p-3 sm:p-4 md:p-6">
             {currentFolder ? (
               // Vista de credenciales dentro de una carpeta
-              filteredCredentials.length === 0 ? (
+              filteredItems.length === 0 ? (
                 <div className="text-center py-6 sm:py-8 md:py-12">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
                     <FaLock className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-gray-400" />
@@ -511,11 +632,108 @@ const Credentials = () => {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
-                  {filteredCredentials.map((cred) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+                  {filteredItems.map((cred) => (
                     <div key={cred.id} className="bg-gray-50 rounded-xl p-3 sm:p-4 md:p-6 border border-gray-200 hover:shadow-md transition-shadow">
                       <div className="flex flex-col items-center text-center sm:items-start sm:text-left md:flex-row md:items-center md:justify-between mb-3 sm:mb-4 gap-2">
                         <h3 className="font-semibold text-gray-900 text-sm sm:text-sm md:text-base truncate w-full sm:w-auto">{cred.service}</h3>
+                      </div>
+                      <div className="space-y-2 text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
+                        <div className="flex items-center justify-between">
+                          <p><strong>Usuario:</strong> {cred.username}</p>
+                          <button
+                            onClick={() => copyToClipboard(cred.username, 'Usuario')}
+                            className="text-gray-400 hover:text-[#662d91] p-1 transition-colors"
+                            title="Copiar usuario"
+                          >
+                            <FaCopy className="w-3 h-3" />
+                          </button>
+                        </div>
+                        {cred.area && (
+                          <div className="flex items-center justify-between">
+                            <p><strong>Área:</strong> {cred.area}</p>
+                          </div>
+                        )}
+                        <div className="flex items-center space-x-2">
+                          <p className="text-xs sm:text-sm"><strong>Contraseña:</strong></p>
+                          <span className="flex-1 text-xs sm:text-sm font-mono">
+                            {showPassword[cred.id] ? cred.password : '••••••••'}
+                          </span>
+                          <button
+                            onClick={() => togglePasswordVisibility(cred.id)}
+                            className="text-gray-400 hover:text-gray-600 p-1"
+                            title={showPassword[cred.id] ? 'Ocultar' : 'Mostrar'}
+                          >
+                            {showPassword[cred.id] ? <FaEyeSlash className="w-3 h-3" /> : <FaEye className="w-3 h-3" />}
+                          </button>
+                          <button
+                            onClick={() => copyToClipboard(cred.password, 'Contraseña')}
+                            className="text-gray-400 hover:text-[#662d91] p-1 transition-colors"
+                            title="Copiar contraseña"
+                          >
+                            <FaCopy className="w-3 h-3" />
+                          </button>
+                        </div>
+                        {cred.description && (
+                          <div className="pt-2 border-t border-gray-200">
+                            <p className="text-xs text-gray-500 mb-1"><strong>Notas:</strong></p>
+                            <p className="text-xs text-gray-600">{cred.description}</p>
+                          </div>
+                        )}
+                        {cred.createdAt && (
+                          <div className="flex items-center justify-center sm:justify-start gap-2 text-xs text-gray-500 pt-2">
+                            <FaClock className="w-3 h-3" />
+                            <span>Creada {getTimeAgo(cred.createdAt)}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        {checkPermission('credentials', 'edit') && (
+                          <button
+                            onClick={() => handleEdit(cred)}
+                            className="flex items-center justify-center space-x-1 px-3 sm:px-3 md:px-4 py-2 sm:py-2 md:py-3 bg-blue-100 text-blue-700 text-sm sm:text-sm font-medium rounded-lg hover:bg-blue-200 transition-colors"
+                          >
+                            <FaEdit className="w-4 h-4 sm:w-4 md:w-4" />
+                            <span>Editar</span>
+                          </button>
+                        )}
+                        {checkPermission('credentials', 'delete') && (
+                          <button
+                            onClick={() => handleDelete(cred.id)}
+                            className="flex items-center justify-center space-x-1 px-3 sm:px-3 md:px-4 py-2 sm:py-2 md:py-3 bg-red-100 text-red-700 text-sm sm:text-sm font-medium rounded-lg hover:bg-red-200 transition-colors"
+                          >
+                            <FaTrash className="w-4 h-4 sm:w-4 md:w-4" />
+                            <span>Eliminar</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
+            ) : isGlobalSearch ? (
+              // Vista de búsqueda global de credenciales
+              filteredItems.length === 0 ? (
+                <div className="text-center py-6 sm:py-8 md:py-12">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <FaLock className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-sm sm:text-base md:text-lg font-medium text-gray-900 mb-2">
+                    No se encontraron credenciales
+                  </h3>
+                  <p className="text-xs sm:text-sm md:text-base text-gray-600">
+                    No hay credenciales que coincidan con "{searchTerm}" en todo el sistema
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+                  {filteredItems.map((cred) => (
+                    <div key={cred.id} className="bg-gray-50 rounded-xl p-3 sm:p-4 md:p-6 border border-gray-200 hover:shadow-md transition-shadow">
+                      <div className="flex flex-col items-center text-center sm:items-start sm:text-left md:flex-row md:items-center md:justify-between mb-3 sm:mb-4 gap-2">
+                        <h3 className="font-semibold text-gray-900 text-sm sm:text-sm md:text-base truncate w-full sm:w-auto">{cred.service}</h3>
+                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full shrink-0">
+                          {getFolderName(cred)}
+                        </span>
                       </div>
                       <div className="space-y-2 text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
                         <div className="flex items-center justify-between">
@@ -605,8 +823,8 @@ const Credentials = () => {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
-                  {rootFolders.map((folder) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+                  {filteredItems.map((folder) => (
                     <div
                       key={folder.id}
                       onClick={() => handleEnterFolder(folder)}
@@ -631,7 +849,7 @@ const Credentials = () => {
                           </div>
                         </div>
                         <div className="flex flex-row sm:flex-col gap-1.5 sm:gap-2">
-                          {checkPermission('credentials', 'manage_folders') && (
+                          {hasPermission('credentials', 'manage_folders') && (
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -643,7 +861,7 @@ const Credentials = () => {
                               <FaEdit className="w-4 h-4 sm:w-4" />
                             </button>
                           )}
-                          {checkPermission('credentials', 'delete') && (
+                          {hasPermission('credentials', 'delete') && (
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -1067,6 +1285,3 @@ const Credentials = () => {
 };
 
 export default Credentials;
-
-
-

@@ -111,6 +111,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   const checkPermission = (module, action) => {
+    // Los administradores tienen acceso completo a todo
+    if (user?.role?.name === 'Administrador') {
+      return true;
+    }
+    
     if (!user || !user.permissions) return false;
 
     return user.permissions.some(permission =>
@@ -126,5 +131,3 @@ export const AuthProvider = ({ children }) => {
 };
 
 export default AuthContext;
-
-

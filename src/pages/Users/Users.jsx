@@ -586,7 +586,7 @@ const Users = () => {
             ) : (
               <>
                 {/* NUEVA FUNCIONALIDAD: Vista de cuadrícula */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                   {filteredUsers.map((usr) => (
                     <div key={usr.id} className="bg-gray-50 rounded-xl p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-shadow">
                       <div className="flex items-center justify-between mb-4">
