@@ -1,191 +1,610 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import AuthContext from '../context/AuthContext.jsx';
-import { FaCrown, FaWrench, FaUser, FaShieldAlt, FaUserShield, FaUserCog } from 'react-icons/fa';
+const axios = require('axios');
 
-const Navbar = ({ toggleSidebar }) => {
-  const { user, logout } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const getRoleBadge = (roleName) => {
-    const badges = {
-      'Administrador': { color: 'from-red-500 to-pink-600', icon: <FaCrown />, text: 'Admin', iconColor: 'text-red-500' },
-      'Coordinadora Administrativa': { color: 'from-orange-500 to-red-600', icon: <FaUserShield />, text: 'Coord', iconColor: 'text-orange-500' },
-      'Técnico': { color: 'from-blue-500 to-cyan-600', icon: <FaWrench />, text: 'Tech', iconColor: 'text-blue-500' },
-      'Jefe': { color: 'from-yellow-500 to-orange-600', icon: <FaUserCog />, text: 'Jefe', iconColor: 'text-yellow-500' },
-      'Compras': { color: 'from-teal-500 to-cyan-600', icon: <FaUser />, text: 'Compras', iconColor: 'text-teal-500' },
-      'Calidad': { color: 'from-[#662d91] to-[#8e4dbf]', icon: <FaShieldAlt />, text: 'Quality', iconColor: 'text-[#662d91]' },
-      'Empleado': { color: 'from-green-500 to-emerald-600', icon: <FaUser />, text: 'User', iconColor: 'text-green-500' }
-    };
-    return badges[roleName] || badges['Empleado'];
-  };
+// Configurar MailerSend
+const apiKey = process.env.SENDGRID_API_KEY;
+const mailerSendToken = apiKey; // Reutilizamos la misma variable para el token de MailerSend
+const MAILER_SEND_API_URL = 'https://api.mailersend.com/v1';
 
-  const roleBadge = getRoleBadge(user?.role?.name);
+if (mailerSendToken) {
+  console.log('✅ Token MailerSend configurado correctamente');
+} else {
+  console.log('❌ SENDGRID_API_KEY (MailerSend token) no encontrada en variables de entorno');
+}
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+/**
+ * Servicio de email usando SendGrid API
+ */
+class EmailService {
+  /**
+   * Enviar email de recuperación de contraseña
+   * @param {string} to - Email del destinatario
+   * @param {string} resetToken - Token de reset
+   * @param {string} userName - Nombre del usuario
+   * @returns {Promise<Object>} - Resultado del envío
+   */
+  async sendPasswordResetEmail(to, resetToken, userName) {
+    try {
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
+      const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'noreply@test-xkjn41m1e954z781.mlsender.net';
+      const fromName = process.env.SENDGRID_FROM_NAME || 'Sistema de Tickets DuvyClass';
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
+      // Preparar datos para MailerSend API
+      const emailData = {
+        from: {
+          email: fromEmail,
+          name: fromName
+        },
+        to: [
+          {
+            email: to,
+            name: userName
+          }
+        ],
+        subject: 'Recuperación de Contraseña - Sistema de Tickets',
+        html: this.generatePasswordResetEmailTemplate(userName, resetUrl),
+        text: `Hola ${userName},\n\nHas solicitado restablecer tu contraseña. Haz clic en el siguiente enlace para crear una nueva contraseña: ${resetUrl}\n\nSi no solicitaste este cambio, puedes ignorar este email.\n\nSaludos,\nEquipo de Sistema de Tickets`
+      };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+      console.log(`📧 Enviando email de reset a: ${to}`);
+      
+      // Enviar email usando MailerSend API
+      const response = await axios.post(`${MAILER_SEND_API_URL}/email`, emailData, {
+        headers: {
+          'Authorization': `Bearer ${mailerSendToken}`,
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+      
+      console.log('✅ Email enviado exitosamente');
+      
+      return {
+        success: true,
+        messageId: response.data.message_id || 'unknown',
+        status: response.status
+      };
 
-  if (!user) return null;
+    } catch (error) {
+      console.error('❌ Error enviando email de reset:', error);
+      
+      // Manejo de errores específicos de MailerSend
+      if (error.response) {
+        const { status, data } = error.response;
+        console.error('📊 MailerSend Error Status:', status);
+        console.error('📋 MailerSend Error Body:', data);
+        
+        return {
+          success: false,
+          error: `Error de MailerSend (${status}): ${data.message || 'Error desconocido'}`
+        };
+      }
+      
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
 
-  return (
-    <nav className={`sticky top-0 z-30 transition-all duration-300 ${
-      isScrolled
-        ? 'bg-white shadow-sm'
-        : 'bg-linear-to-br from-[#662d91] via-[#7a3da8] to-[#8e4dbf] shadow-lg'
-    }`}>
-      <div className="px-2 sm:px-4 lg:px-8">
-        <div className="flex items-center justify-between h-14 sm:h-16">
-          {/* Left side - Menu button and Title for mobile */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
-            <button
-              onClick={toggleSidebar}
-              className={`lg:hidden p-1.5 sm:p-2 rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${
-                isScrolled
-                  ? 'text-gray-600 hover:text-[#662d91] hover:bg-[#f3ebf9] focus:ring-[#662d91]'
-                  : 'text-white/80 hover:text-white hover:bg-white/20 focus:ring-white'
-              }`}
-            >
-              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-
-            <div className="lg:hidden flex items-center">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-white rounded-lg flex items-center justify-center mr-2">
-                <span className="text-transparent bg-clip-text bg-linear-to-br from-[#662d91] to-[#7a3da8] font-bold text-xs sm:text-sm">D</span>
-              </div>
-              <div className="min-w-0">
-                <h1 className={`text-base sm:text-lg font-bold truncate ${
-                  isScrolled ? 'text-gray-900' : 'text-white'
-                }`}>Duvy Class</h1>
-                <p className={`text-xs truncate ${
-                  isScrolled ? 'text-gray-500' : 'text-[#e8d5f5]'
-                }`}>Sistema IT</p>
-              </div>
+  /**
+   * Generar template HTML para email de recuperación de contraseña
+   * @param {string} userName - Nombre del usuario
+   * @param {string} resetUrl - URL de reset
+   * @returns {string} - HTML del email
+   */
+  generatePasswordResetEmailTemplate(userName, resetUrl) {
+    const currentYear = new Date().getFullYear();
+    
+    return `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Recuperación de Contraseña - Sistema de Tickets</title>
+        <style>
+            /* Reset y base */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                line-height: 1.6;
+                color: #1a1a1a;
+                background-color: #f5f5f5;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .email-wrapper {
+                background-color: #f5f5f5;
+                padding: 40px 20px;
+            }
+            
+            .email-container {
+                max-width: 600px;
+                margin: 0 auto;
+                background: #ffffff;
+                border-radius: 2px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            }
+            
+            /* Header corporativo con marca */
+            .header {
+                background: #662d91;
+                padding: 48px 40px;
+                text-align: center;
+                position: relative;
+            }
+            
+            .logo-container {
+                margin-bottom: 24px;
+            }
+            
+            .logo {
+                width: 64px;
+                height: 64px;
+                background: #ffffff;
+                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 32px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+            
+            .header h1 {
+                font-size: 28px;
+                font-weight: 600;
+                color: #ffffff;
+                margin: 0;
+                letter-spacing: -0.5px;
+            }
+            
+            .header-subtitle {
+                font-size: 15px;
+                color: rgba(255, 255, 255, 0.9);
+                margin-top: 8px;
+                font-weight: 400;
+            }
+            
+            /* Contenido principal */
+            .content {
+                padding: 48px 40px;
+            }
+            
+            .greeting {
+                font-size: 18px;
+                font-weight: 600;
+                color: #1a1a1a;
+                margin-bottom: 24px;
+            }
+            
+            .greeting-name {
+                color: #662d91;
+            }
+            
+            .message {
+                font-size: 15px;
+                color: #4a4a4a;
+                margin-bottom: 20px;
+                line-height: 1.7;
+            }
+            
+            .message strong {
+                color: #1a1a1a;
+                font-weight: 600;
+            }
+            
+            /* Caja destacada */
+            .highlight-box {
+                background: #fafafa;
+                border-left: 4px solid #662d91;
+                padding: 24px;
+                border-radius: 2px;
+                margin: 32px 0;
+            }
+            
+            .highlight-title {
+                font-weight: 600;
+                color: #1a1a1a;
+                margin-bottom: 12px;
+                font-size: 16px;
+            }
+            
+            .highlight-text {
+                color: #4a4a4a;
+                font-size: 15px;
+                line-height: 1.6;
+            }
+            
+            /* Botón principal corporativo */
+            .cta-container {
+                text-align: center;
+                margin: 40px 0;
+            }
+            
+            .reset-button {
+                display: inline-block;
+                background: #662d91;
+                color: #ffffff;
+                padding: 16px 48px;
+                text-decoration: none;
+                border-radius: 2px;
+                font-weight: 600;
+                font-size: 15px;
+                letter-spacing: 0.3px;
+                box-shadow: 0 2px 8px rgba(102, 45, 145, 0.3);
+                transition: all 0.3s ease;
+            }
+            
+            .reset-button:hover {
+                background: #7a3ba8;
+                box-shadow: 0 4px 12px rgba(102, 45, 145, 0.4);
+            }
+            
+            /* Grid de información profesional */
+            .info-grid {
+                display: table;
+                width: 100%;
+                margin: 32px 0;
+                border-collapse: separate;
+                border-spacing: 12px 0;
+            }
+            
+            .info-item {
+                display: table-cell;
+                width: 33.33%;
+                background: #fafafa;
+                border: 1px solid #e8e8e8;
+                border-radius: 2px;
+                padding: 24px 16px;
+                text-align: center;
+                vertical-align: top;
+            }
+            
+            .info-icon {
+                font-size: 28px;
+                margin-bottom: 12px;
+                display: block;
+                opacity: 0.9;
+            }
+            
+            .info-title {
+                font-weight: 600;
+                color: #1a1a1a;
+                margin-bottom: 8px;
+                font-size: 14px;
+            }
+            
+            .info-text {
+                font-size: 13px;
+                color: #6a6a6a;
+                line-height: 1.5;
+            }
+            
+            /* Alerta de seguridad empresarial */
+            .security-box {
+                background: #fff9f0;
+                border: 1px solid #f5d899;
+                border-radius: 2px;
+                padding: 28px;
+                margin: 32px 0;
+            }
+            
+            .security-header {
+                display: flex;
+                align-items: center;
+                margin-bottom: 16px;
+            }
+            
+            .security-icon {
+                font-size: 24px;
+                margin-right: 12px;
+            }
+            
+            .security-title {
+                font-weight: 600;
+                color: #8b6914;
+                font-size: 16px;
+                margin: 0;
+            }
+            
+            .security-text {
+                color: #8b6914;
+                font-size: 14px;
+                line-height: 1.6;
+                margin-bottom: 16px;
+            }
+            
+            .security-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .security-list li {
+                color: #8b6914;
+                font-size: 14px;
+                margin-bottom: 10px;
+                padding-left: 28px;
+                position: relative;
+                line-height: 1.5;
+            }
+            
+            .security-list li::before {
+                content: '✓';
+                color: #059669;
+                font-weight: bold;
+                position: absolute;
+                left: 0;
+                font-size: 16px;
+            }
+            
+            /* Enlace de respaldo profesional */
+            .link-section {
+                margin-top: 32px;
+                padding-top: 32px;
+                border-top: 1px solid #e8e8e8;
+            }
+            
+            .link-label {
+                font-size: 14px;
+                color: #6a6a6a;
+                margin-bottom: 12px;
+            }
+            
+            .link-fallback {
+                word-break: break-all;
+                background: #fafafa;
+                border: 1px solid #e8e8e8;
+                border-radius: 2px;
+                padding: 16px;
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 12px;
+                color: #662d91;
+                text-align: center;
+                line-height: 1.6;
+            }
+            
+            /* Divisor */
+            .divider {
+                height: 1px;
+                background: #e8e8e8;
+                margin: 32px 0;
+            }
+            
+            /* Footer corporativo */
+            .footer {
+                background: #1a1a1a;
+                color: #ffffff;
+                padding: 40px;
+                text-align: center;
+            }
+            
+            .footer-brand {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 16px;
+            }
+            
+            .footer-logo {
+                width: 32px;
+                height: 32px;
+                background: #662d91;
+                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 12px;
+                font-size: 16px;
+            }
+            
+            .footer-name {
+                font-size: 18px;
+                font-weight: 600;
+                color: #ffffff;
+            }
+            
+            .footer-tagline {
+                font-size: 13px;
+                color: #b0b0b0;
+                margin-bottom: 24px;
+            }
+            
+            .footer-divider {
+                height: 1px;
+                background: rgba(255, 255, 255, 0.1);
+                margin: 24px 0;
+            }
+            
+            .footer-legal {
+                font-size: 12px;
+                color: #808080;
+                line-height: 1.6;
+            }
+            
+            .footer-year {
+                color: #b0b0b0;
+                font-weight: 600;
+            }
+            
+            /* Responsive */
+            @media only screen and (max-width: 600px) {
+                .email-wrapper {
+                    padding: 20px 10px;
+                }
+                
+                .header {
+                    padding: 32px 24px;
+                }
+                
+                .header h1 {
+                    font-size: 24px;
+                }
+                
+                .content {
+                    padding: 32px 24px;
+                }
+                
+                .info-grid {
+                    display: block;
+                }
+                
+                .info-item {
+                    display: block;
+                    width: 100%;
+                    margin-bottom: 12px;
+                }
+                
+                .reset-button {
+                    padding: 14px 32px;
+                    font-size: 14px;
+                }
+                
+                .footer {
+                    padding: 32px 24px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="email-wrapper">
+            <div class="email-container">
+                <!-- Header -->
+                <div class="header">
+                    <div class="logo-container">
+                        <div class="logo">🔐</div>
+                    </div>
+                    <h1>Recuperación de Contraseña</h1>
+                    <div class="header-subtitle">Sistema de Tickets DuvyClass</div>
+                </div>
+                
+                <!-- Contenido principal -->
+                <div class="content">
+                    <div class="greeting">
+                        Hola, <span class="greeting-name">${userName}</span>
+                    </div>
+                    
+                    <div class="message">
+                        Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en el <strong>Sistema de Tickets DuvyClass</strong>.
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <div class="highlight-title">Acción Requerida</div>
+                        <div class="highlight-text">
+                            Para continuar con el proceso de recuperación, haz clic en el botón de abajo y sigue las instrucciones para crear una nueva contraseña segura.
+                        </div>
+                    </div>
+                    
+                    <div class="cta-container">
+                        <a href="${resetUrl}" class="reset-button">
+                            RESTABLECER CONTRASEÑA
+                        </a>
+                    </div>
+                    
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-icon">⏱️</span>
+                            <div class="info-title">Válido por</div>
+                            <div class="info-text">1 hora desde la solicitud</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">🔒</span>
+                            <div class="info-title">Seguridad</div>
+                            <div class="info-text">Enlace de un solo uso</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">✓</span>
+                            <div class="info-title">Sin problemas</div>
+                            <div class="info-text">Puedes ignorar este email</div>
+                        </div>
+                    </div>
+                    
+                    <div class="security-box">
+                        <div class="security-header">
+                            <span class="security-icon">🛡️</span>
+                            <h3 class="security-title">Medidas de Seguridad</h3>
+                        </div>
+                        <div class="security-text">
+                            Para proteger tu cuenta, ten en cuenta lo siguiente:
+                        </div>
+                        <ul class="security-list">
+                            <li>Este enlace expirará automáticamente después de 1 hora</li>
+                            <li>Si no realizaste esta solicitud, tu contraseña actual permanece segura</li>
+                            <li>No compartas este enlace con terceros</li>
+                            <li>El enlace solo puede utilizarse una vez</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="link-section">
+                        <div class="link-label">
+                            <strong>¿Problemas con el botón?</strong> Copia y pega este enlace en tu navegador:
+                        </div>
+                        <div class="link-fallback">
+                            ${resetUrl}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <div class="footer">
+                    <div class="footer-brand">
+                        <div class="footer-logo">📋</div>
+                        <div class="footer-name">DuvyClass</div>
+                    </div>
+                    <div class="footer-tagline">Sistema de Gestión de Tickets y Soporte Técnico</div>
+                    <div class="footer-divider"></div>
+                    <div class="footer-legal">
+                        <span class="footer-year">© ${currentYear}</span> DuvyClass. Todos los derechos reservados.<br>
+                        Este es un mensaje automático del sistema. Por favor, no responda a este correo.
+                    </div>
+                </div>
             </div>
-          </div>
-
-
-          {/* Right side - Notifications and User menu */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* User Menu */}
-            <div className="relative">
-              <button
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                className={`flex items-center space-x-2 sm:space-x-3 p-1.5 rounded-xl transition-all duration-200 ${
-                  isScrolled ? 'hover:bg-gray-50' : 'hover:bg-white/20'
-                }`}
-              >
-                <div className="hidden sm:block text-right">
-                  <div className="flex items-center gap-2">
-                    <p className={`text-sm font-semibold truncate max-w-20 ${
-                      isScrolled ? 'text-gray-900' : 'text-white'
-                    }`}>{user?.name || user?.username || 'Usuario'}</p>
-                    <span className={`shrink-0 text-base ${roleBadge.iconColor}`}>{roleBadge.icon}</span>
-                  </div>
-                  <p className={`text-xs truncate max-w-24 ${
-                    isScrolled ? 'text-gray-500' : 'text-[#e8d5f5]'
-                  }`}>{user?.role?.name || 'Rol'}</p>
-                </div>
-                <div className={`w-8 h-8 sm:w-10 sm:h-10 bg-linear-to-br ${roleBadge.color} rounded-xl flex items-center justify-center shadow-md ring-2 ring-white`}>
-                  <span className="text-white text-xs sm:text-sm font-bold">
-                    {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <svg className={`hidden sm:block w-4 h-4 ${
-                  isScrolled ? 'text-gray-400' : 'text-white/80'
-                }`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {/* Dropdown Menu */}
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-64 sm:w-72 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
-                  <div className="px-4 py-3 border-b border-gray-200">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{user?.name || user?.username || 'Usuario'}</p>
-                    <p className="text-xs text-gray-500 truncate">{user?.email || 'email@ejemplo.com'}</p>
-                    {user?.department && (
-                      <p className="text-xs text-gray-400 truncate">{user?.department}</p>
-                    )}
-                    <span className="inline-block mt-2 px-2 py-1 bg-[#f3ebf9] text-[#662d91] text-xs font-medium rounded-md">
-                      {user?.role?.name || 'Rol'}
-                    </span>
-                  </div>
-                  
-                  <div className="py-2">
-                    <Link
-                      to="/profile"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#662d91] transition-colors"
-                    >
-                      <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                      Mi Perfil
-                    </Link>
-                    <Link
-                      to="/settings"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#662d91] transition-colors"
-                    >
-                      <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      Configuración
-                    </Link>
-                    <Link
-                      to="/help"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#662d91] transition-colors"
-                    >
-                      <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      Ayuda
-                    </Link>
-                  </div>
-
-                  <div className="border-t border-gray-200 py-2">
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                    >
-                      <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                      </svg>
-                      Cerrar Sesión
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
         </div>
-      </div>
+    </body>
+    </html>
+    `;
+  }
 
-      {/* Close dropdown when clicking outside */}
-      {showUserMenu && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => {
-            setShowUserMenu(false);
-          }}
-        />
-      )}
-    </nav>
-  );
-};
+  /**
+   * Verificar configuración de MailerSend
+   * @returns {Object} - Estado de la configuración
+   */
+  checkConfiguration() {
+    const apiKey = process.env.SENDGRID_API_KEY; // Reutilizamos la variable para el token de MailerSend
+    const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'noreply@test-xkjn41m1e954z781.mlsender.net';
+    const fromName = process.env.SENDGRID_FROM_NAME || 'Sistema de Tickets DuvyClass';
+    
+    const issues = [];
+    
+    if (!apiKey) {
+      issues.push('SENDGRID_API_KEY (MailerSend token) no está configurada');
+    }
+    
+    if (!fromEmail) {
+      issues.push('SENDGRID_FROM_EMAIL no está configurada');
+    }
+    
+    if (!fromName) {
+      issues.push('SENDGRID_FROM_NAME no está configurada');
+    }
+    
+    return {
+      isConfigured: issues.length === 0,
+      issues: issues,
+      hasApiKey: !!apiKey,
+      hasFromEmail: !!fromEmail,
+      hasFromName: !!fromName,
+      service: 'MailerSend'
+    };
+  }
+}
 
-export default Navbar;
-
+module.exports = new EmailService();
