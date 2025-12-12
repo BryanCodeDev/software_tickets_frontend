@@ -14,4 +14,5 @@ export { default as rolesAPI } from './rolesAPI';
 export { default as actaEntregaAPI } from './actaEntregaAPI';
 export { default as tabletInventoryAPI } from './tabletInventoryAPI';
 export { default as pdaInventoryAPI } from './pdaInventoryAPI';
+export { default as trashAPI } from './trashAPI';
 export { getServerBaseURL } from './api';

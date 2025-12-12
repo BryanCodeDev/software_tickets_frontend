@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaCrown, FaWrench, FaUser, FaShieldAlt, FaClipboardList, FaUserShield, FaUserCog } from 'react-icons/fa';
+import { FaCrown, FaWrench, FaUser, FaShieldAlt, FaClipboardList, FaUserShield, FaUserCog, FaDumpster } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext.jsx';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
@@ -163,6 +163,14 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         ),
         label: 'Roles',
         description: 'Gestión de roles y permisos'
+      },
+      {
+        path: '/trash',
+        icon: (
+          <FaDumpster className="w-5 h-5" />
+        ),
+        label: 'Papelera',
+        description: 'Elementos eliminados del sistema'
       }
     );
   } else if (role === 'Técnico') {
@@ -282,6 +290,14 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         ),
         label: 'Credenciales',
         description: 'Gestión de accesos seguros'
+      },
+      {
+        path: '/trash',
+        icon: (
+          <FaDumpster className="w-5 h-5" />
+        ),
+        label: 'Papelera',
+        description: 'Elementos eliminados del sistema'
       }
     );
   } else if (role === 'Empleado') {
@@ -917,4 +933,3 @@ return (
 );
 };
 export default Sidebar;
-

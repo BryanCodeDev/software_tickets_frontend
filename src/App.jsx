@@ -27,6 +27,7 @@ const Documents = lazy(() => import('./pages/Documents/Documents'));
 const Credentials = lazy(() => import('./pages/Credentials/Credentials'));
 const Users = lazy(() => import('./pages/Users/Users'));
 const Roles = lazy(() => import('./pages/Roles/Roles'));
+const Trash = lazy(() => import('./pages/Trash/Trash'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Help = lazy(() => import('./pages/Help'));
@@ -170,6 +171,13 @@ function App() {
                 </Layout>
               </ProtectedRoute>
             } />
+            <Route path="/trash" element={
+              <ProtectedRoute>
+                <Layout>
+                  <Trash />
+                </Layout>
+              </ProtectedRoute>
+            } />
             <Route path="/profile" element={
               <ProtectedRoute>
                 <Layout>
@@ -204,4 +212,3 @@ function App() {
 }
 
 export default App;
-

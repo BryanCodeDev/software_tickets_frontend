@@ -1,0 +1,512 @@
+import React, { useState, useEffect, useContext } from 'react';
+import { trashAPI } from '../../api';
+import AuthContext from '../../context/AuthContext.jsx';
+import { FaTrash, FaUndo, FaTimes, FaSearch, FaFilter, FaChartBar, FaCalendarAlt, FaUser, FaFileAlt, FaTicketAlt, FaDatabase, FaPhone, FaTabletAlt, FaCog, FaHistory, FaEye, FaExclamationTriangle, FaDumpster, FaShieldAlt } from 'react-icons/fa';
+import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
+
+const Trash = () => {
+  const [trashItems, setTrashItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [notification, setNotification] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState(null);
+  const { user } = useContext(AuthContext);
+
+  // Estados para búsqueda, filtros y ordenamiento
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterModule, setFilterModule] = useState('all');
+  const [showFilters, setShowFilters] = useState(false);
+  const [showStats, setShowStats] = useState(false);
+  const [stats, setStats] = useState({ total: 0, stats: [] });
+  const [pagination, setPagination] = useState({ current: 1, pages: 1, total: 0 });
+
+  // Estados para detalles de elemento
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+
+  useEffect(() => {
+    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Tecnico')) {
+      fetchTrashItems();
+      fetchStats();
+    }
+  }, [user, searchTerm, filterModule, pagination.current]);
+
+  const fetchTrashItems = async () => {
+    try {
+      setLoading(true);
+      const data = await trashAPI.getFilteredTrash({
+        page: pagination.current,
+        limit: 12,
+        moduleType: filterModule !== 'all' ? filterModule : '',
+        search: searchTerm
+      });
+      setTrashItems(data.trash);
+      setPagination(data.pagination);
+    } catch (err) {
+      showNotification('Error al cargar elementos de la papelera', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const data = await trashAPI.getTrashStats();
+      setStats(data);
+    } catch (err) {
+      console.error('Error fetching stats:', err);
+    }
+  };
+
+  const handleRestore = async (item) => {
+    showConfirmDialog(
+      `¿Estás seguro de que deseas restaurar "${item.title}"?`,
+      async () => {
+        try {
+          await trashAPI.restoreTrash(item.id);
+          fetchTrashItems();
+          fetchStats();
+          showNotification('Elemento restaurado exitosamente', 'success');
+        } catch (err) {
+          showNotification('Error al restaurar el elemento', 'error');
+        }
+      }
+    );
+  };
+
+  const handlePermanentDelete = async (item) => {
+    showConfirmDialog(
+      `¿Estás seguro de que deseas eliminar permanentemente "${item.title}"? Esta acción no se puede deshacer.`,
+      async () => {
+        try {
+          await trashAPI.deleteTrash(item.id);
+          fetchTrashItems();
+          fetchStats();
+          showNotification('Elemento eliminado permanentemente', 'success');
+        } catch (err) {
+          showNotification('Error al eliminar el elemento', 'error');
+        }
+      }
+    );
+  };
+
+  const handleEmptyTrash = () => {
+    showConfirmDialog(
+      '¿Estás seguro de que deseas vaciar toda la papelera? Esta acción eliminará permanentemente todos los elementos.',
+      async () => {
+        try {
+          await trashAPI.emptyTrash();
+          fetchTrashItems();
+          fetchStats();
+          showNotification('Papelera vaciada exitosamente', 'success');
+        } catch (err) {
+          showNotification('Error al vaciar la papelera', 'error');
+        }
+      }
+    );
+  };
+
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
+
+  const showConfirmDialog = (message, onConfirm) => {
+    setConfirmDialog({ message, onConfirm });
+  };
+
+  const handleConfirm = () => {
+    if (confirmDialog?.onConfirm) {
+      confirmDialog.onConfirm();
+    }
+    setConfirmDialog(null);
+  };
+
+  const handleCancelConfirm = () => {
+    setConfirmDialog(null);
+  };
+
+  const getModuleIcon = (moduleType) => {
+    switch(moduleType) {
+      case 'ticket': return <FaTicketAlt className="w-5 h-5" />;
+      case 'qualityTicket': return <FaShieldAlt className="w-5 h-5" />;
+      case 'purchaseRequest': return <FaFileAlt className="w-5 h-5" />;
+      case 'user': return <FaUser className="w-5 h-5" />;
+      case 'inventory': return <FaDatabase className="w-5 h-5" />;
+      case 'corporatePhone': return <FaPhone className="w-5 h-5" />;
+      case 'document': return <FaFileAlt className="w-5 h-5" />;
+      case 'credential': return <FaCog className="w-5 h-5" />;
+      case 'tabletInventory': return <FaTabletAlt className="w-5 h-5" />;
+      case 'pdaInventory': return <FaPhone className="w-5 h-5" />;
+      case 'actaEntrega': return <FaFileAlt className="w-5 h-5" />;
+      default: return <FaFileAlt className="w-5 h-5" />;
+    }
+  };
+
+  const getModuleColor = (moduleType) => {
+    switch(moduleType) {
+      case 'ticket': return 'from-blue-500 to-blue-600';
+      case 'qualityTicket': return 'from-emerald-500 to-emerald-600';
+      case 'purchaseRequest': return 'from-purple-500 to-purple-600';
+      case 'user': return 'from-orange-500 to-orange-600';
+      case 'inventory': return 'from-gray-500 to-gray-600';
+      case 'corporatePhone': return 'from-teal-500 to-teal-600';
+      case 'document': return 'from-indigo-500 to-indigo-600';
+      case 'credential': return 'from-red-500 to-red-600';
+      case 'tabletInventory': return 'from-cyan-500 to-cyan-600';
+      case 'pdaInventory': return 'from-pink-500 to-pink-600';
+      case 'actaEntrega': return 'from-yellow-500 to-yellow-600';
+      default: return 'from-gray-400 to-gray-500';
+    }
+  };
+
+  const getTimeAgo = (date) => {
+    if (!date) return 'Desconocido';
+    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+    if (seconds < 60) return 'Hace un momento';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `Hace ${minutes}min`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `Hace ${hours}h`;
+    const days = Math.floor(hours / 24);
+    if (days < 30) return `Hace ${days}d`;
+    const months = Math.floor(days / 30);
+    if (months < 12) return `Hace ${months}m`;
+    return `Hace ${Math.floor(months / 12)}a`;
+  };
+
+  const handleViewDetails = (item) => {
+    setSelectedItem(item);
+    setShowDetailModal(true);
+  };
+
+  if (!user || (user.role?.name !== 'Administrador' && user.role?.name !== 'Tecnico')) {
+    return (
+      <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto">
+          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+            <FaExclamationTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Acceso Denegado</h2>
+            <p className="text-gray-600">No tienes permisos para acceder a la papelera del sistema.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4 sm:px-6 lg:px-8">
+      {/* Notification */}
+      <NotificationSystem
+        notification={notification}
+        onClose={() => setNotification(null)}
+      />
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        confirmDialog={confirmDialog}
+        onClose={handleCancelConfirm}
+        onConfirm={handleConfirm}
+      />
+
+      <div>
+        <div className="mb-8">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center">
+                <div className="w-12 h-12 bg-linear-to-r from-gray-600 to-gray-700 rounded-xl flex items-center justify-center mr-3 shadow-lg">
+                  <FaDumpster className="w-6 h-6 text-white" />
+                </div>
+                Papelera del Sistema
+              </h1>
+              <p className="mt-2 text-gray-600">Recupera o elimina permanentemente elementos eliminados</p>
+            </div>
+            <div className="flex items-center gap-3 flex-wrap">
+              <button
+                onClick={() => setShowStats(!showStats)}
+                className="inline-flex items-center px-4 py-2.5 bg-white hover:bg-gray-50 border-2 border-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
+                title="Ver estadísticas"
+              >
+                <FaChartBar className="mr-2" />
+                <span className="hidden sm:inline">Estadísticas</span>
+              </button>
+              <button
+                onClick={handleEmptyTrash}
+                className="flex items-center space-x-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                disabled={stats.total === 0}
+              >
+                <FaTrash className="w-5 h-5" />
+                <span className="hidden sm:inline">Vaciar Papelera</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Panel */}
+        {showStats && (
+          <StatsPanel
+            showStats={showStats}
+            stats={stats}
+            statsConfig={[
+              {
+                key: 'total',
+                label: 'Total Elementos',
+                icon: FaDumpster,
+                gradient: 'from-gray-500 to-gray-600',
+                loading: loading
+              },
+              ...stats.stats.map((stat, index) => ({
+                key: `${stat.moduleType}_${index}`,
+                label: `${stat.moduleName} (${stat.count})`,
+                icon: getModuleIcon(stat.moduleType),
+                gradient: getModuleColor(stat.moduleType),
+                loading: loading
+              }))
+            ]}
+          />
+        )}
+
+        {/* Filter Panel */}
+        <FilterPanel
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          showFilters={showFilters}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+          filters={[
+            {
+              label: 'Módulo',
+              value: filterModule,
+              onChange: setFilterModule,
+              type: 'select',
+              options: [
+                { value: 'all', label: 'Todos los módulos' },
+                { value: 'ticket', label: 'Tickets' },
+                { value: 'qualityTicket', label: 'Tickets de Calidad' },
+                { value: 'purchaseRequest', label: 'Solicitudes de Compra' },
+                { value: 'user', label: 'Usuarios' },
+                { value: 'inventory', label: 'Inventario' },
+                { value: 'corporatePhone', label: 'Teléfonos Corporativos' },
+                { value: 'document', label: 'Documentos' },
+                { value: 'credential', label: 'Credenciales' },
+                { value: 'tabletInventory', label: 'Inventario Tablets' },
+                { value: 'pdaInventory', label: 'Inventario PDAs' },
+                { value: 'actaEntrega', label: 'Actas de Entrega' }
+              ]
+            }
+          ]}
+        />
+
+        {/* Resumen de resultados */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2 sm:gap-0">
+          <p className="text-sm text-gray-600 font-medium">
+            Mostrando <span className="font-bold text-gray-700">{trashItems.length}</span> de <span className="font-bold">{pagination.total}</span> elementos
+          </p>
+          <p className="text-xs text-gray-500">
+            Los elementos se eliminan automáticamente después de 30 días
+          </p>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+            <h2 className="text-xl font-semibold text-gray-900">Elementos Eliminados</h2>
+          </div>
+          <div className="p-6">
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+                <p className="mt-4 text-gray-600">Cargando elementos de la papelera...</p>
+              </div>
+            ) : trashItems.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FaDumpster className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  {searchTerm || filterModule !== 'all'
+                    ? 'No se encontraron elementos'
+                    : 'La papelera está vacía'}
+                </h3>
+                <p className="text-gray-600">
+                  {searchTerm || filterModule !== 'all'
+                    ? 'Intenta ajustar los filtros de búsqueda'
+                    : 'Los elementos eliminados aparecerán aquí'}
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                  {trashItems.map((item) => (
+                    <div key={item.id} className="bg-gray-50 rounded-xl p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-shadow">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-10 h-10 bg-linear-to-r ${getModuleColor(item.moduleType)} rounded-full flex items-center justify-center text-white`}>
+                            {getModuleIcon(item.moduleType)}
+                          </div>
+                          <h3 className="font-semibold text-gray-900 truncate" title={item.title}>
+                            {item.title}
+                          </h3>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2 text-sm text-gray-600 mb-4">
+                        <div className="flex items-center gap-2">
+                          <FaFileAlt className="w-3 h-3 text-gray-400" />
+                          <p><strong>Módulo:</strong> {item.moduleName}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <FaUser className="w-3 h-3 text-gray-400" />
+                          <p><strong>Eliminado por:</strong> {item.deleter?.name || 'Usuario desconocido'}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <FaCalendarAlt className="w-3 h-3 text-gray-400" />
+                          <p><strong>Eliminado:</strong> {getTimeAgo(item.deletedAt)}</p>
+                        </div>
+                        {item.deletedReason && (
+                          <div className="pt-2 border-t border-gray-200">
+                            <p className="text-xs text-gray-500 mb-1"><strong>Razón:</strong></p>
+                            <p className="text-xs text-gray-600 italic">{item.deletedReason}</p>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                        <button
+                          onClick={() => handleViewDetails(item)}
+                          className="flex items-center justify-center space-x-1 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors"
+                        >
+                          <FaEye />
+                          <span>Ver detalles</span>
+                        </button>
+                        <button
+                          onClick={() => handleRestore(item)}
+                          className="flex items-center justify-center space-x-1 px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-lg hover:bg-green-200 transition-colors"
+                        >
+                          <FaUndo />
+                          <span>Restaurar</span>
+                        </button>
+                        <button
+                          onClick={() => handlePermanentDelete(item)}
+                          className="flex items-center justify-center space-x-1 px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors"
+                        >
+                          <FaTrash />
+                          <span>Eliminar</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Paginación */}
+                {pagination.pages > 1 && (
+                  <div className="flex justify-center mt-8">
+                    <nav className="flex items-center space-x-2">
+                      <button
+                        onClick={() => setPagination(prev => ({ ...prev, current: Math.max(1, prev.current - 1) }))}
+                        disabled={pagination.current === 1}
+                        className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Anterior
+                      </button>
+                      <span className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg">
+                        {pagination.current} de {pagination.pages}
+                      </span>
+                      <button
+                        onClick={() => setPagination(prev => ({ ...prev, current: Math.min(prev.pages, prev.current + 1) }))}
+                        disabled={pagination.current === pagination.pages}
+                        className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Siguiente
+                      </button>
+                    </nav>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Modal para ver detalles */}
+      {showDetailModal && selectedItem && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+            <div className="sticky top-0 bg-linear-to-r from-gray-600 to-gray-700 p-4 lg:p-6 z-10">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl lg:text-2xl font-bold text-white flex items-center gap-2">
+                  <FaHistory className="w-6 h-6" />
+                  Detalles del Elemento
+                </h2>
+                <button
+                  onClick={() => setShowDetailModal(false)}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                >
+                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-4 sm:p-6 md:p-8 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
+                  <p className="text-gray-900 font-semibold">{selectedItem.title}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Módulo</label>
+                  <div className="flex items-center gap-2">
+                    <div className={`w-6 h-6 bg-linear-to-r ${getModuleColor(selectedItem.moduleType)} rounded-full flex items-center justify-center text-white`}>
+                      {getModuleIcon(selectedItem.moduleType)}
+                    </div>
+                    <p className="text-gray-900">{selectedItem.moduleName}</p>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Eliminado por</label>
+                  <p className="text-gray-900">{selectedItem.deleter?.name || 'Usuario desconocido'}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Fecha de eliminación</label>
+                  <p className="text-gray-900">{new Date(selectedItem.deletedAt).toLocaleString()}</p>
+                </div>
+              </div>
+
+              {selectedItem.deletedReason && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Razón de eliminación</label>
+                  <p className="text-gray-900 bg-gray-50 p-3 rounded-lg">{selectedItem.deletedReason}</p>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Datos originales</label>
+                <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                  <pre className="text-xs">{JSON.stringify(JSON.parse(selectedItem.data), null, 2)}</pre>
+                </div>
+              </div>
+
+              <div className="flex space-x-3 pt-4">
+                <button
+                  onClick={() => setShowDetailModal(false)}
+                  className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors"
+                >
+                  Cerrar
+                </button>
+                <button
+                  onClick={() => {
+                    handleRestore(selectedItem);
+                    setShowDetailModal(false);
+                  }}
+                  className="flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center"
+                >
+                  <FaUndo className="mr-2" />
+                  Restaurar Elemento
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Trash;
