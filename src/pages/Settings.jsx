@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import AuthContext from '../context/AuthContext.jsx';
 import { usersAPI } from '../api';
-import { FaCheck, FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaEye, FaEyeSlash, FaCog, FaLock, FaShieldAlt, FaKey } from 'react-icons/fa';
 
 const Settings = () => {
   const { user } = useContext(AuthContext);
@@ -105,9 +105,8 @@ const Settings = () => {
       });
       showNotification('Contraseña cambiada exitosamente. Serás redirigido al login.', 'success');
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-      setShowPasswords({ current: false, new: false, confirm: false }); // Reset visibility
+      setShowPasswords({ current: false, new: false, confirm: false });
 
-      // Clear local storage and redirect to login after successful password change
       setTimeout(() => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -174,231 +173,222 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
-      {/* Notification */}
-      {notification && (
-        <div className="fixed top-4 right-4 z-50 max-w-sm">
-          <div className={`flex items-center p-4 rounded-lg shadow-lg transition-all duration-300 ${
-            notification.type === 'success'
-              ? 'bg-green-50 border border-green-200 text-green-800'
-              : 'bg-red-50 border border-red-200 text-red-800'
-          }`}>
-            <div className="shrink-0">
-              {notification.type === 'success' ? (
-                <FaCheck className="w-5 h-5 text-green-400" />
-              ) : (
-                <FaTimes className="w-5 h-5 text-red-400" />
-              )}
-            </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium">{notification.message}</p>
-            </div>
-            <div className="ml-auto pl-3">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-gray-50 to-gray-100">
+      <div className="max-w-5xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+        
+        {/* Notification Toast */}
+        {notification && (
+          <div className="fixed top-4 right-4 z-50 max-w-sm">
+            <div className={`flex items-center gap-3 p-4 rounded-lg shadow-lg border backdrop-blur-sm transition-all duration-300 ${
+              notification.type === 'success'
+                ? 'bg-green-50 border-green-200 text-green-800'
+                : 'bg-red-50 border-red-200 text-red-800'
+            }`}>
+              <div className={`p-2 rounded-full shrink-0 ${
+                notification.type === 'success' ? 'bg-green-100' : 'bg-red-100'
+              }`}>
+                {notification.type === 'success' ? (
+                  <FaCheck className="w-4 h-4 text-green-600" />
+                ) : (
+                  <FaTimes className="w-4 h-4 text-red-600" />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium">{notification.message}</p>
+              </div>
               <button
                 onClick={() => setNotification(null)}
-                className="inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 hover:bg-gray-50"
+                className="shrink-0 p-1 rounded-md hover:bg-black/5 transition-colors"
               >
-                <FaTimes className="w-4 h-4" />
+                <FaTimes className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-            Configuración
-          </h1>
-          <p className="text-base sm:text-lg text-gray-600">
-            Personaliza tu experiencia en la plataforma
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-
-          {/* Seguridad */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">
-                Seguridad
-              </h2>
+        {/* Header Section */}
+        <div className="mb-6 lg:mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2.5 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-lg shadow-lg">
+              <FaCog className="text-white text-xl sm:text-2xl" />
             </div>
-            <div className="p-6 space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-                <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
-                    Cambiar Contraseña
-                  </label>
-                  <p className="text-sm text-gray-600">
-                    Actualiza tu contraseña de acceso
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowPasswordModal(true)}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors shrink-0"
-                >
-                  Cambiar
-                </button>
-              </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Configuración</h1>
+              <p className="text-sm sm:text-base text-gray-600 mt-0.5">Personaliza tu experiencia y gestiona tu seguridad</p>
+            </div>
+          </div>
+        </div>
 
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-                <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
-                    Autenticación de Dos Factores
-                  </label>
-                  <p className="text-sm text-gray-600">
-                    {twoFactorData.isEnabled ? 'Habilitada - Añade una capa extra de seguridad' : 'Deshabilitada - Añade una capa extra de seguridad'}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={handle2FAToggle}
-                  disabled={twoFactorLoading}
-                  className={`px-4 py-2 font-medium rounded-lg focus:ring-2 focus:ring-offset-2 transition-colors shrink-0 ${
-                    twoFactorData.isEnabled
-                      ? 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500'
-                      : 'bg-[#662d91] text-white hover:bg-[#7a3da8] focus:ring-[#662d91]'
-                  } disabled:opacity-50 disabled:cursor-not-allowed`}
-                >
-                  {twoFactorLoading ? 'Procesando...' : (twoFactorData.isEnabled ? 'Deshabilitar' : 'Habilitar')}
-                </button>
+        {/* Main Settings Card */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          
+          {/* Security Section Header */}
+          <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-4 sm:px-6 py-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+                <FaShieldAlt className="text-white text-lg" />
+              </div>
+              <div>
+                <p className="text-xs text-purple-200 font-medium">Gestión de Cuenta</p>
+                <p className="text-base sm:text-lg font-bold text-white">Seguridad y Privacidad</p>
               </div>
             </div>
           </div>
 
-          {/* Guardar Cambios */}
-          <div className="flex justify-end pt-2">
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-6 py-3 bg-[#662d91] text-white font-semibold rounded-xl hover:bg-[#7a3da8] focus:ring-2 focus:ring-[#662d91] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
-            >
-              {loading ? 'Guardando...' : 'Guardar Cambios'}
-            </button>
-          </div>
-        </form>
-
-
-        {/* 2FA Setup Modal */}
-        {show2FAModal && (
-          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    Configurar Autenticación de Dos Factores
-                  </h2>
-                  <button
-                    onClick={() => {
-                      setShow2FAModal(false);
-                      setTwoFactorData(prev => ({ ...prev, secret: '', qrCode: '', token: '' }));
-                    }}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    <svg className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
+          {/* Form Section */}
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 lg:p-8">
+            
+            {/* Security Settings */}
+            <div className="mb-8">
+              <div className="flex items-center gap-2 mb-4 sm:mb-6">
+                <div className="h-px flex-1 bg-gray-200"></div>
+                <h2 className="text-base sm:text-lg font-bold text-gray-900 px-3">Opciones de Seguridad</h2>
+                <div className="h-px flex-1 bg-gray-200"></div>
               </div>
 
-              <form onSubmit={handle2FASubmit} className="p-6 space-y-5">
-                <div className="text-center">
-                  <p className="text-sm text-gray-600 mb-4">
-                    Escanea el código QR con tu aplicación de autenticación (Google Authenticator, Authy, etc.)
-                  </p>
-                  {twoFactorData.qrCode && (
-                    <div className="flex justify-center mb-4">
-                      <img
-                        src={twoFactorData.qrCode}
-                        alt="QR Code para 2FA"
-                        className="border border-gray-300 rounded-lg"
-                      />
+              <div className="space-y-4 sm:space-y-6">
+                
+                {/* Change Password Option */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 rounded-lg border border-gray-200 hover:border-[#662d91] hover:bg-gray-50 transition-all">
+                  <div className="flex items-start gap-3 flex-1">
+                    <div className="p-2 bg-purple-100 rounded-lg shrink-0 mt-0.5">
+                      <FaLock className="text-[#662d91] text-sm" />
                     </div>
-                  )}
-                  <p className="text-xs text-gray-500 mb-4">
-                    O ingresa manualmente este código: <strong>{twoFactorData.secret}</strong>
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
-                    Código de Verificación *
-                  </label>
-                  <input
-                    type="text"
-                    name="token"
-                    value={twoFactorData.token}
-                    onChange={handle2FAChange}
-                    placeholder="Ingresa el código de 6 dígitos"
-                    className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all"
-                    required
-                    maxLength="6"
-                  />
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                    <div className="flex-1 min-w-0">
+                      <label className="block text-sm font-semibold text-gray-900 mb-1">
+                        Cambiar Contraseña
+                      </label>
+                      <p className="text-xs sm:text-sm text-gray-600">
+                        Actualiza tu contraseña de acceso al sistema
+                      </p>
+                    </div>
+                  </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      setShow2FAModal(false);
-                      setTwoFactorData(prev => ({ ...prev, secret: '', qrCode: '', token: '' }));
-                    }}
-                    className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors"
-                    disabled={twoFactorLoading}
+                    onClick={() => setShowPasswordModal(true)}
+                    className="w-full sm:w-auto px-4 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all text-sm shrink-0"
                   >
-                    Cancelar
+                    Cambiar
                   </button>
+                </div>
+
+                {/* Two-Factor Authentication Option */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 rounded-lg border border-gray-200 hover:border-[#662d91] hover:bg-gray-50 transition-all">
+                  <div className="flex items-start gap-3 flex-1">
+                    <div className="p-2 bg-purple-100 rounded-lg shrink-0 mt-0.5">
+                      <FaKey className="text-[#662d91] text-sm" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <label className="block text-sm font-semibold text-gray-900 mb-1">
+                        Autenticación de Dos Factores
+                      </label>
+                      <p className="text-xs sm:text-sm text-gray-600">
+                        {twoFactorData.isEnabled 
+                          ? 'Actualmente habilitada - Mayor protección para tu cuenta' 
+                          : 'Añade una capa extra de seguridad con códigos de verificación'}
+                      </p>
+                      {twoFactorData.isEnabled && (
+                        <div className="flex items-center gap-2 mt-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span className="text-xs font-medium text-green-700">Activo</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                   <button
-                    type="submit"
-                    className="flex-1 px-4 py-3 bg-[#662d91] hover:bg-[#7a3da8] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    type="button"
+                    onClick={handle2FAToggle}
                     disabled={twoFactorLoading}
+                    className={`w-full sm:w-auto px-4 py-2.5 font-medium rounded-lg focus:ring-2 focus:ring-offset-2 transition-all text-sm shrink-0 ${
+                      twoFactorData.isEnabled
+                        ? 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500'
+                        : 'bg-[#662d91] text-white hover:bg-[#7a3da8] focus:ring-[#662d91]'
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     {twoFactorLoading ? (
-                      <>
-                        <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Verificando...
-                      </>
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Procesando...</span>
+                      </div>
                     ) : (
-                      'Verificar y Habilitar'
+                      twoFactorData.isEnabled ? 'Deshabilitar' : 'Habilitar'
                     )}
                   </button>
                 </div>
-              </form>
+
+              </div>
             </div>
-          </div>
-        )}
+
+            {/* Security Info Card */}
+            <div className="mb-6 p-4 rounded-lg border-l-4 bg-blue-50 border-blue-500">
+              <div className="flex items-start gap-3">
+                <FaShieldAlt className="mt-0.5 shrink-0 text-blue-600" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold mb-1 text-blue-900">
+                    Recomendaciones de Seguridad
+                  </p>
+                  <p className="text-xs text-blue-700">
+                    Mantén tu cuenta segura actualizando tu contraseña regularmente y habilitando la autenticación de dos factores para mayor protección.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-gray-200">
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span>Los cambios se aplican de forma inmediata</span>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
+              >
+                {loading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Guardando...</span>
+                  </>
+                ) : (
+                  <>
+                    <FaCheck className="text-sm" />
+                    <span>Guardar Cambios</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
 
         {/* Password Change Modal */}
         {showPasswordModal && (
           <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
             <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
+              <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-6 py-5 rounded-t-2xl">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    Cambiar Contraseña
-                  </h2>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+                      <FaLock className="text-white text-lg" />
+                    </div>
+                    <h2 className="text-xl font-bold text-white">
+                      Cambiar Contraseña
+                    </h2>
+                  </div>
                   <button
                     onClick={() => setShowPasswordModal(false)}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                   >
-                    <svg className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <FaTimes className="w-5 h-5 text-white" />
                   </button>
                 </div>
               </div>
 
               <form onSubmit={handlePasswordSubmit} className="p-6 space-y-5">
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <FaLock className="text-[#662d91] text-xs" />
                     Contraseña Actual *
                   </label>
                   <div className="relative">
@@ -407,7 +397,8 @@ const Settings = () => {
                       name="currentPassword"
                       value={passwordData.currentPassword}
                       onChange={handlePasswordChange}
-                      className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all"
+                      placeholder="Ingresa tu contraseña actual"
+                      className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-sm sm:text-base hover:border-gray-400"
                       required
                     />
                     <button
@@ -421,7 +412,8 @@ const Settings = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <FaKey className="text-[#662d91] text-xs" />
                     Nueva Contraseña *
                   </label>
                   <div className="relative">
@@ -430,7 +422,8 @@ const Settings = () => {
                       name="newPassword"
                       value={passwordData.newPassword}
                       onChange={handlePasswordChange}
-                      className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all"
+                      placeholder="Ingresa tu nueva contraseña"
+                      className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-sm sm:text-base hover:border-gray-400"
                       required
                     />
                     <button
@@ -444,7 +437,8 @@ const Settings = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <FaKey className="text-[#662d91] text-xs" />
                     Confirmar Nueva Contraseña *
                   </label>
                   <div className="relative">
@@ -453,7 +447,8 @@ const Settings = () => {
                       name="confirmPassword"
                       value={passwordData.confirmPassword}
                       onChange={handlePasswordChange}
-                      className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all"
+                      placeholder="Confirma tu nueva contraseña"
+                      className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-sm sm:text-base hover:border-gray-400"
                       required
                     />
                     <button
@@ -470,26 +465,118 @@ const Settings = () => {
                   <button
                     type="button"
                     onClick={() => setShowPasswordModal(false)}
-                    className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors"
+                    className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
                     disabled={passwordLoading}
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-3 bg-[#662d91] hover:bg-[#7a3da8] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    className="flex-1 px-4 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#662d91] text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                     disabled={passwordLoading}
                   >
                     {passwordLoading ? (
                       <>
-                        <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                         Cambiando...
                       </>
                     ) : (
                       'Cambiar Contraseña'
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* 2FA Setup Modal */}
+        {show2FAModal && (
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200">
+              <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-6 py-5 rounded-t-2xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+                      <FaShieldAlt className="text-white text-lg" />
+                    </div>
+                    <h2 className="text-xl font-bold text-white">
+                      Configurar 2FA
+                    </h2>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setShow2FAModal(false);
+                      setTwoFactorData(prev => ({ ...prev, secret: '', qrCode: '', token: '' }));
+                    }}
+                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  >
+                    <FaTimes className="w-5 h-5 text-white" />
+                  </button>
+                </div>
+              </div>
+
+              <form onSubmit={handle2FASubmit} className="p-6 space-y-5">
+                <div className="text-center">
+                  <p className="text-sm text-gray-600 mb-4">
+                    Escanea el código QR con tu aplicación de autenticación (Google Authenticator, Authy, etc.)
+                  </p>
+                  {twoFactorData.qrCode && (
+                    <div className="flex justify-center mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                      <img
+                        src={twoFactorData.qrCode}
+                        alt="QR Code para 2FA"
+                        className="rounded-lg"
+                      />
+                    </div>
+                  )}
+                  <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                    <p className="text-xs text-gray-600 mb-1">O ingresa manualmente:</p>
+                    <p className="text-sm font-mono font-semibold text-[#662d91] break-all">{twoFactorData.secret}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <FaKey className="text-[#662d91] text-xs" />
+                    Código de Verificación *
+                  </label>
+                  <input
+                    type="text"
+                    name="token"
+                    value={twoFactorData.token}
+                    onChange={handle2FAChange}
+                    placeholder="Ingresa el código de 6 dígitos"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-center text-lg tracking-widest font-mono"
+                    required
+                    maxLength="6"
+                  />
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShow2FAModal(false);
+                      setTwoFactorData(prev => ({ ...prev, secret: '', qrCode: '', token: '' }));
+                    }}
+                    className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
+                    disabled={twoFactorLoading}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 px-4 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#662d91] text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    disabled={twoFactorLoading}
+                  >
+                    {twoFactorLoading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                        Verificando...
+                      </>
+                    ) : (
+                      'Verificar y Habilitar'
                     )}
                   </button>
                 </div>
@@ -503,5 +590,3 @@ const Settings = () => {
 };
 
 export default Settings;
-
-

@@ -158,14 +158,22 @@ const Help = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Centro de Ayuda</h1>
-        <p className="text-base sm:text-lg text-gray-600">Encuentra respuestas y recursos para usar la plataforma</p>
-      </div>
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-gray-50 to-gray-100">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8 space-y-6">
+        <div className="mb-6 lg:mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2.5 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-lg shadow-lg">
+              <FaQuestionCircle className="text-white text-xl sm:text-2xl" />
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Centro de Ayuda</h1>
+              <p className="text-sm sm:text-base text-gray-600 mt-0.5">Encuentra respuestas y recursos para usar la plataforma</p>
+            </div>
+          </div>
+        </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-xl shadow-lg">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="border-b border-gray-200">
           <nav className="flex">
             <button
@@ -242,18 +250,24 @@ const Help = () => {
                 ))}
               </div>
 
-              <div className="mt-8 bg-[#f3ebf9] rounded-lg p-6">
-                <h3 className="font-medium text-gray-900 mb-2">¿No encuentras lo que buscas?</h3>
-                <p className="text-gray-600 mb-4">
-                  Si tienes alguna pregunta específica o necesitas ayuda con algo en particular,
-                  no dudes en contactarnos. Nuestro equipo de soporte está aquí para ayudarte.
-                </p>
-                <button
-                  onClick={() => navigate('/tickets')}
-                  className="px-4 py-2 bg-[#662d91] text-white rounded-lg hover:bg-[#7a3da8] transition-colors"
-                >
-                  Crear Ticket de Soporte
-                </button>
+              <div className="mt-8 p-4 rounded-lg border-l-4 bg-purple-50 border-[#662d91]">
+                <div className="flex items-start gap-3">
+                  <FaHeadset className="mt-0.5 shrink-0 text-[#662d91]" />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-[#662d91] mb-1">¿No encuentras lo que buscas?</h3>
+                    <p className="text-sm text-gray-700 mb-3">
+                      Si tienes alguna pregunta específica o necesitas ayuda con algo en particular,
+                      no dudes en contactarnos. Nuestro equipo de soporte está aquí para ayudarte.
+                    </p>
+                    <button
+                      onClick={() => navigate('/tickets')}
+                      className="flex items-center justify-center gap-2 px-4 py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5] transition-all shadow-lg hover:shadow-xl text-sm"
+                    >
+                      <FaTicketAlt className="text-sm" />
+                      <span>Crear Ticket de Soporte</span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -266,9 +280,16 @@ const Help = () => {
                 <h2 className="text-xl font-semibold text-gray-900">Manual de Usuario</h2>
               </div>
               <div className="space-y-4">
-                <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white p-4 rounded-lg">
-                  <h3 className="text-lg font-bold">Manual de Usuario - DuvyClass</h3>
-                  <p className="text-sm opacity-90">Sistema IT de Gestión Tecnológica</p>
+                <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-lg shadow-lg p-6 mb-2">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+                      <FaBook className="text-white text-xl" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white">Manual de Usuario - DuvyClass</h3>
+                      <p className="text-sm text-purple-100 mt-1">Sistema IT de Gestión Tecnológica</p>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
@@ -867,6 +888,7 @@ const Help = () => {
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );
