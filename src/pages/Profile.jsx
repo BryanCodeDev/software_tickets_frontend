@@ -149,7 +149,7 @@ const Profile = () => {
         {/* Header Section */}
         <div className="mb-6 lg:mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2.5 bg-linear-to-br from-purple-600 to-purple-700 rounded-lg shadow-lg">
+            <div className="p-2.5 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-lg shadow-lg">
               <FaUser className="text-white text-xl sm:text-2xl" />
             </div>
             <div>
@@ -163,7 +163,7 @@ const Profile = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           
           {/* Role Badge Section */}
-          <div className="bg-linear-to-r from-purple-600 to-purple-700 px-4 sm:px-6 py-4">
+          <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-4 sm:px-6 py-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
@@ -201,7 +201,7 @@ const Profile = () => {
                 {/* Nombre Completo */}
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                    <FaUser className="text-purple-600 text-xs" />
+                    <FaUser className="text-[#662d91] text-xs" />
                     Nombre Completo
                   </label>
                   <input
@@ -210,7 +210,7 @@ const Profile = () => {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="Ingresa tu nombre completo"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-sm sm:text-base hover:border-gray-400"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent transition-all text-sm sm:text-base hover:border-gray-400"
                     required
                   />
                 </div>
@@ -218,7 +218,7 @@ const Profile = () => {
                 {/* Correo Electrónico */}
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                    <FaEnvelope className="text-purple-600 text-xs" />
+                    <FaEnvelope className="text-[#662d91] text-xs" />
                     Correo Electrónico
                   </label>
                   <input
@@ -227,7 +227,7 @@ const Profile = () => {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="correo@ejemplo.com"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-sm sm:text-base hover:border-gray-400"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent transition-all text-sm sm:text-base hover:border-gray-400"
                     required
                   />
                 </div>
@@ -235,7 +235,7 @@ const Profile = () => {
                 {/* Nombre de Usuario */}
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                    <FaIdCard className="text-purple-600 text-xs" />
+                    <FaIdCard className="text-[#662d91] text-xs" />
                     Nombre de Usuario
                   </label>
                   <input
@@ -244,7 +244,7 @@ const Profile = () => {
                     value={formData.username}
                     onChange={handleChange}
                     placeholder="usuario123"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-sm sm:text-base hover:border-gray-400"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent transition-all text-sm sm:text-base hover:border-gray-400"
                     required
                   />
                 </div>
@@ -252,14 +252,14 @@ const Profile = () => {
                 {/* Código IT */}
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                    <FaIdCard className="text-purple-600 text-xs" />
+                    <FaIdCard className="text-[#662d91] text-xs" />
                     Código IT
                   </label>
                   <select
                     name="it"
                     value={formData.it}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-sm sm:text-base hover:border-gray-400 bg-white"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent transition-all text-sm sm:text-base hover:border-gray-400 bg-white"
                   >
                     <option value="">Seleccionar código IT</option>
                     {uniqueITs.map((item) => (
@@ -284,21 +284,21 @@ const Profile = () => {
                 {/* ¿Tiene teléfono corporativo? */}
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
-                    <FaPhone className="text-purple-600 text-xs" />
+                    <FaPhone className="text-[#662d91] text-xs" />
                     ¿Tiene teléfono corporativo?
                   </label>
                   <div className="flex gap-3 flex-wrap">
-                    <label className="flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 has-checked:border-purple-600 has-checked:bg-purple-50 flex-1 min-w-[100px]">
+                    <label className="flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9] flex-1 min-w-[100px]">
                       <input
                         type="radio"
                         name="hasCorporatePhone"
                         checked={formData.hasCorporatePhone === true}
                         onChange={() => setFormData({ ...formData, hasCorporatePhone: true })}
-                        className="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                        className="w-4 h-4 text-[#662d91] focus:ring-[#7a3da8]"
                       />
                       <span className="text-sm font-medium text-gray-700">Sí</span>
                     </label>
-                    <label className="flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 has-checked:border-purple-600 has-checked:bg-purple-50 flex-1 min-w-[100px]">
+                    <label className="flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9] flex-1 min-w-[100px]">
                       <input
                         type="radio"
                         name="hasCorporatePhone"
@@ -307,7 +307,7 @@ const Profile = () => {
                           setFormData({ ...formData, hasCorporatePhone: false, corporatePhone: '' });
                           setSearchPhone('');
                         }}
-                        className="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                        className="w-4 h-4 text-[#662d91] focus:ring-[#7a3da8]"
                       />
                       <span className="text-sm font-medium text-gray-700">No</span>
                     </label>
@@ -318,7 +318,7 @@ const Profile = () => {
                 {formData.hasCorporatePhone && (
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                      <FaMobile className="text-purple-600 text-xs" />
+                      <FaMobile className="text-[#662d91] text-xs" />
                       Número Corporativo
                       <span className="ml-auto text-xs font-normal text-gray-500">
                         {availablePhones.length} disponibles
@@ -339,7 +339,7 @@ const Profile = () => {
                         }}
                         onFocus={() => setShowPhoneDropdown(true)}
                         onBlur={() => setTimeout(() => setShowPhoneDropdown(false), 200)}
-                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-sm sm:text-base hover:border-gray-400"
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent transition-all text-sm sm:text-base hover:border-gray-400"
                       />
                       
                       {/* Dropdown de teléfonos */}
@@ -350,7 +350,7 @@ const Profile = () => {
                               {phonesFiltered.map(phone => (
                                 <div
                                   key={phone.id}
-                                  className="px-4 py-3 hover:bg-purple-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                                  className="px-4 py-3 hover:bg-[#f3ebf9] cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
                                   onClick={() => {
                                     setFormData({ ...formData, corporatePhone: phone.numero_celular });
                                     setSearchPhone('');
@@ -362,7 +362,7 @@ const Profile = () => {
                                       <div className="font-semibold text-gray-900 text-sm">{phone.numero_celular}</div>
                                       <div className="text-xs text-gray-600">{phone.nombre}</div>
                                     </div>
-                                    <div className="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded">
+                                    <div className="px-2 py-1 bg-[#f3ebf9] text-[#662d91] text-xs font-medium rounded">
                                       {phone.category}
                                     </div>
                                   </div>
@@ -436,7 +436,7 @@ const Profile = () => {
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-purple-600 to-purple-700 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 focus:ring-4 focus:ring-purple-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
               >
                 {loading ? (
                   <>
