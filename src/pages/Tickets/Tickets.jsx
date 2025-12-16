@@ -403,6 +403,7 @@ const Tickets = () => {
        formDataToSend.append('priority', formData.priority);
        formDataToSend.append('status', formData.status);
        formDataToSend.append('assignedTo', assignedToValue || '');
+       formDataToSend.append('createdAt', new Date().toISOString()); // Asignar fecha y hora automáticamente
        formDataToSend.append('attachment', formData.attachment);
 
        const ticket = await ticketsAPI.createTicketWithAttachment(formDataToSend);
@@ -416,7 +417,8 @@ const Tickets = () => {
          description: formData.description,
          priority: formData.priority,
          status: formData.status,
-         assignedTo: assignedToValue || null
+         assignedTo: assignedToValue || null,
+         createdAt: new Date().toISOString() // Asignar fecha y hora automáticamente
        };
 
        const ticket = await ticketsAPI.createTicket(ticketData);
@@ -939,7 +941,10 @@ const Tickets = () => {
             {showFilters && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6 border-t-2 border-gray-100 animate-fade-in">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Estado</label>
+                  <label className={conditionalClasses({
+                    light: "block text-sm font-semibold text-gray-700 mb-2",
+                    dark: "block text-sm font-semibold text-gray-300 mb-2"
+                  })}>Estado</label>
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
@@ -954,7 +959,10 @@ const Tickets = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Prioridad</label>
+                  <label className={conditionalClasses({
+                    light: "block text-sm font-semibold text-gray-700 mb-2",
+                    dark: "block text-sm font-semibold text-gray-300 mb-2"
+                  })}>Prioridad</label>
                   <select
                     value={filterPriority}
                     onChange={(e) => setFilterPriority(e.target.value)}
@@ -968,7 +976,10 @@ const Tickets = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
+                  <label className={conditionalClasses({
+                    light: "block text-sm font-semibold text-gray-700 mb-2",
+                    dark: "block text-sm font-semibold text-gray-300 mb-2"
+                  })}>Categoría</label>
                   <select
                     value={titleFilter}
                     onChange={(e) => setTitleFilter(e.target.value)}
@@ -982,7 +993,10 @@ const Tickets = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Ordenar por</label>
+                  <label className={conditionalClasses({
+                    light: "block text-sm font-semibold text-gray-700 mb-2",
+                    dark: "block text-sm font-semibold text-gray-300 mb-2"
+                  })}>Ordenar por</label>
                   <div className="flex gap-2">
                     <select
                       value={sortBy}
@@ -1192,16 +1206,34 @@ const Tickets = () => {
                           dark: "grid grid-cols-2 gap-4 text-xs text-gray-300"
                         })}>
                           <div>
-                            <span className="font-medium">Creado por:</span>
-                            <p className="truncate">{ticket.creator?.name || 'Usuario'}</p>
+                            <span className={conditionalClasses({
+                              light: "font-medium text-gray-600",
+                              dark: "font-medium text-gray-300"
+                            })}>Creado por:</span>
+                            <p className={conditionalClasses({
+                              light: "truncate text-gray-700",
+                              dark: "truncate text-gray-200"
+                            })}>{ticket.creator?.name || 'Usuario'}</p>
                           </div>
                           <div>
-                            <span className="font-medium">Asignado a:</span>
-                            <p className="truncate">{ticket.assignee?.name || 'Sin asignar'}</p>
+                            <span className={conditionalClasses({
+                              light: "font-medium text-gray-600",
+                              dark: "font-medium text-gray-300"
+                            })}>Asignado a:</span>
+                            <p className={conditionalClasses({
+                              light: "truncate text-gray-700",
+                              dark: "truncate text-gray-200"
+                            })}>{ticket.assignee?.name || 'Sin asignar'}</p>
                           </div>
                           <div className="col-span-2">
-                            <span className="font-medium">Actualizado:</span>
-                            <p>{getTimeAgo(ticket.updatedAt)}</p>
+                            <span className={conditionalClasses({
+                              light: "font-medium text-gray-600",
+                              dark: "font-medium text-gray-300"
+                            })}>Actualizado:</span>
+                            <p className={conditionalClasses({
+                              light: "text-gray-700",
+                              dark: "text-gray-200"
+                            })}>{getTimeAgo(ticket.updatedAt)}</p>
                           </div>
                         </div>
                       </div>
@@ -1221,9 +1253,18 @@ const Tickets = () => {
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase">Título</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase">Estado</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase">Prioridad</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Creado por</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Asignado a</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Fecha</th>
+                        <th className={conditionalClasses({
+                          light: "px-4 py-4 text-left text-xs font-bold uppercase text-gray-700",
+                          dark: "px-4 py-4 text-left text-xs font-bold uppercase text-gray-300"
+                        })}>Creado por</th>
+                        <th className={conditionalClasses({
+                          light: "px-4 py-4 text-left text-xs font-bold uppercase text-gray-700",
+                          dark: "px-4 py-4 text-left text-xs font-bold uppercase text-gray-300"
+                        })}>Asignado a</th>
+                        <th className={conditionalClasses({
+                          light: "px-4 py-4 text-left text-xs font-bold uppercase text-gray-700",
+                          dark: "px-4 py-4 text-left text-xs font-bold uppercase text-gray-300"
+                        })}>Fecha</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase">Acciones</th>
                       </tr>
                     </thead>
@@ -1260,13 +1301,22 @@ const Tickets = () => {
                               {ticket.priority}
                             </span>
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-700">
+                          <td className={conditionalClasses({
+                            light: "px-4 py-4 text-sm text-gray-700",
+                            dark: "px-4 py-4 text-sm text-gray-200"
+                          })}>
                             {ticket.creator?.name || 'Usuario'}
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-700">
+                          <td className={conditionalClasses({
+                            light: "px-4 py-4 text-sm text-gray-700",
+                            dark: "px-4 py-4 text-sm text-gray-200"
+                          })}>
                             {ticket.assignee?.name || 'Sin asignar'}
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-500">
+                          <td className={conditionalClasses({
+                            light: "px-4 py-4 text-sm text-gray-500",
+                            dark: "px-4 py-4 text-sm text-gray-400"
+                          })}>
                             {getTimeAgo(ticket.updatedAt)}
                           </td>
                           <td className="px-4 py-4">

@@ -213,7 +213,10 @@ const TicketDetailModal = ({
                 light: 'bg-white rounded-xl border-2 border-gray-200 overflow-hidden',
                 dark: 'bg-gray-700 rounded-xl border-2 border-gray-600 overflow-hidden'
               })}>
-                <div className="bg-linear-to-r from-[#f3ebf9] to-[#e8d5f5] px-4 lg:px-5 py-3 border-b-2 border-gray-200">
+                <div className={conditionalClasses({
+                  light: 'bg-linear-to-r from-[#f3ebf9] to-[#e8d5f5] px-4 lg:px-5 py-3 border-b-2 border-gray-200',
+                  dark: 'bg-linear-to-r from-gray-700 to-gray-600 px-4 lg:px-5 py-3 border-b-2 border-gray-600'
+                })}>
                   <h3 className={conditionalClasses({
                     light: 'text-base lg:text-lg font-bold text-gray-900 flex items-center gap-2',
                     dark: 'text-base lg:text-lg font-bold text-white flex items-center gap-2'

@@ -347,6 +347,7 @@ const TicketCalidad = () => {
         formDataToSend.append('status', formData.status);
         formDataToSend.append('type', 'calidad');
         formDataToSend.append('assignedTo', assignedToValue || '');
+        formDataToSend.append('createdAt', new Date().toISOString()); // Asignar fecha y hora automáticamente
         formDataToSend.append('attachment', formData.attachment);
 
         await qualityTicketsAPI.createQualityTicketWithAttachment(formDataToSend);
@@ -361,7 +362,8 @@ const TicketCalidad = () => {
           priority: formData.priority,
           status: formData.status,
           type: 'calidad',
-          assignedTo: assignedToValue || null
+          assignedTo: assignedToValue || null,
+          createdAt: new Date().toISOString() // Asignar fecha y hora automáticamente
         };
 
         await qualityTicketsAPI.createQualityTicket(ticketData);

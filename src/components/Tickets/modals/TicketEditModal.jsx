@@ -44,7 +44,7 @@ const TicketEditModal = ({
                 <div className="md:col-span-2">
                   <label className={conditionalClasses({
                     light: 'block text-sm font-semibold text-gray-700 mb-2',
-                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    dark: 'block text-sm font-semibold text-gray-200 mb-2'
                   })}>
                     Categoría del Problema *
                   </label>
@@ -179,7 +179,7 @@ const TicketEditModal = ({
               onClick={() => setShowEditModal(false)}
               className={conditionalClasses({
                 light: 'px-4 lg:px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all text-sm lg:text-base',
-                dark: 'px-4 lg:px-6 py-3 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold rounded-xl transition-all text-sm lg:text-base'
+                dark: 'px-4 lg:px-6 py-3 bg-gray-700 hover:bg-gray-600 text-gray-200 font-semibold rounded-xl transition-all text-sm lg:text-base'
               })}
               disabled={formLoading}
             >
