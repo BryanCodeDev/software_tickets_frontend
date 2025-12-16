@@ -40,15 +40,30 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-900 via-[#662d91] to-slate-900 flex">
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-linear-to-br from-[#662d91] via-[#8e4dbf] to-indigo-600 p-12 flex-col justify-between relative overflow-hidden">
+      <div className={conditionalClasses({
+        light: 'hidden lg:flex lg:w-1/2 bg-linear-to-br from-[#662d91] via-[#8e4dbf] to-indigo-600 p-12 flex-col justify-between relative overflow-hidden',
+        dark: 'hidden lg:flex lg:w-1/2 bg-linear-to-br from-gray-900 via-[#4c1d95] to-slate-900 p-12 flex-col justify-between relative overflow-hidden'
+      })}>
         {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-48 -mt-48"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-white opacity-5 rounded-full -ml-40 -mb-40"></div>
+        <div className={conditionalClasses({
+          light: 'absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-48 -mt-48',
+          dark: 'absolute top-0 right-0 w-96 h-96 bg-white opacity-10 rounded-full -mr-48 -mt-48'
+        })}></div>
+        <div className={conditionalClasses({
+          light: 'absolute bottom-0 left-0 w-80 h-80 bg-white opacity-5 rounded-full -ml-40 -mb-40',
+          dark: 'absolute bottom-0 left-0 w-80 h-80 bg-white opacity-10 rounded-full -ml-40 -mb-40'
+        })}></div>
         
         <div className="relative z-10">
           <div className="flex items-center space-x-3 mb-8">
-            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-xl">
-              <svg className="w-7 h-7 text-[#662d91]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className={conditionalClasses({
+              light: 'w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-xl',
+              dark: 'w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-xl border border-white/20'
+            })}>
+              <svg className={conditionalClasses({
+                light: 'w-7 h-7 text-[#662d91]',
+                dark: 'w-7 h-7 text-white'
+              })} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
               </svg>
             </div>
@@ -59,7 +74,10 @@ const Login = () => {
             <h1 className="text-5xl font-bold text-white leading-tight">
               Plataforma de Gestión<br />Tecnológica Empresarial
             </h1>
-            <p className="text-xl text-[#e8d5f5] leading-relaxed">
+            <p className={conditionalClasses({
+              light: 'text-xl text-[#e8d5f5] leading-relaxed',
+              dark: 'text-xl text-gray-300 leading-relaxed'
+            })}>
               Centraliza tu soporte técnico, inventario IT, documentación y gestión de credenciales en una sola solución profesional.
             </p>
           </div>
@@ -67,7 +85,10 @@ const Login = () => {
 
         <div className="relative z-10 space-y-6">
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+            <div className={conditionalClasses({
+              light: 'bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20',
+              dark: 'bg-black/20 backdrop-blur-sm rounded-xl p-4 border border-white/20'
+            })}>
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
                   <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -76,11 +97,17 @@ const Login = () => {
                 </div>
                 <div>
                   <p className="text-white font-semibold">Mesa de Ayuda</p>
-                  <p className="text-[#e8d5f5] text-sm">Tickets en tiempo real</p>
+                  <p className={conditionalClasses({
+                    light: 'text-[#e8d5f5] text-sm',
+                    dark: 'text-gray-300 text-sm'
+                  })}>Tickets en tiempo real</p>
                 </div>
               </div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+            <div className={conditionalClasses({
+              light: 'bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20',
+              dark: 'bg-black/20 backdrop-blur-sm rounded-xl p-4 border border-white/20'
+            })}>
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
                   <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -89,11 +116,17 @@ const Login = () => {
                 </div>
                 <div>
                   <p className="text-white font-semibold">Inventario IT</p>
-                  <p className="text-[#e8d5f5] text-sm">Control de activos</p>
+                  <p className={conditionalClasses({
+                    light: 'text-[#e8d5f5] text-sm',
+                    dark: 'text-gray-300 text-sm'
+                  })}>Control de activos</p>
                 </div>
               </div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+            <div className={conditionalClasses({
+              light: 'bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20',
+              dark: 'bg-black/20 backdrop-blur-sm rounded-xl p-4 border border-white/20'
+            })}>
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
                   <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -102,11 +135,17 @@ const Login = () => {
                 </div>
                 <div>
                   <p className="text-white font-semibold">Repositorio</p>
-                  <p className="text-[#e8d5f5] text-sm">Documentación técnica</p>
+                  <p className={conditionalClasses({
+                    light: 'text-[#e8d5f5] text-sm',
+                    dark: 'text-gray-300 text-sm'
+                  })}>Documentación técnica</p>
                 </div>
               </div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+            <div className={conditionalClasses({
+              light: 'bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20',
+              dark: 'bg-black/20 backdrop-blur-sm rounded-xl p-4 border border-white/20'
+            })}>
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
                   <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,7 +154,10 @@ const Login = () => {
                 </div>
                 <div>
                   <p className="text-white font-semibold">Credenciales</p>
-                  <p className="text-[#e8d5f5] text-sm">Gestión segura</p>
+                  <p className={conditionalClasses({
+                    light: 'text-[#e8d5f5] text-sm',
+                    dark: 'text-gray-300 text-sm'
+                  })}>Gestión segura</p>
                 </div>
               </div>
             </div>

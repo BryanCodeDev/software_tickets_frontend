@@ -117,7 +117,10 @@ const ResetPassword = () => {
             })}>Ingresa tu nueva contraseña</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
+          <div className={conditionalClasses({
+            light: 'bg-white rounded-2xl shadow-xl border border-gray-200 p-8',
+            dark: 'bg-gray-800 rounded-2xl shadow-xl border border-gray-600 p-8'
+          })}>
             <form onSubmit={handleSubmit} className="space-y-5">
               {error && (
                 <div className={conditionalClasses({
