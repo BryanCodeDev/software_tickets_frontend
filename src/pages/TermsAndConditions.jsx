@@ -1,11 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useThemeClasses } from '../hooks/useThemeClasses';
 
 const TermsAndConditions = () => {
+  const { conditionalClasses } = useThemeClasses();
+
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className={conditionalClasses({
+      light: 'min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8',
+      dark: 'min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8'
+    })}>
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
+        <div className={conditionalClasses({
+          light: 'bg-white shadow-xl rounded-2xl overflow-hidden',
+          dark: 'bg-gray-800 shadow-xl rounded-2xl overflow-hidden'
+        })}>
           {/* Header */}
           <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-8 py-6">
             <div className="flex items-center justify-between">
@@ -30,13 +39,22 @@ const TermsAndConditions = () => {
 
           {/* Content */}
           <div className="px-8 py-8">
-            <div className="prose prose-lg max-w-none text-gray-700">
-              <p className="text-sm text-gray-500 mb-8">
+            <div className={conditionalClasses({
+              light: 'prose prose-lg max-w-none text-gray-700',
+              dark: 'prose prose-lg max-w-none text-gray-300'
+            })}>
+              <p className={conditionalClasses({
+                light: 'text-sm text-gray-500 mb-8',
+                dark: 'text-sm text-gray-400 mb-8'
+              })}>
                 Última actualización: {new Date().toLocaleDateString('es-ES')}
               </p>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Aceptación de los Términos</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>1. Aceptación de los Términos</h2>
                 <p className="mb-4">
                   Al acceder y utilizar DuvyClass, aceptas estar sujeto a estos términos y condiciones de uso.
                   Si no estás de acuerdo con alguna parte de estos términos, no podrás acceder al servicio.
@@ -44,7 +62,10 @@ const TermsAndConditions = () => {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">2. Descripción del Servicio</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>2. Descripción del Servicio</h2>
                 <p className="mb-4">
                   DuvyClass es una plataforma de gestión IT que proporciona herramientas para:
                 </p>
@@ -58,7 +79,10 @@ const TermsAndConditions = () => {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">3. Uso Aceptable</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>3. Uso Aceptable</h2>
                 <p className="mb-4">
                   Te comprometes a utilizar el servicio únicamente para fines legales y de acuerdo con estos términos.
                   No podrás:
@@ -73,7 +97,10 @@ const TermsAndConditions = () => {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">4. Privacidad y Protección de Datos</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>4. Privacidad y Protección de Datos</h2>
                 <p className="mb-4">
                   Tu privacidad es importante para nosotros. Consulta nuestra Política de Privacidad para
                   entender cómo recopilamos, utilizamos y protegemos tu información personal.
@@ -81,7 +108,10 @@ const TermsAndConditions = () => {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">5. Propiedad Intelectual</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>5. Propiedad Intelectual</h2>
                 <p className="mb-4">
                   Todo el contenido, características y funcionalidad de DuvyClass son propiedad de nuestros
                   desarrolladores y están protegidos por leyes de propiedad intelectual.
@@ -89,7 +119,10 @@ const TermsAndConditions = () => {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">6. Limitación de Responsabilidad</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>6. Limitación de Responsabilidad</h2>
                 <p className="mb-4">
                   DuvyClass se proporciona "tal cual" sin garantías de ningún tipo. No seremos responsables
                   por daños directos, indirectos, incidentales o consecuentes.
@@ -97,7 +130,10 @@ const TermsAndConditions = () => {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">7. Modificaciones</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>7. Modificaciones</h2>
                 <p className="mb-4">
                   Nos reservamos el derecho de modificar estos términos en cualquier momento.
                   Los cambios serán efectivos inmediatamente después de su publicación.
@@ -105,7 +141,10 @@ const TermsAndConditions = () => {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">8. Contacto</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>8. Contacto</h2>
                 <p className="mb-4">
                   Si tienes preguntas sobre estos términos, puedes contactarnos a través de:
                 </p>
@@ -117,9 +156,15 @@ const TermsAndConditions = () => {
             </div>
 
             {/* Footer */}
-            <div className="mt-12 pt-8 border-t border-gray-200">
+            <div className={conditionalClasses({
+              light: 'mt-12 pt-8 border-t border-gray-200',
+              dark: 'mt-12 pt-8 border-t border-gray-600'
+            })}>
               <div className="flex flex-col sm:flex-row justify-between items-center">
-                <p className="text-sm text-gray-500 mb-4 sm:mb-0">
+                <p className={conditionalClasses({
+                  light: 'text-sm text-gray-500 mb-4 sm:mb-0',
+                  dark: 'text-sm text-gray-400 mb-4 sm:mb-0'
+                })}>
                   © 2025 DuvyClass. Desarrollado por Bryan Muñoz.
                 </p>
                 <Link
@@ -138,5 +183,3 @@ const TermsAndConditions = () => {
 };
 
 export default TermsAndConditions;
-
-

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaTimes, FaPlus, FaSpinner, FaPaperclip, FaTrash } from 'react-icons/fa';
 import { purchaseRequestsAPI } from '../../../api';
+import { useThemeClasses } from '../../../hooks/useThemeClasses';
 
 const PurchaseRequestCreateModal = ({
   showCreateModal,
@@ -10,6 +11,7 @@ const PurchaseRequestCreateModal = ({
   userRole,
   onSuccess // Nueva prop para callback
 }) => {
+  const { conditionalClasses } = useThemeClasses();
   const [errors, setErrors] = useState({});
   const [formLoading, setFormLoading] = useState(false);
   const [attachments, setAttachments] = useState([]);
@@ -173,7 +175,10 @@ const PurchaseRequestCreateModal = ({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-      <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] border-2 border-gray-200 animate-scale-in flex flex-col">
+      <div className={conditionalClasses({
+        light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] border-2 border-gray-200 animate-scale-in flex flex-col',
+        dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] border-2 border-gray-600 animate-scale-in flex flex-col'
+      })}>
         <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
           <div className="flex items-center justify-between">
             <h2 className="text-xl lg:text-2xl font-bold text-white">Nueva Solicitud de Compra</h2>
@@ -189,7 +194,10 @@ const PurchaseRequestCreateModal = ({
         <form onSubmit={handleSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6 overflow-y-auto flex-1 min-h-0">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
             <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className={conditionalClasses({
+                light: 'block text-sm font-semibold text-gray-700 mb-2',
+                dark: 'block text-sm font-semibold text-gray-200 mb-2'
+              })}>
                 Título de la Solicitud *
               </label>
               <input
@@ -198,9 +206,14 @@ const PurchaseRequestCreateModal = ({
                 value={formData.title}
                 onChange={handleInputChange}
                 placeholder="Ej: Mouse inalámbrico Logitech"
-                className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${
-                  errors.title ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                }`}
+                className={conditionalClasses({
+                  light: `w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${
+                    errors.title ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                  }`,
+                  dark: `w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-white bg-gray-700 ${
+                    errors.title ? 'border-red-600 bg-red-900/50' : 'border-gray-600'
+                  }`
+                })}
                 disabled={formLoading}
               />
               {errors.title && (
@@ -209,14 +222,20 @@ const PurchaseRequestCreateModal = ({
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className={conditionalClasses({
+                light: 'block text-sm font-semibold text-gray-700 mb-2',
+                dark: 'block text-sm font-semibold text-gray-200 mb-2'
+              })}>
                 Tipo de Ítem *
               </label>
               <select
                 name="itemType"
                 value={formData.itemType}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                className={conditionalClasses({
+                  light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-gray-900 bg-white',
+                  dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-white bg-gray-700'
+                })}
                 disabled={formLoading}
               >
                 <option value="periferico">Periférico</option>
@@ -227,7 +246,10 @@ const PurchaseRequestCreateModal = ({
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className={conditionalClasses({
+                light: 'block text-sm font-semibold text-gray-700 mb-2',
+                dark: 'block text-sm font-semibold text-gray-200 mb-2'
+              })}>
                 Cantidad *
               </label>
               <input
@@ -236,9 +258,14 @@ const PurchaseRequestCreateModal = ({
                 value={formData.quantity}
                 onChange={handleInputChange}
                 min="1"
-                className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${
-                  errors.quantity ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                }`}
+                className={conditionalClasses({
+                  light: `w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${
+                    errors.quantity ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                  }`,
+                  dark: `w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-white bg-gray-700 ${
+                    errors.quantity ? 'border-red-600 bg-red-900/50' : 'border-gray-600'
+                  }`
+                })}
                 disabled={formLoading}
               />
               {errors.quantity && (
@@ -247,19 +274,30 @@ const PurchaseRequestCreateModal = ({
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className={conditionalClasses({
+                light: 'block text-sm font-semibold text-gray-700 mb-2',
+                dark: 'block text-sm font-semibold text-gray-200 mb-2'
+              })}>
                 Costo Estimado (COP) *
               </label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">$</span>
+                <span className={conditionalClasses({
+                  light: 'absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium',
+                  dark: 'absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 font-medium'
+                })}>$</span>
                 <input
                   type="text"
                   value={formData.estimatedCost}
                   onChange={handleCostChange}
                   placeholder="0"
-                  className={`w-full pl-8 pr-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${
-                    errors.estimatedCost ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                  }`}
+                  className={conditionalClasses({
+                    light: `w-full pl-8 pr-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${
+                      errors.estimatedCost ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                    }`,
+                    dark: `w-full pl-8 pr-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-white bg-gray-700 ${
+                      errors.estimatedCost ? 'border-red-600 bg-red-900/50' : 'border-gray-600'
+                    }`
+                  })}
                   disabled={formLoading}
                 />
               </div>
@@ -269,7 +307,10 @@ const PurchaseRequestCreateModal = ({
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className={conditionalClasses({
+                light: 'block text-sm font-semibold text-gray-700 mb-2',
+                dark: 'block text-sm font-semibold text-gray-200 mb-2'
+              })}>
                 Descripción *
               </label>
               <textarea
@@ -278,9 +319,14 @@ const PurchaseRequestCreateModal = ({
                 onChange={handleInputChange}
                 placeholder="Describe detalladamente el ítem que necesitas..."
                 rows="4 lg:rows-5"
-                className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium resize-none text-sm lg:text-base ${
-                  errors.description ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                }`}
+                className={conditionalClasses({
+                  light: `w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium resize-none text-sm lg:text-base ${
+                    errors.description ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                  }`,
+                  dark: `w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium resize-none text-sm lg:text-base text-white bg-gray-700 placeholder-gray-400 ${
+                    errors.description ? 'border-red-600 bg-red-900/50' : 'border-gray-600'
+                  }`
+                })}
                 disabled={formLoading}
               />
               {errors.description && (
@@ -289,7 +335,10 @@ const PurchaseRequestCreateModal = ({
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className={conditionalClasses({
+                light: 'block text-sm font-semibold text-gray-700 mb-2',
+                dark: 'block text-sm font-semibold text-gray-200 mb-2'
+              })}>
                 Justificación *
               </label>
               <textarea
@@ -298,9 +347,14 @@ const PurchaseRequestCreateModal = ({
                 onChange={handleInputChange}
                 placeholder="Explica por qué necesitas este ítem y cómo beneficiará tu trabajo..."
                 rows="4 lg:rows-5"
-                className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium resize-none text-sm lg:text-base ${
-                  errors.justification ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                }`}
+                className={conditionalClasses({
+                  light: `w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium resize-none text-sm lg:text-base ${
+                    errors.justification ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                  }`,
+                  dark: `w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium resize-none text-sm lg:text-base text-white bg-gray-700 placeholder-gray-400 ${
+                    errors.justification ? 'border-red-600 bg-red-900/50' : 'border-gray-600'
+                  }`
+                })}
                 disabled={formLoading}
               />
               {errors.justification && (
@@ -310,12 +364,18 @@ const PurchaseRequestCreateModal = ({
 
             {/* Attachments Section */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className={conditionalClasses({
+                light: 'block text-sm font-semibold text-gray-700 mb-2',
+                dark: 'block text-sm font-semibold text-gray-200 mb-2'
+              })}>
                 Archivos Adjuntos (Opcional)
               </label>
               <div className="space-y-3">
                 <div>
-                  <label className="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg cursor-pointer transition-colors">
+                  <label className={conditionalClasses({
+                    light: 'inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg cursor-pointer transition-colors',
+                    dark: 'inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-500 text-gray-200 text-sm font-medium rounded-lg cursor-pointer transition-colors'
+                  })}>
                     <FaPaperclip className="mr-2" />
                     Seleccionar Archivos
                     <input
@@ -327,27 +387,42 @@ const PurchaseRequestCreateModal = ({
                       disabled={formLoading}
                     />
                   </label>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className={conditionalClasses({
+                    light: 'text-xs text-gray-500 mt-1',
+                    dark: 'text-xs text-gray-400 mt-1'
+                  })}>
                     Tipos permitidos: PDF, Word, Excel, imágenes. Máximo 10MB por archivo.
                   </p>
                 </div>
 
                 {attachments.length > 0 && (
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-700">Archivos seleccionados:</p>
+                    <p className={conditionalClasses({
+                      light: 'text-sm font-medium text-gray-700',
+                      dark: 'text-sm font-medium text-gray-200'
+                    })}>Archivos seleccionados:</p>
                     {attachments.map((attachment) => (
-                      <div key={attachment.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                      <div key={attachment.id} className={conditionalClasses({
+                        light: 'flex items-center justify-between p-2 bg-gray-50 rounded-lg',
+                        dark: 'flex items-center justify-between p-2 bg-gray-600 rounded-lg'
+                      })}>
                         <div className="flex items-center flex-1 min-w-0">
                           <FaPaperclip className="w-4 h-4 text-gray-400 mr-2 shrink-0" />
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">{attachment.name}</p>
+                            <p className={conditionalClasses({
+                              light: 'text-sm font-medium text-gray-900 truncate',
+                              dark: 'text-sm font-medium text-white truncate'
+                            })}>{attachment.name}</p>
                             <p className="text-xs text-gray-500">{(attachment.size / 1024).toFixed(1)} KB</p>
                           </div>
                         </div>
                         <button
                           type="button"
                           onClick={() => removeAttachment(attachment.id)}
-                          className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors ml-2"
+                          className={conditionalClasses({
+                            light: 'p-1 text-red-600 hover:bg-red-50 rounded transition-colors ml-2',
+                            dark: 'p-1 text-red-400 hover:bg-red-900/50 rounded transition-colors ml-2'
+                          })}
                           disabled={formLoading}
                         >
                           <FaTrash className="w-4 h-4" />
@@ -360,11 +435,17 @@ const PurchaseRequestCreateModal = ({
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-4 lg:pt-6 border-t-2 border-gray-100 shrink-0">
+          <div className={conditionalClasses({
+            light: 'flex flex-col sm:flex-row gap-3 pt-4 lg:pt-6 border-t-2 border-gray-100 shrink-0',
+            dark: 'flex flex-col sm:flex-row gap-3 pt-4 lg:pt-6 border-t-2 border-gray-700 shrink-0'
+          })}>
             <button
               type="button"
               onClick={() => setShowCreateModal(false)}
-              className="px-4 lg:px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all text-sm lg:text-base"
+              className={conditionalClasses({
+                light: 'px-4 lg:px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all text-sm lg:text-base',
+                dark: 'px-4 lg:px-6 py-3 bg-gray-700 hover:bg-gray-600 text-gray-200 font-semibold rounded-xl transition-all text-sm lg:text-base'
+              })}
               disabled={formLoading}
             >
               Cancelar

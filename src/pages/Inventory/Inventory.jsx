@@ -3,11 +3,13 @@ import { FaBox, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, F
 import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
+import { useThemeClasses } from '../../hooks/useThemeClasses.js';
 import inventoryAPI from '../../api/inventoryAPI';
 import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 import ActaEntregaHistoryModal from '../../components/ActasEntrega/ActaEntregaHistoryModal';
 
 const Inventory = () => {
+  const { conditionalClasses } = useThemeClasses();
   const [inventory, setInventory] = useState([]);
   const [filteredInventory, setFilteredInventory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -355,18 +357,27 @@ const Inventory = () => {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4">
+    <div className={`min-h-screen py-8 px-4 ${conditionalClasses({
+      light: 'bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]',
+      dark: 'bg-gray-900'
+    })}`}>
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#662d91] mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Cargando inventario...</p>
+          <p className={`text-lg font-medium ${conditionalClasses({
+            light: 'text-gray-600',
+            dark: 'text-gray-300'
+          })}`}>Cargando inventario...</p>
         </div>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8">
+    <div className={`min-h-screen py-4 px-3 sm:py-6 sm:px-4 lg:px-8 ${conditionalClasses({
+      light: 'bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]',
+      dark: 'bg-gray-900'
+    })}`}>
       {/* Notification */}
       <NotificationSystem
         notification={notification}
@@ -390,10 +401,16 @@ const Inventory = () => {
                   <FaBox className="text-white text-xl lg:text-2xl" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight truncate">
+                  <h1 className={`text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight truncate ${conditionalClasses({
+                    light: 'text-gray-900',
+                    dark: 'text-white'
+                  })}`}>
                     Sistema de Inventario
                   </h1>
-                  <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                  <p className={`text-xs sm:text-sm mt-1 ${conditionalClasses({
+                    light: 'text-gray-600',
+                    dark: 'text-gray-300'
+                  })}`}>
                     Gestión integral de equipos de cómputo · 2025
                   </p>
                 </div>
@@ -403,14 +420,20 @@ const Inventory = () => {
             <div className="flex flex-wrap gap-2 lg:gap-3">
               <button
                 onClick={() => setShowStats(!showStats)}
-                className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
+                className={`flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 font-semibold rounded-xl border-2 transition-all duration-200 hover:shadow-lg text-sm lg:text-base ${conditionalClasses({
+                  light: 'bg-white hover:bg-gray-50 text-gray-700 border-gray-200',
+                  dark: 'bg-gray-800 hover:bg-gray-700 text-gray-300 border-gray-600'
+                })}`}
               >
                 <FaChartBar className="w-4 h-4" />
                 <span className="hidden sm:inline">Estadísticas</span>
               </button>
               <button
                 onClick={exportToExcel}
-                className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
+                className={`flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 font-semibold rounded-xl border-2 transition-all duration-200 hover:shadow-lg text-sm lg:text-base ${conditionalClasses({
+                  light: 'bg-white hover:bg-gray-50 text-gray-700 border-gray-200',
+                  dark: 'bg-gray-800 hover:bg-gray-700 text-gray-300 border-gray-600'
+                })}`}
               >
                 <FaDownload className="w-4 h-4" />
                 <span className="hidden sm:inline">Exportar</span>
@@ -610,28 +633,37 @@ const Inventory = () => {
 
         {/* Results Summary */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <p className="text-sm text-gray-600 font-medium">
+          <p className={`text-sm font-medium ${conditionalClasses({
+            light: 'text-gray-600',
+            dark: 'text-gray-300'
+          })}`}>
             Mostrando <span className="font-bold text-[#662d91]">{filteredInventory.length}</span> de <span className="font-bold">{inventory.length}</span> equipos
           </p>
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode('cards')}
-              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
-                viewMode === 'cards'
+              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${conditionalClasses({
+                light: viewMode === 'cards'
                   ? 'bg-[#662d91] text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
-              }`}
+                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200',
+                dark: viewMode === 'cards'
+                  ? 'bg-[#662d91] text-white shadow-md'
+                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600'
+              })}`}
             >
               <FaBox className="w-4 h-4" />
               <span className="hidden sm:inline ml-2">Tarjetas</span>
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
-                viewMode === 'table'
+              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${conditionalClasses({
+                light: viewMode === 'table'
                   ? 'bg-[#662d91] text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
-              }`}
+                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200',
+                dark: viewMode === 'table'
+                  ? 'bg-[#662d91] text-white shadow-md'
+                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600'
+              })}`}
             >
               <FaChartBar className="w-4 h-4" />
               <span className="hidden sm:inline ml-2">Tabla</span>
@@ -641,16 +673,28 @@ const Inventory = () => {
 
         {/* Main Content */}
         {filteredInventory.length === 0 ? (
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center">
-            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className={`rounded-xl lg:rounded-2xl shadow-lg border-2 p-6 lg:p-12 text-center ${conditionalClasses({
+            light: 'bg-white border-gray-200',
+            dark: 'bg-gray-800 border-gray-600'
+          })}`}>
+            <div className={`w-16 h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center mx-auto mb-4 ${conditionalClasses({
+              light: 'bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5]',
+              dark: 'bg-gray-700'
+            })}`}>
               <FaBox className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
             </div>
-            <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2">
+            <h3 className={`text-lg lg:text-xl font-bold mb-2 ${conditionalClasses({
+              light: 'text-gray-900',
+              dark: 'text-white'
+            })}`}>
               {searchTerm || filterStatus !== 'all' || filterArea !== 'all'
                 ? 'No se encontraron equipos'
                 : 'No hay equipos disponibles'}
             </h3>
-            <p className="text-sm lg:text-base text-gray-600 max-w-md mx-auto mb-4 lg:mb-6">
+            <p className={`text-sm lg:text-base max-w-md mx-auto mb-4 lg:mb-6 ${conditionalClasses({
+              light: 'text-gray-600',
+              dark: 'text-gray-300'
+            })}`}>
               {searchTerm || filterStatus !== 'all' || filterArea !== 'all'
                 ? 'Intenta ajustar los filtros de búsqueda'
                 : 'Comienza agregando un nuevo equipo al inventario'}
@@ -675,7 +719,10 @@ const Inventory = () => {
                   return (
                     <div
                       key={item.id}
-                      className="bg-white rounded-xl lg:rounded-2xl border-2 border-gray-200 hover:border-[#8e4dbf] hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                      className={`rounded-xl lg:rounded-2xl border-2 hover:border-[#8e4dbf] hover:shadow-xl transition-all duration-300 overflow-hidden group ${conditionalClasses({
+                        light: 'bg-white border-gray-200',
+                        dark: 'bg-gray-800 border-gray-600'
+                      })}`}
                     >
                       {/* Card Header */}
                       <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-3 lg:p-4 text-white">
@@ -728,35 +775,74 @@ const Inventory = () => {
                       {/* Card Body */}
                       <div className="p-4 lg:p-5">
                         <div className="space-y-3">
-                          <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
+                          <div className={`flex items-center gap-3 pb-3 border-b ${conditionalClasses({
+                            light: 'border-gray-100',
+                            dark: 'border-gray-600'
+                          })}`}>
                             <div className="w-8 h-8 lg:w-10 lg:h-10 bg-[#f3ebf9] rounded-lg flex items-center justify-center shrink-0">
                               <FaBox className="w-4 h-4 lg:w-5 lg:h-5 text-[#662d91]" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs text-gray-500 font-medium">Responsable</p>
-                              <p className="text-sm font-bold text-gray-900 truncate">{item.responsable}</p>
+                              <p className={`text-xs font-medium ${conditionalClasses({
+                                light: 'text-gray-500',
+                                dark: 'text-gray-400'
+                              })}`}>Responsable</p>
+                              <p className={`text-sm font-bold truncate ${conditionalClasses({
+                                light: 'text-gray-900',
+                                dark: 'text-white'
+                              })}`}>{item.responsable}</p>
                             </div>
                           </div>
 
                           <div>
-                            <p className="text-xs text-gray-500 font-medium mb-1">Área</p>
-                            <p className="text-sm font-semibold text-gray-900 truncate">{item.area}</p>
+                            <p className={`text-xs font-medium mb-1 ${conditionalClasses({
+                              light: 'text-gray-500',
+                              dark: 'text-gray-400'
+                            })}`}>Área</p>
+                            <p className={`text-sm font-semibold truncate ${conditionalClasses({
+                              light: 'text-gray-900',
+                              dark: 'text-white'
+                            })}`}>{item.area}</p>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-100">
+                          <div className={`grid grid-cols-2 gap-3 pt-3 border-t ${conditionalClasses({
+                            light: 'border-gray-100',
+                            dark: 'border-gray-600'
+                          })}`}>
                             <div>
-                              <p className="text-xs text-gray-500 font-medium mb-1">Capacidad</p>
-                              <p className="text-sm font-semibold text-gray-900 truncate">{item.capacidad}</p>
+                              <p className={`text-xs font-medium mb-1 ${conditionalClasses({
+                                light: 'text-gray-500',
+                                dark: 'text-gray-400'
+                              })}`}>Capacidad</p>
+                              <p className={`text-sm font-semibold truncate ${conditionalClasses({
+                                light: 'text-gray-900',
+                                dark: 'text-white'
+                              })}`}>{item.capacidad}</p>
                             </div>
                             <div>
-                              <p className="text-xs text-gray-500 font-medium mb-1">RAM</p>
-                              <p className="text-sm font-semibold text-gray-900 truncate">{item.ram}</p>
+                              <p className={`text-xs font-medium mb-1 ${conditionalClasses({
+                                light: 'text-gray-500',
+                                dark: 'text-gray-400'
+                              })}`}>RAM</p>
+                              <p className={`text-sm font-semibold truncate ${conditionalClasses({
+                                light: 'text-gray-900',
+                                dark: 'text-white'
+                              })}`}>{item.ram}</p>
                             </div>
                           </div>
 
-                          <div className="pt-3 border-t border-gray-100">
-                            <p className="text-xs text-gray-500 font-medium mb-1">Serial</p>
-                            <p className="text-xs font-mono bg-gray-50 px-3 py-2 rounded-lg text-gray-700 break-all">{item.serial}</p>
+                          <div className={`pt-3 border-t ${conditionalClasses({
+                            light: 'border-gray-100',
+                            dark: 'border-gray-600'
+                          })}`}>
+                            <p className={`text-xs font-medium mb-1 ${conditionalClasses({
+                              light: 'text-gray-500',
+                              dark: 'text-gray-400'
+                            })}`}>Serial</p>
+                            <p className={`text-xs font-mono px-3 py-2 rounded-lg break-all ${conditionalClasses({
+                              light: 'bg-gray-50 text-gray-700',
+                              dark: 'bg-gray-700 text-gray-300'
+                            })}`}>{item.serial}</p>
                           </div>
 
                           {/* Warranty Alert */}
@@ -784,14 +870,23 @@ const Inventory = () => {
 
             {/* Table View */}
             {viewMode === 'table' && (
-              <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden">
+              <div className={`rounded-2xl shadow-lg border-2 overflow-hidden ${conditionalClasses({
+                light: 'bg-white border-gray-200',
+                dark: 'bg-gray-800 border-gray-600'
+              })}`}>
                 {/* Mobile Card View for Table Mode */}
                 <div className="block md:hidden">
-                  <div className="divide-y divide-gray-200">
+                  <div className={`divide-y ${conditionalClasses({
+                    light: 'divide-gray-200',
+                    dark: 'divide-gray-600'
+                  })}`}>
                     {filteredInventory.map((item) => {
                       const warranty = getWarrantyStatus(item.warrantyExpiry);
                       return (
-                        <div key={item.id} className="p-4 hover:bg-[#f3ebf9] transition-colors">
+                        <div key={item.id} className={`p-4 transition-colors ${conditionalClasses({
+                          light: 'hover:bg-[#f3ebf9]',
+                          dark: 'hover:bg-gray-700'
+                        })}`}>
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-2">
@@ -805,14 +900,23 @@ const Inventory = () => {
                                   {item.status}
                                 </span>
                               </div>
-                              <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">{item.responsable}</h3>
-                              <p className="text-xs text-gray-500 truncate">{item.marca}</p>
+                              <h3 className={`font-semibold text-sm mb-1 truncate ${conditionalClasses({
+                                light: 'text-gray-900',
+                                dark: 'text-white'
+                              })}`}>{item.responsable}</h3>
+                              <p className={`text-xs truncate ${conditionalClasses({
+                                light: 'text-gray-500',
+                                dark: 'text-gray-400'
+                              })}`}>{item.marca}</p>
                               <p className="text-xs text-[#662d91] font-medium truncate">{item.propiedad}</p>
                             </div>
                             <div className="flex gap-2">
                               <button
                                 onClick={() => handleHistory(item)}
-                                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all touch-manipulation"
+                                className={`p-2 rounded-lg transition-all touch-manipulation ${conditionalClasses({
+                                  light: 'text-gray-600 hover:bg-gray-100',
+                                  dark: 'text-gray-400 hover:bg-gray-600'
+                                })}`}
                                 title="Historial"
                               >
                                 <FaHistory className="w-4 h-4" />
@@ -837,7 +941,10 @@ const Inventory = () => {
                               )}
                             </div>
                           </div>
-                          <div className="text-xs text-gray-600">
+                          <div className={`text-xs ${conditionalClasses({
+                            light: 'text-gray-600',
+                            dark: 'text-gray-300'
+                          })}`}>
                             <span className="font-medium">Área:</span>
                             <p className="truncate">{item.area}</p>
                             <div>
@@ -850,7 +957,10 @@ const Inventory = () => {
                             </div>
                             <div className="col-span-2">
                               <span className="font-medium">Serial:</span>
-                              <p className="font-mono bg-gray-50 px-2 py-1 rounded text-xs break-all">{item.serial}</p>
+                              <p className={`font-mono px-2 py-1 rounded text-xs break-all ${conditionalClasses({
+                                light: 'bg-gray-50',
+                                dark: 'bg-gray-700'
+                              })}`}>{item.serial}</p>
                             </div>
                             {warranty.status !== 'unknown' && (
                               <div className="col-span-2">
@@ -889,11 +999,17 @@ const Inventory = () => {
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Acciones</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className={`divide-y ${conditionalClasses({
+                      light: 'divide-gray-200',
+                      dark: 'divide-gray-600'
+                    })}`}>
                       {filteredInventory.map((item) => {
                         const warranty = getWarrantyStatus(item.warrantyExpiry);
                         return (
-                          <tr key={item.id} className="hover:bg-[#f3ebf9] transition-colors">
+                          <tr key={item.id} className={`transition-colors ${conditionalClasses({
+                            light: 'hover:bg-[#f3ebf9]',
+                            dark: 'hover:bg-gray-700'
+                          })}`}>
                             <td className="px-4 py-4">
                               <span className="font-bold text-[#662d91]">{item.it}</span>
                             </td>
@@ -906,17 +1022,35 @@ const Inventory = () => {
                                 {item.propiedad}
                               </span>
                             </td>
-                            <td className="px-4 py-4 text-sm text-gray-700">{item.responsable}</td>
-                            <td className="px-4 py-4 text-sm text-gray-700">{item.area}</td>
+                            <td className={`px-4 py-4 text-sm ${conditionalClasses({
+                              light: 'text-gray-700',
+                              dark: 'text-gray-300'
+                            })}`}>{item.responsable}</td>
+                            <td className={`px-4 py-4 text-sm ${conditionalClasses({
+                              light: 'text-gray-700',
+                              dark: 'text-gray-300'
+                            })}`}>{item.area}</td>
                             <td className="px-4 py-4">
-                              <div className="font-semibold text-gray-900">{item.marca}</div>
+                              <div className={`font-semibold ${conditionalClasses({
+                                light: 'text-gray-900',
+                                dark: 'text-white'
+                              })}`}>{item.marca}</div>
                             </td>
                             <td className="px-4 py-4">
-                              <span className="text-xs font-mono bg-gray-100 px-2 py-1 rounded">{item.serial}</span>
+                              <span className={`text-xs font-mono px-2 py-1 rounded ${conditionalClasses({
+                                light: 'bg-gray-100',
+                                dark: 'bg-gray-700'
+                              })}`}>{item.serial}</span>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-900">{item.capacidad}</div>
-                              <div className="text-xs text-gray-500">{item.ram}</div>
+                              <div className={`text-sm ${conditionalClasses({
+                                light: 'text-gray-900',
+                                dark: 'text-white'
+                              })}`}>{item.capacidad}</div>
+                              <div className={`text-xs ${conditionalClasses({
+                                light: 'text-gray-500',
+                                dark: 'text-gray-400'
+                              })}`}>{item.ram}</div>
                             </td>
                             <td className="px-4 py-4">
                               <span className={`px-3 py-1 text-xs font-bold rounded-full ${
@@ -947,7 +1081,10 @@ const Inventory = () => {
                               <div className="flex gap-2">
                                 <button
                                   onClick={() => handleHistory(item)}
-                                  className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all"
+                                  className={`p-2 rounded-lg transition-all ${conditionalClasses({
+                                    light: 'text-gray-600 hover:bg-gray-100',
+                                    dark: 'text-gray-400 hover:bg-gray-600'
+                                  })}`}
                                   title="Historial"
                                 >
                                   <FaHistory className="w-4 h-4" />
@@ -987,7 +1124,10 @@ const Inventory = () => {
       {/* Modal for Create/Edit */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+          <div className={`rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({
+            light: 'bg-white border-gray-200',
+            dark: 'bg-gray-800 border-gray-600'
+          })}`}>
             <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">
@@ -1005,7 +1145,10 @@ const Inventory = () => {
             <form onSubmit={handleSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6">
               {/* Información Básica */}
               <div>
-                <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <h3 className={`text-base lg:text-lg font-bold mb-4 flex items-center gap-2 ${conditionalClasses({
+                  light: 'text-gray-900',
+                  dark: 'text-white'
+                })}`}>
                   <div className="w-6 h-6 lg:w-8 lg:h-8 bg-[#f3ebf9] rounded-lg flex items-center justify-center">
                     <FaBox className="w-3 h-3 lg:w-4 lg:h-4 text-[#662d91]" />
                   </div>
@@ -1013,7 +1156,10 @@ const Inventory = () => {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
                       Código IT *
                     </label>
                     <input
@@ -1021,19 +1167,28 @@ const Inventory = () => {
                       placeholder="Ej: IT070"
                       value={formData.it}
                       onChange={(e) => setFormData({ ...formData, it: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
+                        light: 'border-gray-200',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
                       Propiedad *
                     </label>
                     <select
                       value={formData.propiedad}
                       onChange={(e) => setFormData({ ...formData, propiedad: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
+                        light: 'border-gray-200',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                       required
                     >
                       <option value="">Seleccionar</option>
@@ -1044,13 +1199,19 @@ const Inventory = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
                       Estado *
                     </label>
                     <select
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
+                        light: 'border-gray-200',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                       required
                     >
                       <option value="disponible">Disponible</option>
@@ -1063,8 +1224,14 @@ const Inventory = () => {
               </div>
 
               {/* Asignación */}
-              <div className="pt-4 lg:pt-6 border-t-2 border-gray-100">
-                <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <div className={`pt-4 lg:pt-6 border-t-2 ${conditionalClasses({
+                light: 'border-gray-100',
+                dark: 'border-gray-600'
+              })}`}>
+                <h3 className={`text-base lg:text-lg font-bold mb-4 flex items-center gap-2 ${conditionalClasses({
+                  light: 'text-gray-900',
+                  dark: 'text-white'
+                })}`}>
                   <div className="w-6 h-6 lg:w-8 lg:h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                     <FaCog className="w-3 h-3 lg:w-4 lg:h-4 text-blue-600" />
                   </div>
@@ -1072,7 +1239,10 @@ const Inventory = () => {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
                       Responsable *
                     </label>
                     <input
@@ -1080,19 +1250,28 @@ const Inventory = () => {
                       placeholder="Nombre completo"
                       value={formData.responsable}
                       onChange={(e) => setFormData({ ...formData, responsable: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
+                        light: 'border-gray-200',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
                       Área *
                     </label>
                     <select
                       value={formData.area}
                       onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
+                        light: 'border-gray-200 bg-white',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                       required
                     >
                       <option value="">Seleccionar área</option>
@@ -1178,9 +1357,15 @@ const Inventory = () => {
               </div>
 
               {/* Especificaciones Técnicas */}
-              <div className="pt-4 lg:pt-6 border-t-2 border-gray-100">
+              <div className={`pt-4 lg:pt-6 border-t-2 ${conditionalClasses({
+                light: 'border-gray-100',
+                dark: 'border-gray-600'
+              })}`}>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
-                  <h3 className="text-base lg:text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <h3 className={`text-base lg:text-lg font-bold flex items-center gap-2 ${conditionalClasses({
+                    light: 'text-gray-900',
+                    dark: 'text-white'
+                  })}`}>
                     <div className="w-6 h-6 lg:w-8 lg:h-8 bg-green-100 rounded-lg flex items-center justify-center">
                       <FaCog className="w-3 h-3 lg:w-4 lg:h-4 text-green-600" />
                     </div>
@@ -1210,7 +1395,10 @@ const Inventory = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
                       Marca *
                     </label>
                     <input
@@ -1218,13 +1406,19 @@ const Inventory = () => {
                       placeholder="Ej: Lenovo"
                       value={formData.marca}
                       onChange={(e) => setFormData({ ...formData, marca: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
+                        light: 'border-gray-200',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
                       Serial *
                     </label>
                     <input
@@ -1232,13 +1426,19 @@ const Inventory = () => {
                       placeholder="Número de serie"
                       value={formData.serial}
                       onChange={(e) => setFormData({ ...formData, serial: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-mono text-sm lg:text-base"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-mono text-sm lg:text-base ${conditionalClasses({
+                        light: 'border-gray-200',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
                       Capacidad *
                     </label>
                     <input
@@ -1246,13 +1446,19 @@ const Inventory = () => {
                       placeholder="Ej: 512GB SSD"
                       value={formData.capacidad}
                       onChange={(e) => setFormData({ ...formData, capacidad: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
+                        light: 'border-gray-200',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
                       RAM *
                     </label>
                     <input
@@ -1260,7 +1466,10 @@ const Inventory = () => {
                       placeholder="Ej: 16GB DDR4"
                       value={formData.ram}
                       onChange={(e) => setFormData({ ...formData, ram: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
+                        light: 'border-gray-200',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                       required
                     />
                   </div>
@@ -1268,8 +1477,14 @@ const Inventory = () => {
               </div>
 
               {/* Información Administrativa */}
-              <div className="pt-4 lg:pt-6 border-t-2 border-gray-100">
-                <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <div className={`pt-4 lg:pt-6 border-t-2 ${conditionalClasses({
+                light: 'border-gray-100',
+                dark: 'border-gray-600'
+              })}`}>
+                <h3 className={`text-base lg:text-lg font-bold mb-4 flex items-center gap-2 ${conditionalClasses({
+                  light: 'text-gray-900',
+                  dark: 'text-white'
+                })}`}>
                   <div className="w-6 h-6 lg:w-8 lg:h-8 bg-amber-100 rounded-lg flex items-center justify-center">
                     <FaCalendarAlt className="w-3 h-3 lg:w-4 lg:h-4 text-amber-600" />
                   </div>
@@ -1277,43 +1492,64 @@ const Inventory = () => {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
                       Fecha de Compra
                     </label>
                     <input
                       type="date"
                       value={formData.purchaseDate}
                       onChange={(e) => setFormData({ ...formData, purchaseDate: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
+                        light: 'border-gray-200',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
                       Vencimiento Garantía
                     </label>
                     <input
                       type="date"
                       value={formData.warrantyExpiry}
                       onChange={(e) => setFormData({ ...formData, warrantyExpiry: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
+                        light: 'border-gray-200',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
                       Último Mantenimiento
                     </label>
                     <input
                       type="date"
                       value={formData.lastMaintenance}
                       onChange={(e) => setFormData({ ...formData, lastMaintenance: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
+                        light: 'border-gray-200',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
                       Costo (COP)
                     </label>
                     <input
@@ -1321,18 +1557,27 @@ const Inventory = () => {
                       placeholder="0"
                       value={formData.cost}
                       onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
+                        light: 'border-gray-200',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                     />
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-4 lg:pt-6 border-t-2 border-gray-100">
+              <div className={`flex flex-col sm:flex-row gap-3 pt-4 lg:pt-6 border-t-2 ${conditionalClasses({
+                light: 'border-gray-100',
+                dark: 'border-gray-600'
+              })}`}>
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 lg:px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all disabled:opacity-50 text-sm lg:text-base"
+                  className={`px-4 lg:px-6 py-3 font-semibold rounded-xl transition-all disabled:opacity-50 text-sm lg:text-base ${conditionalClasses({
+                    light: 'bg-gray-100 hover:bg-gray-200 text-gray-700',
+                    dark: 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                  })}`}
                   disabled={formLoading || detectingHardware}
                 >
                   Cancelar

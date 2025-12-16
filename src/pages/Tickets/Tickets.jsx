@@ -11,6 +11,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { useThemeClasses } from '../../hooks/useThemeClasses';
 import AuthContext from '../../context/AuthContext';
 import ticketsAPI from '../../api/ticketsAPI';
 import messagesAPI from '../../api/messagesAPI';
@@ -35,6 +36,7 @@ ChartJS.register(
 );
 
 const Tickets = () => {
+  const { conditionalClasses } = useThemeClasses();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -625,22 +627,44 @@ const Tickets = () => {
   };
 
   const getStatusColor = (status) => {
+    const isDark = document.documentElement.classList.contains('dark');
+    
     const colors = {
-      'abierto': 'bg-[#f3ebf9] text-[#662d91] border-[#e8d5f5]',
-      'en progreso': 'bg-blue-100 text-blue-700 border-blue-200',
-      'cerrado': 'bg-gray-200 text-gray-700 border-gray-300',
-      'resuelto': 'bg-green-100 text-green-700 border-green-200'
+      'abierto': isDark
+        ? 'bg-purple-900/50 text-purple-200 border-purple-700'
+        : 'bg-[#f3ebf9] text-[#662d91] border-[#e8d5f5]',
+      'en progreso': isDark
+        ? 'bg-blue-900/50 text-blue-200 border-blue-700'
+        : 'bg-blue-100 text-blue-700 border-blue-200',
+      'cerrado': isDark
+        ? 'bg-gray-700 text-gray-300 border-gray-600'
+        : 'bg-gray-200 text-gray-700 border-gray-300',
+      'resuelto': isDark
+        ? 'bg-green-900/50 text-green-200 border-green-700'
+        : 'bg-green-100 text-green-700 border-green-200'
     };
-    return colors[status?.toLowerCase()] || 'bg-gray-100 text-gray-600 border-gray-200';
+    return colors[status?.toLowerCase()] || (isDark
+      ? 'bg-gray-700 text-gray-400 border-gray-600'
+      : 'bg-gray-100 text-gray-600 border-gray-200');
   };
 
   const getPriorityColor = (priority) => {
+    const isDark = document.documentElement.classList.contains('dark');
+    
     const colors = {
-      'alta': 'bg-red-100 text-red-700 border-red-200',
-      'media': 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      'baja': 'bg-green-100 text-green-700 border-green-200'
+      'alta': isDark
+        ? 'bg-red-900/50 text-red-200 border-red-700'
+        : 'bg-red-100 text-red-700 border-red-200',
+      'media': isDark
+        ? 'bg-yellow-900/50 text-yellow-200 border-yellow-700'
+        : 'bg-yellow-100 text-yellow-700 border-yellow-200',
+      'baja': isDark
+        ? 'bg-green-900/50 text-green-200 border-green-700'
+        : 'bg-green-100 text-green-700 border-green-200'
     };
-    return colors[priority?.toLowerCase()] || 'bg-gray-100 text-gray-600 border-gray-200';
+    return colors[priority?.toLowerCase()] || (isDark
+      ? 'bg-gray-700 text-gray-400 border-gray-600'
+      : 'bg-gray-100 text-gray-600 border-gray-200');
   };
 
   const getStatusIcon = (status) => {
@@ -656,17 +680,26 @@ const Tickets = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] flex items-center justify-center">
+      <div className={conditionalClasses({
+        light: "min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] flex items-center justify-center",
+        dark: "min-h-screen bg-gray-900 flex items-center justify-center"
+      })}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#662d91] mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Cargando tickets...</p>
+          <p className={conditionalClasses({
+            light: "text-lg text-gray-600 font-medium",
+            dark: "text-lg text-gray-300 font-medium"
+          })}>Cargando tickets...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8">
+    <div className={conditionalClasses({
+      light: "min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8",
+      dark: "min-h-screen bg-gray-900 py-4 px-3 sm:py-6 sm:px-4 lg:px-8"
+    })}>
       {/* Notification */}
       {notification && (
         <div className="fixed top-3 right-3 left-3 sm:top-4 sm:right-4 sm:left-auto z-50 max-w-sm animate-slide-in-right">
@@ -702,19 +735,31 @@ const Tickets = () => {
       {/* Confirm Dialog */}
       {confirmDialog && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4 animate-fade-in">
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 transform animate-scale-in">
+          <div className={conditionalClasses({
+            light: "bg-white rounded-xl lg:rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 transform animate-scale-in",
+            dark: "bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl max-w-md w-full border border-gray-600 transform animate-scale-in"
+          })}>
             <div className="p-4 lg:p-6">
               <div className="flex items-center justify-center mb-4">
                 <div className="w-12 h-12 lg:w-16 lg:h-16 bg-linear-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
                   <FaExclamationTriangle className="w-6 h-6 lg:w-8 lg:h-8 text-white" />
                 </div>
               </div>
-              <h3 className="text-lg lg:text-xl font-bold text-gray-900 text-center mb-3">Confirmar Acción</h3>
-              <p className="text-xs sm:text-sm text-gray-600 text-center mb-4 lg:mb-6 leading-relaxed">{confirmDialog.message}</p>
+              <h3 className={`text-lg lg:text-xl font-bold text-center mb-3 ${conditionalClasses({
+                light: "text-gray-900",
+                dark: "text-white"
+              })}`}>Confirmar Acción</h3>
+              <p className={`text-xs sm:text-sm text-center mb-4 lg:mb-6 leading-relaxed ${conditionalClasses({
+                light: "text-gray-600",
+                dark: "text-gray-300"
+              })}`}>{confirmDialog.message}</p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={() => setConfirmDialog(null)}
-                  className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all duration-200 text-sm lg:text-base touch-manipulation"
+                  className={conditionalClasses({
+                    light: "flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all duration-200 text-sm lg:text-base touch-manipulation",
+                    dark: "flex-1 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-gray-200 font-semibold rounded-xl transition-all duration-200 text-sm lg:text-base touch-manipulation"
+                  })}
                 >
                   Cancelar
                 </button>
@@ -745,10 +790,16 @@ const Tickets = () => {
                   </svg>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight truncate">
+                  <h1 className={conditionalClasses({
+                    light: "text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight truncate",
+                    dark: "text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight truncate"
+                  })}>
                     Sistema de Tickets
                   </h1>
-                  <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                  <p className={conditionalClasses({
+                    light: "text-xs sm:text-sm text-gray-600 mt-1",
+                    dark: "text-xs sm:text-sm text-gray-300 mt-1"
+                  })}>
                     Gestión integral de incidencias y soporte técnico
                   </p>
                 </div>
@@ -762,7 +813,10 @@ const Tickets = () => {
                   {(checkPermission('tickets', 'view_stats') || userRole === 'Administrador' || userRole === 'Técnico') && (
                     <button
                       onClick={() => setShowStats(!showStats)}
-                      className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: "flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base",
+                        dark: "flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold rounded-xl border-2 border-gray-600 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
+                      })}
                     >
                       <FaChartBar className="w-4 h-4" />
                       <span className="hidden sm:inline">Estadísticas</span>
@@ -771,7 +825,10 @@ const Tickets = () => {
                   {(checkPermission('tickets', 'export') || userRole === 'Administrador' || userRole === 'Técnico') && (
                     <button
                       onClick={exportToExcel}
-                      className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: "flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base",
+                        dark: "flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold rounded-xl border-2 border-gray-600 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
+                      })}
                     >
                       <FaDownload className="w-4 h-4" />
                       <span className="hidden sm:inline">Exportar</span>
@@ -782,7 +839,10 @@ const Tickets = () => {
               {canCreate && (
                 <button
                   onClick={handleCreate}
-                  className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
+                  className={conditionalClasses({
+                    light: "flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base",
+                    dark: "flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
+                  })}
                 >
                   <FaPlus className="w-4 h-4" />
                   <span>Nuevo Ticket</span>
@@ -798,8 +858,14 @@ const Tickets = () => {
         {/* Charts */}
         {showStats && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Administradores con Más Tickets Asignados</h3>
+            <div className={conditionalClasses({
+              light: "bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6",
+              dark: "bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-6"
+            })}>
+              <h3 className={conditionalClasses({
+                light: "text-lg font-bold text-gray-900 mb-4",
+                dark: "text-lg font-bold text-white mb-4"
+              })}>Administradores con Más Tickets Asignados</h3>
               <Bar data={getAdminChartData()} options={{
                 responsive: true,
                 plugins: {
@@ -809,8 +875,14 @@ const Tickets = () => {
                 },
               }} />
             </div>
-            <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Categorías con Más Reportes</h3>
+            <div className={conditionalClasses({
+              light: "bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6",
+              dark: "bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-6"
+            })}>
+              <h3 className={conditionalClasses({
+                light: "text-lg font-bold text-gray-900 mb-4",
+                dark: "text-lg font-bold text-white mb-4"
+              })}>Categorías con Más Reportes</h3>
               <Bar data={getCategoryChartData()} options={{
                 responsive: true,
                 plugins: {
@@ -824,7 +896,10 @@ const Tickets = () => {
         )}
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 mb-6">
+        <div className={conditionalClasses({
+          light: "bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 mb-6",
+          dark: "bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-4 lg:p-6 mb-6"
+        })}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1 relative">
@@ -834,17 +909,27 @@ const Tickets = () => {
                   placeholder="Buscar por título, descripción o creador..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-gray-700 font-medium text-sm lg:text-base"
+                  className={conditionalClasses({
+                    light: "w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-gray-700 font-medium text-sm lg:text-base bg-white",
+                    dark: "w-full pl-12 pr-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-gray-200 font-medium text-sm lg:text-base bg-gray-700"
+                  })}
                 />
               </div>
 
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${
-                  showFilters
-                    ? 'bg-[#662d91] text-white shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                className={conditionalClasses({
+                  light: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${
+                    showFilters
+                      ? 'bg-[#662d91] text-white shadow-lg'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`,
+                  dark: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${
+                    showFilters
+                      ? 'bg-[#662d91] text-white shadow-lg'
+                      : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                  }`
+                })}
               >
                 <FaFilter className="w-4 h-4" />
                 <span>Filtros</span>
@@ -924,28 +1009,45 @@ const Tickets = () => {
 
         {/* Results Summary */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <p className="text-sm text-gray-600 font-medium">
+          <p className={conditionalClasses({
+            light: "text-sm text-gray-600 font-medium",
+            dark: "text-sm text-gray-300 font-medium"
+          })}>
             Mostrando <span className="font-bold text-[#662d91]">{filteredTickets.length}</span> de <span className="font-bold">{tickets.length}</span> tickets
           </p>
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode('cards')}
-              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
-                viewMode === 'cards'
-                  ? 'bg-[#662d91] text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
-              }`}
+              className={conditionalClasses({
+                light: `px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
+                  viewMode === 'cards'
+                    ? 'bg-[#662d91] text-white shadow-md'
+                    : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                }`,
+                dark: `px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
+                  viewMode === 'cards'
+                    ? 'bg-[#662d91] text-white shadow-md'
+                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600'
+                }`
+              })}
             >
               <FaClipboardList className="w-4 h-4" />
               <span className="hidden sm:inline ml-2">Tarjetas</span>
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
-                viewMode === 'list'
-                  ? 'bg-[#662d91] text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
-              }`}
+              className={conditionalClasses({
+                light: `px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
+                  viewMode === 'list'
+                    ? 'bg-[#662d91] text-white shadow-md'
+                    : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                }`,
+                dark: `px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
+                  viewMode === 'list'
+                    ? 'bg-[#662d91] text-white shadow-md'
+                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600'
+                }`
+              })}
             >
               <FaChartBar className="w-4 h-4" />
               <span className="hidden sm:inline ml-2">Lista</span>
@@ -955,16 +1057,25 @@ const Tickets = () => {
 
         {/* Tickets Display */}
         {filteredTickets.length === 0 ? (
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center">
+          <div className={conditionalClasses({
+            light: "bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center",
+            dark: "bg-gray-800 rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-700 p-6 lg:p-12 text-center"
+          })}>
             <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4">
               <FaClipboardList className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
             </div>
-            <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2">
+            <h3 className={conditionalClasses({
+              light: "text-lg lg:text-xl font-bold text-gray-900 mb-2",
+              dark: "text-lg lg:text-xl font-bold text-white mb-2"
+            })}>
               {searchTerm || filterStatus !== 'all' || filterPriority !== 'all' || titleFilter
                 ? 'No se encontraron tickets'
                 : 'No hay tickets disponibles'}
             </h3>
-            <p className="text-sm lg:text-base text-gray-600 max-w-md mx-auto mb-4 lg:mb-6">
+            <p className={conditionalClasses({
+              light: "text-sm lg:text-base text-gray-600 max-w-md mx-auto mb-4 lg:mb-6",
+              dark: "text-sm lg:text-base text-gray-300 max-w-md mx-auto mb-4 lg:mb-6"
+            })}>
               {searchTerm || filterStatus !== 'all' || filterPriority !== 'all' || titleFilter
                 ? 'Intenta ajustar los filtros de búsqueda'
                 : 'Comienza creando un nuevo ticket para dar seguimiento a incidencias'}
@@ -983,7 +1094,10 @@ const Tickets = () => {
           <>
             {/* Cards View */}
             {viewMode === 'cards' && (
-              <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6">
+              <div className={conditionalClasses({
+                light: "bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6",
+                dark: "bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-4 lg:p-6"
+              })}>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
                   {filteredTickets.map((ticket) => (
                     <TicketCard
@@ -1001,12 +1115,21 @@ const Tickets = () => {
 
             {/* List View */}
             {viewMode === 'list' && (
-              <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 overflow-hidden">
+              <div className={conditionalClasses({
+                light: "bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 overflow-hidden",
+                dark: "bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-4 lg:p-6 overflow-hidden"
+              })}>
                 {/* Mobile Card View for List Mode */}
                 <div className="block md:hidden">
-                  <div className="divide-y divide-gray-200">
+                  <div className={conditionalClasses({
+                    light: "divide-y divide-gray-200",
+                    dark: "divide-y divide-gray-600"
+                  })}>
                     {filteredTickets.map((ticket) => (
-                      <div key={ticket.id} className="p-4 hover:bg-[#f3ebf9] transition-colors">
+                      <div key={ticket.id} className={conditionalClasses({
+                        light: "p-4 hover:bg-[#f3ebf9] transition-colors",
+                        dark: "p-4 hover:bg-gray-700 transition-colors"
+                      })}>
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-2">
@@ -1018,13 +1141,22 @@ const Tickets = () => {
                                 {ticket.priority}
                               </span>
                             </div>
-                            <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">{ticket.title}</h3>
-                            <p className="text-xs text-gray-500 line-clamp-2">{ticket.description}</p>
+                            <h3 className={conditionalClasses({
+                              light: "font-semibold text-gray-900 text-sm mb-1 truncate",
+                              dark: "font-semibold text-white text-sm mb-1 truncate"
+                            })}>{ticket.title}</h3>
+                            <p className={conditionalClasses({
+                              light: "text-xs text-gray-500 line-clamp-2",
+                              dark: "text-xs text-gray-400 line-clamp-2"
+                            })}>{ticket.description}</p>
                           </div>
                           <div className="flex gap-1 ml-2">
                             <button
                               onClick={() => handleViewDetail(ticket)}
-                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation"
+                              className={conditionalClasses({
+                                light: "p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation",
+                                dark: "p-2 text-blue-400 hover:bg-blue-900/50 rounded-lg transition-all touch-manipulation"
+                              })}
                               title="Ver detalles"
                             >
                               <FaEye className="w-4 h-4" />
@@ -1032,7 +1164,10 @@ const Tickets = () => {
                             {canEditTicket(ticket) && (
                               <button
                                 onClick={() => handleEdit(ticket)}
-                                className="p-2 text-[#662d91] hover:bg-[#f3ebf9] rounded-lg transition-all touch-manipulation"
+                                className={conditionalClasses({
+                                  light: "p-2 text-[#662d91] hover:bg-[#f3ebf9] rounded-lg transition-all touch-manipulation",
+                                  dark: "p-2 text-purple-400 hover:bg-purple-900/50 rounded-lg transition-all touch-manipulation"
+                                })}
                                 title="Editar"
                               >
                                 <FaEdit className="w-4 h-4" />
@@ -1041,7 +1176,10 @@ const Tickets = () => {
                             {canDeleteTicket(ticket) && (
                               <button
                                 onClick={() => handleDelete(ticket)}
-                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all touch-manipulation"
+                                className={conditionalClasses({
+                                  light: "p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all touch-manipulation",
+                                  dark: "p-2 text-red-400 hover:bg-red-900/50 rounded-lg transition-all touch-manipulation"
+                                })}
                                 title="Eliminar"
                               >
                                 <FaTrash className="w-4 h-4" />
@@ -1049,7 +1187,10 @@ const Tickets = () => {
                             )}
                           </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-4 text-xs text-gray-600">
+                        <div className={conditionalClasses({
+                          light: "grid grid-cols-2 gap-4 text-xs text-gray-600",
+                          dark: "grid grid-cols-2 gap-4 text-xs text-gray-300"
+                        })}>
                           <div>
                             <span className="font-medium">Creado por:</span>
                             <p className="truncate">{ticket.creator?.name || 'Usuario'}</p>
@@ -1071,7 +1212,10 @@ const Tickets = () => {
                 {/* Desktop Table View */}
                 <div className="hidden md:block">
                   <table className="w-full">
-                    <thead className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white">
+                    <thead className={conditionalClasses({
+                      light: "bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white",
+                      dark: "bg-linear-to-r from-purple-700 to-purple-800 text-white"
+                    })}>
                       <tr>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase">ID</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase">Título</th>
@@ -1083,15 +1227,27 @@ const Tickets = () => {
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase">Acciones</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className={conditionalClasses({
+                      light: "divide-y divide-gray-200",
+                      dark: "divide-y divide-gray-600"
+                    })}>
                       {filteredTickets.map((ticket) => (
-                        <tr key={ticket.id} className="hover:bg-[#f3ebf9] transition-colors">
+                        <tr key={ticket.id} className={conditionalClasses({
+                          light: "hover:bg-[#f3ebf9] transition-colors",
+                          dark: "hover:bg-gray-700 transition-colors"
+                        })}>
                           <td className="px-4 py-4">
                             <span className="font-bold text-[#662d91]">#{ticket.id}</span>
                           </td>
                           <td className="px-4 py-4">
-                            <div className="font-semibold text-gray-900">{ticket.title}</div>
-                            <div className="text-xs text-gray-500 truncate max-w-xs">{ticket.description}</div>
+                            <div className={conditionalClasses({
+                              light: "font-semibold text-gray-900",
+                              dark: "font-semibold text-white"
+                            })}>{ticket.title}</div>
+                            <div className={conditionalClasses({
+                              light: "text-xs text-gray-500 truncate max-w-xs",
+                              dark: "text-xs text-gray-400 truncate max-w-xs"
+                            })}>{ticket.description}</div>
                           </td>
                           <td className="px-4 py-4">
                             <span className={`px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1 ${getStatusColor(ticket.status)}`}>
@@ -1117,7 +1273,10 @@ const Tickets = () => {
                             <div className="flex gap-2">
                               <button
                                 onClick={() => handleViewDetail(ticket)}
-                                className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation"
+                                className={conditionalClasses({
+                                  light: "p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation",
+                                  dark: "p-2 text-blue-400 hover:bg-blue-900/50 rounded-lg transition-all touch-manipulation"
+                                })}
                                 title="Ver detalles"
                               >
                                 <FaEye className="w-4 h-4" />
@@ -1125,7 +1284,10 @@ const Tickets = () => {
                               {canEditTicket(ticket) && (
                                 <button
                                   onClick={() => handleEdit(ticket)}
-                                  className="p-2 text-[#662d91] hover:bg-[#f3ebf9] rounded-lg transition-all touch-manipulation"
+                                  className={conditionalClasses({
+                                    light: "p-2 text-[#662d91] hover:bg-[#f3ebf9] rounded-lg transition-all touch-manipulation",
+                                    dark: "p-2 text-purple-400 hover:bg-purple-900/50 rounded-lg transition-all touch-manipulation"
+                                  })}
                                   title="Editar"
                                 >
                                   <FaEdit className="w-4 h-4" />
@@ -1134,7 +1296,10 @@ const Tickets = () => {
                               {canDeleteTicket(ticket) && (
                                 <button
                                   onClick={() => handleDelete(ticket)}
-                                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all touch-manipulation"
+                                  className={conditionalClasses({
+                                    light: "p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all touch-manipulation",
+                                    dark: "p-2 text-red-400 hover:bg-red-900/50 rounded-lg transition-all touch-manipulation"
+                                  })}
                                   title="Eliminar"
                                 >
                                   <FaTrash className="w-4 h-4" />

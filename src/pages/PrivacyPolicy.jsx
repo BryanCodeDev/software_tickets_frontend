@@ -1,11 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useThemeClasses } from '../hooks/useThemeClasses';
 
 const PrivacyPolicy = () => {
+  const { conditionalClasses } = useThemeClasses();
+
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className={conditionalClasses({
+      light: 'min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8',
+      dark: 'min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8'
+    })}>
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
+        <div className={conditionalClasses({
+          light: 'bg-white shadow-xl rounded-2xl overflow-hidden',
+          dark: 'bg-gray-800 shadow-xl rounded-2xl overflow-hidden'
+        })}>
           {/* Header */}
           <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-8 py-6">
             <div className="flex items-center justify-between">
@@ -30,13 +39,22 @@ const PrivacyPolicy = () => {
 
           {/* Content */}
           <div className="px-8 py-8">
-            <div className="prose prose-lg max-w-none text-gray-700">
-              <p className="text-sm text-gray-500 mb-8">
+            <div className={conditionalClasses({
+              light: 'prose prose-lg max-w-none text-gray-700',
+              dark: 'prose prose-lg max-w-none text-gray-300'
+            })}>
+              <p className={conditionalClasses({
+                light: 'text-sm text-gray-500 mb-8',
+                dark: 'text-sm text-gray-400 mb-8'
+              })}>
                 Última actualización: {new Date().toLocaleDateString('es-ES')}
               </p>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Información que Recopilamos</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>1. Información que Recopilamos</h2>
                 <p className="mb-4">
                   Recopilamos información personal que nos proporcionas directamente al registrarte
                   y utilizar nuestros servicios:
@@ -50,7 +68,10 @@ const PrivacyPolicy = () => {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">2. Cómo Utilizamos tu Información</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>2. Cómo Utilizamos tu Información</h2>
                 <p className="mb-4">
                   Utilizamos la información recopilada para:
                 </p>
@@ -64,7 +85,10 @@ const PrivacyPolicy = () => {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">3. Compartir Información</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>3. Compartir Información</h2>
                 <p className="mb-4">
                   No vendemos, alquilamos ni compartimos tu información personal con terceros,
                   excepto en las siguientes circunstancias:
@@ -78,7 +102,10 @@ const PrivacyPolicy = () => {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">4. Seguridad de Datos</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>4. Seguridad de Datos</h2>
                 <p className="mb-4">
                   Implementamos medidas de seguridad técnicas y organizativas para proteger tu
                   información personal contra acceso no autorizado, alteración, divulgación o
@@ -87,7 +114,10 @@ const PrivacyPolicy = () => {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">5. Cookies y Tecnologías Similares</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>5. Cookies y Tecnologías Similares</h2>
                 <p className="mb-4">
                   Utilizamos cookies y tecnologías similares para mejorar tu experiencia en nuestra
                   plataforma. Puedes controlar el uso de cookies a través de la configuración de tu navegador.
@@ -95,7 +125,10 @@ const PrivacyPolicy = () => {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">6. Tus Derechos</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>6. Tus Derechos</h2>
                 <p className="mb-4">
                   Tienes derecho a:
                 </p>
@@ -109,7 +142,10 @@ const PrivacyPolicy = () => {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">7. Retención de Datos</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>7. Retención de Datos</h2>
                 <p className="mb-4">
                   Conservamos tu información personal solo durante el tiempo necesario para
                   proporcionar nuestros servicios y cumplir con nuestras obligaciones legales.
@@ -117,7 +153,10 @@ const PrivacyPolicy = () => {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">8. Cambios a esta Política</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>8. Cambios a esta Política</h2>
                 <p className="mb-4">
                   Podemos actualizar esta política de privacidad periódicamente. Te notificaremos
                   sobre cambios significativos a través de la plataforma o por correo electrónico.
@@ -125,7 +164,10 @@ const PrivacyPolicy = () => {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">9. Contacto</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-2xl font-bold text-gray-900 mb-4',
+                  dark: 'text-2xl font-bold text-gray-100 mb-4'
+                })}>9. Contacto</h2>
                 <p className="mb-4">
                   Si tienes preguntas sobre esta política de privacidad, puedes contactarnos:
                 </p>
@@ -137,9 +179,15 @@ const PrivacyPolicy = () => {
             </div>
 
             {/* Footer */}
-            <div className="mt-12 pt-8 border-t border-gray-200">
+            <div className={conditionalClasses({
+              light: 'mt-12 pt-8 border-t border-gray-200',
+              dark: 'mt-12 pt-8 border-t border-gray-600'
+            })}>
               <div className="flex flex-col sm:flex-row justify-between items-center">
-                <p className="text-sm text-gray-500 mb-4 sm:mb-0">
+                <p className={conditionalClasses({
+                  light: 'text-sm text-gray-500 mb-4 sm:mb-0',
+                  dark: 'text-sm text-gray-400 mb-4 sm:mb-0'
+                })}>
                   © 2025 DuvyClass. Desarrollado por Bryan Muñoz.
                 </p>
                 <Link

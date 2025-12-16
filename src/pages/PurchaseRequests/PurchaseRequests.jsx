@@ -14,6 +14,7 @@ import { Bar } from 'react-chartjs-2';
 import AuthContext from '../../context/AuthContext';
 import { purchaseRequestsAPI } from '../../api';
 import { useAuth } from '../../hooks/useAuth';
+import { useThemeClasses } from '../../hooks/useThemeClasses';
 import { joinPurchaseRequestRoom, leavePurchaseRequestRoom, onPurchaseRequestUpdated, onPurchaseRequestCreated, onPurchaseRequestDeleted, onPurchaseRequestsListUpdated, offPurchaseRequestUpdated, offPurchaseRequestCreated, offPurchaseRequestDeleted, offPurchaseRequestsListUpdated } from '../../api/socket';
 import {
   PurchaseRequestCreateModal,
@@ -35,6 +36,7 @@ ChartJS.register(
 );
 
 const PurchaseRequests = () => {
+  const { conditionalClasses } = useThemeClasses();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -341,25 +343,39 @@ const PurchaseRequests = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#662d91] mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Cargando solicitudes de compra...</p>
+      <div className={conditionalClasses({
+        light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]',
+        dark: 'min-h-screen bg-gray-900'
+      })}>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#662d91] mx-auto mb-4"></div>
+            <p className={conditionalClasses({
+              light: 'text-lg text-gray-600 font-medium',
+              dark: 'text-lg text-gray-300 font-medium'
+            })}>Cargando solicitudes de compra...</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-2 px-2 sm:py-4 sm:px-3 lg:py-6 lg:px-8">
+    <div className={conditionalClasses({
+      light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-2 px-2 sm:py-4 sm:px-3 lg:py-6 lg:px-8',
+      dark: 'min-h-screen bg-gray-900 py-2 px-2 sm:py-4 sm:px-3 lg:py-6 lg:px-8'
+    })}>
       {/* Notification */}
       {notification && (
         <div className="fixed top-3 right-3 left-3 sm:top-4 sm:right-4 sm:left-auto z-50 max-w-sm animate-slide-in-right">
-          <div className={`flex items-center p-3 sm:p-4 rounded-xl shadow-2xl border-2 transition-all duration-300 ${
-            notification.type === 'success'
+          <div className={`flex items-center p-3 sm:p-4 rounded-xl shadow-2xl border-2 transition-all duration-300 ${conditionalClasses({
+            light: notification.type === 'success'
               ? 'bg-white border-green-400 text-green-800'
-              : 'bg-white border-red-400 text-red-800'
-          }`}>
+              : 'bg-white border-red-400 text-red-800',
+            dark: notification.type === 'success'
+              ? 'bg-gray-800 border-green-600 text-green-300'
+              : 'bg-gray-800 border-red-600 text-red-300'
+          })}`}>
             <div className="shrink-0">
               {notification.type === 'success' ? (
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-full flex items-center justify-center">
@@ -396,10 +412,16 @@ const PurchaseRequests = () => {
                   </svg>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-900 leading-tight truncate">
+                  <h1 className={conditionalClasses({
+                    light: 'text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-900 leading-tight truncate',
+                    dark: 'text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-white leading-tight truncate'
+                  })}>
                     Solicitudes de Compra
                   </h1>
-                  <p className="text-xs sm:text-sm text-gray-600 mt-1 hidden sm:block">
+                  <p className={conditionalClasses({
+                    light: 'text-xs sm:text-sm text-gray-600 mt-1 hidden sm:block',
+                    dark: 'text-xs sm:text-sm text-gray-400 mt-1 hidden sm:block'
+                  })}>
                     Gestión de solicitudes de periféricos y electrodomésticos
                   </p>
                 </div>
@@ -413,7 +435,10 @@ const PurchaseRequests = () => {
                   {(checkPermission('purchase_requests', 'view_stats') || userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Coordinadora Administrativa' || userRole === 'Jefe') && (
                     <button
                       onClick={() => setShowStats(!showStats)}
-                      className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base',
+                        dark: 'flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-600 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base'
+                      })}
                     >
                       <FaChartBar className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span className="hidden sm:inline">Estadísticas</span>
@@ -422,7 +447,10 @@ const PurchaseRequests = () => {
                   {(checkPermission('purchase_requests', 'export') || userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Coordinadora Administrativa' || userRole === 'Jefe') && (
                     <button
                       onClick={exportToExcel}
-                      className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base',
+                        dark: 'flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-600 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base'
+                      })}
                     >
                       <FaDownload className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span className="hidden sm:inline">Exportar</span>
@@ -448,27 +476,35 @@ const PurchaseRequests = () => {
         {showStats && <PurchaseRequestStats stats={stats} userRole={userRole} />}
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 mb-6">
+        <div className={conditionalClasses({
+          light: 'bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 mb-6',
+          dark: 'bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-4 lg:p-6 mb-6'
+        })}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1 relative">
-                <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <FaSearch className={conditionalClasses({
+                  light: 'absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5',
+                  dark: 'absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5'
+                })} />
                 <input
                   type="text"
                   placeholder="Buscar por título, descripción o solicitante..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-gray-700 font-medium text-sm lg:text-base"
+                  className={conditionalClasses({
+                    light: 'w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-gray-700 font-medium text-sm lg:text-base',
+                    dark: 'w-full pl-12 pr-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-white font-medium text-sm lg:text-base bg-gray-700'
+                  })}
                 />
               </div>
 
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${
-                  showFilters
-                    ? 'bg-[#662d91] text-white shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                className={conditionalClasses({
+                  light: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${showFilters ? 'bg-[#662d91] text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`,
+                  dark: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${showFilters ? 'bg-[#662d91] text-white shadow-lg' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`
+                })}
               >
                 <FaFilter className="w-4 h-4" />
                 <span>Filtros</span>
@@ -476,13 +512,22 @@ const PurchaseRequests = () => {
             </div>
 
             {showFilters && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-6 border-t-2 border-gray-100 animate-fade-in">
+              <div className={conditionalClasses({
+                light: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-6 border-t-2 border-gray-100 animate-fade-in',
+                dark: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-6 border-t-2 border-gray-600 animate-fade-in'
+              })}>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Estado</label>
+                  <label className={conditionalClasses({
+                    light: 'block text-sm font-semibold text-gray-700 mb-2',
+                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                  })}>Estado</label>
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm"
+                    className={conditionalClasses({
+                      light: 'w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm',
+                      dark: 'w-full px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-gray-700 text-white'
+                    })}
                   >
                     <option value="all">Todos los estados</option>
                     <option value="solicitado">Solicitado</option>
@@ -498,11 +543,17 @@ const PurchaseRequests = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Tipo de Ítem</label>
+                  <label className={conditionalClasses({
+                    light: 'block text-sm font-semibold text-gray-700 mb-2',
+                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                  })}>Tipo de Ítem</label>
                   <select
                     value={filterItemType || 'all'}
                     onChange={(e) => setFilterItemType(e.target.value)}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm"
+                    className={conditionalClasses({
+                      light: 'w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm',
+                      dark: 'w-full px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-gray-700 text-white'
+                    })}
                   >
                     <option value="all">Todos los tipos</option>
                     <option value="periferico">Periférico</option>
@@ -513,12 +564,18 @@ const PurchaseRequests = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Ordenar por</label>
+                  <label className={conditionalClasses({
+                    light: 'block text-sm font-semibold text-gray-700 mb-2',
+                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                  })}>Ordenar por</label>
                   <div className="flex gap-2">
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="flex-1 px-3 lg:px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm"
+                      className={conditionalClasses({
+                        light: 'flex-1 px-3 lg:px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm',
+                        dark: 'flex-1 px-3 lg:px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-gray-700 text-white'
+                      })}
                     >
                       <option value="createdAt">Fecha creación</option>
                       <option value="updatedAt">Última actualización</option>
@@ -527,7 +584,10 @@ const PurchaseRequests = () => {
                     </select>
                     <button
                       onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                      className="px-3 lg:px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all"
+                      className={conditionalClasses({
+                        light: 'px-3 lg:px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all',
+                        dark: 'px-3 lg:px-4 py-2.5 bg-gray-700 hover:bg-gray-600 rounded-xl transition-all'
+                      })}
                     >
                       {sortOrder === 'asc' ? <FaSortAmountDown className="w-4 h-4 lg:w-5 lg:h-5" /> : <FaSortAmountUp className="w-4 h-4 lg:w-5 lg:h-5" />}
                     </button>
@@ -540,28 +600,29 @@ const PurchaseRequests = () => {
 
         {/* Results Summary */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 mb-3 sm:mb-4">
-          <p className="text-xs sm:text-sm text-gray-600 font-medium">
+          <p className={conditionalClasses({
+            light: 'text-xs sm:text-sm text-gray-600 font-medium',
+            dark: 'text-xs sm:text-sm text-gray-400 font-medium'
+          })}>
             Mostrando <span className="font-bold text-[#662d91]">{filteredRequests.length}</span> de <span className="font-bold">{requests.length}</span> solicitudes
           </p>
           <div className="flex gap-1 sm:gap-2">
             <button
               onClick={() => setViewMode('cards')}
-              className={`px-2 sm:px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-xs sm:text-sm lg:text-base ${
-                viewMode === 'cards'
-                  ? 'bg-[#662d91] text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
-              }`}
+              className={conditionalClasses({
+                light: `px-2 sm:px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-xs sm:text-sm lg:text-base ${viewMode === 'cards' ? 'bg-[#662d91] text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'}`,
+                dark: `px-2 sm:px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-xs sm:text-sm lg:text-base ${viewMode === 'cards' ? 'bg-[#662d91] text-white shadow-md' : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border border-gray-600'}`
+              })}
             >
               <FaClipboardList className="w-3 h-3 sm:w-4 sm:h-4" />
               <span className="hidden sm:inline ml-1 sm:ml-2">Tarjetas</span>
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`px-2 sm:px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-xs sm:text-sm lg:text-base ${
-                viewMode === 'list'
-                  ? 'bg-[#662d91] text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
-              }`}
+              className={conditionalClasses({
+                light: `px-2 sm:px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-xs sm:text-sm lg:text-base ${viewMode === 'list' ? 'bg-[#662d91] text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'}`,
+                dark: `px-2 sm:px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-xs sm:text-sm lg:text-base ${viewMode === 'list' ? 'bg-[#662d91] text-white shadow-md' : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border border-gray-600'}`
+              })}
             >
               <FaChartBar className="w-3 h-3 sm:w-4 sm:h-4" />
               <span className="hidden sm:inline ml-1 sm:ml-2">Lista</span>
@@ -571,16 +632,25 @@ const PurchaseRequests = () => {
 
         {/* Purchase Requests Display */}
         {filteredRequests.length === 0 ? (
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center">
+          <div className={conditionalClasses({
+            light: 'bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center',
+            dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-700 p-6 lg:p-12 text-center'
+          })}>
             <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4">
               <FaClipboardList className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
             </div>
-            <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2">
+            <h3 className={conditionalClasses({
+              light: 'text-lg lg:text-xl font-bold text-gray-900 mb-2',
+              dark: 'text-lg lg:text-xl font-bold text-white mb-2'
+            })}>
               {searchTerm || filterStatus !== 'all'
                 ? 'No se encontraron solicitudes'
                 : 'No hay solicitudes disponibles'}
             </h3>
-            <p className="text-sm lg:text-base text-gray-600 max-w-md mx-auto mb-4 lg:mb-6">
+            <p className={conditionalClasses({
+              light: 'text-sm lg:text-base text-gray-600 max-w-md mx-auto mb-4 lg:mb-6',
+              dark: 'text-sm lg:text-base text-gray-400 max-w-md mx-auto mb-4 lg:mb-6'
+            })}>
               {searchTerm || filterStatus !== 'all'
                 ? 'Intenta ajustar los filtros de búsqueda'
                 : 'Comienza creando una nueva solicitud de compra'}
@@ -599,7 +669,10 @@ const PurchaseRequests = () => {
           <>
             {/* Cards View */}
             {viewMode === 'cards' && (
-              <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-3 sm:p-4 lg:p-6">
+              <div className={conditionalClasses({
+                light: 'bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-3 sm:p-4 lg:p-6',
+                dark: 'bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-3 sm:p-4 lg:p-6'
+              })}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                   {filteredRequests.map((request) => (
                     <PurchaseRequestCard
@@ -618,12 +691,21 @@ const PurchaseRequests = () => {
 
             {/* List View */}
             {viewMode === 'list' && (
-              <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 overflow-hidden">
+              <div className={conditionalClasses({
+                light: 'bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 overflow-hidden',
+                dark: 'bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-4 lg:p-6 overflow-hidden'
+              })}>
                 {/* Mobile Card View for List Mode */}
                 <div className="block md:hidden">
-                  <div className="divide-y divide-gray-200">
+                  <div className={conditionalClasses({
+                    light: 'divide-y divide-gray-200',
+                    dark: 'divide-y divide-gray-600'
+                  })}>
                     {filteredRequests.map((request) => (
-                      <div key={request.id} className="p-4 hover:bg-[#f3ebf9] transition-colors">
+                      <div key={request.id} className={conditionalClasses({
+                        light: 'p-4 hover:bg-[#f3ebf9] transition-colors',
+                        dark: 'p-4 hover:bg-gray-700/50 transition-colors'
+                      })}>
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-2">
@@ -632,29 +714,56 @@ const PurchaseRequests = () => {
                                 {request.status}
                               </span>
                             </div>
-                            <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">{request.title}</h3>
-                            <p className="text-xs text-gray-500 line-clamp-2">{request.description}</p>
+                            <h3 className={conditionalClasses({
+                              light: 'font-semibold text-gray-900 text-sm mb-1 truncate',
+                              dark: 'font-semibold text-white text-sm mb-1 truncate'
+                            })}>{request.title}</h3>
+                            <p className={conditionalClasses({
+                              light: 'text-xs text-gray-500 line-clamp-2',
+                              dark: 'text-xs text-gray-400 line-clamp-2'
+                            })}>{request.description}</p>
                           </div>
                           <button
                             onClick={() => handleViewDetail(request)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation"
+                            className={conditionalClasses({
+                              light: 'p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation',
+                              dark: 'p-2 text-blue-400 hover:bg-gray-700 rounded-lg transition-all touch-manipulation'
+                            })}
                             title="Ver detalles"
                           >
                             <FaEye className="w-4 h-4" />
                           </button>
                         </div>
-                        <div className="grid grid-cols-2 gap-4 text-xs text-gray-600">
+                        <div className="grid grid-cols-2 gap-4 text-xs">
                           <div>
-                            <span className="font-medium">Tipo:</span>
-                            <p className="capitalize">{request.itemType}</p>
+                            <span className={conditionalClasses({
+                              light: 'font-medium',
+                              dark: 'font-medium text-gray-300'
+                            })}>Tipo:</span>
+                            <p className={conditionalClasses({
+                              light: 'capitalize',
+                              dark: 'capitalize text-gray-300'
+                            })}>{request.itemType}</p>
                           </div>
                           <div>
-                            <span className="font-medium">Costo:</span>
-                            <p>${request.estimatedCost}</p>
+                            <span className={conditionalClasses({
+                              light: 'font-medium',
+                              dark: 'font-medium text-gray-300'
+                            })}>Costo:</span>
+                            <p className={conditionalClasses({
+                              light: '',
+                              dark: 'text-gray-300'
+                            })}>${request.estimatedCost}</p>
                           </div>
                           <div className="col-span-2">
-                            <span className="font-medium">Solicitante:</span>
-                            <p className="truncate">{request.requester?.name || 'Usuario'}</p>
+                            <span className={conditionalClasses({
+                              light: 'font-medium',
+                              dark: 'font-medium text-gray-300'
+                            })}>Solicitante:</span>
+                            <p className={conditionalClasses({
+                              light: 'truncate',
+                              dark: 'truncate text-gray-300'
+                            })}>{request.requester?.name || 'Usuario'}</p>
                           </div>
                         </div>
                       </div>
@@ -677,17 +786,32 @@ const PurchaseRequests = () => {
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase">Acciones</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className={conditionalClasses({
+                      light: 'divide-y divide-gray-200',
+                      dark: 'divide-y divide-gray-600'
+                    })}>
                       {filteredRequests.map((request) => (
-                        <tr key={request.id} className="hover:bg-[#f3ebf9] transition-colors">
+                        <tr key={request.id} className={conditionalClasses({
+                          light: 'hover:bg-[#f3ebf9] transition-colors',
+                          dark: 'hover:bg-gray-700/50 transition-colors'
+                        })}>
                           <td className="px-4 py-4">
                             <span className="font-bold text-[#662d91]">#{request.id}</span>
                           </td>
                           <td className="px-4 py-4">
-                            <div className="font-semibold text-gray-900">{request.title}</div>
-                            <div className="text-xs text-gray-500 truncate max-w-xs">{request.description}</div>
+                            <div className={conditionalClasses({
+                              light: 'font-semibold text-gray-900',
+                              dark: 'font-semibold text-white'
+                            })}>{request.title}</div>
+                            <div className={conditionalClasses({
+                              light: 'text-xs text-gray-500 truncate max-w-xs',
+                              dark: 'text-xs text-gray-400 truncate max-w-xs'
+                            })}>{request.description}</div>
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-700 capitalize">
+                          <td className={conditionalClasses({
+                            light: 'px-4 py-4 text-sm text-gray-700 capitalize',
+                            dark: 'px-4 py-4 text-sm text-gray-300 capitalize'
+                          })}>
                             {request.itemType}
                           </td>
                           <td className="px-4 py-4">
@@ -696,19 +820,31 @@ const PurchaseRequests = () => {
                               {request.status}
                             </span>
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-700">
+                          <td className={conditionalClasses({
+                            light: 'px-4 py-4 text-sm text-gray-700',
+                            dark: 'px-4 py-4 text-sm text-gray-300'
+                          })}>
                             ${request.estimatedCost}
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-700">
+                          <td className={conditionalClasses({
+                            light: 'px-4 py-4 text-sm text-gray-700',
+                            dark: 'px-4 py-4 text-sm text-gray-300'
+                          })}>
                             {request.requester?.name || 'Usuario'}
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-500">
+                          <td className={conditionalClasses({
+                            light: 'px-4 py-4 text-sm text-gray-500',
+                            dark: 'px-4 py-4 text-sm text-gray-400'
+                          })}>
                             {getTimeAgo(request.updatedAt)}
                           </td>
                           <td className="px-4 py-4">
                             <button
                               onClick={() => handleViewDetail(request)}
-                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation"
+                              className={conditionalClasses({
+                                light: 'p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation',
+                                dark: 'p-2 text-blue-400 hover:bg-gray-700 rounded-lg transition-all touch-manipulation'
+                              })}
                               title="Ver detalles"
                             >
                               <FaEye className="w-4 h-4" />

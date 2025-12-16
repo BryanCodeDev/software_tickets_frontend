@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { documentsAPI, getServerBaseURL } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
+import { useThemeClasses } from '../../hooks/useThemeClasses.js';
 import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes, FaFileAlt, FaTag, FaSearch, FaSortAmountDown, FaSortAmountUp, FaFilePdf, FaFileWord, FaFileExcel, FaFileImage, FaFileArchive, FaClock, FaUser, FaFolder, FaFolderOpen, FaPlus, FaArrowLeft } from 'react-icons/fa';
 import { NotificationSystem, ConfirmDialog, FilterPanel } from '../../components/common';
 import {
@@ -25,6 +26,7 @@ import {
 } from '../../api/socket';
 
 const Documents = () => {
+  const { conditionalClasses } = useThemeClasses();
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -353,18 +355,36 @@ const Documents = () => {
   const getFileIcon = (filePath) => {
     const extension = filePath?.split('.').pop().toLowerCase();
     switch(extension) {
-      case 'pdf': return <FaFilePdf className="text-red-600 text-xl" />;
+      case 'pdf': return <FaFilePdf className={`text-xl ${conditionalClasses({
+        light: 'text-red-600',
+        dark: 'text-red-400'
+      })}`} />;
       case 'doc':
-      case 'docx': return <FaFileWord className="text-blue-600 text-xl" />;
+      case 'docx': return <FaFileWord className={`text-xl ${conditionalClasses({
+        light: 'text-blue-600',
+        dark: 'text-blue-400'
+      })}`} />;
       case 'xls':
-      case 'xlsx': return <FaFileExcel className="text-green-600 text-xl" />;
+      case 'xlsx': return <FaFileExcel className={`text-xl ${conditionalClasses({
+        light: 'text-green-600',
+        dark: 'text-green-400'
+      })}`} />;
       case 'jpg':
       case 'jpeg':
       case 'png':
-      case 'gif': return <FaFileImage className="text-[#662d91] text-xl" />;
+      case 'gif': return <FaFileImage className={`text-xl ${conditionalClasses({
+        light: 'text-[#662d91]',
+        dark: 'text-purple-400'
+      })}`} />;
       case 'zip':
-      case 'rar': return <FaFileArchive className="text-yellow-600 text-xl" />;
-      default: return <FaFileAlt className="text-[#662d91] text-xl" />;
+      case 'rar': return <FaFileArchive className={`text-xl ${conditionalClasses({
+        light: 'text-yellow-600',
+        dark: 'text-yellow-400'
+      })}`} />;
+      default: return <FaFileAlt className={`text-xl ${conditionalClasses({
+        light: 'text-[#662d91]',
+        dark: 'text-purple-400'
+      })}`} />;
     }
   };
 
@@ -784,17 +804,26 @@ const Documents = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${conditionalClasses({
+        light: 'bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]',
+        dark: 'bg-gray-900'
+      })}`}>
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-[#662d91] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Cargando documentos...</p>
+          <p className={conditionalClasses({
+            light: 'text-gray-600 font-medium',
+            dark: 'text-gray-300 font-medium'
+          })}>Cargando documentos...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]">
+    <div className={`min-h-screen ${conditionalClasses({
+      light: 'bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]',
+      dark: 'bg-gray-900'
+    })}`}>
       {/* Notification */}
       <NotificationSystem
         notification={notification}
@@ -809,7 +838,10 @@ const Documents = () => {
       />
 
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
+      <div className={`shadow-sm border-b ${conditionalClasses({
+        light: 'bg-white border-gray-200',
+        dark: 'bg-gray-800 border-gray-700'
+      })}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center space-x-4">
@@ -819,23 +851,35 @@ const Documents = () => {
                 </svg>
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className={`text-3xl font-bold ${conditionalClasses({
+                  light: 'text-gray-900',
+                  dark: 'text-white'
+                })}`}>
                   {currentFolder ? `Carpeta: ${currentFolder.name}` : 'Control de Versiones'}
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p className={`mt-1 ${conditionalClasses({
+                  light: 'text-gray-600',
+                  dark: 'text-gray-300'
+                })}`}>
                   {currentFolder ? currentFolder.description || 'Gestiona versiones de políticas y documentos oficiales' : 'Gestiona versiones de políticas y documentos oficiales'}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
-              <div className="flex items-center space-x-2 bg-[#f3ebf9] px-4 py-2 rounded-xl">
+              <div className={`flex items-center space-x-2 px-4 py-2 rounded-xl ${conditionalClasses({
+                light: 'bg-[#f3ebf9] text-gray-700',
+                dark: 'bg-gray-700 text-gray-300'
+              })}`}>
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium text-gray-700">{totalUniqueDocuments} documentos</span>
+                <span className="text-sm font-medium">{totalUniqueDocuments} documentos</span>
               </div>
               {currentFolder && (
                 <button
                   onClick={handleGoBack}
-                  className="inline-flex items-center px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                  className={`inline-flex items-center px-5 py-2.5 font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all ${conditionalClasses({
+                    light: 'bg-gray-100 hover:bg-gray-200 text-gray-700',
+                    dark: 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                  })}`}
                 >
                   <FaArrowLeft className="mr-2" />
                   Atrás
@@ -895,7 +939,10 @@ const Documents = () => {
         />
 
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm text-gray-600 font-medium">
+          <p className={`text-sm font-medium ${conditionalClasses({
+            light: 'text-gray-600',
+            dark: 'text-gray-300'
+          })}`}>
             Mostrando <span className="font-bold text-[#662d91]">{filteredDocuments.length}</span> documentos
           </p>
         </div>
@@ -903,15 +950,33 @@ const Documents = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200 bg-linear-to-r from-[#f3ebf9] to-[#e8d5f5]">
+        <div className={`rounded-2xl shadow-lg border ${conditionalClasses({
+          light: 'bg-white border-gray-200',
+          dark: 'bg-gray-800 border-gray-700'
+        })}`}>
+          <div className={`px-6 py-4 border-b ${conditionalClasses({
+            light: 'bg-linear-to-r from-[#f3ebf9] to-[#e8d5f5] border-gray-200',
+            dark: 'bg-gray-800 border-gray-700'
+          })}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <FaFile className="text-[#662d91] text-lg" />
-                <h2 className="text-lg font-bold text-gray-900">Repositorio de Versiones de Documentos</h2>
+                <FaFile className={`text-[#662d91] text-lg ${conditionalClasses({
+                  light: 'text-[#662d91]',
+                  dark: 'text-purple-400'
+                })}`} />
+                <h2 className={`text-lg font-bold ${conditionalClasses({
+                  light: 'text-gray-900',
+                  dark: 'text-white'
+                })}`}>Repositorio de Versiones de Documentos</h2>
               </div>
-              <span className="px-3 py-1 bg-[#f3ebf9] text-[#662d91] text-sm font-semibold rounded-full">
-               {currentFolders.length + filteredDocuments.length} elementos
+              <span className={`px-3 py-1 text-sm font-semibold rounded-full ${conditionalClasses({
+                light: 'bg-[#f3ebf9] text-[#662d91]',
+                dark: 'bg-gray-700 text-gray-300'
+              })}`}>
+               <span className={`${conditionalClasses({
+                 light: 'text-[#662d91]',
+                 dark: 'text-gray-300'
+               })}`}>{currentFolders.length + filteredDocuments.length} elementos</span>
              </span>
             </div>
           </div>
@@ -919,15 +984,27 @@ const Documents = () => {
           <div className="p-6">
             {currentFolders.length === 0 && filteredDocuments.length === 0 ? (
               <div className="text-center py-16">
-                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FaFileAlt className="w-10 h-10 text-gray-400" />
+                <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 ${conditionalClasses({
+                  light: 'bg-gray-100',
+                  dark: 'bg-gray-700'
+                })}`}>
+                  <FaFileAlt className={`w-10 h-10 ${conditionalClasses({
+                    light: 'text-gray-400',
+                    dark: 'text-gray-500'
+                  })}`} />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <h3 className={`text-xl font-semibold mb-2 ${conditionalClasses({
+                  light: 'text-gray-900',
+                  dark: 'text-white'
+                })}`}>
                   {searchTerm || filterType !== 'all'
                     ? 'No se encontraron elementos'
                     : 'Sin elementos disponibles'}
                 </h3>
-                <p className="text-gray-600 max-w-sm mx-auto">
+                <p className={`max-w-sm mx-auto ${conditionalClasses({
+                  light: 'text-gray-600',
+                  dark: 'text-gray-300'
+                })}`}>
                   {searchTerm || filterType !== 'all'
                     ? 'Intenta ajustar los filtros de búsqueda'
                     : 'Comienza agregando tu primera carpeta o documento'}
@@ -942,18 +1019,36 @@ const Documents = () => {
                       <div
                         key={`folder-${folder.id}`}
                         onClick={() => handleEnterFolder(folder)}
-                        className="group bg-linear-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 cursor-pointer"
+                        className={`group rounded-xl p-5 border transition-all duration-200 cursor-pointer ${conditionalClasses({
+                          light: 'bg-linear-to-r from-blue-50 to-indigo-50 border-blue-200 hover:border-blue-300 hover:shadow-md',
+                          dark: 'bg-gray-800 border-gray-600 hover:border-blue-400 hover:shadow-lg'
+                        })}`}
                       >
                         <div className="flex items-start space-x-4 mb-4">
-                          <div className="w-12 h-12 bg-linear-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center shrink-0">
-                            <FaFolder className="text-blue-600 text-xl" />
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${conditionalClasses({
+                            light: 'bg-linear-to-br from-blue-100 to-indigo-100',
+                            dark: 'bg-gray-700'
+                          })}`}>
+                            <FaFolder className={`text-xl ${conditionalClasses({
+                              light: 'text-blue-600',
+                              dark: 'text-blue-400'
+                            })}`} />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-gray-900 mb-2 text-lg">{folder.name}</h3>
+                            <h3 className={`font-bold mb-2 text-lg ${conditionalClasses({
+                              light: 'text-gray-900',
+                              dark: 'text-white'
+                            })}`}>{folder.name}</h3>
                             {folder.description && (
-                              <p className="text-sm text-gray-600 mb-2">{folder.description}</p>
+                              <p className={`text-sm mb-2 ${conditionalClasses({
+                                light: 'text-gray-600',
+                                dark: 'text-gray-300'
+                              })}`}>{folder.description}</p>
                             )}
-                            <div className="flex items-center gap-3 text-xs text-gray-500">
+                            <div className={`flex items-center gap-3 text-xs ${conditionalClasses({
+                              light: 'text-gray-500',
+                              dark: 'text-gray-400'
+                            })}`}>
                               {folder.createdAt && (
                                 <span className="flex items-center gap-1">
                                   <FaClock className="w-3 h-3" />
@@ -971,7 +1066,10 @@ const Documents = () => {
                         </div>
 
                         {/* Actions */}
-                        <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+                        <div className={`flex flex-wrap gap-2 pt-3 border-t ${conditionalClasses({
+                          light: 'border-gray-100',
+                          dark: 'border-gray-600'
+                        })}`}>
                           {canEdit(folder) && (
                             <>
                               <button
@@ -979,7 +1077,10 @@ const Documents = () => {
                                   e.stopPropagation();
                                   handleEditFolder(folder);
                                 }}
-                                className="inline-flex items-center px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-semibold rounded-lg transition-all"
+                                className={`inline-flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all ${conditionalClasses({
+                                  light: 'bg-blue-50 hover:bg-blue-100 text-blue-700',
+                                  dark: 'bg-blue-900/50 hover:bg-blue-800 text-blue-300'
+                                })}`}
                               >
                                 <FaEdit className="mr-1" />
                                 Editar
@@ -989,7 +1090,10 @@ const Documents = () => {
                                   e.stopPropagation();
                                   handleDeleteFolder(folder.id);
                                 }}
-                                className="inline-flex items-center px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-semibold rounded-lg transition-all"
+                                className={`inline-flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all ${conditionalClasses({
+                                  light: 'bg-red-50 hover:bg-red-100 text-red-700',
+                                  dark: 'bg-red-900/50 hover:bg-red-800 text-red-300'
+                                })}`}
                               >
                                 <FaTrash className="mr-1" />
                                 Eliminar
@@ -1002,7 +1106,10 @@ const Documents = () => {
                                 e.stopPropagation();
                                 handleOpenPermissionsModal(folder, 'folder');
                               }}
-                              className="inline-flex items-center px-3 py-1.5 bg-[#f3ebf9] hover:bg-[#f3ebf9] text-[#662d91] text-sm font-semibold rounded-lg transition-all"
+                              className={`inline-flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all ${conditionalClasses({
+                                light: 'bg-[#f3ebf9] hover:bg-[#f3ebf9] text-[#662d91]',
+                                dark: 'bg-purple-900/50 hover:bg-purple-800 text-purple-300'
+                              })}`}
                             >
                               <FaUser className="mr-1" />
                               Permisos
@@ -1017,38 +1124,65 @@ const Documents = () => {
                       return (
                         <div
                           key={doc.id}
-                          className="group bg-linear-to-r from-gray-50 to-white rounded-xl p-5 border border-gray-200 hover:border-[#8e4dbf] hover:shadow-md transition-all duration-200"
+                          className={`group rounded-xl p-5 border transition-all duration-200 ${conditionalClasses({
+                            light: 'bg-linear-to-r from-gray-50 to-white border-gray-200 hover:border-[#8e4dbf] hover:shadow-md',
+                            dark: 'bg-gray-800 border-gray-600 hover:border-[#8e4dbf] hover:shadow-lg'
+                          })}`}
                         >
                           {/* Document Header with Icon and Info */}
                           <div className="flex items-start space-x-4 mb-4">
-                            <div className="w-12 h-12 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-xl flex items-center justify-center shrink-0">
+                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${conditionalClasses({
+                              light: 'bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5]',
+                              dark: 'bg-gray-700'
+                            })}`}>
                               {getFileIcon(doc.filePath)}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-bold text-gray-900 mb-2 text-lg">{doc.title}</h3>
+                              <h3 className={`font-bold mb-2 text-lg ${conditionalClasses({
+                                light: 'text-gray-900',
+                                dark: 'text-white'
+                              })}`}>{doc.title}</h3>
                               <div className="flex flex-wrap gap-2 mb-2">
                                 {doc.type && (
-                                  <span className="inline-flex items-center px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg">
-                                    <FaTag className="mr-1.5 text-xs" />
+                                  <span className={`inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-lg ${conditionalClasses({
+                                    light: 'bg-blue-50 text-blue-700',
+                                    dark: 'bg-blue-900 text-blue-300'
+                                  })}`}>
+                                    <FaTag className={`mr-1.5 text-xs ${conditionalClasses({
+                                      light: 'text-blue-700',
+                                      dark: 'text-blue-300'
+                                    })}`} />
                                     {doc.type}
                                   </span>
                                 )}
                                 {doc.category && (
-                                  <span className="inline-flex items-center px-2.5 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-lg">
+                                  <span className={`inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-lg ${conditionalClasses({
+                                    light: 'bg-green-50 text-green-700',
+                                    dark: 'bg-green-900 text-green-300'
+                                  })}`}>
                                     {doc.category}
                                   </span>
                                 )}
                                 {doc.version && (
-                                  <span className="inline-flex items-center px-2.5 py-1 bg-[#f3ebf9] text-[#662d91] text-xs font-medium rounded-lg">
+                                  <span className={`inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-lg ${conditionalClasses({
+                                    light: 'bg-[#f3ebf9] text-[#662d91]',
+                                    dark: 'bg-purple-900/50 text-purple-300'
+                                  })}`}>
                                     v{doc.version}
                                   </span>
                                 )}
                               </div>
                               {doc.description && (
-                                <p className="text-sm text-gray-600 mb-2">{doc.description}</p>
+                                <p className={`text-sm mb-2 ${conditionalClasses({
+                                  light: 'text-gray-600',
+                                  dark: 'text-gray-300'
+                                })}`}>{doc.description}</p>
                               )}
                               {/* NUEVA FUNCIONALIDAD: Información adicional */}
-                              <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
+                              <div className={`flex items-center gap-3 text-xs mb-2 ${conditionalClasses({
+                                light: 'text-gray-500',
+                                dark: 'text-gray-400'
+                              })}`}>
                                 {doc.createdAt && (
                                   <span className="flex items-center gap-1">
                                     <FaClock className="w-3 h-3" />
@@ -1066,7 +1200,10 @@ const Documents = () => {
                           </div>
   
                           {/* Actions */}
-                          <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+                          <div className={`flex flex-wrap gap-2 pt-3 border-t ${conditionalClasses({
+                            light: 'border-gray-100',
+                            dark: 'border-gray-600'
+                          })}`}>
                             <button
                               onClick={() => handleDownloadDocument(doc.id, getDownloadName(doc))}
                               className="inline-flex items-center px-4 py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all"
@@ -1076,7 +1213,10 @@ const Documents = () => {
                             </button>
                             <button
                               onClick={() => handleViewHistory(doc)}
-                              className="inline-flex items-center px-4 py-2.5 bg-green-50 hover:bg-green-100 text-green-700 text-sm font-semibold rounded-lg transition-all"
+                              className={`inline-flex items-center px-4 py-2.5 text-sm font-semibold rounded-lg transition-all ${conditionalClasses({
+                                light: 'bg-green-50 hover:bg-green-100 text-green-700',
+                                dark: 'bg-green-900/50 hover:bg-green-800 text-green-300'
+                              })}`}
                             >
                               <FaClock className="mr-2" />
                               Ver Versiones
@@ -1085,14 +1225,20 @@ const Documents = () => {
                               <>
                                 <button
                                   onClick={() => handleEdit(doc)}
-                                  className="inline-flex items-center px-4 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-semibold rounded-lg transition-all"
+                                  className={`inline-flex items-center px-4 py-2.5 text-sm font-semibold rounded-lg transition-all ${conditionalClasses({
+                                    light: 'bg-blue-50 hover:bg-blue-100 text-blue-700',
+                                    dark: 'bg-blue-900/50 hover:bg-blue-800 text-blue-300'
+                                  })}`}
                                 >
                                   <FaEdit className="mr-2" />
                                   Editar
                                 </button>
                                 <button
                                   onClick={() => handleDelete(doc.id)}
-                                  className="inline-flex items-center px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-semibold rounded-lg transition-all"
+                                  className={`inline-flex items-center px-4 py-2.5 text-sm font-semibold rounded-lg transition-all ${conditionalClasses({
+                                    light: 'bg-red-50 hover:bg-red-100 text-red-700',
+                                    dark: 'bg-red-900/50 hover:bg-red-800 text-red-300'
+                                  })}`}
                                 >
                                   <FaTrash className="mr-2" />
                                   Eliminar
@@ -1113,7 +1259,10 @@ const Documents = () => {
       {/* Upload Modal */}
       {showUploadModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+          <div className={`rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({
+            light: 'bg-white border-gray-200',
+            dark: 'bg-gray-800 border-gray-600'
+          })}`}>
             <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">Nuevo Documento</h2>
@@ -1128,7 +1277,10 @@ const Documents = () => {
 
             <form onSubmit={handleUpload} className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-5rem)]">
               <div className="flex items-center space-x-4 mb-4">
-                <label className="flex items-center">
+                <label className={`flex items-center ${conditionalClasses({
+                  light: 'text-gray-700',
+                  dark: 'text-gray-300'
+                })}`}>
                   <input
                     type="radio"
                     name="uploadType"
@@ -1138,7 +1290,10 @@ const Documents = () => {
                   />
                   Nuevo Documento
                 </label>
-                <label className="flex items-center">
+                <label className={`flex items-center ${conditionalClasses({
+                  light: 'text-gray-700',
+                  dark: 'text-gray-300'
+                })}`}>
                   <input
                     type="radio"
                     name="uploadType"
@@ -1152,7 +1307,10 @@ const Documents = () => {
 
               {formData.isNewVersion && (
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                    light: 'text-gray-700',
+                    dark: 'text-gray-300'
+                  })}`}>
                     Seleccionar Documento Base <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -1168,7 +1326,10 @@ const Documents = () => {
                         version: selectedDoc ? (parseFloat(selectedDoc.version) + 0.1).toFixed(1) : '1.0'
                       });
                     }}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
+                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
+                      light: 'border-gray-300 bg-white',
+                      dark: 'border-gray-600 bg-gray-700 text-white'
+                    })}`}
                     required={formData.isNewVersion}
                   >
                     <option value="">Seleccionar documento...</option>
@@ -1195,7 +1356,10 @@ const Documents = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                    light: 'text-gray-700',
+                    dark: 'text-gray-300'
+                  })}`}>
                     Título <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -1203,67 +1367,100 @@ const Documents = () => {
                     placeholder="Nombre del documento"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
+                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
+                      light: 'border-gray-300 bg-white',
+                      dark: 'border-gray-600 bg-gray-700 text-white'
+                    })}`}
                     required
                     disabled={formData.isNewVersion}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Versión</label>
+                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                    light: 'text-gray-700',
+                    dark: 'text-gray-300'
+                  })}`}>Versión</label>
                   <input
                     type="text"
                     placeholder="Ej: 1.0"
                     value={formData.version}
                     onChange={(e) => setFormData({ ...formData, version: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
+                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
+                      light: 'border-gray-300 bg-white',
+                      dark: 'border-gray-600 bg-gray-700 text-white'
+                    })}`}
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Tipo</label>
+                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                    light: 'text-gray-700',
+                    dark: 'text-gray-300'
+                  })}`}>Tipo</label>
                   <input
                     type="text"
                     placeholder="Ej: Manual, Política"
                     value={formData.type}
                     onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
+                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
+                      light: 'border-gray-300 bg-white',
+                      dark: 'border-gray-600 bg-gray-700 text-white'
+                    })}`}
                     disabled={formData.isNewVersion}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
+                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                    light: 'text-gray-700',
+                    dark: 'text-gray-300'
+                  })}`}>Categoría</label>
                   <input
                     type="text"
                     placeholder="Ej: Recursos Humanos"
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
+                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
+                      light: 'border-gray-300 bg-white',
+                      dark: 'border-gray-600 bg-gray-700 text-white'
+                    })}`}
                     disabled={formData.isNewVersion}
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                    light: 'text-gray-700',
+                    dark: 'text-gray-300'
+                  })}`}>Descripción</label>
                   <textarea
                     placeholder="Descripción del contenido del documento"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all resize-none"
+                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all resize-none ${conditionalClasses({
+                      light: 'border-gray-300 bg-white',
+                      dark: 'border-gray-600 bg-gray-700 text-white'
+                    })}`}
                     rows="3"
                   />
                 </div>
 
                 {formData.isNewVersion && (
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción de Cambios</label>
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>Descripción de Cambios</label>
                     <textarea
                       placeholder="Describe los cambios en esta versión"
                       value={formData.changeDescription}
                       onChange={(e) => setFormData({ ...formData, changeDescription: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all resize-none"
+                      className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all resize-none ${conditionalClasses({
+                        light: 'border-gray-300 bg-white',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                       rows="2"
                     />
                   </div>
@@ -1271,11 +1468,17 @@ const Documents = () => {
 
                 {!formData.isNewVersion && (
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Carpeta</label>
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>Carpeta</label>
                     <select
                       value={formData.folderId || ''}
                       onChange={(e) => setFormData({ ...formData, folderId: e.target.value || null })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
+                      className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
+                        light: 'border-gray-300 bg-white',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                     >
                       <option value="">Seleccionar carpeta (opcional)</option>
                       {folders.map((folder) => (
@@ -1286,23 +1489,35 @@ const Documents = () => {
                 )}
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                    light: 'text-gray-700',
+                    dark: 'text-gray-300'
+                  })}`}>
                     Archivo <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="file"
                     onChange={(e) => setFormData({ ...formData, file: e.target.files[0] })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#f3ebf9] file:text-[#662d91] hover:file:bg-[#e8d5f5] file:cursor-pointer"
+                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:cursor-pointer ${conditionalClasses({
+                      light: 'border-gray-300 file:bg-[#f3ebf9] file:text-[#662d91] hover:file:bg-[#e8d5f5]',
+                      dark: 'border-gray-600 file:bg-purple-900/50 file:text-purple-300 file:border-gray-600'
+                    })}`}
                     required
                   />
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-gray-200">
+              <div className={`flex gap-3 pt-4 border-t ${conditionalClasses({
+                light: 'border-gray-200',
+                dark: 'border-gray-600'
+              })}`}>
                 <button
                   type="button"
                   onClick={() => setShowUploadModal(false)}
-                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
+                  className={`flex-1 px-6 py-3 font-semibold rounded-xl transition-all ${conditionalClasses({
+                    light: 'bg-gray-100 hover:bg-gray-200 text-gray-700',
+                    dark: 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                  })}`}
                 >
                   Cancelar
                 </button>
@@ -1335,7 +1550,10 @@ const Documents = () => {
       {/* Edit Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+          <div className={`rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({
+            light: 'bg-white border-gray-200',
+            dark: 'bg-gray-800 border-gray-600'
+          })}`}>
             <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">Editar Documento</h2>
@@ -1351,7 +1569,10 @@ const Documents = () => {
             <form onSubmit={handleUpdate} className="p-6 space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                    light: 'text-gray-700',
+                    dark: 'text-gray-300'
+                  })}`}>
                     Título <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -1359,50 +1580,77 @@ const Documents = () => {
                     placeholder="Nombre del documento"
                     value={editFormData.title}
                     onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
+                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
+                      light: 'border-gray-300 bg-white',
+                      dark: 'border-gray-600 bg-gray-700 text-white'
+                    })}`}
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Tipo</label>
+                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                    light: 'text-gray-700',
+                    dark: 'text-gray-300'
+                  })}`}>Tipo</label>
                   <input
                     type="text"
                     placeholder="Ej: Manual, Política"
                     value={editFormData.type}
                     onChange={(e) => setEditFormData({ ...editFormData, type: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
+                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
+                      light: 'border-gray-300 bg-white',
+                      dark: 'border-gray-600 bg-gray-700 text-white'
+                    })}`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
+                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                    light: 'text-gray-700',
+                    dark: 'text-gray-300'
+                  })}`}>Categoría</label>
                   <input
                     type="text"
                     placeholder="Ej: Recursos Humanos"
                     value={editFormData.category}
                     onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
+                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
+                      light: 'border-gray-300 bg-white',
+                      dark: 'border-gray-600 bg-gray-700 text-white'
+                    })}`}
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                    light: 'text-gray-700',
+                    dark: 'text-gray-300'
+                  })}`}>Descripción</label>
                   <textarea
                     placeholder="Descripción del contenido del documento"
                     value={editFormData.description}
                     onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all resize-none"
+                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all resize-none ${conditionalClasses({
+                      light: 'border-gray-300 bg-white',
+                      dark: 'border-gray-600 bg-gray-700 text-white'
+                    })}`}
                     rows="4"
                   />
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-gray-200">
+              <div className={`flex gap-3 pt-4 border-t ${conditionalClasses({
+                light: 'border-gray-200',
+                dark: 'border-gray-600'
+              })}`}>
                 <button
                   type="button"
                   onClick={() => setShowEditModal(false)}
-                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
+                  className={`flex-1 px-6 py-3 font-semibold rounded-xl transition-all ${conditionalClasses({
+                    light: 'bg-gray-100 hover:bg-gray-200 text-gray-700',
+                    dark: 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                  })}`}
                 >
                   Cancelar
                 </button>
@@ -1421,7 +1669,10 @@ const Documents = () => {
       {/* History Modal */}
       {showHistoryModal && selectedDocument && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+          <div className={`rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({
+            light: 'bg-white border-gray-200',
+            dark: 'bg-gray-800 border-gray-600'
+          })}`}>
             <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">Historial de Versiones: {selectedDocument.title}</h2>
@@ -1437,12 +1688,24 @@ const Documents = () => {
             <div className="p-6">
               <div className="space-y-4">
                 {selectedDocument.versions.map((version, index) => (
-                  <div key={version.id} className={`p-4 rounded-xl border ${version.isActive ? 'border-[#8e4dbf] bg-[#f3ebf9]' : 'border-gray-200 bg-gray-50'}`}>
+                  <div key={version.id} className={`p-4 rounded-xl border ${conditionalClasses({
+                    light: version.isActive ? 'border-[#8e4dbf] bg-[#f3ebf9]' : 'border-gray-200 bg-gray-50',
+                    dark: version.isActive ? 'border-purple-500 bg-purple-900/20' : 'border-gray-600 bg-gray-700'
+                  })}`}>
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center space-x-3">
-                        <span className="text-lg font-bold text-gray-900">Versión {version.version}</span>
-                        {version.isActive && <span className="px-2 py-1 bg-[#f3ebf9] text-[#662d91] text-xs font-semibold rounded-full">Activa</span>}
-                        <span className="text-sm text-gray-500">{getTimeAgo(version.createdAt)}</span>
+                        <span className={`text-lg font-bold ${conditionalClasses({
+                          light: 'text-gray-900',
+                          dark: 'text-white'
+                        })}`}>Versión {version.version}</span>
+                        {version.isActive && <span className={`px-2 py-1 text-xs font-semibold rounded-full ${conditionalClasses({
+                          light: 'bg-[#f3ebf9] text-[#662d91]',
+                          dark: 'bg-purple-900/50 text-purple-300'
+                        })}`}>Activa</span>}
+                        <span className={`text-sm ${conditionalClasses({
+                          light: 'text-gray-500',
+                          dark: 'text-gray-400'
+                        })}`}>{getTimeAgo(version.createdAt)}</span>
                       </div>
                       <div className="flex gap-2">
                         <button
@@ -1464,10 +1727,16 @@ const Documents = () => {
                       </div>
                     </div>
                     {version.changeDescription && (
-                      <p className="text-sm text-gray-600 mb-2"><strong>Cambios:</strong> {version.changeDescription}</p>
+                      <p className={`text-sm mb-2 ${conditionalClasses({
+                        light: 'text-gray-600',
+                        dark: 'text-gray-300'
+                      })}`}><strong>Cambios:</strong> {version.changeDescription}</p>
                     )}
                     {version.description && (
-                      <p className="text-sm text-gray-600"><strong>Descripción:</strong> {version.description}</p>
+                      <p className={`text-sm ${conditionalClasses({
+                        light: 'text-gray-600',
+                        dark: 'text-gray-300'
+                      })}`}><strong>Descripción:</strong> {version.description}</p>
                     )}
                   </div>
                 ))}
@@ -1480,7 +1749,10 @@ const Documents = () => {
       {/* Create Folder Modal */}
       {showCreateFolderModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+          <div className={`rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({
+            light: 'bg-white border-gray-200',
+            dark: 'bg-gray-800 border-gray-600'
+          })}`}>
             <div className="sticky top-0 bg-linear-to-r from-green-600 to-green-700 p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">Nueva Carpeta</h2>
@@ -1495,7 +1767,10 @@ const Documents = () => {
 
             <form onSubmit={handleCreateFolder} className="p-6 space-y-5">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                  light: 'text-gray-700',
+                  dark: 'text-gray-300'
+                })}`}>
                   Nombre <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -1503,27 +1778,42 @@ const Documents = () => {
                   placeholder="Nombre de la carpeta"
                   value={folderFormData.name}
                   onChange={(e) => setFolderFormData({ ...folderFormData, name: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all ${conditionalClasses({
+                    light: 'border-gray-300 bg-white',
+                    dark: 'border-gray-600 bg-gray-700 text-white'
+                  })}`}
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                  light: 'text-gray-700',
+                  dark: 'text-gray-300'
+                })}`}>Descripción</label>
                 <textarea
                   placeholder="Descripción de la carpeta (opcional)"
                   value={folderFormData.description}
                   onChange={(e) => setFolderFormData({ ...folderFormData, description: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none ${conditionalClasses({
+                    light: 'border-gray-300 bg-white',
+                    dark: 'border-gray-600 bg-gray-700 text-white'
+                  })}`}
                   rows="3"
                 />
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-gray-200">
+              <div className={`flex gap-3 pt-4 border-t ${conditionalClasses({
+                light: 'border-gray-200',
+                dark: 'border-gray-600'
+              })}`}>
                 <button
                   type="button"
                   onClick={() => setShowCreateFolderModal(false)}
-                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
+                  className={`flex-1 px-6 py-3 font-semibold rounded-xl transition-all ${conditionalClasses({
+                    light: 'bg-gray-100 hover:bg-gray-200 text-gray-700',
+                    dark: 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                  })}`}
                 >
                   Cancelar
                 </button>
@@ -1542,7 +1832,10 @@ const Documents = () => {
       {/* Edit Folder Modal */}
       {showEditFolderModal && editingFolder && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+          <div className={`rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({
+            light: 'bg-white border-gray-200',
+            dark: 'bg-gray-800 border-gray-600'
+          })}`}>
             <div className="sticky top-0 bg-linear-to-r from-blue-600 to-blue-700 p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">Editar Carpeta</h2>
@@ -1557,7 +1850,10 @@ const Documents = () => {
 
             <form onSubmit={handleUpdateFolder} className="p-6 space-y-5">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                  light: 'text-gray-700',
+                  dark: 'text-gray-300'
+                })}`}>
                   Nombre <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -1565,27 +1861,42 @@ const Documents = () => {
                   placeholder="Nombre de la carpeta"
                   value={editFolderFormData.name}
                   onChange={(e) => setEditFolderFormData({ ...editFolderFormData, name: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${conditionalClasses({
+                    light: 'border-gray-300 bg-white',
+                    dark: 'border-gray-600 bg-gray-700 text-white'
+                  })}`}
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                  light: 'text-gray-700',
+                  dark: 'text-gray-300'
+                })}`}>Descripción</label>
                 <textarea
                   placeholder="Descripción de la carpeta (opcional)"
                   value={editFolderFormData.description}
                   onChange={(e) => setEditFolderFormData({ ...editFolderFormData, description: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none ${conditionalClasses({
+                    light: 'border-gray-300 bg-white',
+                    dark: 'border-gray-600 bg-gray-700 text-white'
+                  })}`}
                   rows="3"
                 />
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-gray-200">
+              <div className={`flex gap-3 pt-4 border-t ${conditionalClasses({
+                light: 'border-gray-200',
+                dark: 'border-gray-600'
+              })}`}>
                 <button
                   type="button"
                   onClick={() => setShowEditFolderModal(false)}
-                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
+                  className={`flex-1 px-6 py-3 font-semibold rounded-xl transition-all ${conditionalClasses({
+                    light: 'bg-gray-100 hover:bg-gray-200 text-gray-700',
+                    dark: 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                  })}`}
                 >
                   Cancelar
                 </button>
@@ -1604,7 +1915,10 @@ const Documents = () => {
       {/* Permissions Modal */}
       {showPermissionsModal && selectedItemForPermissions && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+          <div className={`rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({
+            light: 'bg-white border-gray-200',
+            dark: 'bg-gray-800 border-gray-600'
+          })}`}>
             <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">Gestionar Permisos</h2>
@@ -1620,35 +1934,65 @@ const Documents = () => {
             <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-5rem)]">
               {/* Current Permissions */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Permisos Actuales</h3>
+                <h3 className={`text-lg font-semibold mb-4 ${conditionalClasses({
+                  light: 'text-gray-900',
+                  dark: 'text-white'
+                })}`}>Permisos Actuales</h3>
                 {permissions.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">No hay permisos asignados</p>
+                  <p className={`text-center py-4 ${conditionalClasses({
+                    light: 'text-gray-500',
+                    dark: 'text-gray-400'
+                  })}`}>No hay permisos asignados</p>
                 ) : (
                   <div className="space-y-3">
                     {permissions.map((permission) => (
-                      <div key={permission.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div key={permission.id} className={`flex items-center justify-between p-4 rounded-lg ${conditionalClasses({
+                        light: 'bg-gray-50',
+                        dark: 'bg-gray-700'
+                      })}`}>
                         <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-[#f3ebf9] rounded-full flex items-center justify-center">
-                            <FaUser className="w-4 h-4 text-[#662d91]" />
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${conditionalClasses({
+                            light: 'bg-[#f3ebf9]',
+                            dark: 'bg-purple-900/50'
+                          })}`}>
+                            <FaUser className={`w-4 h-4 ${conditionalClasses({
+                              light: 'text-[#662d91]',
+                              dark: 'text-purple-300'
+                            })}`} />
                           </div>
                           <div>
-                            <p className="font-medium text-gray-900">
+                            <p className={`font-medium ${conditionalClasses({
+                              light: 'text-gray-900',
+                              dark: 'text-white'
+                            })}`}>
                               {permission.user?.name || permission.user?.username}
                             </p>
-                            <p className="text-sm text-gray-500">{permission.user?.email}</p>
+                            <p className={`text-sm ${conditionalClasses({
+                              light: 'text-gray-500',
+                              dark: 'text-gray-400'
+                            })}`}>{permission.user?.email}</p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-3">
                           <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                             permission.permissionType === 'write'
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-blue-100 text-blue-700'
+                              ? conditionalClasses({
+                                light: 'bg-green-100 text-green-700',
+                                dark: 'bg-green-900/50 text-green-300'
+                              })
+                              : conditionalClasses({
+                                light: 'bg-blue-100 text-blue-700',
+                                dark: 'bg-blue-900/50 text-blue-300'
+                              })
                           }`}>
                             {permission.permissionType === 'write' ? 'Lectura y Escritura' : 'Solo Lectura'}
                           </span>
                           <button
                             onClick={() => handleRevokePermission(permission.id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className={`p-2 rounded-lg transition-colors ${conditionalClasses({
+                              light: 'text-red-600 hover:bg-red-50',
+                              dark: 'text-red-400 hover:bg-red-900/20'
+                            })}`}
                             title="Revocar permiso"
                           >
                             <FaTrash className="w-4 h-4" />
@@ -1661,14 +2005,26 @@ const Documents = () => {
               </div>
 
               {/* Grant New Permissions */}
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Otorgar Nuevos Permisos</h3>
+              <div className={`border-t pt-6 ${conditionalClasses({
+                light: 'border-gray-200',
+                dark: 'border-gray-600'
+              })}`}>
+                <h3 className={`text-lg font-semibold mb-4 ${conditionalClasses({
+                  light: 'text-gray-900',
+                  dark: 'text-white'
+                })}`}>Otorgar Nuevos Permisos</h3>
 
                 {/* Permission Type */}
                 <div className="mb-4">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Tipo de Permiso</label>
+                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                    light: 'text-gray-700',
+                    dark: 'text-gray-300'
+                  })}`}>Tipo de Permiso</label>
                   <div className="flex gap-4">
-                    <label className="flex items-center">
+                    <label className={`flex items-center ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
                       <input
                         type="radio"
                         name="permissionType"
@@ -1677,9 +2033,15 @@ const Documents = () => {
                         onChange={(e) => setPermissionType(e.target.value)}
                         className="mr-2"
                       />
-                      <span className="text-sm">Solo Lectura (ver y descargar)</span>
+                      <span className={`text-sm ${conditionalClasses({
+                        light: 'text-gray-700',
+                        dark: 'text-gray-300'
+                      })}`}>Solo Lectura (ver y descargar)</span>
                     </label>
-                    <label className="flex items-center">
+                    <label className={`flex items-center ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
                       <input
                         type="radio"
                         name="permissionType"
@@ -1688,19 +2050,28 @@ const Documents = () => {
                         onChange={(e) => setPermissionType(e.target.value)}
                         className="mr-2"
                       />
-                      <span className="text-sm">Lectura y Escritura (crear, editar, eliminar)</span>
+                      <span className={`text-sm ${conditionalClasses({
+                        light: 'text-gray-700',
+                        dark: 'text-gray-300'
+                      })}`}>Lectura y Escritura (crear, editar, eliminar)</span>
                     </label>
                   </div>
                 </div>
 
                 {/* User Selection */}
                 <div className="mb-4">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Seleccionar Usuarios</label>
+                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                    light: 'text-gray-700',
+                    dark: 'text-gray-300'
+                  })}`}>Seleccionar Usuarios</label>
 
                   {/* Search Bar */}
                   <div className="mb-3 relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className={`h-5 w-5 ${conditionalClasses({
+                        light: 'text-gray-400',
+                        dark: 'text-gray-500'
+                      })}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                       </svg>
                     </div>
@@ -1709,7 +2080,10 @@ const Documents = () => {
                       placeholder="Buscar usuarios por nombre, usuario o email..."
                       value={userSearchTerm}
                       onChange={(e) => setUserSearchTerm(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#662d91] focus:border-[#662d91] text-sm"
+                      className={`block w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-[#662d91] focus:border-[#662d91] text-sm ${conditionalClasses({
+                        light: 'border-gray-300 bg-white',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
                     />
                   </div>
 
@@ -1718,41 +2092,68 @@ const Documents = () => {
                     <button
                       type="button"
                       onClick={handleSelectAllUsers}
-                      className="px-3 py-1.5 bg-[#f3ebf9] text-[#662d91] text-xs font-medium rounded-md hover:bg-[#e8d5f5] transition-colors"
+                      className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${conditionalClasses({
+                        light: 'bg-[#f3ebf9] text-[#662d91] hover:bg-[#e8d5f5]',
+                        dark: 'bg-purple-900/50 text-purple-300 hover:bg-purple-800'
+                      })}`}
                     >
                       Seleccionar Todos
                     </button>
                     <button
                       type="button"
                       onClick={handleDeselectAllUsers}
-                      className="px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-md hover:bg-gray-200 transition-colors"
+                      className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${conditionalClasses({
+                        light: 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                        dark: 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      })}`}
                     >
                       Deseleccionar Todos
                     </button>
-                    <span className="text-xs text-gray-500 self-center ml-auto">
+                    <span className={`text-xs self-center ml-auto ${conditionalClasses({
+                      light: 'text-gray-500',
+                      dark: 'text-gray-400'
+                    })}`}>
                       {selectedUsers.length} seleccionados
                     </span>
                   </div>
 
                   {/* Users List */}
-                  <div className="border border-gray-300 rounded-lg max-h-60 overflow-y-auto">
+                  <div className={`border rounded-lg max-h-60 overflow-y-auto ${conditionalClasses({
+                    light: 'border-gray-300',
+                    dark: 'border-gray-600'
+                  })}`}>
                     {filteredUsers.length === 0 ? (
-                      <div className="p-4 text-center text-gray-500 text-sm">
+                      <div className={`p-4 text-center text-sm ${conditionalClasses({
+                        light: 'text-gray-500',
+                        dark: 'text-gray-400'
+                      })}`}>
                         {userSearchTerm ? (
                           `No se encontraron usuarios para "${userSearchTerm}"`
                         ) : allUsers.length === 0 ? (
                           <div>
-                            <p>No hay usuarios disponibles</p>
-                            <p className="text-xs mt-1">Verifica que tengas permisos para ver usuarios</p>
+                            <p className={`${conditionalClasses({
+                              light: 'text-gray-600',
+                              dark: 'text-gray-300'
+                            })}`}>No hay usuarios disponibles</p>
+                            <p className={`text-xs mt-1 ${conditionalClasses({
+                              light: 'text-gray-500',
+                              dark: 'text-gray-400'
+                            })}`}>Verifica que tengas permisos para ver usuarios</p>
                           </div>
                         ) : (
                           'No hay usuarios que coincidan con los criterios'
                         )}
                       </div>
                     ) : (
-                      <div className="divide-y divide-gray-200">
+                      <div className={`divide-y ${conditionalClasses({
+                        light: 'divide-gray-200',
+                        dark: 'divide-gray-600'
+                      })}`}>
                         {filteredUsers.map((u) => (
-                          <label key={u.id} className="flex items-center p-3 hover:bg-gray-50 cursor-pointer">
+                          <label key={u.id} className={`flex items-center p-3 cursor-pointer ${conditionalClasses({
+                            light: 'hover:bg-gray-50',
+                            dark: 'hover:bg-gray-700'
+                          })}`}>
                             <input
                               type="checkbox"
                               checked={selectedUsers.includes(u.id)}
@@ -1760,20 +2161,35 @@ const Documents = () => {
                               className="mr-3 h-4 w-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
                             />
                             <div className="flex items-center space-x-3 flex-1">
-                              <div className="w-8 h-8 bg-[#f3ebf9] rounded-full flex items-center justify-center">
-                                <span className="text-sm font-medium text-[#662d91]">
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${conditionalClasses({
+                                light: 'bg-[#f3ebf9]',
+                                dark: 'bg-purple-900/50'
+                              })}`}>
+                                <span className={`text-sm font-medium ${conditionalClasses({
+                                  light: 'text-[#662d91]',
+                                  dark: 'text-purple-300'
+                                })}`}>
                                   {(u.name || u.username || 'U').charAt(0).toUpperCase()}
                                 </span>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="font-medium text-gray-900 text-sm truncate">
+                                <p className={`font-medium text-sm truncate ${conditionalClasses({
+                                  light: 'text-gray-900',
+                                  dark: 'text-white'
+                                })}`}>
                                   {u.name || u.username || 'Usuario sin nombre'}
                                 </p>
-                                <p className="text-xs text-gray-500 truncate">
+                                <p className={`text-xs truncate ${conditionalClasses({
+                                  light: 'text-gray-500',
+                                  dark: 'text-gray-400'
+                                })}`}>
                                   {u.email || 'Sin email'}
                                 </p>
                                 {u.Role && (
-                                  <p className="text-xs text-[#662d91] truncate">
+                                  <p className={`text-xs truncate ${conditionalClasses({
+                                    light: 'text-[#662d91]',
+                                    dark: 'text-purple-300'
+                                  })}`}>
                                     {u.Role.name}
                                   </p>
                                 )}
@@ -1787,10 +2203,16 @@ const Documents = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-3 pt-4 border-t border-gray-200">
+                <div className={`flex gap-3 pt-4 border-t ${conditionalClasses({
+                  light: 'border-gray-200',
+                  dark: 'border-gray-600'
+                })}`}>
                   <button
                     onClick={() => setShowPermissionsModal(false)}
-                    className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
+                    className={`flex-1 px-6 py-3 font-semibold rounded-xl transition-all ${conditionalClasses({
+                      light: 'bg-gray-100 hover:bg-gray-200 text-gray-700',
+                      dark: 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                    })}`}
                   >
                     Cancelar
                   </button>
@@ -1812,5 +2234,3 @@ const Documents = () => {
 };
 
 export default Documents;
-
-

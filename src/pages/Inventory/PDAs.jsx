@@ -6,8 +6,10 @@ import { useAuth } from '../../hooks/useAuth';
 import pdaInventoryAPI from '../../api/pdaInventoryAPI';
 import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 import ActaEntregaHistoryModal from '../../components/ActasEntrega/ActaEntregaHistoryModal';
+import { useThemeClasses } from '../../hooks/useThemeClasses';
 
 const PDAs = () => {
+  const { conditionalClasses } = useThemeClasses();
   const [pdas, setPdas] = useState([]);
   const [filteredPdas, setFilteredPdas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -345,18 +347,27 @@ const PDAs = () => {
   };
   
   if (loading) return (
-    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4">
+    <div className={conditionalClasses({
+      light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4',
+      dark: 'min-h-screen bg-gray-900 py-8 px-4'
+    })}>
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#662d91] mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Cargando PDAs...</p>
+          <p className={conditionalClasses({
+            light: 'text-lg text-gray-600 font-medium',
+            dark: 'text-lg text-gray-300 font-medium'
+          })}>Cargando PDAs...</p>
         </div>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8">
+    <div className={conditionalClasses({
+      light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8',
+      dark: 'min-h-screen bg-gray-900 py-4 px-3 sm:py-6 sm:px-4 lg:px-8'
+    })}>
       {/* Notification */}
       <NotificationSystem
         notification={notification}
@@ -380,10 +391,16 @@ const PDAs = () => {
                   <FaMobile className="text-white text-xl lg:text-2xl" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight truncate">
+                  <h1 className={conditionalClasses({
+                    light: 'text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight truncate',
+                    dark: 'text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight truncate'
+                  })}>
                     Inventario de PDAs
                   </h1>
-                  <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                  <p className={conditionalClasses({
+                    light: 'text-xs sm:text-sm text-gray-600 mt-1',
+                    dark: 'text-xs sm:text-sm text-gray-300 mt-1'
+                  })}>
                     Gestión integral de PDAs corporativas · 2025
                   </p>
                 </div>
@@ -393,14 +410,20 @@ const PDAs = () => {
             <div className="flex flex-wrap gap-2 lg:gap-3">
               <button
                 onClick={() => setShowStats(!showStats)}
-                className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
+                className={conditionalClasses({
+                  light: 'flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base',
+                  dark: 'flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold rounded-xl border-2 border-gray-600 transition-all duration-200 hover:shadow-lg text-sm lg:text-base'
+                })}
               >
                 <FaChartBar className="w-4 h-4" />
                 <span className="hidden sm:inline">Estadísticas</span>
               </button>
               <button
                 onClick={exportToExcel}
-                className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
+                className={conditionalClasses({
+                  light: 'flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base',
+                  dark: 'flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold rounded-xl border-2 border-gray-600 transition-all duration-200 hover:shadow-lg text-sm lg:text-base'
+                })}
               >
                 <FaDownload className="w-4 h-4" />
                 <span className="hidden sm:inline">Exportar</span>
@@ -600,7 +623,10 @@ const PDAs = () => {
 
         {/* Results Summary */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <p className="text-sm text-gray-600 font-medium">
+          <p className={conditionalClasses({
+            light: 'text-sm text-gray-600 font-medium',
+            dark: 'text-sm text-gray-300 font-medium'
+          })}>
             Mostrando <span className="font-bold text-[#662d91]">{filteredPdas.length}</span> de <span className="font-bold">{pdas.length}</span> PDAs
           </p>
           <div className="flex gap-2">
@@ -609,7 +635,10 @@ const PDAs = () => {
               className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
                 viewMode === 'cards'
                   ? 'bg-[#662d91] text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                  : conditionalClasses({
+                      light: 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200',
+                      dark: 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600'
+                    })
               }`}
             >
               <FaMobile className="w-4 h-4" />
@@ -620,7 +649,10 @@ const PDAs = () => {
               className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
                 viewMode === 'table'
                   ? 'bg-[#662d91] text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                  : conditionalClasses({
+                      light: 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200',
+                      dark: 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600'
+                    })
               }`}
             >
               <FaChartBar className="w-4 h-4" />
@@ -631,16 +663,25 @@ const PDAs = () => {
 
         {/* Main Content */}
         {filteredPdas.length === 0 ? (
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center">
+          <div className={conditionalClasses({
+            light: 'bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center',
+            dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-700 p-6 lg:p-12 text-center'
+          })}>
             <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4">
               <FaMobile className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
             </div>
-            <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2">
+            <h3 className={conditionalClasses({
+              light: 'text-lg lg:text-xl font-bold text-gray-900 mb-2',
+              dark: 'text-lg lg:text-xl font-bold text-white mb-2'
+            })}>
               {searchTerm || filterStatus !== 'all' || filterArea !== 'all'
                 ? 'No se encontraron PDAs'
                 : 'No hay PDAs disponibles'}
             </h3>
-            <p className="text-sm lg:text-base text-gray-600 max-w-md mx-auto mb-4 lg:mb-6">
+            <p className={conditionalClasses({
+              light: 'text-sm lg:text-base text-gray-600 max-w-md mx-auto mb-4 lg:mb-6',
+              dark: 'text-sm lg:text-base text-gray-300 max-w-md mx-auto mb-4 lg:mb-6'
+            })}>
               {searchTerm || filterStatus !== 'all' || filterArea !== 'all'
                 ? 'Intenta ajustar los filtros de búsqueda'
                 : 'Comienza agregando una nueva PDA al inventario'}
@@ -665,7 +706,10 @@ const PDAs = () => {
                   return (
                     <div
                       key={item.id}
-                      className="bg-white rounded-xl lg:rounded-2xl border-2 border-gray-200 hover:border-[#8e4dbf] hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                      className={conditionalClasses({
+                        light: 'bg-white rounded-xl lg:rounded-2xl border-2 border-gray-200 hover:border-[#8e4dbf] hover:shadow-xl transition-all duration-300 overflow-hidden group',
+                        dark: 'bg-gray-800 rounded-xl lg:rounded-2xl border-2 border-gray-700 hover:border-[#8e4dbf] hover:shadow-xl transition-all duration-300 overflow-hidden group'
+                      })}
                     >
                       {/* Card Header */}
                       <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-3 lg:p-4 text-white">
@@ -718,34 +762,70 @@ const PDAs = () => {
                       {/* Card Body */}
                       <div className="p-4 lg:p-5">
                         <div className="space-y-3">
-                          <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
+                          <div className={conditionalClasses({
+                            light: 'flex items-center gap-3 pb-3 border-b border-gray-100',
+                            dark: 'flex items-center gap-3 pb-3 border-b border-gray-600'
+                          })}>
                             <div className="w-8 h-8 lg:w-10 lg:h-10 bg-[#f3ebf9] rounded-lg flex items-center justify-center shrink-0">
                               <FaMobile className="w-4 h-4 lg:w-5 lg:h-5 text-[#662d91]" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs text-gray-500 font-medium">Responsable</p>
-                              <p className="text-sm font-bold text-gray-900 truncate">{item.responsable}</p>
+                              <p className={conditionalClasses({
+                                light: 'text-xs text-gray-500 font-medium',
+                                dark: 'text-xs text-gray-400 font-medium'
+                              })}>Responsable</p>
+                              <p className={conditionalClasses({
+                                light: 'text-sm font-bold text-gray-900 truncate',
+                                dark: 'text-sm font-bold text-white truncate'
+                              })}>{item.responsable}</p>
                             </div>
                           </div>
 
                           <div>
-                            <p className="text-xs text-gray-500 font-medium mb-1">Área</p>
-                            <p className="text-sm font-semibold text-gray-900 truncate">{item.area}</p>
+                            <p className={conditionalClasses({
+                              light: 'text-xs text-gray-500 font-medium mb-1',
+                              dark: 'text-xs text-gray-400 font-medium mb-1'
+                            })}>Área</p>
+                            <p className={conditionalClasses({
+                              light: 'text-sm font-semibold text-gray-900 truncate',
+                              dark: 'text-sm font-semibold text-white truncate'
+                            })}>{item.area}</p>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-100">
+                          <div className={conditionalClasses({
+                            light: 'grid grid-cols-2 gap-3 pt-3 border-t border-gray-100',
+                            dark: 'grid grid-cols-2 gap-3 pt-3 border-t border-gray-600'
+                          })}>
                             <div>
-                              <p className="text-xs text-gray-500 font-medium mb-1">Conectividad</p>
-                              <p className="text-sm font-semibold text-gray-900 truncate">{item.tipo_conectividad || '-'}</p>
+                              <p className={conditionalClasses({
+                                light: 'text-xs text-gray-500 font-medium mb-1',
+                                dark: 'text-xs text-gray-400 font-medium mb-1'
+                              })}>Conectividad</p>
+                              <p className={conditionalClasses({
+                                light: 'text-sm font-semibold text-gray-900 truncate',
+                                dark: 'text-sm font-semibold text-white truncate'
+                              })}>{item.tipo_conectividad || '-'}</p>
                             </div>
                             <div>
-                              <p className="text-xs text-gray-500 font-medium mb-1">SO</p>
-                              <p className="text-sm font-semibold text-gray-900 truncate">{item.sistema_operativo || '-'}</p>
+                              <p className={conditionalClasses({
+                                light: 'text-xs text-gray-500 font-medium mb-1',
+                                dark: 'text-xs text-gray-400 font-medium mb-1'
+                              })}>SO</p>
+                              <p className={conditionalClasses({
+                                light: 'text-sm font-semibold text-gray-900 truncate',
+                                dark: 'text-sm font-semibold text-white truncate'
+                              })}>{item.sistema_operativo || '-'}</p>
                             </div>
                           </div>
 
-                          <div className="pt-3 border-t border-gray-100">
-                            <p className="text-xs text-gray-500 font-medium mb-1">Serial</p>
+                          <div className={conditionalClasses({
+                            light: 'pt-3 border-t border-gray-100',
+                            dark: 'pt-3 border-t border-gray-600'
+                          })}>
+                            <p className={conditionalClasses({
+                              light: 'text-xs text-gray-500 font-medium mb-1',
+                              dark: 'text-xs text-gray-400 font-medium mb-1'
+                            })}>Serial</p>
                             <p className="text-xs font-mono bg-gray-50 px-3 py-2 rounded-lg text-gray-700 break-all">{item.serial}</p>
                           </div>
 
@@ -774,14 +854,23 @@ const PDAs = () => {
 
             {/* Table View */}
             {viewMode === 'table' && (
-              <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden">
+              <div className={conditionalClasses({
+                light: 'bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden',
+                dark: 'bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 overflow-hidden'
+              })}>
                 {/* Mobile Card View for Table Mode */}
                 <div className="block md:hidden">
-                  <div className="divide-y divide-gray-200">
+                  <div className={conditionalClasses({
+                    light: 'divide-y divide-gray-200',
+                    dark: 'divide-y divide-gray-600'
+                  })}>
                     {filteredPdas.map((item) => {
                       const warranty = getWarrantyStatus(item.warrantyExpiry);
                       return (
-                        <div key={item.id} className="p-4 hover:bg-[#f3ebf9] transition-colors">
+                        <div key={item.id} className={conditionalClasses({
+                          light: 'p-4 hover:bg-[#f3ebf9] transition-colors',
+                          dark: 'p-4 hover:bg-gray-700 transition-colors'
+                        })}>
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-2">
@@ -795,14 +884,23 @@ const PDAs = () => {
                                   {item.status}
                                 </span>
                               </div>
-                              <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">{item.responsable}</h3>
-                              <p className="text-xs text-gray-500 truncate">{item.marca}</p>
+                              <h3 className={conditionalClasses({
+                                light: 'font-semibold text-gray-900 text-sm mb-1 truncate',
+                                dark: 'font-semibold text-white text-sm mb-1 truncate'
+                              })}>{item.responsable}</h3>
+                              <p className={conditionalClasses({
+                                light: 'text-xs text-gray-500 truncate',
+                                dark: 'text-xs text-gray-400 truncate'
+                              })}>{item.marca}</p>
                               <p className="text-xs text-blue-600 font-medium truncate">{item.propiedad}</p>
                             </div>
                             <div className="flex gap-2">
                               <button
                                 onClick={() => handleHistory(item)}
-                                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all touch-manipulation"
+                                className={conditionalClasses({
+                                  light: 'p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all touch-manipulation',
+                                  dark: 'p-2 text-gray-400 hover:bg-gray-600 rounded-lg transition-all touch-manipulation'
+                                })}
                                 title="Historial"
                               >
                                 <FaHistory className="w-4 h-4" />
@@ -827,7 +925,10 @@ const PDAs = () => {
                               )}
                             </div>
                           </div>
-                          <div className="text-xs text-gray-600">
+                          <div className={conditionalClasses({
+                            light: 'text-xs text-gray-600',
+                            dark: 'text-xs text-gray-300'
+                          })}>
                             <span className="font-medium">Área:</span>
                             <p className="truncate">{item.area}</p>
                             <div>
@@ -840,7 +941,10 @@ const PDAs = () => {
                             </div>
                             <div className="col-span-2">
                               <span className="font-medium">Serial:</span>
-                              <p className="font-mono bg-gray-50 px-2 py-1 rounded text-xs break-all">{item.serial}</p>
+                              <p className={conditionalClasses({
+                                light: 'font-mono bg-gray-50 px-2 py-1 rounded text-xs break-all',
+                                dark: 'font-mono bg-gray-600 px-2 py-1 rounded text-xs break-all'
+                              })}>{item.serial}</p>
                             </div>
                             {warranty.status !== 'unknown' && (
                               <div className="col-span-2">
@@ -883,11 +987,17 @@ const PDAs = () => {
                         )}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className={conditionalClasses({
+                      light: 'divide-y divide-gray-200',
+                      dark: 'divide-y divide-gray-600'
+                    })}>
                       {filteredPdas.map((item) => {
                         const warranty = getWarrantyStatus(item.warrantyExpiry);
                         return (
-                          <tr key={item.id} className="hover:bg-[#f3ebf9] transition-colors">
+                          <tr key={item.id} className={conditionalClasses({
+                            light: 'hover:bg-[#f3ebf9] transition-colors',
+                            dark: 'hover:bg-gray-700 transition-colors'
+                          })}>
                             <td className="px-4 py-4">
                               <span className="font-bold text-[#662d91]">{item.it}</span>
                             </td>
@@ -900,22 +1010,43 @@ const PDAs = () => {
                                 {item.propiedad}
                               </span>
                             </td>
-                            <td className="px-4 py-4 text-sm text-gray-700">{item.responsable}</td>
-                            <td className="px-4 py-4 text-sm text-gray-700">{item.area}</td>
+                            <td className={conditionalClasses({
+                              light: 'px-4 py-4 text-sm text-gray-700',
+                              dark: 'px-4 py-4 text-sm text-gray-300'
+                            })}>{item.responsable}</td>
+                            <td className={conditionalClasses({
+                              light: 'px-4 py-4 text-sm text-gray-700',
+                              dark: 'px-4 py-4 text-sm text-gray-300'
+                            })}>{item.area}</td>
                             <td className="px-4 py-4">
-                              <div className="font-semibold text-gray-900">{item.marca}</div>
+                              <div className={conditionalClasses({
+                                light: 'font-semibold text-gray-900',
+                                dark: 'font-semibold text-white'
+                              })}>{item.marca}</div>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-900">{item.modelo || '-'}</div>
+                              <div className={conditionalClasses({
+                                light: 'text-sm text-gray-900',
+                                dark: 'text-sm text-gray-300'
+                              })}>{item.modelo || '-'}</div>
                             </td>
                             <td className="px-4 py-4">
-                              <span className="text-xs font-mono bg-gray-100 px-2 py-1 rounded">{item.serial}</span>
+                              <span className={conditionalClasses({
+                                light: 'text-xs font-mono bg-gray-100 px-2 py-1 rounded',
+                                dark: 'text-xs font-mono bg-gray-600 px-2 py-1 rounded'
+                              })}>{item.serial}</span>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-900">{item.tipo_conectividad || '-'}</div>
+                              <div className={conditionalClasses({
+                                light: 'text-sm text-gray-900',
+                                dark: 'text-sm text-gray-300'
+                              })}>{item.tipo_conectividad || '-'}</div>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-900 truncate max-w-xs">{item.aplicaciones || '-'}</div>
+                              <div className={conditionalClasses({
+                                light: 'text-sm text-gray-900 truncate max-w-xs',
+                                dark: 'text-sm text-gray-300 truncate max-w-xs'
+                              })}>{item.aplicaciones || '-'}</div>
                             </td>
                             <td className="px-4 py-4">
                               <span className={`px-3 py-1 text-xs font-bold rounded-full ${
@@ -947,7 +1078,10 @@ const PDAs = () => {
                                 <div className="flex gap-2">
                                   <button
                                     onClick={() => handleHistory(item)}
-                                    className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all"
+                                    className={conditionalClasses({
+                                      light: 'p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all',
+                                      dark: 'p-2 text-gray-400 hover:bg-gray-600 rounded-lg transition-all'
+                                    })}
                                     title="Historial"
                                   >
                                     <FaHistory className="w-4 h-4" />
@@ -988,7 +1122,10 @@ const PDAs = () => {
       {/* Modal for Create/Edit */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+          <div className={conditionalClasses({
+            light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in',
+            dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-700 animate-scale-in'
+          })}>
             <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">
@@ -1006,7 +1143,10 @@ const PDAs = () => {
             <form onSubmit={handleSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6">
               {/* Información Básica */}
               <div>
-                <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <h3 className={conditionalClasses({
+                  light: 'text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2',
+                  dark: 'text-base lg:text-lg font-bold text-white mb-4 flex items-center gap-2'
+                })}>
                   <div className="w-6 h-6 lg:w-8 lg:h-8 bg-[#f3ebf9] rounded-lg flex items-center justify-center">
                     <FaMobile className="w-3 h-3 lg:w-4 lg:h-4 text-[#662d91]" />
                   </div>
@@ -1014,7 +1154,10 @@ const PDAs = () => {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    })}>
                       Código IT *
                     </label>
                     <input
@@ -1022,19 +1165,28 @@ const PDAs = () => {
                       placeholder="Ej: PDA001"
                       value={formData.it}
                       onChange={(e) => setFormData({ ...formData, it: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-gray-700 text-white'
+                      })}
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    })}>
                       Propiedad *
                     </label>
                     <select
                       value={formData.propiedad}
                       onChange={(e) => setFormData({ ...formData, propiedad: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-gray-700 text-white'
+                      })}
                       required
                     >
                       <option value="">Seleccionar</option>
@@ -1045,13 +1197,19 @@ const PDAs = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    })}>
                       Estado *
                     </label>
                     <select
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-gray-700 text-white'
+                      })}
                       required
                     >
                       <option value="disponible">Disponible</option>
@@ -1064,8 +1222,14 @@ const PDAs = () => {
               </div>
 
               {/* Asignación */}
-              <div className="pt-4 lg:pt-6 border-t-2 border-gray-100">
-                <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <div className={conditionalClasses({
+                light: 'pt-4 lg:pt-6 border-t-2 border-gray-100',
+                dark: 'pt-4 lg:pt-6 border-t-2 border-gray-600'
+              })}>
+                <h3 className={conditionalClasses({
+                  light: 'text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2',
+                  dark: 'text-base lg:text-lg font-bold text-white mb-4 flex items-center gap-2'
+                })}>
                   <div className="w-6 h-6 lg:w-8 lg:h-8 bg-green-100 rounded-lg flex items-center justify-center">
                     <FaCog className="w-3 h-3 lg:w-4 lg:h-4 text-green-600" />
                   </div>
@@ -1073,7 +1237,10 @@ const PDAs = () => {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    })}>
                       Responsable *
                     </label>
                     <input
@@ -1081,19 +1248,28 @@ const PDAs = () => {
                       placeholder="Nombre completo"
                       value={formData.responsable}
                       onChange={(e) => setFormData({ ...formData, responsable: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-gray-700 text-white'
+                      })}
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    })}>
                       Área *
                     </label>
                     <select
                       value={formData.area}
                       onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-gray-700 text-white'
+                      })}
                       required
                     >
                       <option value="">Seleccionar área</option>
@@ -1178,8 +1354,14 @@ const PDAs = () => {
               </div>
 
               {/* Especificaciones Técnicas */}
-              <div className="pt-4 lg:pt-6 border-t-2 border-gray-100">
-                <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <div className={conditionalClasses({
+                light: 'pt-4 lg:pt-6 border-t-2 border-gray-100',
+                dark: 'pt-4 lg:pt-6 border-t-2 border-gray-600'
+              })}>
+                <h3 className={conditionalClasses({
+                  light: 'text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2',
+                  dark: 'text-base lg:text-lg font-bold text-white mb-4 flex items-center gap-2'
+                })}>
                   <div className="w-6 h-6 lg:w-8 lg:h-8 bg-purple-100 rounded-lg flex items-center justify-center">
                     <FaCog className="w-3 h-3 lg:w-4 lg:h-4 text-purple-600" />
                   </div>
@@ -1187,7 +1369,10 @@ const PDAs = () => {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    })}>
                       Marca *
                     </label>
                     <input
@@ -1195,13 +1380,19 @@ const PDAs = () => {
                       placeholder="Ej: Zebra"
                       value={formData.marca}
                       onChange={(e) => setFormData({ ...formData, marca: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-gray-700 text-white'
+                      })}
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    })}>
                       Modelo
                     </label>
                     <input
@@ -1209,12 +1400,18 @@ const PDAs = () => {
                       placeholder="Ej: MC40"
                       value={formData.modelo}
                       onChange={(e) => setFormData({ ...formData, modelo: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-gray-700 text-white'
+                      })}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    })}>
                       Serial *
                     </label>
                     <input
@@ -1222,19 +1419,28 @@ const PDAs = () => {
                       placeholder="Número de serie"
                       value={formData.serial}
                       onChange={(e) => setFormData({ ...formData, serial: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-mono text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-mono text-sm lg:text-base bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-mono text-sm lg:text-base bg-gray-700 text-white'
+                      })}
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    })}>
                       Tipo de Conectividad
                     </label>
                     <select
                       value={formData.tipo_conectividad}
                       onChange={(e) => setFormData({ ...formData, tipo_conectividad: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-gray-700 text-white'
+                      })}
                     >
                       <option value="">Seleccionar</option>
                       <option value="WiFi">WiFi</option>
@@ -1246,7 +1452,10 @@ const PDAs = () => {
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    })}>
                       Aplicaciones Instaladas
                     </label>
                     <input
@@ -1254,12 +1463,18 @@ const PDAs = () => {
                       placeholder="Separar por comas: SAP, inventario, WMS..."
                       value={formData.aplicaciones}
                       onChange={(e) => setFormData({ ...formData, aplicaciones: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-gray-700 text-white'
+                      })}
                     />
                   </div>
 
                   <div className="md:col-span-3">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    })}>
                       Sistema Operativo
                     </label>
                     <input
@@ -1267,15 +1482,24 @@ const PDAs = () => {
                       placeholder="Ej: Windows Mobile, Android..."
                       value={formData.sistema_operativo}
                       onChange={(e) => setFormData({ ...formData, sistema_operativo: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-gray-700 text-white'
+                      })}
                     />
                   </div>
                 </div>
               </div>
 
               {/* Información Administrativa */}
-              <div className="pt-4 lg:pt-6 border-t-2 border-gray-100">
-                <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <div className={conditionalClasses({
+                light: 'pt-4 lg:pt-6 border-t-2 border-gray-100',
+                dark: 'pt-4 lg:pt-6 border-t-2 border-gray-600'
+              })}>
+                <h3 className={conditionalClasses({
+                  light: 'text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2',
+                  dark: 'text-base lg:text-lg font-bold text-white mb-4 flex items-center gap-2'
+                })}>
                   <div className="w-6 h-6 lg:w-8 lg:h-8 bg-amber-100 rounded-lg flex items-center justify-center">
                     <FaCalendarAlt className="w-3 h-3 lg:w-4 lg:h-4 text-amber-600" />
                   </div>
@@ -1283,43 +1507,64 @@ const PDAs = () => {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    })}>
                       Fecha de Compra
                     </label>
                     <input
                       type="date"
                       value={formData.purchaseDate}
                       onChange={(e) => setFormData({ ...formData, purchaseDate: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-gray-700 text-white'
+                      })}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    })}>
                       Vencimiento Garantía
                     </label>
                     <input
                       type="date"
                       value={formData.warrantyExpiry}
                       onChange={(e) => setFormData({ ...formData, warrantyExpiry: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-gray-700 text-white'
+                      })}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    })}>
                       Último Mantenimiento
                     </label>
                     <input
                       type="date"
                       value={formData.lastMaintenance}
                       onChange={(e) => setFormData({ ...formData, lastMaintenance: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-gray-700 text-white'
+                      })}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                    })}>
                       Costo (COP)
                     </label>
                     <input
@@ -1327,18 +1572,27 @@ const PDAs = () => {
                       placeholder="0"
                       value={formData.cost}
                       onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base bg-gray-700 text-white'
+                      })}
                     />
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-4 lg:pt-6 border-t-2 border-gray-100">
+              <div className={conditionalClasses({
+                light: 'flex flex-col sm:flex-row gap-3 pt-4 lg:pt-6 border-t-2 border-gray-100',
+                dark: 'flex flex-col sm:flex-row gap-3 pt-4 lg:pt-6 border-t-2 border-gray-600'
+              })}>
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 lg:px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all disabled:opacity-50 text-sm lg:text-base"
+                  className={conditionalClasses({
+                    light: 'px-4 lg:px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all disabled:opacity-50 text-sm lg:text-base',
+                    dark: 'px-4 lg:px-6 py-3 bg-gray-600 hover:bg-gray-500 text-gray-200 font-semibold rounded-xl transition-all disabled:opacity-50 text-sm lg:text-base'
+                  })}
                   disabled={formLoading}
                 >
                   Cancelar

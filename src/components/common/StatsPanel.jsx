@@ -1,6 +1,9 @@
 import React from 'react';
+import { useThemeClasses } from '../../hooks/useThemeClasses';
 
 const StatsPanel = React.memo(({ stats, showStats, onToggleStats, title, statsConfig }) => {
+  const { conditionalClasses } = useThemeClasses();
+
   if (!showStats) return null;
 
   return (
@@ -35,4 +38,3 @@ const StatsPanel = React.memo(({ stats, showStats, onToggleStats, title, statsCo
 StatsPanel.displayName = 'StatsPanel';
 
 export default StatsPanel;
-

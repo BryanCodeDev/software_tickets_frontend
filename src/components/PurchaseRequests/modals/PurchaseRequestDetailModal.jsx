@@ -4,6 +4,7 @@ import { purchaseRequestsAPI } from '../../../api';
 import AuthContext from '../../../context/AuthContext';
 import { getTimeAgo } from '../../../utils';
 import { SERVER_BASE_URL } from '../../../utils/constants';
+import { useThemeClasses } from '../../../hooks/useThemeClasses';
 
 const PurchaseRequestDetailModal = ({
   showDetailModal,
@@ -11,6 +12,7 @@ const PurchaseRequestDetailModal = ({
   selectedRequest,
   user
 }) => {
+  const { conditionalClasses } = useThemeClasses();
   const [actionLoading, setActionLoading] = useState(false);
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
@@ -118,17 +120,47 @@ const PurchaseRequestDetailModal = ({
 
   const getStatusColor = (status) => {
     const colors = {
-      'solicitado': 'bg-blue-100 text-blue-700 border-blue-200',
-      'pendiente_coordinadora': 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      'aprobado_coordinadora': 'bg-orange-100 text-orange-700 border-orange-200',
-      'pendiente_jefe': 'bg-[#f3ebf9] text-[#662d91] border-[#e8d5f5]',
-      'aprobado_jefe': 'bg-indigo-100 text-indigo-700 border-indigo-200',
-      'en_compras': 'bg-cyan-100 text-cyan-700 border-cyan-200',
-      'comprado': 'bg-teal-100 text-teal-700 border-teal-200',
-      'entregado': 'bg-green-100 text-green-700 border-green-200',
-      'rechazado': 'bg-red-100 text-red-700 border-red-200'
+      'solicitado': conditionalClasses({
+        light: 'bg-blue-100 text-blue-700 border-blue-200',
+        dark: 'bg-blue-900/30 text-blue-300 border-blue-700/30'
+      }),
+      'pendiente_coordinadora': conditionalClasses({
+        light: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+        dark: 'bg-yellow-900/30 text-yellow-300 border-yellow-700/30'
+      }),
+      'aprobado_coordinadora': conditionalClasses({
+        light: 'bg-orange-100 text-orange-700 border-orange-200',
+        dark: 'bg-orange-900/30 text-orange-300 border-orange-700/30'
+      }),
+      'pendiente_jefe': conditionalClasses({
+        light: 'bg-[#f3ebf9] text-[#662d91] border-[#e8d5f5]',
+        dark: 'bg-purple-900/30 text-purple-300 border-purple-700/30'
+      }),
+      'aprobado_jefe': conditionalClasses({
+        light: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+        dark: 'bg-indigo-900/30 text-indigo-300 border-indigo-700/30'
+      }),
+      'en_compras': conditionalClasses({
+        light: 'bg-cyan-100 text-cyan-700 border-cyan-200',
+        dark: 'bg-cyan-900/30 text-cyan-300 border-cyan-700/30'
+      }),
+      'comprado': conditionalClasses({
+        light: 'bg-teal-100 text-teal-700 border-teal-200',
+        dark: 'bg-teal-900/30 text-teal-300 border-teal-700/30'
+      }),
+      'entregado': conditionalClasses({
+        light: 'bg-green-100 text-green-700 border-green-200',
+        dark: 'bg-green-900/30 text-green-300 border-green-700/30'
+      }),
+      'rechazado': conditionalClasses({
+        light: 'bg-red-100 text-red-700 border-red-200',
+        dark: 'bg-red-900/30 text-red-300 border-red-700/30'
+      })
     };
-    return colors[status?.toLowerCase()] || 'bg-gray-100 text-gray-600 border-gray-200';
+    return colors[status?.toLowerCase()] || conditionalClasses({
+      light: 'bg-gray-100 text-gray-600 border-gray-200',
+      dark: 'bg-gray-700 text-gray-300 border-gray-600'
+    });
   };
 
   const getStatusIcon = (status) => {
@@ -280,7 +312,10 @@ const PurchaseRequestDetailModal = ({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4 animate-fade-in">
-      <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] border border-gray-200 transform animate-scale-in flex flex-col">
+      <div className={conditionalClasses({
+        light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] border border-gray-200 transform animate-scale-in flex flex-col',
+        dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] border border-gray-600 transform animate-scale-in flex flex-col'
+      })}>
         <div className="p-4 lg:p-6 overflow-y-auto flex-1 min-h-0">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
@@ -289,13 +324,19 @@ const PurchaseRequestDetailModal = ({
                 <span className="text-white font-bold text-lg">#{selectedRequest.id}</span>
               </div>
               <div>
-                <h2 className="text-xl lg:text-2xl font-bold text-gray-900 line-clamp-1">{selectedRequest.title}</h2>
+                <h2 className={conditionalClasses({
+                  light: 'text-xl lg:text-2xl font-bold text-gray-900 line-clamp-1',
+                  dark: 'text-xl lg:text-2xl font-bold text-gray-100 line-clamp-1'
+                })}>{selectedRequest.title}</h2>
                 <div className="flex items-center gap-2 mt-1">
                   <span className={`px-3 py-1 rounded-full text-sm font-bold inline-flex items-center gap-1 ${getStatusColor(selectedRequest.status)}`}>
                     {getStatusIcon(selectedRequest.status)}
                     {selectedRequest.status}
                   </span>
-                  <span className="text-sm text-gray-500">
+                  <span className={conditionalClasses({
+                    light: 'text-sm text-gray-500',
+                    dark: 'text-sm text-gray-400'
+                  })}>
                     {getTimeAgo(selectedRequest.updatedAt)}
                   </span>
                 </div>
@@ -303,7 +344,10 @@ const PurchaseRequestDetailModal = ({
             </div>
             <button
               onClick={() => setShowDetailModal(false)}
-              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
+              className={conditionalClasses({
+                light: 'p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200',
+                dark: 'p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-700 rounded-lg transition-all duration-200'
+              })}
             >
               <FaTimes className="w-5 h-5" />
             </button>
@@ -313,40 +357,79 @@ const PurchaseRequestDetailModal = ({
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">
               {/* Request Details */}
-              <div className="bg-gray-50 rounded-xl p-4 lg:p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Detalles de la Solicitud</h3>
+              <div className={conditionalClasses({
+                light: 'bg-gray-50 rounded-xl p-4 lg:p-6',
+                dark: 'bg-gray-700 rounded-xl p-4 lg:p-6'
+              })}>
+                <h3 className={conditionalClasses({
+                  light: 'text-lg font-bold text-gray-900 mb-4',
+                  dark: 'text-lg font-bold text-gray-100 mb-4'
+                })}>Detalles de la Solicitud</h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Tipo de Ítem</span>
-                    <p className="text-base font-medium text-gray-900 mt-1 capitalize">{selectedRequest.itemType}</p>
+                    <span className={conditionalClasses({
+                      light: 'text-sm font-semibold text-gray-500 uppercase tracking-wide',
+                      dark: 'text-sm font-semibold text-gray-400 uppercase tracking-wide'
+                    })}>Tipo de Ítem</span>
+                    <p className={conditionalClasses({
+                      light: 'text-base font-medium text-gray-900 mt-1 capitalize',
+                      dark: 'text-base font-medium text-gray-100 mt-1 capitalize'
+                    })}>{selectedRequest.itemType}</p>
                   </div>
                   <div>
-                    <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Cantidad</span>
-                    <p className="text-base font-medium text-gray-900 mt-1">{selectedRequest.quantity}</p>
+                    <span className={conditionalClasses({
+                      light: 'text-sm font-semibold text-gray-500 uppercase tracking-wide',
+                      dark: 'text-sm font-semibold text-gray-400 uppercase tracking-wide'
+                    })}>Cantidad</span>
+                    <p className={conditionalClasses({
+                      light: 'text-base font-medium text-gray-900 mt-1',
+                      dark: 'text-base font-medium text-gray-100 mt-1'
+                    })}>{selectedRequest.quantity}</p>
                   </div>
                   <div className="md:col-span-2">
-                    <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Costo Estimado</span>
+                    <span className={conditionalClasses({
+                      light: 'text-sm font-semibold text-gray-500 uppercase tracking-wide',
+                      dark: 'text-sm font-semibold text-gray-400 uppercase tracking-wide'
+                    })}>Costo Estimado</span>
                     <p className="text-xl font-bold text-green-600 mt-1">{formatCurrency(selectedRequest.estimatedCost)}</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Descripción</span>
-                    <p className="text-base text-gray-900 mt-1 leading-relaxed">{selectedRequest.description}</p>
+                    <span className={conditionalClasses({
+                      light: 'text-sm font-semibold text-gray-500 uppercase tracking-wide',
+                      dark: 'text-sm font-semibold text-gray-400 uppercase tracking-wide'
+                    })}>Descripción</span>
+                    <p className={conditionalClasses({
+                      light: 'text-base text-gray-900 mt-1 leading-relaxed',
+                      dark: 'text-base text-gray-100 mt-1 leading-relaxed'
+                    })}>{selectedRequest.description}</p>
                   </div>
                   <div>
-                    <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Justificación</span>
-                    <p className="text-base text-gray-900 mt-1 leading-relaxed">{selectedRequest.justification}</p>
+                    <span className={conditionalClasses({
+                      light: 'text-sm font-semibold text-gray-500 uppercase tracking-wide',
+                      dark: 'text-sm font-semibold text-gray-400 uppercase tracking-wide'
+                    })}>Justificación</span>
+                    <p className={conditionalClasses({
+                      light: 'text-base text-gray-900 mt-1 leading-relaxed',
+                      dark: 'text-base text-gray-100 mt-1 leading-relaxed'
+                    })}>{selectedRequest.justification}</p>
                   </div>
                 </div>
               </div>
 
               {/* Attachments */}
-              <div className="bg-gray-50 rounded-xl p-4 lg:p-6">
+              <div className={conditionalClasses({
+                light: 'bg-gray-50 rounded-xl p-4 lg:p-6',
+                dark: 'bg-gray-700 rounded-xl p-4 lg:p-6'
+              })}>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-gray-900 flex items-center">
+                  <h3 className={conditionalClasses({
+                    light: 'text-lg font-bold text-gray-900 flex items-center',
+                    dark: 'text-lg font-bold text-gray-100 flex items-center'
+                  })}>
                     <FaPaperclip className="mr-2" />
                     Archivos Adjuntos ({attachments.length})
                   </h3>
@@ -369,22 +452,43 @@ const PurchaseRequestDetailModal = ({
                 {attachmentsLoading ? (
                   <div className="text-center py-4">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="text-sm text-gray-600 mt-2">Cargando archivos...</p>
+                    <p className={conditionalClasses({
+                      light: 'text-sm text-gray-600 mt-2',
+                      dark: 'text-sm text-gray-300 mt-2'
+                    })}>Cargando archivos...</p>
                   </div>
                 ) : attachments.length === 0 ? (
                   <div className="text-center py-8">
-                    <FaPaperclip className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-500">No hay archivos adjuntos</p>
+                    <FaPaperclip className={conditionalClasses({
+                      light: 'w-12 h-12 text-gray-300 mx-auto mb-3',
+                      dark: 'w-12 h-12 text-gray-500 mx-auto mb-3'
+                    })} />
+                    <p className={conditionalClasses({
+                      light: 'text-gray-500',
+                      dark: 'text-gray-400'
+                    })}>No hay archivos adjuntos</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {attachments.map((attachment) => (
-                      <div key={attachment.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
+                      <div key={attachment.id} className={conditionalClasses({
+                        light: 'flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200',
+                        dark: 'flex items-center justify-between p-3 bg-gray-800 rounded-lg border border-gray-600'
+                      })}>
                         <div className="flex items-center flex-1 min-w-0">
-                          <FaPaperclip className="w-4 h-4 text-gray-400 mr-3 shrink-0" />
+                          <FaPaperclip className={conditionalClasses({
+                            light: 'w-4 h-4 text-gray-400 mr-3 shrink-0',
+                            dark: 'w-4 h-4 text-gray-500 mr-3 shrink-0'
+                          })} />
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">{attachment.originalName}</p>
-                            <p className="text-xs text-gray-500">
+                            <p className={conditionalClasses({
+                              light: 'text-sm font-medium text-gray-900 truncate',
+                              dark: 'text-sm font-medium text-gray-100 truncate'
+                            })}>{attachment.originalName}</p>
+                            <p className={conditionalClasses({
+                              light: 'text-xs text-gray-500',
+                              dark: 'text-xs text-gray-400'
+                            })}>
                               {(attachment.size / 1024).toFixed(1)} KB • Subido por {attachment.uploader?.name || 'Usuario'} • {getTimeAgo(attachment.createdAt)}
                             </p>
                           </div>
@@ -392,7 +496,10 @@ const PurchaseRequestDetailModal = ({
                         <div className="flex items-center gap-2 ml-4">
                           <button
                             onClick={() => downloadAttachment(attachment)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            className={conditionalClasses({
+                              light: 'p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors',
+                              dark: 'p-2 text-blue-400 hover:bg-blue-900/30 rounded-lg transition-colors'
+                            })}
                             title="Descargar"
                           >
                             <FaDownload className="w-4 h-4" />
@@ -400,7 +507,10 @@ const PurchaseRequestDetailModal = ({
                           {(userRole === 'Administrador' || attachment.uploadedBy === user?.id) && (
                             <button
                               onClick={() => handleDeleteAttachment(attachment.id)}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              className={conditionalClasses({
+                                light: 'p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors',
+                                dark: 'p-2 text-red-400 hover:bg-red-900/30 rounded-lg transition-colors'
+                              })}
                               title="Eliminar"
                             >
                               <FaTrash className="w-4 h-4" />

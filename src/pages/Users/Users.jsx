@@ -3,11 +3,13 @@ import { usersAPI, authAPI } from '../../api';
 import { inventoryAPI } from '../../api';
 import { corporatePhoneAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
+import { useThemeClasses } from '../../hooks/useThemeClasses';
 import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSearch, FaFilter, FaUserShield, FaUserCog, FaUser, FaChartBar, FaDownload, FaSortAmountDown, FaSortAmountUp, FaClock, FaEnvelope, FaKey, FaToggleOn, FaToggleOff, FaBan, FaShieldAlt, FaCrown, FaClipboardList } from 'react-icons/fa';
 import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 import { onUserUpdated, onUsersListUpdated, offUserUpdated, offUsersListUpdated } from '../../api/socket';
 
 const Users = () => {
+  const { conditionalClasses } = useThemeClasses();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -237,28 +239,52 @@ const Users = () => {
   // NUEVA FUNCIONALIDAD: Obtener icono de rol
   const getRoleIcon = (roleName) => {
     switch(roleName) {
-      case 'Administrador': return <FaUserShield className="w-4 h-4 text-[#662d91]" />;
-      case 'Coordinadora Administrativa': return <FaUserShield className="w-4 h-4 text-orange-600" />;
-      case 'Técnico': return <FaUserCog className="w-4 h-4 text-blue-600" />;
-      case 'Calidad': return <FaShieldAlt className="w-4 h-4 text-emerald-600" />;
-      case 'Jefe': return <FaClipboardList className="w-4 h-4 text-yellow-600" />;
-      case 'Compras': return <FaCrown className="w-4 h-4 text-teal-600" />;
-      case 'Empleado': return <FaUser className="w-4 h-4 text-green-600" />;
-      default: return <FaUser className="w-4 h-4 text-gray-600" />;
+      case 'Administrador': return <FaUserShield className={conditionalClasses({ light: 'w-4 h-4 text-[#662d91]', dark: 'w-4 h-4 text-[#8e4dbf]' })} />;
+      case 'Coordinadora Administrativa': return <FaUserShield className={conditionalClasses({ light: 'w-4 h-4 text-orange-600', dark: 'w-4 h-4 text-orange-400' })} />;
+      case 'Técnico': return <FaUserCog className={conditionalClasses({ light: 'w-4 h-4 text-blue-600', dark: 'w-4 h-4 text-blue-400' })} />;
+      case 'Calidad': return <FaShieldAlt className={conditionalClasses({ light: 'w-4 h-4 text-emerald-600', dark: 'w-4 h-4 text-emerald-400' })} />;
+      case 'Jefe': return <FaClipboardList className={conditionalClasses({ light: 'w-4 h-4 text-yellow-600', dark: 'w-4 h-4 text-yellow-400' })} />;
+      case 'Compras': return <FaCrown className={conditionalClasses({ light: 'w-4 h-4 text-teal-600', dark: 'w-4 h-4 text-teal-400' })} />;
+      case 'Empleado': return <FaUser className={conditionalClasses({ light: 'w-4 h-4 text-green-600', dark: 'w-4 h-4 text-green-400' })} />;
+      default: return <FaUser className={conditionalClasses({ light: 'w-4 h-4 text-gray-600', dark: 'w-4 h-4 text-gray-400' })} />;
     }
   };
 
   // NUEVA FUNCIONALIDAD: Obtener color de badge por rol
   const getRoleBadgeColor = (roleName) => {
     switch(roleName) {
-      case 'Administrador': return 'bg-[#f3ebf9] text-[#662d91] border-[#e8d5f5]';
-      case 'Coordinadora Administrativa': return 'bg-orange-100 text-orange-700 border-orange-200';
-      case 'Técnico': return 'bg-blue-100 text-blue-700 border-blue-200';
-      case 'Calidad': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
-      case 'Jefe': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
-      case 'Compras': return 'bg-teal-100 text-teal-700 border-teal-200';
-      case 'Empleado': return 'bg-green-100 text-green-700 border-green-200';
-      default: return 'bg-gray-100 text-gray-700 border-gray-200';
+      case 'Administrador': return conditionalClasses({
+        light: 'bg-[#f3ebf9] text-[#662d91] border-[#e8d5f5]',
+        dark: 'bg-[#3d2a4a] text-[#8e4dbf] border-[#4a3560]'
+      });
+      case 'Coordinadora Administrativa': return conditionalClasses({
+        light: 'bg-orange-100 text-orange-700 border-orange-200',
+        dark: 'bg-orange-900/30 text-orange-400 border-orange-600'
+      });
+      case 'Técnico': return conditionalClasses({
+        light: 'bg-blue-100 text-blue-700 border-blue-200',
+        dark: 'bg-blue-900/30 text-blue-400 border-blue-600'
+      });
+      case 'Calidad': return conditionalClasses({
+        light: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+        dark: 'bg-emerald-900/30 text-emerald-400 border-emerald-600'
+      });
+      case 'Jefe': return conditionalClasses({
+        light: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+        dark: 'bg-yellow-900/30 text-yellow-400 border-yellow-600'
+      });
+      case 'Compras': return conditionalClasses({
+        light: 'bg-teal-100 text-teal-700 border-teal-200',
+        dark: 'bg-teal-900/30 text-teal-400 border-teal-600'
+      });
+      case 'Empleado': return conditionalClasses({
+        light: 'bg-green-100 text-green-700 border-green-200',
+        dark: 'bg-green-900/30 text-green-400 border-green-600'
+      });
+      default: return conditionalClasses({
+        light: 'bg-gray-100 text-gray-700 border-gray-200',
+        dark: 'bg-gray-700 text-gray-300 border-gray-600'
+      });
     }
   };
 
@@ -391,7 +417,10 @@ const Users = () => {
   if (loading) return <div>Cargando...</div>;
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4 sm:px-6 lg:px-8">
+    <div className={conditionalClasses({
+      light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4 sm:px-6 lg:px-8',
+      dark: 'min-h-screen bg-gray-900 py-8 px-4 sm:px-6 lg:px-8'
+    })}>
       {/* Notification */}
       <NotificationSystem
         notification={notification}
@@ -409,21 +438,30 @@ const Users = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center">
-                <div className="w-12 h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg">
+              <h1 className={conditionalClasses({
+                light: 'text-2xl sm:text-3xl font-bold text-gray-900 flex items-center',
+                dark: 'text-2xl sm:text-3xl font-bold text-gray-100 flex items-center'
+              })}>
+                <div className={conditionalClasses({
+                  light: 'w-12 h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg',
+                  dark: 'w-12 h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg'
+                })}>
                   <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                   </svg>
                 </div>
                 Usuarios
               </h1>
-              <p className="mt-2 text-gray-600">Gestiona los usuarios del sistema</p>
-            </div>
-            <div className="flex items-center gap-3 flex-wrap">
-              {/* NUEVA FUNCIONALIDAD: Botones de estadísticas */}
+              <p className={conditionalClasses({
+                light: 'mt-2 text-gray-600',
+                dark: 'mt-2 text-gray-300'
+              })}>Gestiona los usuarios del sistema</p>
               <button
                 onClick={() => setShowStats(!showStats)}
-                className="inline-flex items-center px-4 py-2.5 bg-white hover:bg-gray-50 border-2 border-gray-200 text-gray-700 font-semibold rounded-xl transition-all"
+                className={conditionalClasses({
+                  light: 'inline-flex items-center px-4 py-2.5 bg-white hover:bg-gray-50 border-2 border-gray-200 text-gray-700 font-semibold rounded-xl transition-all',
+                  dark: 'inline-flex items-center px-4 py-2.5 bg-gray-700 hover:bg-gray-600 border-2 border-gray-600 text-gray-200 font-semibold rounded-xl transition-all'
+                })}
                 title="Ver estadísticas"
               >
                 <FaChartBar className="mr-2" />
@@ -557,28 +595,52 @@ const Users = () => {
 
         {/* NUEVA FUNCIONALIDAD: Resumen de resultados y vista */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2 sm:gap-0">
-          <p className="text-sm text-gray-600 font-medium">
+          <p className={conditionalClasses({
+            light: 'text-sm text-gray-600 font-medium',
+            dark: 'text-sm text-gray-300 font-medium'
+          })}>
             Mostrando <span className="font-bold text-[#662d91]">{filteredUsers.length}</span> de <span className="font-bold">{users.length}</span> usuarios
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-            <h2 className="text-xl font-semibold text-gray-900">Todos los Usuarios</h2>
+        <div className={conditionalClasses({
+          light: 'bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden',
+          dark: 'bg-gray-800 rounded-2xl shadow-xl border border-gray-600 overflow-hidden'
+        })}>
+          <div className={conditionalClasses({
+            light: 'px-6 py-4 border-b border-gray-200 bg-gray-50',
+            dark: 'px-6 py-4 border-b border-gray-600 bg-gray-700'
+          })}>
+            <h2 className={conditionalClasses({
+              light: 'text-xl font-semibold text-gray-900',
+              dark: 'text-xl font-semibold text-gray-100'
+            })}>Todos los Usuarios</h2>
           </div>
           <div className="p-6">
             {filteredUsers.length === 0 ? (
               <div className="text-center py-12">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FaUsers className="w-8 h-8 text-gray-400" />
+                <div className={conditionalClasses({
+                  light: 'w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4',
+                  dark: 'w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4'
+                })}>
+                  <FaUsers className={conditionalClasses({
+                    light: 'w-8 h-8 text-gray-400',
+                    dark: 'w-8 h-8 text-gray-500'
+                  })} />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  {searchTerm || filterRole !== 'all' || filterStatus !== 'all'
+                <h3 className={conditionalClasses({
+                  light: 'text-lg font-medium text-gray-900 mb-2',
+                  dark: 'text-lg font-medium text-gray-100 mb-2'
+                })}>
+                  {searchTerm || filterRole !== 'all'
                     ? 'No se encontraron usuarios'
                     : 'No hay usuarios disponibles'}
                 </h3>
-                <p className="text-gray-600">
-                  {searchTerm || filterRole !== 'all' || filterStatus !== 'all'
+                <p className={conditionalClasses({
+                  light: 'text-gray-600',
+                  dark: 'text-gray-300'
+                })}>
+                  {searchTerm || filterRole !== 'all'
                     ? 'Intenta ajustar los filtros de búsqueda'
                     : 'Comienza creando un nuevo usuario'}
                 </p>
@@ -588,53 +650,107 @@ const Users = () => {
                 {/* NUEVA FUNCIONALIDAD: Vista de cuadrícula */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                   {filteredUsers.map((usr) => (
-                    <div key={usr.id} className="bg-gray-50 rounded-xl p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-shadow">
+                    <div key={usr.id} className={conditionalClasses({
+                      light: 'bg-gray-50 rounded-xl p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-shadow',
+                      dark: 'bg-gray-700 rounded-xl p-4 sm:p-6 border border-gray-600 hover:shadow-md transition-shadow'
+                    })}>
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
-                          <div className="w-10 h-10 bg-[#f3ebf9] rounded-full flex items-center justify-center">
+                          <div className={conditionalClasses({
+                            light: 'w-10 h-10 bg-[#f3ebf9] rounded-full flex items-center justify-center',
+                            dark: 'w-10 h-10 bg-[#3d2a4a] rounded-full flex items-center justify-center'
+                          })}>
                             {getRoleIcon(usr.Role?.name)}
                           </div>
-                          <h3 className="font-semibold text-gray-900">{usr.username}</h3>
+                          <h3 className={conditionalClasses({
+                            light: 'font-semibold text-gray-900',
+                            dark: 'font-semibold text-gray-100'
+                          })}>{usr.username}</h3>
                         </div>
                         <span className={`px-3 py-1 text-xs font-medium rounded-full border ${getRoleBadgeColor(usr.Role?.name)}`}>
                           {usr.Role?.name}
                         </span>
                       </div>
-                      <div className="space-y-2 text-sm text-gray-600 mb-4">
+                      <div className={conditionalClasses({
+                        light: 'space-y-2 text-sm text-gray-600 mb-4',
+                        dark: 'space-y-2 text-sm text-gray-300 mb-4'
+                      })}>
                         <div className="flex items-center gap-2">
-                          <FaUser className="w-3 h-3 text-gray-400" />
+                          <FaUser className={conditionalClasses({
+                            light: 'w-3 h-3 text-gray-400',
+                            dark: 'w-3 h-3 text-gray-500'
+                          })} />
                           <p><strong>Nombre:</strong> {usr.name || usr.username}</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <FaEnvelope className="w-3 h-3 text-gray-400" />
+                          <FaEnvelope className={conditionalClasses({
+                            light: 'w-3 h-3 text-gray-400',
+                            dark: 'w-3 h-3 text-gray-500'
+                          })} />
                           <p className="truncate"><strong>Email:</strong> {usr.email}</p>
                         </div>
-                        <div className="pt-2 border-t border-gray-200">
-                          <p className="text-xs text-gray-500 mb-1"><strong>IT Asignado:</strong></p>
+                        <div className={conditionalClasses({
+                          light: 'pt-2 border-t border-gray-200',
+                          dark: 'pt-2 border-t border-gray-600'
+                        })}>
+                          <p className={conditionalClasses({
+                            light: 'text-xs text-gray-500 mb-1',
+                            dark: 'text-xs text-gray-400 mb-1'
+                          })}><strong>IT Asignado:</strong></p>
                           {usr.it ? (
-                            <div className="bg-blue-50 rounded-lg p-2">
-                              <p className="text-xs font-semibold text-blue-700">{usr.it}</p>
-                              <p className="text-xs text-blue-600">
+                            <div className={conditionalClasses({
+                              light: 'bg-blue-50 rounded-lg p-2',
+                              dark: 'bg-blue-900/30 rounded-lg p-2'
+                            })}>
+                              <p className={conditionalClasses({
+                                light: 'text-xs font-semibold text-blue-700',
+                                dark: 'text-xs font-semibold text-blue-300'
+                              })}>{usr.it}</p>
+                              <p className={conditionalClasses({
+                                light: 'text-xs text-blue-600',
+                                dark: 'text-xs text-blue-400'
+                              })}>
                                 {inventoryItems.find(item => item.it === usr.it)?.area || 'Sin área'}
                               </p>
                             </div>
                           ) : (
-                            <p className="text-xs text-gray-400 italic">No asignado</p>
+                            <p className={conditionalClasses({
+                              light: 'text-xs text-gray-400 italic',
+                              dark: 'text-xs text-gray-500 italic'
+                            })}>No asignado</p>
                           )}
                         </div>
-                        <div className="pt-2 border-t border-gray-200">
-                          <p className="text-xs text-gray-500 mb-1"><strong>Teléfono Corporativo:</strong></p>
+                        <div className={conditionalClasses({
+                          light: 'pt-2 border-t border-gray-200',
+                          dark: 'pt-2 border-t border-gray-600'
+                        })}>
+                          <p className={conditionalClasses({
+                            light: 'text-xs text-gray-500 mb-1',
+                            dark: 'text-xs text-gray-400 mb-1'
+                          })}><strong>Teléfono Corporativo:</strong></p>
                           {usr.hasCorporatePhone ? (
-                            <div className="bg-green-50 rounded-lg p-2">
-                              <p className="text-xs font-semibold text-green-700">{usr.corporatePhone}</p>
+                            <div className={conditionalClasses({
+                              light: 'bg-green-50 rounded-lg p-2',
+                              dark: 'bg-green-900/30 rounded-lg p-2'
+                            })}>
+                              <p className={conditionalClasses({
+                                light: 'text-xs font-semibold text-green-700',
+                                dark: 'text-xs font-semibold text-green-300'
+                              })}>{usr.corporatePhone}</p>
                             </div>
                           ) : (
-                            <p className="text-xs text-gray-400 italic">No tiene</p>
+                            <p className={conditionalClasses({
+                              light: 'text-xs text-gray-400 italic',
+                              dark: 'text-xs text-gray-500 italic'
+                            })}>No tiene</p>
                           )}
                         </div>
                         {/* NUEVA FUNCIONALIDAD: Mostrar fecha de creación */}
                         {usr.createdAt && (
-                          <div className="flex items-center gap-2 text-xs text-gray-500 pt-2">
+                          <div className={conditionalClasses({
+                            light: 'flex items-center gap-2 text-xs text-gray-500 pt-2',
+                            dark: 'flex items-center gap-2 text-xs text-gray-400 pt-2'
+                          })}>
                             <FaClock className="w-3 h-3" />
                             <span>Creado {getTimeAgo(usr.createdAt)}</span>
                           </div>
@@ -643,14 +759,20 @@ const Users = () => {
                       <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                         <button
                           onClick={() => handleEdit(usr)}
-                          className="flex items-center space-x-1 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors"
+                          className={conditionalClasses({
+                            light: 'flex items-center space-x-1 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors',
+                            dark: 'flex items-center space-x-1 px-3 py-1 bg-blue-900/30 text-blue-400 text-xs font-medium rounded-lg hover:bg-blue-900/50 transition-colors'
+                          })}
                         >
                           <FaEdit />
                           <span>Editar</span>
                         </button>
                         <button
                           onClick={() => handleDelete(usr.id)}
-                          className="flex items-center space-x-1 px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors"
+                          className={conditionalClasses({
+                            light: 'flex items-center space-x-1 px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors',
+                            dark: 'flex items-center space-x-1 px-3 py-1 bg-red-900/30 text-red-400 text-xs font-medium rounded-lg hover:bg-red-900/50 transition-colors'
+                          })}
                           disabled={usr.id === user?.id}
                         >
                           <FaTrash />
@@ -669,8 +791,14 @@ const Users = () => {
       {/* Modal for Create/Edit */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
-            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
+          <div className={conditionalClasses({
+            light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in',
+            dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-600 animate-scale-in'
+          })}>
+            <div className={conditionalClasses({
+              light: 'sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10',
+              dark: 'sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10'
+            })}>
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">
                   {editingUser ? 'Editar Usuario' : 'Nuevo Usuario'}
@@ -687,7 +815,10 @@ const Users = () => {
             <form onSubmit={handleSubmit} className="p-4 sm:p-6 md:p-8 space-y-3 sm:space-y-4 md:space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                  <label className={conditionalClasses({
+                    light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
+                    dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
+                  })}>
                     Username *
                   </label>
                   <input
@@ -695,14 +826,20 @@ const Users = () => {
                     placeholder="Nombre de usuario"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                    className={conditionalClasses({
+                      light: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900',
+                      dark: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-gray-100'
+                    })}
                     required
                     disabled={editingUser}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                  <label className={conditionalClasses({
+                    light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
+                    dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
+                  })}>
                     Email *
                   </label>
                   <input
@@ -710,14 +847,20 @@ const Users = () => {
                     placeholder="Email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                    className={conditionalClasses({
+                      light: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900',
+                      dark: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-gray-100'
+                    })}
                     required
                     disabled={editingUser}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                  <label className={conditionalClasses({
+                    light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
+                    dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
+                  })}>
                     Nombre *
                   </label>
                   <input
@@ -725,7 +868,10 @@ const Users = () => {
                     placeholder="Nombre completo"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                    className={conditionalClasses({
+                      light: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900',
+                      dark: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-gray-100'
+                    })}
                     required
                     disabled={editingUser}
                   />
@@ -733,7 +879,10 @@ const Users = () => {
 
                 {(!editingUser || (user && user.role?.name === 'Administrador')) && (
                   <div>
-                    <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
+                      dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
+                    })}>
                       {editingUser ? 'Nueva Contraseña (opcional)' : 'Contraseña *'}
                     </label>
                     <div className="relative">
@@ -742,7 +891,10 @@ const Users = () => {
                         placeholder={editingUser ? "Dejar vacío para mantener contraseña actual" : "Contraseña"}
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 pr-20 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                        className={conditionalClasses({
+                          light: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 pr-20 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900',
+                          dark: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 pr-20 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-gray-100'
+                        })}
                         required={!editingUser}
                       />
                       <div className="absolute inset-y-0 right-0 flex items-center pr-2 gap-1">
@@ -768,27 +920,47 @@ const Users = () => {
                     {passwordStrength && formData.password && (
                       <div className="mt-2">
                         <div className="flex items-center gap-2 mb-1">
-                          <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div className={conditionalClasses({
+                            light: 'flex-1 h-2 bg-gray-200 rounded-full overflow-hidden',
+                            dark: 'flex-1 h-2 bg-gray-600 rounded-full overflow-hidden'
+                          })}>
                             <div
-                              className={`h-full transition-all duration-300 ${
-                                passwordStrength.color === 'red' ? 'bg-red-500' :
-                                passwordStrength.color === 'yellow' ? 'bg-yellow-500' :
-                                'bg-green-500'
-                              }`}
+                              className={conditionalClasses({
+                                light: `h-full transition-all duration-300 ${
+                                  passwordStrength.color === 'red' ? 'bg-red-500' :
+                                  passwordStrength.color === 'yellow' ? 'bg-yellow-500' :
+                                  'bg-green-500'
+                                }`,
+                                dark: `h-full transition-all duration-300 ${
+                                  passwordStrength.color === 'red' ? 'bg-red-400' :
+                                  passwordStrength.color === 'yellow' ? 'bg-yellow-400' :
+                                  'bg-green-400'
+                                }`
+                              })}
                               style={{ width: `${(passwordStrength.strength / 5) * 100}%` }}
                             />
                           </div>
-                          <span className={`text-xs font-semibold ${
-                            passwordStrength.color === 'red' ? 'text-red-600' :
-                            passwordStrength.color === 'yellow' ? 'text-yellow-600' :
-                            'text-green-600'
-                          }`}>
+                          <span className={conditionalClasses({
+                            light: `text-xs font-semibold ${
+                              passwordStrength.color === 'red' ? 'text-red-600' :
+                              passwordStrength.color === 'yellow' ? 'text-yellow-600' :
+                              'text-green-600'
+                            }`,
+                            dark: `text-xs font-semibold ${
+                              passwordStrength.color === 'red' ? 'text-red-400' :
+                              passwordStrength.color === 'yellow' ? 'text-yellow-400' :
+                              'text-green-400'
+                            }`
+                          })}>
                             {passwordStrength.level === 'weak' ? 'Débil' :
                              passwordStrength.level === 'medium' ? 'Media' : 'Fuerte'}
                           </span>
                         </div>
                         {passwordStrength.feedback.length > 0 && (
-                          <p className="text-xs text-gray-500">
+                          <p className={conditionalClasses({
+                            light: 'text-xs text-gray-500',
+                            dark: 'text-xs text-gray-400'
+                          })}>
                             Mejoras: {passwordStrength.feedback.join(', ')}
                           </p>
                         )}
@@ -798,13 +970,19 @@ const Users = () => {
                 )}
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                  <label className={conditionalClasses({
+                    light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
+                    dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
+                  })}>
                     Rol
                   </label>
                   <select
                     value={formData.roleId}
                     onChange={(e) => setFormData({ ...formData, roleId: parseInt(e.target.value) })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                    className={conditionalClasses({
+                      light: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900',
+                      dark: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-gray-100'
+                    })}
                   >
                     <option value={1}>Administrador</option>
                     <option value={5}>Coordinadora Administrativa</option>
@@ -817,13 +995,19 @@ const Users = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                  <label className={conditionalClasses({
+                    light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
+                    dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
+                  })}>
                     IT del Computador
                   </label>
                   <select
                     value={formData.it}
                     onChange={(e) => setFormData({ ...formData, it: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                    className={conditionalClasses({
+                      light: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900',
+                      dark: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-gray-100'
+                    })}
                   >
                     <option value="">Sin asignar</option>
                     {uniqueITs.map((item) => (
@@ -835,11 +1019,17 @@ const Users = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                  <label className={conditionalClasses({
+                    light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
+                    dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
+                  })}>
                     ¿Tiene teléfono corporativo?
                   </label>
                   <div className="flex gap-4">
-                    <label className="flex items-center">
+                    <label className={conditionalClasses({
+                      light: 'flex items-center',
+                      dark: 'flex items-center'
+                    })}>
                       <input
                         type="radio"
                         name="hasCorporatePhone"
@@ -847,9 +1037,15 @@ const Users = () => {
                         onChange={() => setFormData({ ...formData, hasCorporatePhone: true })}
                         className="mr-2"
                       />
-                      Sí
+                      <span className={conditionalClasses({
+                        light: 'text-gray-700',
+                        dark: 'text-gray-200'
+                      })}>Sí</span>
                     </label>
-                    <label className="flex items-center">
+                    <label className={conditionalClasses({
+                      light: 'flex items-center',
+                      dark: 'flex items-center'
+                    })}>
                       <input
                         type="radio"
                         name="hasCorporatePhone"
@@ -860,14 +1056,20 @@ const Users = () => {
                         }}
                         className="mr-2"
                       />
-                      No
+                      <span className={conditionalClasses({
+                        light: 'text-gray-700',
+                        dark: 'text-gray-200'
+                      })}>No</span>
                     </label>
                   </div>
                 </div>
 
                 {formData.hasCorporatePhone && (
                   <div>
-                    <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                    <label className={conditionalClasses({
+                      light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
+                      dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
+                    })}>
                       Número Corporativo
                     </label>
                     <div className="relative">
@@ -882,27 +1084,45 @@ const Users = () => {
                         }}
                         onFocus={() => setShowPhoneDropdown(true)}
                         onBlur={() => setTimeout(() => setShowPhoneDropdown(false), 200)}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base"
+                        className={conditionalClasses({
+                          light: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900',
+                          dark: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-gray-100'
+                        })}
                       />
                       {showPhoneDropdown && (
-                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg sm:rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                        <div className={conditionalClasses({
+                          light: 'absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg sm:rounded-xl shadow-lg max-h-60 overflow-y-auto',
+                          dark: 'absolute z-50 w-full mt-1 bg-gray-700 border border-gray-600 rounded-lg sm:rounded-xl shadow-lg max-h-60 overflow-y-auto'
+                        })}>
                           {phonesFiltered.length > 0 ? (
                             phonesFiltered.map(phone => (
                               <div
                                 key={phone.id}
-                                className="px-3 sm:px-4 py-2 sm:py-2.5 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                                className={conditionalClasses({
+                                  light: 'px-3 sm:px-4 py-2 sm:py-2.5 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0',
+                                  dark: 'px-3 sm:px-4 py-2 sm:py-2.5 hover:bg-gray-600 cursor-pointer border-b border-gray-600 last:border-b-0'
+                                })}
                                 onClick={() => {
                                   setFormData({ ...formData, corporatePhone: phone.numero_celular });
                                   setSearchPhone('');
                                   setShowPhoneDropdown(false);
                                 }}
                               >
-                                <div className="font-medium text-gray-900">{phone.numero_celular}</div>
-                                <div className="text-sm text-gray-600">{phone.nombre} ({phone.category})</div>
+                                <div className={conditionalClasses({
+                                  light: 'font-medium text-gray-900',
+                                  dark: 'font-medium text-gray-100'
+                                })}>{phone.numero_celular}</div>
+                                <div className={conditionalClasses({
+                                  light: 'text-sm text-gray-600',
+                                  dark: 'text-sm text-gray-300'
+                                })}>{phone.nombre} ({phone.category})</div>
                               </div>
                             ))
                           ) : (
-                            <div className="px-3 sm:px-4 py-2 sm:py-2.5 text-gray-500 text-center">
+                            <div className={conditionalClasses({
+                              light: 'px-3 sm:px-4 py-2 sm:py-2.5 text-gray-500 text-center',
+                              dark: 'px-3 sm:px-4 py-2 sm:py-2.5 text-gray-400 text-center'
+                            })}>
                               {availablePhones.length === 0
                                 ? 'No hay teléfonos disponibles'
                                 : 'No se encontraron teléfonos con esa búsqueda'}
@@ -919,7 +1139,10 @@ const Users = () => {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors"
+                  className={conditionalClasses({
+                    light: 'flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors',
+                    dark: 'flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-500 text-gray-100 font-medium rounded-xl transition-colors'
+                  })}
                   disabled={formLoading}
                 >
                   Cancelar

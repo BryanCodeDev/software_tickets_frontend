@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import AuthContext from '../context/AuthContext.jsx';
+import { useThemeClasses } from '../hooks/useThemeClasses';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [requires2FA, setRequires2FA] = useState(false);
+  const { conditionalClasses } = useThemeClasses();
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -122,7 +124,10 @@ const Login = () => {
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-slate-50">
+      <div className={conditionalClasses({
+        light: 'w-full lg:w-1/2 flex items-center justify-center p-8 bg-slate-50',
+        dark: 'w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-900'
+      })}>
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center space-x-3 mb-8">
@@ -131,15 +136,27 @@ const Login = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
               </svg>
             </div>
-            <span className="text-2xl font-bold text-gray-900">DuvyClass</span>
+            <span className={conditionalClasses({
+              light: 'text-2xl font-bold text-gray-900',
+              dark: 'text-2xl font-bold text-gray-100'
+            })}>DuvyClass</span>
           </div>
 
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Bienvenido de nuevo</h2>
-            <p className="text-gray-600">Ingresa tus credenciales para acceder al sistema</p>
+            <h2 className={conditionalClasses({
+              light: 'text-3xl font-bold text-gray-900 mb-2',
+              dark: 'text-3xl font-bold text-gray-100 mb-2'
+            })}>Bienvenido de nuevo</h2>
+            <p className={conditionalClasses({
+              light: 'text-gray-600',
+              dark: 'text-gray-300'
+            })}>Ingresa tus credenciales para acceder al sistema</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
+          <div className={conditionalClasses({
+            light: 'bg-white rounded-2xl shadow-xl border border-gray-200 p-8',
+            dark: 'bg-gray-800 rounded-2xl shadow-xl border border-gray-600 p-8'
+          })}>
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
                 <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
@@ -155,7 +172,10 @@ const Login = () => {
               )}
 
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="email" className={conditionalClasses({
+                  light: 'block text-sm font-semibold text-gray-700 mb-2',
+                  dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                })}>
                   Correo Electrónico
                 </label>
                 <div className="relative">
@@ -172,14 +192,20 @@ const Login = () => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
+                    className={conditionalClasses({
+                      light: 'block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all',
+                      dark: 'block w-full pl-12 pr-4 py-3 border border-gray-600 rounded-xl text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all bg-gray-700'
+                    })}
                     placeholder="correo@empresa.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="password" className={conditionalClasses({
+                  light: 'block text-sm font-semibold text-gray-700 mb-2',
+                  dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                })}>
                   Contraseña
                 </label>
                 <div className="relative">
@@ -196,7 +222,10 @@ const Login = () => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
+                    className={conditionalClasses({
+                      light: 'block w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all',
+                      dark: 'block w-full pl-12 pr-12 py-3 border border-gray-600 rounded-xl text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all bg-gray-700'
+                    })}
                     placeholder="••••••••"
                   />
                   <button
@@ -220,7 +249,10 @@ const Login = () => {
 
               {requires2FA && (
                 <div>
-                  <label htmlFor="twoFactorToken" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label htmlFor="twoFactorToken" className={conditionalClasses({
+                    light: 'block text-sm font-semibold text-gray-700 mb-2',
+                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                  })}>
                     Código de Autenticación de Dos Factores
                   </label>
                   <div className="relative">
@@ -236,7 +268,10 @@ const Login = () => {
                       required
                       value={twoFactorToken}
                       onChange={(e) => setTwoFactorToken(e.target.value)}
-                      className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all"
+                      className={conditionalClasses({
+                        light: 'block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all',
+                        dark: 'block w-full pl-12 pr-4 py-3 border border-gray-600 rounded-xl text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all bg-gray-700'
+                      })}
                       placeholder="Ingresa el código de 6 dígitos"
                       maxLength="6"
                     />
@@ -252,7 +287,10 @@ const Login = () => {
                     type="checkbox"
                     className="h-4 w-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
                   />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                  <label htmlFor="remember-me" className={conditionalClasses({
+                    light: 'ml-2 block text-sm text-gray-700',
+                    dark: 'ml-2 block text-sm text-gray-300'
+                  })}>
                     Recordarme
                   </label>
                 </div>
@@ -288,16 +326,25 @@ const Login = () => {
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
+                  <div className={conditionalClasses({
+                    light: 'w-full border-t border-gray-300',
+                    dark: 'w-full border-t border-gray-600'
+                  })}></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">¿No tienes una cuenta?</span>
+                  <span className={conditionalClasses({
+                    light: 'px-2 bg-white text-gray-500',
+                    dark: 'px-2 bg-gray-800 text-gray-400'
+                  })}>¿No tienes una cuenta?</span>
                 </div>
               </div>
 
               <Link
                 to="/register"
-                className="w-full flex justify-center items-center py-3 px-4 border-2 border-[#662d91] rounded-xl shadow-sm text-sm font-semibold text-[#662d91] bg-white hover:bg-[#f3ebf9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#662d91] transition-all duration-200"
+                className={conditionalClasses({
+                  light: 'w-full flex justify-center items-center py-3 px-4 border-2 border-[#662d91] rounded-xl shadow-sm text-sm font-semibold text-[#662d91] bg-white hover:bg-[#f3ebf9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#662d91] transition-all duration-200',
+                  dark: 'w-full flex justify-center items-center py-3 px-4 border-2 border-[#662d91] rounded-xl shadow-sm text-sm font-semibold text-[#662d91] bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#662d91] transition-all duration-200'
+                })}
               >
                 <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -307,7 +354,10 @@ const Login = () => {
             </form>
           </div>
 
-          <p className="mt-8 text-center text-xs text-gray-500">
+          <p className={conditionalClasses({
+            light: 'mt-8 text-center text-xs text-gray-500',
+            dark: 'mt-8 text-center text-xs text-gray-400'
+          })}>
             © 2025 DuvyClass. Desarrollado por Bryan Muñoz.<br />
             Todos los derechos reservados.
           </p>

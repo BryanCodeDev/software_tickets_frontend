@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaTimes, FaCheck, FaBox, FaUser, FaCalendarAlt, FaClipboardCheck, FaTimesCircle } from 'react-icons/fa';
+import { useThemeClasses } from '../../hooks/useThemeClasses';
 
 const ActaEntregaModal = ({
   showModal,
@@ -12,6 +13,7 @@ const ActaEntregaModal = ({
   equiposDisponibles,
   usuarios
 }) => {
+  const { conditionalClasses } = useThemeClasses();
   const [searchEquipo, setSearchEquipo] = useState('');
   const [showEquipoDropdown, setShowEquipoDropdown] = useState(false);
   const [searchUsuario, setSearchUsuario] = useState('');
@@ -42,7 +44,10 @@ const ActaEntregaModal = ({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-      <div className="bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in">
+      <div className={conditionalClasses({
+        light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in',
+        dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-700 animate-scale-in'
+      })}>
         <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
           <div className="flex items-center justify-between">
             <h2 className="text-xl lg:text-2xl font-bold text-white">
@@ -60,15 +65,24 @@ const ActaEntregaModal = ({
         <form onSubmit={onSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6">
           {/* Selección de Equipo */}
           <div>
-            <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <div className="w-6 h-6 lg:w-8 lg:h-8 bg-[#f3ebf9] rounded-lg flex items-center justify-center">
+            <h3 className={conditionalClasses({
+              light: 'text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2',
+              dark: 'text-base lg:text-lg font-bold text-white mb-4 flex items-center gap-2'
+            })}>
+              <div className={conditionalClasses({
+                light: 'w-6 h-6 lg:w-8 lg:h-8 bg-[#f3ebf9] rounded-lg flex items-center justify-center',
+                dark: 'w-6 h-6 lg:w-8 lg:h-8 bg-purple-900/50 rounded-lg flex items-center justify-center'
+              })}>
                 <FaBox className="w-3 h-3 lg:w-4 lg:h-4 text-[#662d91]" />
               </div>
               Selección de Equipo
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className={conditionalClasses({
+                  light: 'block text-sm font-semibold text-gray-700 mb-2',
+                  dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                })}>
                   Tipo de Equipo *
                 </label>
                 <select
@@ -77,7 +91,10 @@ const ActaEntregaModal = ({
                     setFormData({ ...formData, tipo_equipo: e.target.value, equipo_id: '' });
                     setSearchEquipo('');
                   }}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                  className={conditionalClasses({
+                    light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                    dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                  })}
                   required
                 >
                   <option value="inventory">Computadora/Laptop</option>
@@ -88,7 +105,10 @@ const ActaEntregaModal = ({
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className={conditionalClasses({
+                  light: 'block text-sm font-semibold text-gray-700 mb-2',
+                  dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                })}>
                   Equipo Disponible *
                 </label>
                 <div className="relative">
@@ -103,16 +123,25 @@ const ActaEntregaModal = ({
                     }}
                     onFocus={() => setShowEquipoDropdown(true)}
                     onBlur={() => setTimeout(() => setShowEquipoDropdown(false), 200)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                    className={conditionalClasses({
+                      light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                      dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                    })}
                     required
                   />
                   {showEquipoDropdown && (
-                    <div className="absolute z-50 w-full mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                    <div className={conditionalClasses({
+                      light: 'absolute z-50 w-full mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto',
+                      dark: 'absolute z-50 w-full mt-1 bg-gray-800 border-2 border-gray-600 rounded-xl shadow-lg max-h-60 overflow-y-auto'
+                    })}>
                       {equiposFiltrados.length > 0 ? (
                         equiposFiltrados.map(equipo => (
                           <div
                             key={equipo.id}
-                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                            className={conditionalClasses({
+                              light: 'px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0',
+                              dark: 'px-4 py-3 hover:bg-gray-700 cursor-pointer border-b border-gray-600 last:border-b-0'
+                            })}
                             onClick={() => {
                               setFormData({ ...formData, equipo_id: equipo.id });
                               setSearchEquipo('');
@@ -177,11 +206,17 @@ const ActaEntregaModal = ({
                               }
                             }}
                           >
-                            <div className="font-medium text-gray-900">{equipo.nombre}</div>
+                            <div className={conditionalClasses({
+                              light: 'font-medium text-gray-900',
+                              dark: 'font-medium text-white'
+                            })}>{equipo.nombre}</div>
                           </div>
                         ))
                       ) : (
-                        <div className="px-4 py-3 text-gray-500 text-center">
+                        <div className={conditionalClasses({
+                          light: 'px-4 py-3 text-gray-500 text-center',
+                          dark: 'px-4 py-3 text-gray-400 text-center'
+                        })}>
                           {equiposDisponibles.filter(equipo => equipo.tipo === formData.tipo_equipo).length === 0
                             ? 'No hay equipos disponibles de este tipo'
                             : 'No se encontraron equipos con esa búsqueda'}
@@ -195,16 +230,28 @@ const ActaEntregaModal = ({
           </div>
 
           {/* Información del Receptor */}
-          <div className="pt-4 lg:pt-6 border-t-2 border-gray-100">
-            <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <div className="w-6 h-6 lg:w-8 lg:h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+          <div className={conditionalClasses({
+            light: 'pt-4 lg:pt-6 border-t-2 border-gray-100',
+            dark: 'pt-4 lg:pt-6 border-t-2 border-gray-700'
+          })}>
+            <h3 className={conditionalClasses({
+              light: 'text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2',
+              dark: 'text-base lg:text-lg font-bold text-white mb-4 flex items-center gap-2'
+            })}>
+              <div className={conditionalClasses({
+                light: 'w-6 h-6 lg:w-8 lg:h-8 bg-blue-100 rounded-lg flex items-center justify-center',
+                dark: 'w-6 h-6 lg:w-8 lg:h-8 bg-blue-900/50 rounded-lg flex items-center justify-center'
+              })}>
                 <FaUser className="w-3 h-3 lg:w-4 lg:h-4 text-blue-600" />
               </div>
               Información del Receptor
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className={conditionalClasses({
+                  light: 'block text-sm font-semibold text-gray-700 mb-2',
+                  dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                })}>
                   Usuario Receptor *
                 </label>
                 <div className="relative">
@@ -219,28 +266,46 @@ const ActaEntregaModal = ({
                     }}
                     onFocus={() => setShowUsuarioDropdown(true)}
                     onBlur={() => setTimeout(() => setShowUsuarioDropdown(false), 200)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                    className={conditionalClasses({
+                      light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                      dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                    })}
                     required
                   />
                   {showUsuarioDropdown && (
-                    <div className="absolute z-50 w-full mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                    <div className={conditionalClasses({
+                      light: 'absolute z-50 w-full mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto',
+                      dark: 'absolute z-50 w-full mt-1 bg-gray-800 border-2 border-gray-600 rounded-xl shadow-lg max-h-60 overflow-y-auto'
+                    })}>
                       {usuariosFiltrados.length > 0 ? (
                         usuariosFiltrados.map(user => (
                           <div
                             key={user.id}
-                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                            className={conditionalClasses({
+                              light: 'px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0',
+                              dark: 'px-4 py-3 hover:bg-gray-700 cursor-pointer border-b border-gray-600 last:border-b-0'
+                            })}
                             onClick={() => {
                               setFormData({ ...formData, usuario_recibe_id: user.id });
                               setSearchUsuario('');
                               setShowUsuarioDropdown(false);
                             }}
                           >
-                            <div className="font-medium text-gray-900">{user.name}</div>
-                            <div className="text-sm text-gray-600">{user.email}</div>
+                            <div className={conditionalClasses({
+                              light: 'font-medium text-gray-900',
+                              dark: 'font-medium text-white'
+                            })}>{user.name}</div>
+                            <div className={conditionalClasses({
+                              light: 'text-sm text-gray-600',
+                              dark: 'text-sm text-gray-400'
+                            })}>{user.email}</div>
                           </div>
                         ))
                       ) : (
-                        <div className="px-4 py-3 text-gray-500 text-center">
+                        <div className={conditionalClasses({
+                          light: 'px-4 py-3 text-gray-500 text-center',
+                          dark: 'px-4 py-3 text-gray-400 text-center'
+                        })}>
                           No se encontraron usuarios con esa búsqueda
                         </div>
                       )}
@@ -250,13 +315,19 @@ const ActaEntregaModal = ({
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className={conditionalClasses({
+                  light: 'block text-sm font-semibold text-gray-700 mb-2',
+                  dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                })}>
                   Área *
                 </label>
                 <select
                   value={formData.area_recibe}
                   onChange={(e) => setFormData({ ...formData, area_recibe: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                  className={conditionalClasses({
+                    light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                    dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                  })}
                   required
                 >
                   <option value="">Seleccionar área</option>
@@ -341,35 +412,56 @@ const ActaEntregaModal = ({
           </div>
 
           {/* Detalles de la Entrega */}
-          <div className="pt-4 lg:pt-6 border-t-2 border-gray-100">
-            <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <div className="w-6 h-6 lg:w-8 lg:h-8 bg-green-100 rounded-lg flex items-center justify-center">
+          <div className={conditionalClasses({
+            light: 'pt-4 lg:pt-6 border-t-2 border-gray-100',
+            dark: 'pt-4 lg:pt-6 border-t-2 border-gray-700'
+          })}>
+            <h3 className={conditionalClasses({
+              light: 'text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2',
+              dark: 'text-base lg:text-lg font-bold text-white mb-4 flex items-center gap-2'
+            })}>
+              <div className={conditionalClasses({
+                light: 'w-6 h-6 lg:w-8 lg:h-8 bg-green-100 rounded-lg flex items-center justify-center',
+                dark: 'w-6 h-6 lg:w-8 lg:h-8 bg-green-900/50 rounded-lg flex items-center justify-center'
+              })}>
                 <FaCalendarAlt className="w-3 h-3 lg:w-4 lg:h-4 text-green-600" />
               </div>
               Detalles de la Entrega
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className={conditionalClasses({
+                  light: 'block text-sm font-semibold text-gray-700 mb-2',
+                  dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                })}>
                   Fecha de Entrega *
                 </label>
                 <input
                   type="date"
                   value={formData.fecha_entrega}
                   onChange={(e) => setFormData({ ...formData, fecha_entrega: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                  className={conditionalClasses({
+                    light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                    dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                  })}
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className={conditionalClasses({
+                  light: 'block text-sm font-semibold text-gray-700 mb-2',
+                  dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                })}>
                   Motivo de Entrega *
                 </label>
                 <select
                   value={formData.motivo_entrega}
                   onChange={(e) => setFormData({ ...formData, motivo_entrega: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                  className={conditionalClasses({
+                    light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                    dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                  })}
                   required
                 >
                   <option value="nuevo_empleado">Nuevo Empleado</option>
@@ -382,12 +474,21 @@ const ActaEntregaModal = ({
             </div>
 
             {/* Información detallada del equipo */}
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-semibold text-gray-900 mb-4">Información Detallada del Equipo</h4>
+            <div className={conditionalClasses({
+              light: 'mt-6 p-4 bg-gray-50 rounded-lg',
+              dark: 'mt-6 p-4 bg-gray-700/50 rounded-lg'
+            })}>
+              <h4 className={conditionalClasses({
+                light: 'font-semibold text-gray-900 mb-4',
+                dark: 'font-semibold text-white mb-4'
+              })}>Información Detallada del Equipo</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Campos comunes para ambos tipos de dispositivos */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className={conditionalClasses({
+                    light: 'block text-sm font-semibold text-gray-700 mb-2',
+                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                  })}>
                     Marca
                   </label>
                   <input
@@ -395,12 +496,18 @@ const ActaEntregaModal = ({
                     placeholder="Ej: OPPO, Dell, HP"
                     value={formData.marca || ''}
                     onChange={(e) => setFormData({ ...formData, marca: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                    className={conditionalClasses({
+                      light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                      dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                    })}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className={conditionalClasses({
+                    light: 'block text-sm font-semibold text-gray-700 mb-2',
+                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                  })}>
                     Modelo
                   </label>
                   <input
@@ -408,7 +515,10 @@ const ActaEntregaModal = ({
                     placeholder="Ej: A40, CPH2669, XPS 15"
                     value={formData.modelo_equipo || ''}
                     onChange={(e) => setFormData({ ...formData, modelo_equipo: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                    className={conditionalClasses({
+                      light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                      dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                    })}
                   />
                 </div>
 
@@ -416,7 +526,10 @@ const ActaEntregaModal = ({
                 {formData.tipo_equipo === 'inventory' && (
                   <>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-700 mb-2',
+                        dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                      })}>
                         Serial
                       </label>
                       <input
@@ -424,12 +537,18 @@ const ActaEntregaModal = ({
                         placeholder="Número de serie"
                         value={formData.serial_imei || ''}
                         onChange={(e) => setFormData({ ...formData, serial_imei: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className={conditionalClasses({
+                          light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                          dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                        })}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-700 mb-2',
+                        dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                      })}>
                         Sistema Operativo
                       </label>
                       <input
@@ -437,12 +556,18 @@ const ActaEntregaModal = ({
                         placeholder="Ej: Windows 11, macOS"
                         value={formData.sistema_operativo || ''}
                         onChange={(e) => setFormData({ ...formData, sistema_operativo: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className={conditionalClasses({
+                          light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                          dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                        })}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-700 mb-2',
+                        dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                      })}>
                         Procesador
                       </label>
                       <input
@@ -450,7 +575,10 @@ const ActaEntregaModal = ({
                         placeholder="Ej: Intel i7, AMD Ryzen"
                         value={formData.procesador || ''}
                         onChange={(e) => setFormData({ ...formData, procesador: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className={conditionalClasses({
+                          light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                          dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                        })}
                       />
                     </div>
                   </>
@@ -459,7 +587,10 @@ const ActaEntregaModal = ({
                 {formData.tipo_equipo === 'corporate_phone' && (
                   <>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-700 mb-2',
+                        dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                      })}>
                         IMEI
                       </label>
                       <input
@@ -467,12 +598,18 @@ const ActaEntregaModal = ({
                         placeholder="Número IMEI"
                         value={formData.serial_imei || ''}
                         onChange={(e) => setFormData({ ...formData, serial_imei: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className={conditionalClasses({
+                          light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                          dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                        })}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-700 mb-2',
+                        dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                      })}>
                         Línea Telefónica
                       </label>
                       <input
@@ -480,12 +617,18 @@ const ActaEntregaModal = ({
                         placeholder="Número de línea"
                         value={formData.linea_telefonica || ''}
                         onChange={(e) => setFormData({ ...formData, linea_telefonica: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className={conditionalClasses({
+                          light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                          dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                        })}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-700 mb-2',
+                        dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                      })}>
                         Operador
                       </label>
                       <input
@@ -493,12 +636,18 @@ const ActaEntregaModal = ({
                         placeholder="Ej: Claro, Movistar, Tigo"
                         value={formData.operador || ''}
                         onChange={(e) => setFormData({ ...formData, operador: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className={conditionalClasses({
+                          light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                          dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                        })}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-700 mb-2',
+                        dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                      })}>
                         Plan de Datos
                       </label>
                       <input
@@ -506,7 +655,10 @@ const ActaEntregaModal = ({
                         placeholder="Ej: 10GB, Ilimitado"
                         value={formData.plan_datos || ''}
                         onChange={(e) => setFormData({ ...formData, plan_datos: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className={conditionalClasses({
+                          light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                          dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                        })}
                       />
                     </div>
                   </>
@@ -515,7 +667,10 @@ const ActaEntregaModal = ({
                 {formData.tipo_equipo === 'tablet' && (
                   <>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-700 mb-2',
+                        dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                      })}>
                         Serial
                       </label>
                       <input
@@ -523,12 +678,18 @@ const ActaEntregaModal = ({
                         placeholder="Número de serie"
                         value={formData.serial_imei || ''}
                         onChange={(e) => setFormData({ ...formData, serial_imei: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className={conditionalClasses({
+                          light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                          dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                        })}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-700 mb-2',
+                        dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                      })}>
                         Sistema Operativo
                       </label>
                       <input
@@ -536,12 +697,18 @@ const ActaEntregaModal = ({
                         placeholder="Ej: Android 12, iPadOS"
                         value={formData.sistema_operativo || ''}
                         onChange={(e) => setFormData({ ...formData, sistema_operativo: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className={conditionalClasses({
+                          light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                          dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                        })}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-700 mb-2',
+                        dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                      })}>
                         Tamaño de Pantalla
                       </label>
                       <input
@@ -549,7 +716,10 @@ const ActaEntregaModal = ({
                         placeholder="Ej: 10.4 pulgadas"
                         value={formData.tamano_pantalla || ''}
                         onChange={(e) => setFormData({ ...formData, tamano_pantalla: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className={conditionalClasses({
+                          light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                          dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                        })}
                       />
                     </div>
                   </>
@@ -558,7 +728,10 @@ const ActaEntregaModal = ({
                 {formData.tipo_equipo === 'pda' && (
                   <>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-700 mb-2',
+                        dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                      })}>
                         Serial
                       </label>
                       <input
@@ -566,12 +739,18 @@ const ActaEntregaModal = ({
                         placeholder="Número de serie"
                         value={formData.serial_imei || ''}
                         onChange={(e) => setFormData({ ...formData, serial_imei: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className={conditionalClasses({
+                          light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                          dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                        })}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-700 mb-2',
+                        dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                      })}>
                         Sistema Operativo
                       </label>
                       <input
@@ -579,12 +758,18 @@ const ActaEntregaModal = ({
                         placeholder="Ej: Windows Mobile, Android"
                         value={formData.sistema_operativo || ''}
                         onChange={(e) => setFormData({ ...formData, sistema_operativo: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className={conditionalClasses({
+                          light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                          dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                        })}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-700 mb-2',
+                        dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                      })}>
                         Tipo de Conectividad
                       </label>
                       <input
@@ -592,19 +777,28 @@ const ActaEntregaModal = ({
                         placeholder="Ej: WiFi, 4G, Bluetooth"
                         value={formData.tipo_conectividad || ''}
                         onChange={(e) => setFormData({ ...formData, tipo_conectividad: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                        className={conditionalClasses({
+                          light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                          dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                        })}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-700 mb-2',
+                        dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                      })}>
                         Aplicaciones Instaladas
                       </label>
                       <textarea
                         placeholder="Ej: SAP, WMS, Scanner de códigos"
                         value={formData.aplicaciones_instaladas || ''}
                         onChange={(e) => setFormData({ ...formData, aplicaciones_instaladas: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none"
+                        className={conditionalClasses({
+                          light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none',
+                          dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none'
+                        })}
                         rows="2"
                       />
                     </div>
@@ -613,7 +807,10 @@ const ActaEntregaModal = ({
                 
                 {/* Campos comunes para todos los tipos de dispositivos */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className={conditionalClasses({
+                    light: 'block text-sm font-semibold text-gray-700 mb-2',
+                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                  })}>
                     RAM
                   </label>
                   <input
@@ -621,12 +818,18 @@ const ActaEntregaModal = ({
                     placeholder="Ej: 4GB, 8GB, 16GB"
                     value={formData.ram || ''}
                     onChange={(e) => setFormData({ ...formData, ram: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                    className={conditionalClasses({
+                      light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                      dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                    })}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className={conditionalClasses({
+                    light: 'block text-sm font-semibold text-gray-700 mb-2',
+                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                  })}>
                     Almacenamiento
                   </label>
                   <input
@@ -634,14 +837,20 @@ const ActaEntregaModal = ({
                     placeholder="Ej: 256GB, 512GB, 1TB"
                     value={formData.almacenamiento || ''}
                     onChange={(e) => setFormData({ ...formData, almacenamiento: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                    className={conditionalClasses({
+                      light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                      dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                    })}
                   />
                 </div>
               </div>
 
               {/* Accesorios */}
               <div className="mt-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Accesorios Incluidos</h4>
+                <h4 className={conditionalClasses({
+                  light: 'font-semibold text-gray-900 mb-3',
+                  dark: 'font-semibold text-white mb-3'
+                })}>Accesorios Incluidos</h4>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {/* Accesorios comunes para ambos tipos */}
                   <div className="flex items-center gap-2">
@@ -652,7 +861,10 @@ const ActaEntregaModal = ({
                       onChange={(e) => setFormData({ ...formData, accesorio_cargador: e.target.checked })}
                       className="w-4 h-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
                     />
-                    <label htmlFor="accesorio_cargador" className="text-sm text-gray-700">Cargador</label>
+                    <label htmlFor="accesorio_cargador" className={conditionalClasses({
+                      light: 'text-sm text-gray-700',
+                      dark: 'text-sm text-gray-300'
+                    })}>Cargador</label>
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -663,7 +875,10 @@ const ActaEntregaModal = ({
                       onChange={(e) => setFormData({ ...formData, accesorio_antivirus: e.target.checked })}
                       className="w-4 h-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
                     />
-                    <label htmlFor="accesorio_antivirus" className="text-sm text-gray-700">Antivirus</label>
+                    <label htmlFor="accesorio_antivirus" className={conditionalClasses({
+                      light: 'text-sm text-gray-700',
+                      dark: 'text-sm text-gray-300'
+                    })}>Antivirus</label>
                   </div>
 
                   {/* Accesorios específicos para computadora/laptop */}
@@ -677,7 +892,10 @@ const ActaEntregaModal = ({
                           onChange={(e) => setFormData({ ...formData, accesorio_teclado: e.target.checked })}
                           className="w-4 h-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
                         />
-                        <label htmlFor="accesorio_teclado" className="text-sm text-gray-700">Teclado</label>
+                        <label htmlFor="accesorio_teclado" className={conditionalClasses({
+                          light: 'text-sm text-gray-700',
+                          dark: 'text-sm text-gray-300'
+                        })}>Teclado</label>
                       </div>
 
                       <div className="flex items-center gap-2">
@@ -688,7 +906,10 @@ const ActaEntregaModal = ({
                           onChange={(e) => setFormData({ ...formData, accesorio_office: e.target.checked })}
                           className="w-4 h-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
                         />
-                        <label htmlFor="accesorio_office" className="text-sm text-gray-700">Office</label>
+                        <label htmlFor="accesorio_office" className={conditionalClasses({
+                          light: 'text-sm text-gray-700',
+                          dark: 'text-sm text-gray-300'
+                        })}>Office</label>
                       </div>
 
                       <div className="flex items-center gap-2">
@@ -699,7 +920,10 @@ const ActaEntregaModal = ({
                           onChange={(e) => setFormData({ ...formData, accesorio_ssd: e.target.checked })}
                           className="w-4 h-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
                         />
-                        <label htmlFor="accesorio_ssd" className="text-sm text-gray-700">SSD</label>
+                        <label htmlFor="accesorio_ssd" className={conditionalClasses({
+                          light: 'text-sm text-gray-700',
+                          dark: 'text-sm text-gray-300'
+                        })}>SSD</label>
                       </div>
 
                       <div className="flex items-center gap-2">
@@ -710,7 +934,10 @@ const ActaEntregaModal = ({
                           onChange={(e) => setFormData({ ...formData, accesorio_hdd: e.target.checked })}
                           className="w-4 h-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
                         />
-                        <label htmlFor="accesorio_hdd" className="text-sm text-gray-700">HDD</label>
+                        <label htmlFor="accesorio_hdd" className={conditionalClasses({
+                          light: 'text-sm text-gray-700',
+                          dark: 'text-sm text-gray-300'
+                        })}>HDD</label>
                       </div>
                     </>
                   )}
@@ -718,59 +945,95 @@ const ActaEntregaModal = ({
               </div>
 
               <div className="mt-4">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className={conditionalClasses({
+                  light: 'block text-sm font-semibold text-gray-700 mb-2',
+                  dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                })}>
                   Observaciones del Equipo
                 </label>
                 <textarea
                   placeholder="Observaciones específicas sobre el equipo"
                   value={formData.observaciones_equipo || ''}
                   onChange={(e) => setFormData({ ...formData, observaciones_equipo: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none"
+                  className={conditionalClasses({
+                    light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none',
+                    dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none'
+                  })}
                   rows="2"
                 />
               </div>
             </div>
 
             <div className="mt-4">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className={conditionalClasses({
+                light: 'block text-sm font-semibold text-gray-700 mb-2',
+                dark: 'block text-sm font-semibold text-gray-300 mb-2'
+              })}>
                 Estado del Equipo al Entregar *
               </label>
               <textarea
                 placeholder="Describa el estado físico del equipo (nuevo, usado, rayones, etc.)"
                 value={formData.estado_equipo_entrega}
                 onChange={(e) => setFormData({ ...formData, estado_equipo_entrega: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none"
+                className={conditionalClasses({
+                  light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none',
+                  dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none'
+                })}
                 rows="3"
                 required
               />
             </div>
 
             <div className="mt-4">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className={conditionalClasses({
+                light: 'block text-sm font-semibold text-gray-700 mb-2',
+                dark: 'block text-sm font-semibold text-gray-300 mb-2'
+              })}>
                 Observaciones
               </label>
               <textarea
                 placeholder="Observaciones adicionales sobre la entrega"
                 value={formData.observaciones_entrega}
                 onChange={(e) => setFormData({ ...formData, observaciones_entrega: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none"
+                className={conditionalClasses({
+                  light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none',
+                  dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none'
+                })}
                 rows="2"
               />
             </div>
           </div>
 
           {/* Políticas y Firmas */}
-          <div className="pt-4 lg:pt-6 border-t-2 border-gray-100">
-            <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <div className="w-6 h-6 lg:w-8 lg:h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+          <div className={conditionalClasses({
+            light: 'pt-4 lg:pt-6 border-t-2 border-gray-100',
+            dark: 'pt-4 lg:pt-6 border-t-2 border-gray-700'
+          })}>
+            <h3 className={conditionalClasses({
+              light: 'text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2',
+              dark: 'text-base lg:text-lg font-bold text-white mb-4 flex items-center gap-2'
+            })}>
+              <div className={conditionalClasses({
+                light: 'w-6 h-6 lg:w-8 lg:h-8 bg-amber-100 rounded-lg flex items-center justify-center',
+                dark: 'w-6 h-6 lg:w-8 lg:h-8 bg-amber-900/50 rounded-lg flex items-center justify-center'
+              })}>
                 <FaClipboardCheck className="w-3 h-3 lg:w-4 lg:h-4 text-amber-600" />
               </div>
               Políticas y Firmas
             </h3>
 
-            <div className="bg-gray-50 p-4 rounded-lg mb-4">
-              <h4 className="font-semibold text-gray-900 mb-2">Políticas de Uso del Equipo</h4>
-              <ul className="text-sm text-gray-600 space-y-1">
+            <div className={conditionalClasses({
+              light: 'bg-gray-50 p-4 rounded-lg mb-4',
+              dark: 'bg-gray-700/50 p-4 rounded-lg mb-4'
+            })}>
+              <h4 className={conditionalClasses({
+                light: 'font-semibold text-gray-900 mb-2',
+                dark: 'font-semibold text-white mb-2'
+              })}>Políticas de Uso del Equipo</h4>
+              <ul className={conditionalClasses({
+                light: 'text-sm text-gray-600 space-y-1',
+                dark: 'text-sm text-gray-300 space-y-1'
+              })}>
                 <li>• Usar el equipo exclusivamente para fines laborales</li>
                 <li>• No instalar software malicioso sin autorización</li>
                 <li>• Reportar inmediatamente pérdidas, daños o robos</li>
@@ -789,13 +1052,19 @@ const ActaEntregaModal = ({
                 className="w-4 h-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
                 required
               />
-              <label htmlFor="acepta_politica" className="text-sm font-semibold text-gray-700">
+              <label htmlFor="acepta_politica" className={conditionalClasses({
+                light: 'text-sm font-semibold text-gray-700',
+                dark: 'text-sm font-semibold text-gray-300'
+              })}>
                 Acepto las políticas de uso del equipo *
               </label>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className={conditionalClasses({
+                light: 'block text-sm font-semibold text-gray-700 mb-2',
+                dark: 'block text-sm font-semibold text-gray-300 mb-2'
+              })}>
                 Firma del Receptor *
               </label>
               <input
@@ -803,7 +1072,10 @@ const ActaEntregaModal = ({
                 placeholder="Nombre completo del receptor"
                 value={formData.firma_recibe}
                 onChange={(e) => setFormData({ ...formData, firma_recibe: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                className={conditionalClasses({
+                  light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                  dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                })}
                 required
               />
             </div>
@@ -811,28 +1083,46 @@ const ActaEntregaModal = ({
 
           {/* Sección de Devolución (solo para editar) */}
           {editingItem && (
-            <div className="pt-4 lg:pt-6 border-t-2 border-gray-100">
-              <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <div className="w-6 h-6 lg:w-8 lg:h-8 bg-red-100 rounded-lg flex items-center justify-center">
+            <div className={conditionalClasses({
+              light: 'pt-4 lg:pt-6 border-t-2 border-gray-100',
+              dark: 'pt-4 lg:pt-6 border-t-2 border-gray-700'
+            })}>
+              <h3 className={conditionalClasses({
+                light: 'text-base lg:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2',
+                dark: 'text-base lg:text-lg font-bold text-white mb-4 flex items-center gap-2'
+              })}>
+                <div className={conditionalClasses({
+                  light: 'w-6 h-6 lg:w-8 lg:h-8 bg-red-100 rounded-lg flex items-center justify-center',
+                  dark: 'w-6 h-6 lg:w-8 lg:h-8 bg-red-900/50 rounded-lg flex items-center justify-center'
+                })}>
                   <FaTimesCircle className="w-3 h-3 lg:w-4 lg:h-4 text-red-600" />
                 </div>
                 Devolución del Equipo (Opcional)
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className={conditionalClasses({
+                    light: 'block text-sm font-semibold text-gray-700 mb-2',
+                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                  })}>
                     Fecha de Devolución
                   </label>
                   <input
                     type="date"
                     value={formData.fecha_devolucion}
                     onChange={(e) => setFormData({ ...formData, fecha_devolucion: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                    className={conditionalClasses({
+                      light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                      dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                    })}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className={conditionalClasses({
+                    light: 'block text-sm font-semibold text-gray-700 mb-2',
+                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                  })}>
                     Estado del Equipo al Devolver
                   </label>
                   <input
@@ -840,26 +1130,38 @@ const ActaEntregaModal = ({
                     placeholder="Estado al momento de la devolución"
                     value={formData.estado_equipo_devolucion}
                     onChange={(e) => setFormData({ ...formData, estado_equipo_devolucion: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                    className={conditionalClasses({
+                      light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                      dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                    })}
                   />
                 </div>
               </div>
 
               <div className="mt-4">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className={conditionalClasses({
+                  light: 'block text-sm font-semibold text-gray-700 mb-2',
+                  dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                })}>
                   Observaciones de Devolución
                 </label>
                 <textarea
                   placeholder="Observaciones sobre la devolución del equipo"
                   value={formData.observaciones_devolucion}
                   onChange={(e) => setFormData({ ...formData, observaciones_devolucion: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none"
+                  className={conditionalClasses({
+                    light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none',
+                    dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base resize-none'
+                  })}
                   rows="2"
                 />
               </div>
 
               <div className="mt-4">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className={conditionalClasses({
+                  light: 'block text-sm font-semibold text-gray-700 mb-2',
+                  dark: 'block text-sm font-semibold text-gray-300 mb-2'
+                })}>
                   Firma del Entregador (Devolución)
                 </label>
                 <input
@@ -867,18 +1169,27 @@ const ActaEntregaModal = ({
                   placeholder="Nombre del entregador que recibe la devolución"
                   value={formData.firma_entrega_devolucion}
                   onChange={(e) => setFormData({ ...formData, firma_entrega_devolucion: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base"
+                  className={conditionalClasses({
+                    light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                    dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                  })}
                 />
               </div>
             </div>
           )}
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-4 lg:pt-6 border-t-2 border-gray-100">
+          <div className={conditionalClasses({
+            light: 'flex flex-col sm:flex-row gap-3 pt-4 lg:pt-6 border-t-2 border-gray-100',
+            dark: 'flex flex-col sm:flex-row gap-3 pt-4 lg:pt-6 border-t-2 border-gray-700'
+          })}>
             <button
               type="button"
               onClick={onClose}
-              className="px-4 lg:px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all disabled:opacity-50 text-sm lg:text-base"
+              className={conditionalClasses({
+                light: 'px-4 lg:px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all disabled:opacity-50 text-sm lg:text-base',
+                dark: 'px-4 lg:px-6 py-3 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold rounded-xl transition-all disabled:opacity-50 text-sm lg:text-base'
+              })}
               disabled={formLoading}
             >
               Cancelar

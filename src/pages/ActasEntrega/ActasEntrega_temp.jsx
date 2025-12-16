@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { FaClipboardCheck, FaPlus, FaBox, FaFileExport, FaFileWord, FaFilePdf, FaPrint } from 'react-icons/fa';
+import { FaClipboardCheck, FaPlus, FaBox, FaFileExport } from 'react-icons/fa';
 import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
 import actaEntregaAPI from '../../api/actaEntregaAPI';
@@ -13,8 +13,10 @@ import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../.
 import ActaEntregaCard from './ActaEntregaCard';
 import ActaEntregaTable from './ActaEntregaTable';
 import ActaEntregaModal from './ActaEntregaModal';
+import { useThemeClasses } from '../../hooks/useThemeClasses';
 
 const ActasEntrega = () => {
+  const { conditionalClasses } = useThemeClasses();
   const [actas, setActas] = useState([]);
   const [filteredActas, setFilteredActas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,7 +37,6 @@ const ActasEntrega = () => {
     estado_equipo_devolucion: '',
     observaciones_devolucion: '',
     firma_entrega_devolucion: '',
-    // Campos adicionales para información detallada del equipo
     marca: '',
     modelo_equipo: '',
     serial_imei: '',
@@ -68,7 +69,6 @@ const ActasEntrega = () => {
   const { user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
 
-  // Datos adicionales
   const [equiposDisponibles, setEquiposDisponibles] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
 
@@ -77,16 +77,10 @@ const ActasEntrega = () => {
     fetchEquiposDisponibles();
     fetchUsuarios();
 
-    // Configurar WebSocket para actas de entrega
     const socket = getSocket();
 
-    // Función para configurar los listeners de WebSocket
     const setupWebSocketListeners = () => {
       if (socket && socket.connected) {
-
-
-
-
         onActaEntregaCreated((acta) => {
           fetchActas();
         });
@@ -103,7 +97,6 @@ const ActasEntrega = () => {
           fetchActas();
         });
       } else if (socket) {
-        // Si el socket existe pero no está conectado, esperar a que se conecte
         const connectListener = () => {
           setupWebSocketListeners();
           socket.off('connect', connectListener);
@@ -112,11 +105,9 @@ const ActasEntrega = () => {
       }
     };
 
-    // Configurar listeners inicialmente
     setupWebSocketListeners();
 
     return () => {
-      // Limpiar listeners al desmontar el componente
       if (socket) {
         socket.off('acta-entrega-created');
         socket.off('acta-entrega-updated');
@@ -154,11 +145,10 @@ const ActasEntrega = () => {
       const [inventoryData, phonesData, tabletData, pdaData] = await Promise.all([
         inventoryAPI.fetchInventory(),
         corporatePhoneAPI.fetchCorporatePhones(),
-        tabletInventoryAPI.fetchTabletInventory(), // API correcta para tablets
-        pdaInventoryAPI.fetchPDAInventory()        // API correcta para PDAs
+        tabletInventoryAPI.fetchTabletInventory(),
+        pdaInventoryAPI.fetchPDAInventory()
       ]);
 
-      // Procesar equipos del inventario - mostrar todos los equipos
       const equiposInventario = (inventoryData || [])
         .map(item => ({
           id: item.id,
@@ -167,7 +157,6 @@ const ActasEntrega = () => {
           data: item
         }));
 
-      // Procesar teléfonos corporativos - mostrar todos los teléfonos
       const equiposTelefonos = (phonesData || [])
         .map(item => ({
           id: item.id,
@@ -176,7 +165,6 @@ const ActasEntrega = () => {
           data: item
         }));
 
-      // Procesar tablets - mostrar todas las tablets
       const equiposTablets = (tabletData || [])
         .map(item => ({
           id: item.id,
@@ -185,7 +173,6 @@ const ActasEntrega = () => {
           data: item
         }));
 
-      // Procesar PDAs - mostrar todos los PDAs
       const equiposPDAs = (pdaData || [])
         .map(item => ({
           id: item.id,
@@ -309,7 +296,6 @@ const ActasEntrega = () => {
       estado_equipo_devolucion: '',
       observaciones_devolucion: '',
       firma_entrega_devolucion: '',
-      // Campos adicionales para información detallada del equipo
       marca: '',
       modelo_equipo: '',
       serial_imei: '',
@@ -348,7 +334,6 @@ const ActasEntrega = () => {
       estado_equipo_devolucion: acta.estado_equipo_devolucion || '',
       observaciones_devolucion: acta.observaciones_devolucion || '',
       firma_entrega_devolucion: acta.firma_entrega || '',
-      // Campos adicionales para información detallada del equipo
       marca: acta.marca || '',
       modelo_equipo: acta.modelo_equipo || '',
       serial_imei: acta.serial_imei || '',
@@ -394,10 +379,7 @@ const ActasEntrega = () => {
         showNotification('Acta de entrega creada exitosamente', 'success');
       }
 
-      // Recargar datos y esperar a que se completen
       await fetchActas();
-
-      // Cerrar modal después de recargar datos
       setShowModal(false);
     } catch (err) {
       console.error('Error detallado:', err);
@@ -411,7 +393,6 @@ const ActasEntrega = () => {
     }
   };
 
-  // Corregir permisos de 'inventory' a 'actas-entrega'
   const canCreate = checkPermission('actas-entrega', 'create');
   const canEdit = checkPermission('actas-entrega', 'edit');
   const canDelete = checkPermission('actas-entrega', 'delete');
@@ -434,18 +415,27 @@ const ActasEntrega = () => {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4">
+    <div className={conditionalClasses({
+      light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4',
+      dark: 'min-h-screen bg-gray-900 py-8 px-4'
+    })}>
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#662d91] mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Cargando actas de entrega...</p>
+          <p className={conditionalClasses({
+            light: 'text-lg text-gray-600 font-medium',
+            dark: 'text-lg text-gray-300 font-medium'
+          })}>Cargando actas de entrega...</p>
         </div>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8">
+    <div className={conditionalClasses({
+      light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8',
+      dark: 'min-h-screen bg-gray-900 py-4 px-3 sm:py-6 sm:px-4 lg:px-8'
+    })}>
       <NotificationSystem
         notification={notification}
         onClose={() => setNotification(null)}
@@ -467,10 +457,16 @@ const ActasEntrega = () => {
                   <FaClipboardCheck className="text-white text-xl lg:text-2xl" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight truncate">
+                  <h1 className={conditionalClasses({
+                    light: 'text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight truncate',
+                    dark: 'text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight truncate'
+                  })}>
                     Actas de Entrega
                   </h1>
-                  <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                  <p className={conditionalClasses({
+                    light: 'text-xs sm:text-sm text-gray-600 mt-1',
+                    dark: 'text-xs sm:text-sm text-gray-400 mt-1'
+                  })}>
                     Gestión de entregas y devoluciones de equipos corporativos · 2025
                   </p>
                 </div>
@@ -480,7 +476,10 @@ const ActasEntrega = () => {
             <div className="flex flex-wrap gap-2 lg:gap-3">
               <button
                 onClick={() => setShowStats(!showStats)}
-                className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base"
+                className={conditionalClasses({
+                  light: 'flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base',
+                  dark: 'flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold rounded-xl border-2 border-gray-600 transition-all duration-200 hover:shadow-lg text-sm lg:text-base'
+                })}
               >
                 <FaFileExport className="w-4 h-4" />
                 <span className="hidden sm:inline">Estadísticas</span>
@@ -584,7 +583,10 @@ const ActasEntrega = () => {
 
         {/* Results Summary */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <p className="text-sm text-gray-600 font-medium">
+          <p className={conditionalClasses({
+            light: 'text-sm text-gray-600 font-medium',
+            dark: 'text-sm text-gray-400 font-medium'
+          })}>
             Mostrando <span className="font-bold text-[#662d91]">{filteredActas.length}</span> de <span className="font-bold">{actas.length}</span> actas
           </p>
           <div className="flex gap-2">
@@ -593,7 +595,10 @@ const ActasEntrega = () => {
               className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
                 viewMode === 'cards'
                   ? 'bg-[#662d91] text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                  : conditionalClasses({
+                      light: 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200',
+                      dark: 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600'
+                    })
               }`}
             >
               <FaBox className="w-4 h-4" />
@@ -604,7 +609,10 @@ const ActasEntrega = () => {
               className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
                 viewMode === 'table'
                   ? 'bg-[#662d91] text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                  : conditionalClasses({
+                      light: 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200',
+                      dark: 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600'
+                    })
               }`}
             >
               <FaFileExport className="w-4 h-4" />
@@ -615,16 +623,25 @@ const ActasEntrega = () => {
 
         {/* Main Content */}
         {filteredActas.length === 0 ? (
-          <div className="bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center">
+          <div className={conditionalClasses({
+            light: 'bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center',
+            dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-700 p-6 lg:p-12 text-center'
+          })}>
             <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#dbeafe] rounded-full flex items-center justify-center mx-auto mb-4">
               <FaClipboardCheck className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
             </div>
-            <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2">
+            <h3 className={conditionalClasses({
+              light: 'text-lg lg:text-xl font-bold text-gray-900 mb-2',
+              dark: 'text-lg lg:text-xl font-bold text-white mb-2'
+            })}>
               {searchTerm || filterStatus !== 'all' || filterTipo !== 'all'
                 ? 'No se encontraron actas'
                 : 'No hay actas disponibles'}
             </h3>
-            <p className="text-sm lg:text-base text-gray-600 max-w-md mx-auto mb-4 lg:mb-6">
+            <p className={conditionalClasses({
+              light: 'text-sm lg:text-base text-gray-600 max-w-md mx-auto mb-4 lg:mb-6',
+              dark: 'text-sm lg:text-base text-gray-400 max-w-md mx-auto mb-4 lg:mb-6'
+            })}>
               {searchTerm || filterStatus !== 'all' || filterTipo !== 'all'
                 ? 'Intenta ajustar los filtros de búsqueda'
                 : 'Comienza creando la primera acta de entrega'}
@@ -686,32 +703,17 @@ const ActasEntrega = () => {
 
       <style>{`
         @keyframes fade-in {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
 
         @keyframes scale-in {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
         }
 
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out;
-        }
-
-        .animate-scale-in {
-          animation: scale-in 0.3s ease-out;
-        }
+        .animate-fade-in { animation: fade-in 0.3s ease-out; }
+        .animate-scale-in { animation: scale-in 0.3s ease-out; }
       `}</style>
     </div>
   );

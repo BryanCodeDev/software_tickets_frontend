@@ -1,10 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react';
 import AuthContext from '../context/AuthContext.jsx';
 import { usersAPI } from '../api';
-import { FaCheck, FaTimes, FaEye, FaEyeSlash, FaCog, FaLock, FaShieldAlt, FaKey } from 'react-icons/fa';
+import ThemeToggle from '../components/ThemeToggle';
+import { useThemeClasses } from '../hooks/useThemeClasses';
+import { FaCheck, FaTimes, FaEye, FaEyeSlash, FaCog, FaLock, FaShieldAlt, FaKey, FaPalette } from 'react-icons/fa';
 
 const Settings = () => {
   const { user } = useContext(AuthContext);
+  const { conditionalClasses } = useThemeClasses();
   const [settings, setSettings] = useState(() => {
     return {};
   });
@@ -173,34 +176,64 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 via-gray-50 to-gray-100">
+    <div className={conditionalClasses({
+      light: 'min-h-screen bg-linear-to-br from-gray-50 via-gray-50 to-gray-100',
+      dark: 'min-h-screen bg-gray-900 py-8 px-4 sm:px-6 lg:px-8'
+    })}>
       <div className="max-w-5xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         
         {/* Notification Toast */}
         {notification && (
           <div className="fixed top-4 right-4 z-50 max-w-sm">
-            <div className={`flex items-center gap-3 p-4 rounded-lg shadow-lg border backdrop-blur-sm transition-all duration-300 ${
-              notification.type === 'success'
-                ? 'bg-green-50 border-green-200 text-green-800'
-                : 'bg-red-50 border-red-200 text-red-800'
-            }`}>
-              <div className={`p-2 rounded-full shrink-0 ${
-                notification.type === 'success' ? 'bg-green-100' : 'bg-red-100'
-              }`}>
+            <div className={conditionalClasses({
+              light: `flex items-center gap-3 p-4 rounded-lg shadow-lg border backdrop-blur-sm transition-all duration-300 ${
+                notification.type === 'success'
+                  ? 'bg-green-50 border-green-200 text-green-800'
+                  : 'bg-red-50 border-red-200 text-red-800'
+              }`,
+              dark: `flex items-center gap-3 p-4 rounded-lg shadow-lg border backdrop-blur-sm transition-all duration-300 ${
+                notification.type === 'success'
+                  ? 'bg-green-900/30 border-green-800 text-green-300'
+                  : 'bg-red-900/30 border-red-800 text-red-300'
+              }`
+            })}>
+              <div className={conditionalClasses({
+                light: `p-2 rounded-full shrink-0 ${
+                  notification.type === 'success' ? 'bg-green-100' : 'bg-red-100'
+                }`,
+                dark: `p-2 rounded-full shrink-0 ${
+                  notification.type === 'success' ? 'bg-green-800/50' : 'bg-red-800/50'
+                }`
+              })}>
                 {notification.type === 'success' ? (
-                  <FaCheck className="w-4 h-4 text-green-600" />
+                  <FaCheck className={conditionalClasses({
+                    light: 'w-4 h-4 text-green-600',
+                    dark: 'w-4 h-4 text-green-400'
+                  })} />
                 ) : (
-                  <FaTimes className="w-4 h-4 text-red-600" />
+                  <FaTimes className={conditionalClasses({
+                    light: 'w-4 h-4 text-red-600',
+                    dark: 'w-4 h-4 text-red-400'
+                  })} />
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium">{notification.message}</p>
+                <p className={conditionalClasses({
+                  light: 'text-sm font-medium',
+                  dark: 'text-sm font-medium'
+                })}>{notification.message}</p>
               </div>
               <button
                 onClick={() => setNotification(null)}
-                className="shrink-0 p-1 rounded-md hover:bg-black/5 transition-colors"
+                className={conditionalClasses({
+                  light: 'shrink-0 p-1 rounded-md hover:bg-black/5 transition-colors',
+                  dark: 'shrink-0 p-1 rounded-md hover:bg-white/10 transition-colors'
+                })}
               >
-                <FaTimes className="w-3.5 h-3.5" />
+                <FaTimes className={conditionalClasses({
+                  light: 'w-3.5 h-3.5',
+                  dark: 'w-3.5 h-3.5'
+                })} />
               </button>
             </div>
           </div>
@@ -213,14 +246,23 @@ const Settings = () => {
               <FaCog className="text-white text-xl sm:text-2xl" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Configuración</h1>
-              <p className="text-sm sm:text-base text-gray-600 mt-0.5">Personaliza tu experiencia y gestiona tu seguridad</p>
+              <h1 className={conditionalClasses({
+                light: 'text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900',
+                dark: 'text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-100'
+              })}>Configuración</h1>
+              <p className={conditionalClasses({
+                light: 'text-sm sm:text-base text-gray-600 mt-0.5',
+                dark: 'text-sm sm:text-base text-gray-300 mt-0.5'
+              })}>Personaliza tu experiencia y gestiona tu seguridad</p>
             </div>
           </div>
         </div>
 
         {/* Main Settings Card */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className={conditionalClasses({
+          light: 'bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden',
+          dark: 'bg-gray-800 rounded-xl shadow-sm border border-gray-600 overflow-hidden'
+        })}>
           
           {/* Security Section Header */}
           <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-4 sm:px-6 py-4">
@@ -241,24 +283,42 @@ const Settings = () => {
             {/* Security Settings */}
             <div className="mb-8">
               <div className="flex items-center gap-2 mb-4 sm:mb-6">
-                <div className="h-px flex-1 bg-gray-200"></div>
-                <h2 className="text-base sm:text-lg font-bold text-gray-900 px-3">Opciones de Seguridad</h2>
-                <div className="h-px flex-1 bg-gray-200"></div>
+                <div className={conditionalClasses({
+                  light: 'h-px flex-1 bg-gray-200',
+                  dark: 'h-px flex-1 bg-gray-600'
+                })}></div>
+                <h2 className={conditionalClasses({
+                  light: 'text-base sm:text-lg font-bold text-gray-900 px-3',
+                  dark: 'text-base sm:text-lg font-bold text-gray-100 px-3'
+                })}>Opciones de Seguridad</h2>
+                <div className={conditionalClasses({
+                  light: 'h-px flex-1 bg-gray-200',
+                  dark: 'h-px flex-1 bg-gray-600'
+                })}></div>
               </div>
 
               <div className="space-y-4 sm:space-y-6">
                 
                 {/* Change Password Option */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 rounded-lg border border-gray-200 hover:border-[#662d91] hover:bg-gray-50 transition-all">
+                <div className={conditionalClasses({
+                  light: 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 rounded-lg border border-gray-200 hover:border-[#662d91] hover:bg-gray-50 transition-all',
+                  dark: 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 rounded-lg border border-gray-600 hover:border-[#662d91] hover:bg-gray-700 transition-all'
+                })}>
                   <div className="flex items-start gap-3 flex-1">
                     <div className="p-2 bg-purple-100 rounded-lg shrink-0 mt-0.5">
                       <FaLock className="text-[#662d91] text-sm" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <label className="block text-sm font-semibold text-gray-900 mb-1">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-900 mb-1',
+                        dark: 'block text-sm font-semibold text-gray-100 mb-1'
+                      })}>
                         Cambiar Contraseña
                       </label>
-                      <p className="text-xs sm:text-sm text-gray-600">
+                      <p className={conditionalClasses({
+                        light: 'text-xs sm:text-sm text-gray-600',
+                        dark: 'text-xs sm:text-sm text-gray-300'
+                      })}>
                         Actualiza tu contraseña de acceso al sistema
                       </p>
                     </div>
@@ -266,31 +326,46 @@ const Settings = () => {
                   <button
                     type="button"
                     onClick={() => setShowPasswordModal(true)}
-                    className="w-full sm:w-auto px-4 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all text-sm shrink-0"
+                    className={conditionalClasses({
+                      light: 'w-full sm:w-auto px-4 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all text-sm shrink-0',
+                      dark: 'w-full sm:w-auto px-4 py-2.5 bg-gray-600 text-gray-200 font-medium rounded-lg hover:bg-gray-500 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all text-sm shrink-0'
+                    })}
                   >
                     Cambiar
                   </button>
                 </div>
 
                 {/* Two-Factor Authentication Option */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 rounded-lg border border-gray-200 hover:border-[#662d91] hover:bg-gray-50 transition-all">
+                <div className={conditionalClasses({
+                  light: 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 rounded-lg border border-gray-200 hover:border-[#662d91] hover:bg-gray-50 transition-all',
+                  dark: 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 rounded-lg border border-gray-600 hover:border-[#662d91] hover:bg-gray-700 transition-all'
+                })}>
                   <div className="flex items-start gap-3 flex-1">
                     <div className="p-2 bg-purple-100 rounded-lg shrink-0 mt-0.5">
                       <FaKey className="text-[#662d91] text-sm" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <label className="block text-sm font-semibold text-gray-900 mb-1">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-900 mb-1',
+                        dark: 'block text-sm font-semibold text-gray-100 mb-1'
+                      })}>
                         Autenticación de Dos Factores
                       </label>
-                      <p className="text-xs sm:text-sm text-gray-600">
-                        {twoFactorData.isEnabled 
-                          ? 'Actualmente habilitada - Mayor protección para tu cuenta' 
+                      <p className={conditionalClasses({
+                        light: 'text-xs sm:text-sm text-gray-600',
+                        dark: 'text-xs sm:text-sm text-gray-300'
+                      })}>
+                        {twoFactorData.isEnabled
+                          ? 'Actualmente habilitada - Mayor protección para tu cuenta'
                           : 'Añade una capa extra de seguridad con códigos de verificación'}
                       </p>
                       {twoFactorData.isEnabled && (
                         <div className="flex items-center gap-2 mt-2">
                           <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                          <span className="text-xs font-medium text-green-700">Activo</span>
+                          <span className={conditionalClasses({
+                            light: 'text-xs font-medium text-green-700',
+                            dark: 'text-xs font-medium text-green-400'
+                          })}>Activo</span>
                         </div>
                       )}
                     </div>
@@ -319,15 +394,88 @@ const Settings = () => {
               </div>
             </div>
 
+            {/* Theme Settings Section */}
+            <div className="mb-8">
+              <div className="flex items-center gap-2 mb-4 sm:mb-6">
+                <div className={conditionalClasses({
+                  light: 'h-px flex-1 bg-gray-200',
+                  dark: 'h-px flex-1 bg-gray-600'
+                })}></div>
+                <h2 className={conditionalClasses({
+                  light: 'text-base sm:text-lg font-bold text-gray-900 px-3',
+                  dark: 'text-base sm:text-lg font-bold text-gray-100 px-3'
+                })}>Apariencia</h2>
+                <div className={conditionalClasses({
+                  light: 'h-px flex-1 bg-gray-200',
+                  dark: 'h-px flex-1 bg-gray-600'
+                })}></div>
+              </div>
+
+              <div className="space-y-4 sm:space-y-6">
+                {/* Theme Selection */}
+                <div className={conditionalClasses({
+                  light: 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 rounded-lg border border-gray-200 hover:border-[#662d91] hover:bg-gray-50 transition-all',
+                  dark: 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 rounded-lg border border-gray-600 hover:border-[#662d91] hover:bg-gray-700 transition-all'
+                })}>
+                  <div className="flex items-start gap-3 flex-1">
+                    <div className="p-2 bg-purple-100 rounded-lg shrink-0 mt-0.5">
+                      <FaPalette className="text-[#662d91] text-sm" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <label className={conditionalClasses({
+                        light: 'block text-sm font-semibold text-gray-900 mb-1',
+                        dark: 'block text-sm font-semibold text-gray-100 mb-1'
+                      })}>
+                        Tema de la Aplicación
+                      </label>
+                      <p className={conditionalClasses({
+                        light: 'text-xs sm:text-sm text-gray-600',
+                        dark: 'text-xs sm:text-sm text-gray-300'
+                      })}>
+                        Cambia entre modo claro y oscuro según tu preferencia
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className={conditionalClasses({
+                      light: 'text-sm text-gray-500 hidden sm:inline',
+                      dark: 'text-sm text-gray-400 hidden sm:inline'
+                    })}>
+                      Modo Claro
+                    </span>
+                    <ThemeToggle variant="switch" />
+                    <span className={conditionalClasses({
+                      light: 'text-sm text-gray-500 hidden sm:inline',
+                      dark: 'text-sm text-gray-400 hidden sm:inline'
+                    })}>
+                      Modo Oscuro
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Security Info Card */}
-            <div className="mb-6 p-4 rounded-lg border-l-4 bg-blue-50 border-blue-500">
+            <div className={conditionalClasses({
+              light: 'mb-6 p-4 rounded-lg border-l-4 bg-blue-50 border-blue-500',
+              dark: 'mb-6 p-4 rounded-lg border-l-4 bg-blue-900/20 border-blue-600'
+            })}>
               <div className="flex items-start gap-3">
-                <FaShieldAlt className="mt-0.5 shrink-0 text-blue-600" />
+                <FaShieldAlt className={conditionalClasses({
+                  light: 'mt-0.5 shrink-0 text-blue-600',
+                  dark: 'mt-0.5 shrink-0 text-blue-400'
+                })} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold mb-1 text-blue-900">
+                  <p className={conditionalClasses({
+                    light: 'text-sm font-semibold mb-1 text-blue-900',
+                    dark: 'text-sm font-semibold mb-1 text-blue-200'
+                  })}>
                     Recomendaciones de Seguridad
                   </p>
-                  <p className="text-xs text-blue-700">
+                  <p className={conditionalClasses({
+                    light: 'text-xs text-blue-700',
+                    dark: 'text-xs text-blue-300'
+                  })}>
                     Mantén tu cuenta segura actualizando tu contraseña regularmente y habilitando la autenticación de dos factores para mayor protección.
                   </p>
                 </div>
@@ -335,8 +483,14 @@ const Settings = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-gray-200">
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500">
+            <div className={conditionalClasses({
+              light: 'flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-gray-200',
+              dark: 'flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-gray-600'
+            })}>
+              <div className={conditionalClasses({
+                light: 'flex items-center gap-2 text-xs sm:text-sm text-gray-500',
+                dark: 'flex items-center gap-2 text-xs sm:text-sm text-gray-400'
+              })}>
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span>Los cambios se aplican de forma inmediata</span>
               </div>
@@ -365,7 +519,10 @@ const Settings = () => {
         {/* Password Change Modal */}
         {showPasswordModal && (
           <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200">
+            <div className={conditionalClasses({
+              light: 'bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200',
+              dark: 'bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-600'
+            })}>
               <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-6 py-5 rounded-t-2xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -387,7 +544,10 @@ const Settings = () => {
 
               <form onSubmit={handlePasswordSubmit} className="p-6 space-y-5">
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                  <label className={conditionalClasses({
+                    light: 'flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2',
+                    dark: 'flex items-center gap-2 text-sm font-semibold text-gray-200 mb-2'
+                  })}>
                     <FaLock className="text-[#662d91] text-xs" />
                     Contraseña Actual *
                   </label>
@@ -398,13 +558,19 @@ const Settings = () => {
                       value={passwordData.currentPassword}
                       onChange={handlePasswordChange}
                       placeholder="Ingresa tu contraseña actual"
-                      className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-sm sm:text-base hover:border-gray-400"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-sm sm:text-base hover:border-gray-400',
+                        dark: 'w-full px-4 py-3 pr-12 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-sm sm:text-base hover:border-gray-500 text-gray-100'
+                      })}
                       required
                     />
                     <button
                       type="button"
                       onClick={() => togglePasswordVisibility('current')}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                      className={conditionalClasses({
+                        light: 'absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors',
+                        dark: 'absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200 transition-colors'
+                      })}
                     >
                       {showPasswords.current ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
                     </button>
@@ -412,7 +578,10 @@ const Settings = () => {
                 </div>
 
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                  <label className={conditionalClasses({
+                    light: 'flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2',
+                    dark: 'flex items-center gap-2 text-sm font-semibold text-gray-200 mb-2'
+                  })}>
                     <FaKey className="text-[#662d91] text-xs" />
                     Nueva Contraseña *
                   </label>
@@ -423,13 +592,19 @@ const Settings = () => {
                       value={passwordData.newPassword}
                       onChange={handlePasswordChange}
                       placeholder="Ingresa tu nueva contraseña"
-                      className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-sm sm:text-base hover:border-gray-400"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-sm sm:text-base hover:border-gray-400',
+                        dark: 'w-full px-4 py-3 pr-12 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-sm sm:text-base hover:border-gray-500 text-gray-100'
+                      })}
                       required
                     />
                     <button
                       type="button"
                       onClick={() => togglePasswordVisibility('new')}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                      className={conditionalClasses({
+                        light: 'absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors',
+                        dark: 'absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200 transition-colors'
+                      })}
                     >
                       {showPasswords.new ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
                     </button>
@@ -437,7 +612,10 @@ const Settings = () => {
                 </div>
 
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                  <label className={conditionalClasses({
+                    light: 'flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2',
+                    dark: 'flex items-center gap-2 text-sm font-semibold text-gray-200 mb-2'
+                  })}>
                     <FaKey className="text-[#662d91] text-xs" />
                     Confirmar Nueva Contraseña *
                   </label>
@@ -448,13 +626,19 @@ const Settings = () => {
                       value={passwordData.confirmPassword}
                       onChange={handlePasswordChange}
                       placeholder="Confirma tu nueva contraseña"
-                      className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-sm sm:text-base hover:border-gray-400"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-sm sm:text-base hover:border-gray-400',
+                        dark: 'w-full px-4 py-3 pr-12 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-sm sm:text-base hover:border-gray-500 text-gray-100'
+                      })}
                       required
                     />
                     <button
                       type="button"
                       onClick={() => togglePasswordVisibility('confirm')}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                      className={conditionalClasses({
+                        light: 'absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors',
+                        dark: 'absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200 transition-colors'
+                      })}
                     >
                       {showPasswords.confirm ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
                     </button>
@@ -465,7 +649,10 @@ const Settings = () => {
                   <button
                     type="button"
                     onClick={() => setShowPasswordModal(false)}
-                    className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
+                    className={conditionalClasses({
+                      light: 'flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors',
+                      dark: 'flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-500 text-gray-200 font-medium rounded-lg transition-colors'
+                    })}
                     disabled={passwordLoading}
                   >
                     Cancelar
@@ -493,7 +680,10 @@ const Settings = () => {
         {/* 2FA Setup Modal */}
         {show2FAModal && (
           <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200">
+            <div className={conditionalClasses({
+              light: 'bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200',
+              dark: 'bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-600'
+            })}>
               <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-6 py-5 rounded-t-2xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -518,11 +708,17 @@ const Settings = () => {
 
               <form onSubmit={handle2FASubmit} className="p-6 space-y-5">
                 <div className="text-center">
-                  <p className="text-sm text-gray-600 mb-4">
+                  <p className={conditionalClasses({
+                    light: 'text-sm text-gray-600 mb-4',
+                    dark: 'text-sm text-gray-300 mb-4'
+                  })}>
                     Escanea el código QR con tu aplicación de autenticación (Google Authenticator, Authy, etc.)
                   </p>
                   {twoFactorData.qrCode && (
-                    <div className="flex justify-center mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className={conditionalClasses({
+                      light: 'flex justify-center mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200',
+                      dark: 'flex justify-center mb-4 p-4 bg-gray-700 rounded-lg border border-gray-600'
+                    })}>
                       <img
                         src={twoFactorData.qrCode}
                         alt="QR Code para 2FA"
@@ -530,14 +726,23 @@ const Settings = () => {
                       />
                     </div>
                   )}
-                  <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
-                    <p className="text-xs text-gray-600 mb-1">O ingresa manualmente:</p>
+                  <div className={conditionalClasses({
+                    light: 'p-3 bg-purple-50 border border-purple-200 rounded-lg',
+                    dark: 'p-3 bg-purple-900/20 border border-purple-800 rounded-lg'
+                  })}>
+                    <p className={conditionalClasses({
+                      light: 'text-xs text-gray-600 mb-1',
+                      dark: 'text-xs text-gray-400 mb-1'
+                    })}>O ingresa manualmente:</p>
                     <p className="text-sm font-mono font-semibold text-[#662d91] break-all">{twoFactorData.secret}</p>
                   </div>
                 </div>
 
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                  <label className={conditionalClasses({
+                    light: 'flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2',
+                    dark: 'flex items-center gap-2 text-sm font-semibold text-gray-200 mb-2'
+                  })}>
                     <FaKey className="text-[#662d91] text-xs" />
                     Código de Verificación *
                   </label>
@@ -547,7 +752,10 @@ const Settings = () => {
                     value={twoFactorData.token}
                     onChange={handle2FAChange}
                     placeholder="Ingresa el código de 6 dígitos"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-center text-lg tracking-widest font-mono"
+                    className={conditionalClasses({
+                      light: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-center text-lg tracking-widest font-mono',
+                      dark: 'w-full px-4 py-3 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent outline-none transition-all text-center text-lg tracking-widest font-mono text-gray-100'
+                    })}
                     required
                     maxLength="6"
                   />
@@ -560,7 +768,10 @@ const Settings = () => {
                       setShow2FAModal(false);
                       setTwoFactorData(prev => ({ ...prev, secret: '', qrCode: '', token: '' }));
                     }}
-                    className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
+                    className={conditionalClasses({
+                      light: 'flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors',
+                      dark: 'flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-500 text-gray-200 font-medium rounded-lg transition-colors'
+                    })}
                     disabled={twoFactorLoading}
                   >
                     Cancelar
