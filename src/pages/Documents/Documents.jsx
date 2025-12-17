@@ -1,10 +1,21 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback, useMemo, Suspense, lazy } from 'react';
 import { documentsAPI, getServerBaseURL } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { useThemeClasses } from '../../hooks/useThemeClasses.js';
 import { useNotifications } from '../../hooks/useNotifications.js';
+import { useDocumentFilters } from '../../hooks/useDocumentFilters.js';
+import { usePermissions } from '../../hooks/usePermissions.js';
+import { useFolders } from '../../hooks/useFolders.js';
 import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes, FaFileAlt, FaTag, FaSearch, FaSortAmountDown, FaSortAmountUp, FaFilePdf, FaFileWord, FaFileExcel, FaFileImage, FaFileArchive, FaClock, FaUser, FaFolder, FaFolderOpen, FaPlus, FaArrowLeft } from 'react-icons/fa';
 import { ConfirmDialog, FilterPanel } from '../../components/common';
+
+// Lazy load modals
+const UploadModal = lazy(() => import('./modals/UploadModal.jsx'));
+const EditModal = lazy(() => import('./modals/EditModal.jsx'));
+const HistoryModal = lazy(() => import('./modals/HistoryModal.jsx'));
+const CreateFolderModal = lazy(() => import('./modals/CreateFolderModal.jsx'));
+const EditFolderModal = lazy(() => import('./modals/EditFolderModal.jsx'));
+const PermissionsModal = lazy(() => import('./modals/PermissionsModal.jsx'));
 import {
   onDocumentCreated,
   onDocumentUpdated,
@@ -37,34 +48,22 @@ const Documents = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [editingDocument, setEditingDocument] = useState(null);
-  const [formData, setFormData] = useState({ title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' });
-  const [editFormData, setEditFormData] = useState({ title: '', description: '', type: '', category: '', expiryDate: '' });
+  const [forms, setForms] = useState({
+    upload: { title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' },
+    edit: { title: '', description: '', type: '', category: '', expiryDate: '' }
+  });
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
 
-  // NUEVAS FUNCIONALIDADES: Estados para búsqueda, filtros y ordenamiento
+  // Estados para búsqueda, filtros y ordenamiento
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
 
-  // Estados para carpetas
-  const [folders, setFolders] = useState([]);
-  const [currentFolder, setCurrentFolder] = useState(null);
-  const [showCreateFolderModal, setShowCreateFolderModal] = useState(false);
-  const [showEditFolderModal, setShowEditFolderModal] = useState(false);
-  const [editingFolder, setEditingFolder] = useState(null);
-  const [folderFormData, setFolderFormData] = useState({ name: '', description: '', parentFolderId: null });
-  const [editFolderFormData, setEditFolderFormData] = useState({ name: '', description: '' });
-
   // Estados para permisos
   const [showPermissionsModal, setShowPermissionsModal] = useState(false);
-  const [selectedItemForPermissions, setSelectedItemForPermissions] = useState(null); // {type: 'document'|'folder', id: number}
-  const [permissions, setPermissions] = useState([]);
-  const [allUsers, setAllUsers] = useState([]);
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const [permissionType, setPermissionType] = useState('read');
-  const [userSearchTerm, setUserSearchTerm] = useState('');
+  const [selectedItemForPermissions, setSelectedItemForPermissions] = useState(null);
 
   // Estado para elementos filtrados por permisos
   const [filteredItems, setFilteredItems] = useState({ folders: [], documents: [] });
@@ -72,22 +71,162 @@ const Documents = () => {
   // Estado para permisos de escritura en la carpeta actual
   const [canWriteInCurrentFolder, setCanWriteInCurrentFolder] = useState(false);
 
+  // Función para mostrar diálogo de confirmación (definida antes de los hooks)
+  const showConfirmDialog = (message, onConfirm) => {
+    setConfirmDialog({ message, onConfirm });
+  };
+
+  // Custom hooks
+  const foldersHook = useFolders(showConfirmDialog, notifyError);
+  const permissionsHook = usePermissions(user);
+  const {
+    folders,
+    currentFolder,
+    showCreateFolderModal,
+    setShowCreateFolderModal,
+    showEditFolderModal,
+    setShowEditFolderModal,
+    folderFormData,
+    setFolderFormData,
+    editFolderFormData,
+    setEditFolderFormData,
+    fetchFolders,
+    handleCreateFolder: handleCreateFolderHook,
+    handleEnterFolder,
+    handleGoBack,
+    handleEditFolder,
+    handleUpdateFolder: handleUpdateFolderHook,
+    handleDeleteFolder: handleDeleteFolderHook
+  } = foldersHook;
+
+  const {
+    permissions,
+    setPermissions,
+    allUsers,
+    setAllUsers,
+    selectedUsers,
+    setSelectedUsers,
+    permissionType,
+    setPermissionType,
+    userSearchTerm,
+    setUserSearchTerm,
+    filteredUsers,
+    fetchUsers,
+    checkUserPermission,
+    handleOpenPermissionsModal: handleOpenPermissionsModalHook,
+    handleGrantPermissions: handleGrantPermissionsHook,
+    handleRevokePermission: handleRevokePermissionHook,
+    handleSelectAllUsers,
+    handleDeselectAllUsers,
+    handleUserToggle
+  } = permissionsHook;
+
+  // Usar hook de filtros
+  const filteredDocumentsList = useDocumentFilters(documents, searchTerm, filterType, sortBy, sortOrder, currentFolder);
+
   useEffect(() => {
     fetchDocuments();
     fetchFolders();
     fetchUsers(); // Cargar usuarios al inicio
-  }, []);
+  }, [fetchFolders, fetchUsers]);
 
-  const fetchUsers = async () => {
-    try {
-      const usersData = await documentsAPI.fetchUsers();
-      setAllUsers(usersData || []);
-    } catch (err) {
-      console.error('Error fetching users:', err);
-      setAllUsers([]); // Asegurar que esté vacío en caso de error
-      // No mostrar notificación aquí ya que es carga inicial silenciosa
+  // Función para verificar si el usuario puede ver una carpeta
+  const canViewFolder = async (folder) => {
+    // Administradores, técnicos y calidad ven todo
+    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') return true;
+    // Creadores ven sus carpetas
+    if (folder.createdBy === user?.id) return true;
+    // Empleados no ven carpetas sin permisos específicos
+    if (user?.role?.name === 'Empleado') {
+      const permission = await checkUserPermission(folder, 'folder');
+      return permission.hasAccess;
     }
+    return false;
   };
+
+  // Función para verificar si el usuario puede ver un documento
+  const canViewDocument = async (doc) => {
+    // Administradores, técnicos y calidad ven todo
+    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') return true;
+    // Creadores ven sus documentos
+    if (doc.createdBy === user?.id) return true;
+
+    // Para empleados, verificar permisos específicos del documento
+    if (user?.role?.name === 'Empleado') {
+      const docPermission = await checkUserPermission(doc, 'document');
+      if (docPermission.hasAccess) return true;
+
+      // Verificar herencia de permisos de carpeta padre
+      if (doc.folderId) {
+        const parentFolder = folders.find(f => f.id === doc.folderId);
+        if (parentFolder) {
+          const folderPermission = await checkUserPermission(parentFolder, 'folder');
+          if (folderPermission.hasAccess) return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+  // Función para filtrar elementos con permisos
+  const getFilteredItems = async () => {
+    const baseFilteredDocuments = filteredDocumentsList;
+
+    // Filtrar carpetas basadas en permisos
+    let filteredFolders = folders.filter(folder =>
+      currentFolder ? folder.parentFolderId === currentFolder.id : !folder.parentFolderId
+    );
+
+    // Filtrar documentos basados en permisos
+    let filteredDocuments = [];
+
+    // Para administradores, técnicos y calidad, mostrar todo
+     if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') {
+       filteredDocuments = baseFilteredDocuments;
+     } else if (user?.role?.name === 'Empleado') {
+      // Para empleados, filtrar solo elementos con permisos o creados por ellos
+      for (const doc of baseFilteredDocuments) {
+        const canView = await canViewDocument(doc);
+        if (canView) {
+          filteredDocuments.push(doc);
+        }
+      }
+
+      // Filtrar carpetas para empleados
+      const tempFolders = [];
+      for (const folder of filteredFolders) {
+        const canView = await canViewFolder(folder);
+        if (canView) {
+          tempFolders.push(folder);
+        }
+      }
+      filteredFolders = tempFolders;
+    }
+
+    return {
+      folders: filteredFolders,
+      documents: filteredDocuments
+    };
+  };
+
+  // Cargar elementos filtrados cuando cambian los datos
+  useEffect(() => {
+    const loadFilteredItems = async () => {
+      const items = await getFilteredItems();
+      setFilteredItems(items);
+    };
+    loadFilteredItems();
+  }, [documents, folders, currentFolder, user, filteredDocumentsList]);
+
+  // Actualizar permisos de escritura cuando cambia la carpeta actual o el usuario
+  useEffect(() => {
+    const updateWritePermissions = async () => {
+      const canWrite = await canUserWriteInCurrentFolder();
+      setCanWriteInCurrentFolder(canWrite);
+    };
+    updateWritePermissions();
+  }, [currentFolder, user]);
 
   // WebSocket listeners for real-time document updates
   useEffect(() => {
@@ -173,82 +312,7 @@ const Documents = () => {
     }
   };
 
-  const fetchFolders = async () => {
-    try {
-      const data = await documentsAPI.fetchFolders();
-      setFolders(data);
-    } catch (err) {
-      console.error('Error fetching folders:', err);
-    }
-  };
 
-  // Filtrado y ordenamiento de documentos (solo versiones activas más recientes)
-  const filterAndSortDocuments = () => {
-    // Filtrar documentos por carpeta actual
-    let docsInFolder = documents.filter(doc => {
-      if (currentFolder) {
-        return doc.folderId === currentFolder.id;
-      } else {
-        return !doc.folderId; // Documentos en la raíz
-      }
-    });
-
-    // Agrupar documentos por parentDocumentId o id si no tiene parent
-    const grouped = docsInFolder.reduce((acc, doc) => {
-      const key = doc.parentDocumentId || doc.id;
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(doc);
-      return acc;
-    }, {});
-
-    // Para cada grupo, tomar la versión activa más reciente
-    let filtered = Object.values(grouped).map(group => {
-      const activeVersions = group.filter(doc => doc.isActive !== false); // Asumir true si no definido
-      if (activeVersions.length === 0) return group[0]; // Si ninguno activo, tomar el primero
-      return activeVersions.sort((a, b) => parseFloat(b.version) - parseFloat(a.version))[0];
-    });
-
-    // Búsqueda por título, descripción, tipo o categoría
-    if (searchTerm) {
-      filtered = filtered.filter(doc =>
-        doc.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doc.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doc.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doc.category?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Filtro por tipo
-    if (filterType !== 'all') {
-      filtered = filtered.filter(doc => doc.type?.toLowerCase() === filterType.toLowerCase());
-    }
-
-
-    // Ordenamiento
-    filtered.sort((a, b) => {
-      let aVal = a[sortBy];
-      let bVal = b[sortBy];
-
-      if (sortBy === 'createdAt') {
-        aVal = new Date(aVal || 0);
-        bVal = new Date(bVal || 0);
-      } else if (sortBy === 'version') {
-        aVal = parseFloat(aVal || 0);
-        bVal = parseFloat(bVal || 0);
-      } else if (typeof aVal === 'string') {
-        aVal = aVal.toLowerCase();
-        bVal = bVal?.toLowerCase() || '';
-      }
-
-      if (sortOrder === 'asc') {
-        return aVal > bVal ? 1 : -1;
-      } else {
-        return aVal < bVal ? 1 : -1;
-      }
-    });
-
-    return filtered;
-  };
 
   // Calcular el total de documentos únicos (no versiones) en todo el sistema
   const totalUniqueDocuments = [...new Set(documents.map(doc => doc.parentDocumentId || doc.id))].length;
@@ -256,101 +320,7 @@ const Documents = () => {
   // Obtener tipos únicos para filtros
   const uniqueTypes = [...new Set(documents.map(doc => doc.type).filter(Boolean))];
 
-  // Función para verificar si el usuario puede ver una carpeta
-  const canViewFolder = async (folder) => {
-    // Administradores, técnicos y calidad ven todo
-    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') return true;
-    // Creadores ven sus carpetas
-    if (folder.createdBy === user?.id) return true;
-    // Empleados no ven carpetas sin permisos específicos
-    if (user?.role?.name === 'Empleado') {
-      const permission = await checkUserPermission(folder, 'folder');
-      return permission.hasAccess;
-    }
-    return false;
-  };
-
-  // Función para verificar si el usuario puede ver un documento
-  const canViewDocument = async (doc) => {
-    // Administradores, técnicos y calidad ven todo
-    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') return true;
-    // Creadores ven sus documentos
-    if (doc.createdBy === user?.id) return true;
-
-    // Para empleados, verificar permisos específicos del documento
-    if (user?.role?.name === 'Empleado') {
-      const docPermission = await checkUserPermission(doc, 'document');
-      if (docPermission.hasAccess) return true;
-
-      // Verificar herencia de permisos de carpeta padre
-      if (doc.folderId) {
-        const parentFolder = folders.find(f => f.id === doc.folderId);
-        if (parentFolder) {
-          const folderPermission = await checkUserPermission(parentFolder, 'folder');
-          if (folderPermission.hasAccess) return true;
-        }
-      }
-    }
-
-    return false;
-  };
-
-  // Función para filtrar elementos con permisos
-  const getFilteredItems = async () => {
-    const baseFilteredDocuments = filterAndSortDocuments();
-
-    // Filtrar carpetas basadas en permisos
-    let filteredFolders = folders.filter(folder =>
-      currentFolder ? folder.parentFolderId === currentFolder.id : !folder.parentFolderId
-    );
-
-    // Filtrar documentos basados en permisos
-    let filteredDocuments = [];
-
-    // Para administradores, técnicos y calidad, mostrar todo
-     if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') {
-       filteredDocuments = baseFilteredDocuments;
-     } else if (user?.role?.name === 'Empleado') {
-      // Para empleados, filtrar solo elementos con permisos o creados por ellos
-      for (const doc of baseFilteredDocuments) {
-        const canView = await canViewDocument(doc);
-        if (canView) {
-          filteredDocuments.push(doc);
-        }
-      }
-
-      // Filtrar carpetas para empleados
-      const tempFolders = [];
-      for (const folder of filteredFolders) {
-        const canView = await canViewFolder(folder);
-        if (canView) {
-          tempFolders.push(folder);
-        }
-      }
-      filteredFolders = tempFolders;
-    }
-
-    return {
-      folders: filteredFolders,
-      documents: filteredDocuments
-    };
-  };
-
-  // Cargar elementos filtrados cuando cambian los datos
-  useEffect(() => {
-    const loadFilteredItems = async () => {
-      const items = await getFilteredItems();
-      setFilteredItems(items);
-
-      // También actualizar permisos de escritura en la carpeta actual
-      const canWrite = await canUserWriteInCurrentFolder();
-      setCanWriteInCurrentFolder(canWrite);
-    };
-    loadFilteredItems();
-  }, [documents, folders, currentFolder, user]);
-
   const currentFolders = filteredItems.folders;
-  const filteredDocuments = filteredItems.documents;
 
   // Obtener icono según tipo de archivo
   const getFileIcon = (filePath) => {
@@ -418,110 +388,63 @@ const Documents = () => {
     e.preventDefault();
     setUploadLoading(true);
     const data = new FormData();
-    data.append('title', formData.title);
-    data.append('description', formData.description);
-    data.append('type', formData.type);
-    data.append('category', formData.category);
-    data.append('version', formData.version);
-    data.append('file', formData.file);
-    data.append('isNewVersion', formData.isNewVersion);
+    data.append('title', forms.upload.title);
+    data.append('description', forms.upload.description);
+    data.append('type', forms.upload.type);
+    data.append('category', forms.upload.category);
+    data.append('version', forms.upload.version);
+    data.append('file', forms.upload.file);
+    data.append('isNewVersion', forms.upload.isNewVersion);
     // Para nueva versión, folderId se determina del documento padre
     // Para nuevo documento, usar el folderId seleccionado o vacío
-    if (!formData.isNewVersion) {
-      data.append('folderId', formData.folderId || '');
+    if (!forms.upload.isNewVersion) {
+      data.append('folderId', forms.upload.folderId || '');
     }
-    if (formData.isNewVersion) {
-      data.append('parentDocumentId', formData.parentDocumentId);
-      data.append('changeDescription', formData.changeDescription);
+    if (forms.upload.isNewVersion) {
+      data.append('parentDocumentId', forms.upload.parentDocumentId);
+      data.append('changeDescription', forms.upload.changeDescription);
     }
 
     try {
       await documentsAPI.uploadDocument(data);
       // WebSocket will handle the list update automatically
-      setFormData({ title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '', selectedFolderForVersion: null });
+      setForms(prev => ({ ...prev, upload: { title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' } }));
       setShowUploadModal(false);
       // Notification will be handled by WebSocket listener
     } catch (err) {
       notifyError('Error al subir el documento. Por favor, inténtalo de nuevo.');
-      setFormData({ title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' });
+      setForms(prev => ({ ...prev, upload: { title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' } }));
     } finally {
       setUploadLoading(false);
     }
   };
 
-  const handleCreateFolder = async (e) => {
+  const handleCreateFolder = useCallback(async (e) => {
     e.preventDefault();
-    try {
-      const folderData = {
-        ...folderFormData,
-        parentFolderId: currentFolder ? currentFolder.id : null
-      };
-      await documentsAPI.createFolder(folderData);
-      // WebSocket will handle the list update automatically
-      setFolderFormData({ name: '', description: '', parentFolderId: null });
-      setShowCreateFolderModal(false);
-      // Notification will be handled by WebSocket listener
-    } catch (err) {
-      notifyError('Error al crear la carpeta. Por favor, inténtalo de nuevo.');
-    }
-  };
+    await handleCreateFolderHook();
+  }, [handleCreateFolderHook]);
 
-  const handleEnterFolder = (folder) => {
-    setCurrentFolder(folder);
-  };
 
-  const handleGoBack = () => {
-    if (currentFolder && currentFolder.parent) {
-      setCurrentFolder(currentFolder.parent);
-    } else {
-      setCurrentFolder(null);
-    }
-  };
-
-  const handleEditFolder = (folder) => {
-    setEditingFolder(folder);
-    setEditFolderFormData({
-      name: folder.name,
-      description: folder.description || ''
-    });
-    setShowEditFolderModal(true);
-  };
-
-  const handleUpdateFolder = async (e) => {
+  const handleUpdateFolder = useCallback(async (e) => {
     e.preventDefault();
-    try {
-      await documentsAPI.updateFolder(editingFolder.id, editFolderFormData);
-      // WebSocket will handle the list update automatically
-      setShowEditFolderModal(false);
-      // Notification will be handled by WebSocket listener
-    } catch (err) {
-      notifyError('Error al actualizar la carpeta. Por favor, inténtalo de nuevo.');
-    }
-  };
+    await handleUpdateFolderHook();
+  }, [handleUpdateFolderHook]);
 
-  const handleDeleteFolder = async (folderId) => {
-    showConfirmDialog('¿Estás seguro de que deseas eliminar esta carpeta y todos sus contenidos?', async () => {
-      try {
-        await documentsAPI.deleteFolder(folderId);
-        // WebSocket will handle the list update automatically
-        if (currentFolder && currentFolder.id === folderId) {
-          setCurrentFolder(null);
-        }
-        // Notification will be handled by WebSocket listener
-      } catch (err) {
-        notifyError(err.response?.data?.error || 'Error al eliminar la carpeta. Por favor, inténtalo de nuevo.');
-      }
-    });
-  };
+  const handleDeleteFolder = useCallback(async (folderId) => {
+    await handleDeleteFolderHook(folderId);
+  }, [handleDeleteFolderHook]);
 
   const handleEdit = (doc) => {
     setEditingDocument(doc);
-    setEditFormData({
-      title: doc.title,
-      description: doc.description,
-      type: doc.type,
-      category: doc.category
-    });
+    setForms(prev => ({
+      ...prev,
+      edit: {
+        title: doc.title,
+        description: doc.description,
+        type: doc.type,
+        category: doc.category
+      }
+    }));
     setShowEditModal(true);
   };
 
@@ -535,7 +458,7 @@ const Documents = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      await documentsAPI.updateDocument(editingDocument.id, editFormData);
+      await documentsAPI.updateDocument(editingDocument.id, forms.edit);
       // WebSocket will handle the list update automatically
       setShowEditModal(false);
       // Notification will be handled by WebSocket listener
@@ -602,9 +525,6 @@ const Documents = () => {
     else notifyInfo(message);
   };
 
-  const showConfirmDialog = (message, onConfirm) => {
-    setConfirmDialog({ message, onConfirm });
-  };
 
   const handleConfirm = () => {
     if (confirmDialog?.onConfirm) {
@@ -618,90 +538,18 @@ const Documents = () => {
   };
 
   // Funciones de permisos
-  const handleOpenPermissionsModal = async (item, type) => {
-    setSelectedItemForPermissions({ type, id: item.id });
-    setShowPermissionsModal(true);
-    setUserSearchTerm(''); // Limpiar búsqueda
-    setSelectedUsers([]); // Limpiar selección
+  const handleOpenPermissionsModal = useCallback(async (item, type) => {
+    await handleOpenPermissionsModalHook(item, type, setSelectedItemForPermissions, setShowPermissionsModal, showNotification);
+  }, [handleOpenPermissionsModalHook, setSelectedItemForPermissions, setShowPermissionsModal, showNotification]);
 
-    try {
-      // Cargar permisos existentes
-      const permissionsData = await documentsAPI.getDocumentPermissions(
-        type === 'document' ? item.id : null,
-        type === 'folder' ? item.id : null
-      );
-      setPermissions(permissionsData);
+  const handleGrantPermissions = useCallback(async () => {
+    await handleGrantPermissionsHook(selectedItemForPermissions, notifyError);
+  }, [handleGrantPermissionsHook, selectedItemForPermissions, notifyError]);
 
-      // Cargar lista de usuarios (siempre intentar cargar para asegurar datos frescos)
-      try {
-        const usersData = await documentsAPI.fetchUsers();
-        setAllUsers(usersData || []);
-      } catch (usersErr) {
-        console.error('Error loading users in modal:', usersErr);
-        showNotification('Error al cargar la lista de usuarios', 'error');
-        setAllUsers([]); // Asegurar que esté vacío si hay error
-      }
-    } catch (err) {
-      console.error('Error loading permissions:', err);
-      showNotification('Error al cargar permisos', 'error');
-      setPermissions([]);
-    }
-  };
+  const handleRevokePermission = useCallback(async (permissionId) => {
+    await handleRevokePermissionHook(permissionId, showNotification, notifyError);
+  }, [handleRevokePermissionHook, showNotification, notifyError]);
 
-  const handleGrantPermissions = async () => {
-    if (selectedUsers.length === 0) {
-      showNotification('Selecciona al menos un usuario', 'error');
-      return;
-    }
-
-    try {
-      const result = await documentsAPI.grantDocumentPermissions(
-        selectedItemForPermissions.type === 'document' ? selectedItemForPermissions.id : null,
-        selectedItemForPermissions.type === 'folder' ? selectedItemForPermissions.id : null,
-        selectedUsers,
-        permissionType
-      );
-
-      // WebSocket will handle the permissions update automatically
-
-      // Limpiar selección
-      setSelectedUsers([]);
-    } catch (err) {
-      notifyError('Error al otorgar permisos');
-    }
-  };
-
-  const handleRevokePermission = async (permissionId) => {
-    try {
-      // Asegurar que permissionId sea un número válido
-      const id = parseInt(permissionId, 10);
-      if (isNaN(id)) {
-        showNotification('ID de permiso inválido', 'error');
-        return;
-      }
-
-      await documentsAPI.revokeDocumentPermission(id);
-
-      // WebSocket will handle the permissions update automatically
-
-      // Notification will be handled by WebSocket listener
-    } catch (err) {
-      console.error('Error revoking permission:', err);
-      notifyError('Error al revocar permiso');
-    }
-  };
-
-  const checkUserPermission = async (item, type) => {
-    try {
-      const permission = await documentsAPI.checkUserDocumentPermission(
-        type === 'document' ? item.id : null,
-        type === 'folder' ? item.id : null
-      );
-      return permission;
-    } catch (err) {
-      return { hasAccess: false };
-    }
-  };
 
   // Función para determinar si el usuario puede editar un documento/carpeta
   const canUserEdit = (item, type) => {
@@ -761,31 +609,7 @@ const Documents = () => {
     return false;
   };
 
-  // Funciones para manejo de usuarios en permisos
-  const filteredUsers = allUsers.filter(u =>
-    u.id !== user?.id &&
-    !permissions.some(p => p.user?.id === u.id) &&
-    (u.name?.toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-     u.username?.toLowerCase().includes(userSearchTerm.toLowerCase()) ||
-     u.email?.toLowerCase().includes(userSearchTerm.toLowerCase()))
-  );
 
-  const handleSelectAllUsers = () => {
-    const allUserIds = filteredUsers.map(u => u.id);
-    setSelectedUsers(allUserIds);
-  };
-
-  const handleDeselectAllUsers = () => {
-    setSelectedUsers([]);
-  };
-
-  const handleUserToggle = (userId) => {
-    if (selectedUsers.includes(userId)) {
-      setSelectedUsers(selectedUsers.filter(id => id !== userId));
-    } else {
-      setSelectedUsers([...selectedUsers, userId]);
-    }
-  };
 
   const handleDownloadDocument = async (documentId, fileName) => {
     try {
@@ -939,7 +763,7 @@ const Documents = () => {
             light: 'text-gray-600',
             dark: 'text-gray-300'
           })}`}>
-            Mostrando <span className="font-bold text-[#662d91]">{filteredDocuments.length}</span> documentos
+            Mostrando <span className="font-bold text-[#662d91]">{filteredDocumentsList.length}</span> documentos
           </p>
         </div>
       </div>
@@ -972,13 +796,13 @@ const Documents = () => {
                <span className={`${conditionalClasses({
                  light: 'text-[#662d91]',
                  dark: 'text-gray-300'
-               })}`}>{currentFolders.length + filteredDocuments.length} elementos</span>
+               })}`}>{currentFolders.length + filteredDocumentsList.length} elementos</span>
              </span>
             </div>
           </div>
 
           <div className="p-6">
-            {currentFolders.length === 0 && filteredDocuments.length === 0 ? (
+            {currentFolders.length === 0 && filteredDocumentsList.length === 0 ? (
               <div className="text-center py-16">
                 <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 ${conditionalClasses({
                   light: 'bg-gray-100',
@@ -1116,7 +940,7 @@ const Documents = () => {
                     ))}
 
                     {/* Mostrar documentos */}
-                    {filteredDocuments.map((doc) => {
+                    {filteredDocumentsList.map((doc) => {
                       return (
                         <div
                           key={doc.id}
@@ -1252,979 +1076,72 @@ const Documents = () => {
         </div>
       </div>
 
-      {/* Upload Modal */}
-      {showUploadModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className={`rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({
-            light: 'bg-white border-gray-200',
-            dark: 'bg-gray-800 border-gray-600'
-          })}`}>
-            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl lg:text-2xl font-bold text-white">Nuevo Documento</h2>
-                <button
-                  onClick={() => setShowUploadModal(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
-                >
-                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
-                </button>
-              </div>
-            </div>
+      <Suspense fallback={<div>Cargando...</div>}>
+        <UploadModal
+          showUploadModal={showUploadModal}
+          setShowUploadModal={setShowUploadModal}
+          formData={forms.upload}
+          setFormData={(data) => setForms(prev => ({ ...prev, upload: data }))}
+          handleUpload={handleUpload}
+          uploadLoading={uploadLoading}
+          documents={documents}
+          folders={folders}
+        />
 
-            <form onSubmit={handleUpload} className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-5rem)]">
-              <div className="flex items-center space-x-4 mb-4">
-                <label className={`flex items-center ${conditionalClasses({
-                  light: 'text-gray-700',
-                  dark: 'text-gray-300'
-                })}`}>
-                  <input
-                    type="radio"
-                    name="uploadType"
-                    checked={!formData.isNewVersion}
-                    onChange={() => setFormData({ ...formData, isNewVersion: false, parentDocumentId: null })}
-                    className="mr-2"
-                  />
-                  Nuevo Documento
-                </label>
-                <label className={`flex items-center ${conditionalClasses({
-                  light: 'text-gray-700',
-                  dark: 'text-gray-300'
-                })}`}>
-                  <input
-                    type="radio"
-                    name="uploadType"
-                    checked={formData.isNewVersion}
-                    onChange={() => setFormData({ ...formData, isNewVersion: true })}
-                    className="mr-2"
-                  />
-                  Nueva Versión
-                </label>
-              </div>
+        <EditModal
+          showEditModal={showEditModal}
+          setShowEditModal={setShowEditModal}
+          editFormData={forms.edit}
+          setEditFormData={(data) => setForms(prev => ({ ...prev, edit: data }))}
+          handleUpdate={handleUpdate}
+        />
 
-              {formData.isNewVersion && (
-                <div>
-                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                    light: 'text-gray-700',
-                    dark: 'text-gray-300'
-                  })}`}>
-                    Seleccionar Documento Base <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={formData.parentDocumentId || ''}
-                    onChange={(e) => {
-                      const selectedDoc = documents.find(doc => doc.id === parseInt(e.target.value));
-                      setFormData({
-                        ...formData,
-                        parentDocumentId: e.target.value,
-                        title: selectedDoc ? selectedDoc.title : '',
-                        type: selectedDoc ? selectedDoc.type : '',
-                        category: selectedDoc ? selectedDoc.category : '',
-                        version: selectedDoc ? (parseFloat(selectedDoc.version) + 0.1).toFixed(1) : '1.0'
-                      });
-                    }}
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
-                      light: 'border-gray-300 bg-white',
-                      dark: 'border-gray-600 bg-gray-700 text-white'
-                    })}`}
-                    required={formData.isNewVersion}
-                  >
-                    <option value="">Seleccionar documento...</option>
-                    {documents
-                      .filter(doc => doc.isActive)
-                      .sort((a, b) => {
-                        // Ordenar por carpeta primero, luego por título
-                        const aFolder = folders.find(f => f.id === a.folderId)?.name || 'Raíz';
-                        const bFolder = folders.find(f => f.id === b.folderId)?.name || 'Raíz';
-                        if (aFolder !== bFolder) return aFolder.localeCompare(bFolder);
-                        return a.title.localeCompare(b.title);
-                      })
-                      .map((doc) => {
-                        const folderName = folders.find(f => f.id === doc.folderId)?.name || 'Raíz';
-                        return (
-                          <option key={doc.id} value={doc.id}>
-                            [{folderName}] {doc.title} (v{doc.version})
-                          </option>
-                        );
-                      })}
-                  </select>
-                </div>
-              )}
+        <HistoryModal
+          showHistoryModal={showHistoryModal}
+          setShowHistoryModal={setShowHistoryModal}
+          selectedDocument={selectedDocument}
+          getDownloadName={getDownloadName}
+          handleDownloadDocument={handleDownloadDocument}
+          handleDeleteVersion={handleDeleteVersion}
+          user={user}
+        />
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <div className="md:col-span-2">
-                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                    light: 'text-gray-700',
-                    dark: 'text-gray-300'
-                  })}`}>
-                    Título <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Nombre del documento"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
-                      light: 'border-gray-300 bg-white',
-                      dark: 'border-gray-600 bg-gray-700 text-white'
-                    })}`}
-                    required
-                    disabled={formData.isNewVersion}
-                  />
-                </div>
+        <CreateFolderModal
+          showCreateFolderModal={showCreateFolderModal}
+          setShowCreateFolderModal={setShowCreateFolderModal}
+          folderFormData={folderFormData}
+          setFolderFormData={setFolderFormData}
+          handleCreateFolder={handleCreateFolder}
+        />
 
-                <div>
-                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                    light: 'text-gray-700',
-                    dark: 'text-gray-300'
-                  })}`}>Versión</label>
-                  <input
-                    type="text"
-                    placeholder="Ej: 1.0"
-                    value={formData.version}
-                    onChange={(e) => setFormData({ ...formData, version: e.target.value })}
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
-                      light: 'border-gray-300 bg-white',
-                      dark: 'border-gray-600 bg-gray-700 text-white'
-                    })}`}
-                    required
-                  />
-                </div>
+        <EditFolderModal
+          showEditFolderModal={showEditFolderModal}
+          setShowEditFolderModal={setShowEditFolderModal}
+          editFolderFormData={editFolderFormData}
+          setEditFolderFormData={setEditFolderFormData}
+          handleUpdateFolder={handleUpdateFolder}
+        />
 
-                <div>
-                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                    light: 'text-gray-700',
-                    dark: 'text-gray-300'
-                  })}`}>Tipo</label>
-                  <input
-                    type="text"
-                    placeholder="Ej: Manual, Política"
-                    value={formData.type}
-                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
-                      light: 'border-gray-300 bg-white',
-                      dark: 'border-gray-600 bg-gray-700 text-white'
-                    })}`}
-                    disabled={formData.isNewVersion}
-                  />
-                </div>
-
-                <div>
-                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                    light: 'text-gray-700',
-                    dark: 'text-gray-300'
-                  })}`}>Categoría</label>
-                  <input
-                    type="text"
-                    placeholder="Ej: Recursos Humanos"
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
-                      light: 'border-gray-300 bg-white',
-                      dark: 'border-gray-600 bg-gray-700 text-white'
-                    })}`}
-                    disabled={formData.isNewVersion}
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                    light: 'text-gray-700',
-                    dark: 'text-gray-300'
-                  })}`}>Descripción</label>
-                  <textarea
-                    placeholder="Descripción del contenido del documento"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all resize-none ${conditionalClasses({
-                      light: 'border-gray-300 bg-white',
-                      dark: 'border-gray-600 bg-gray-700 text-white'
-                    })}`}
-                    rows="3"
-                  />
-                </div>
-
-                {formData.isNewVersion && (
-                  <div className="md:col-span-2">
-                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                      light: 'text-gray-700',
-                      dark: 'text-gray-300'
-                    })}`}>Descripción de Cambios</label>
-                    <textarea
-                      placeholder="Describe los cambios en esta versión"
-                      value={formData.changeDescription}
-                      onChange={(e) => setFormData({ ...formData, changeDescription: e.target.value })}
-                      className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all resize-none ${conditionalClasses({
-                        light: 'border-gray-300 bg-white',
-                        dark: 'border-gray-600 bg-gray-700 text-white'
-                      })}`}
-                      rows="2"
-                    />
-                  </div>
-                )}
-
-                {!formData.isNewVersion && (
-                  <div className="md:col-span-2">
-                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                      light: 'text-gray-700',
-                      dark: 'text-gray-300'
-                    })}`}>Carpeta</label>
-                    <select
-                      value={formData.folderId || ''}
-                      onChange={(e) => setFormData({ ...formData, folderId: e.target.value || null })}
-                      className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
-                        light: 'border-gray-300 bg-white',
-                        dark: 'border-gray-600 bg-gray-700 text-white'
-                      })}`}
-                    >
-                      <option value="">Seleccionar carpeta (opcional)</option>
-                      {folders.map((folder) => (
-                        <option key={folder.id} value={folder.id}>{folder.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
-                <div className="md:col-span-2">
-                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                    light: 'text-gray-700',
-                    dark: 'text-gray-300'
-                  })}`}>
-                    Archivo <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="file"
-                    onChange={(e) => setFormData({ ...formData, file: e.target.files[0] })}
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:cursor-pointer ${conditionalClasses({
-                      light: 'border-gray-300 file:bg-[#f3ebf9] file:text-[#662d91] hover:file:bg-[#e8d5f5]',
-                      dark: 'border-gray-600 file:bg-purple-900/50 file:text-purple-300 file:border-gray-600'
-                    })}`}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className={`flex gap-3 pt-4 border-t ${conditionalClasses({
-                light: 'border-gray-200',
-                dark: 'border-gray-600'
-              })}`}>
-                <button
-                  type="button"
-                  onClick={() => setShowUploadModal(false)}
-                  className={`flex-1 px-6 py-3 font-semibold rounded-xl transition-all ${conditionalClasses({
-                    light: 'bg-gray-100 hover:bg-gray-200 text-gray-700',
-                    dark: 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                  })}`}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                  disabled={uploadLoading}
-                >
-                  {uploadLoading ? (
-                    <>
-                      <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Subiendo...
-                    </>
-                  ) : (
-                    <>
-                      <FaUpload className="mr-2" />
-                      Subir Documento
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Modal */}
-      {showEditModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className={`rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({
-            light: 'bg-white border-gray-200',
-            dark: 'bg-gray-800 border-gray-600'
-          })}`}>
-            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl lg:text-2xl font-bold text-white">Editar Documento</h2>
-                <button
-                  onClick={() => setShowEditModal(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
-                >
-                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
-                </button>
-              </div>
-            </div>
-
-            <form onSubmit={handleUpdate} className="p-6 space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="md:col-span-2">
-                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                    light: 'text-gray-700',
-                    dark: 'text-gray-300'
-                  })}`}>
-                    Título <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Nombre del documento"
-                    value={editFormData.title}
-                    onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
-                      light: 'border-gray-300 bg-white',
-                      dark: 'border-gray-600 bg-gray-700 text-white'
-                    })}`}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                    light: 'text-gray-700',
-                    dark: 'text-gray-300'
-                  })}`}>Tipo</label>
-                  <input
-                    type="text"
-                    placeholder="Ej: Manual, Política"
-                    value={editFormData.type}
-                    onChange={(e) => setEditFormData({ ...editFormData, type: e.target.value })}
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
-                      light: 'border-gray-300 bg-white',
-                      dark: 'border-gray-600 bg-gray-700 text-white'
-                    })}`}
-                  />
-                </div>
-
-                <div>
-                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                    light: 'text-gray-700',
-                    dark: 'text-gray-300'
-                  })}`}>Categoría</label>
-                  <input
-                    type="text"
-                    placeholder="Ej: Recursos Humanos"
-                    value={editFormData.category}
-                    onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all ${conditionalClasses({
-                      light: 'border-gray-300 bg-white',
-                      dark: 'border-gray-600 bg-gray-700 text-white'
-                    })}`}
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                    light: 'text-gray-700',
-                    dark: 'text-gray-300'
-                  })}`}>Descripción</label>
-                  <textarea
-                    placeholder="Descripción del contenido del documento"
-                    value={editFormData.description}
-                    onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:border-transparent transition-all resize-none ${conditionalClasses({
-                      light: 'border-gray-300 bg-white',
-                      dark: 'border-gray-600 bg-gray-700 text-white'
-                    })}`}
-                    rows="4"
-                  />
-                </div>
-              </div>
-
-              <div className={`flex gap-3 pt-4 border-t ${conditionalClasses({
-                light: 'border-gray-200',
-                dark: 'border-gray-600'
-              })}`}>
-                <button
-                  type="button"
-                  onClick={() => setShowEditModal(false)}
-                  className={`flex-1 px-6 py-3 font-semibold rounded-xl transition-all ${conditionalClasses({
-                    light: 'bg-gray-100 hover:bg-gray-200 text-gray-700',
-                    dark: 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                  })}`}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
-                >
-                  Actualizar Documento
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* History Modal */}
-      {showHistoryModal && selectedDocument && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className={`rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({
-            light: 'bg-white border-gray-200',
-            dark: 'bg-gray-800 border-gray-600'
-          })}`}>
-            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl lg:text-2xl font-bold text-white">Historial de Versiones: {selectedDocument.title}</h2>
-                <button
-                  onClick={() => setShowHistoryModal(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
-                >
-                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
-                </button>
-              </div>
-            </div>
-
-            <div className="p-6">
-              <div className="space-y-4">
-                {selectedDocument.versions.map((version, index) => (
-                  <div key={version.id} className={`p-4 rounded-xl border ${conditionalClasses({
-                    light: version.isActive ? 'border-[#8e4dbf] bg-[#f3ebf9]' : 'border-gray-200 bg-gray-50',
-                    dark: version.isActive ? 'border-purple-500 bg-purple-900/20' : 'border-gray-600 bg-gray-700'
-                  })}`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center space-x-3">
-                        <span className={`text-lg font-bold ${conditionalClasses({
-                          light: 'text-gray-900',
-                          dark: 'text-white'
-                        })}`}>Versión {version.version}</span>
-                        {version.isActive && <span className={`px-2 py-1 text-xs font-semibold rounded-full ${conditionalClasses({
-                          light: 'bg-[#f3ebf9] text-[#662d91]',
-                          dark: 'bg-purple-900/50 text-purple-300'
-                        })}`}>Activa</span>}
-                        <span className={`text-sm ${conditionalClasses({
-                          light: 'text-gray-500',
-                          dark: 'text-gray-400'
-                        })}`}>{getTimeAgo(version.createdAt)}</span>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleDownloadDocument(version.id, getDownloadName(selectedDocument, version))}
-                          className="inline-flex items-center px-3 py-1.5 bg-[#662d91] hover:bg-[#7a3da8] text-white text-sm font-semibold rounded-lg transition-all"
-                        >
-                          <FaDownload className="mr-1" />
-                          Descargar
-                        </button>
-                        {(user.role?.name === 'Administrador' || user.role?.name === 'Técnico') && (
-                          <button
-                            onClick={() => handleDeleteVersion(version.id)}
-                            className="inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-all"
-                          >
-                            <FaTrash className="mr-1" />
-                            Eliminar
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                    {version.changeDescription && (
-                      <p className={`text-sm mb-2 ${conditionalClasses({
-                        light: 'text-gray-600',
-                        dark: 'text-gray-300'
-                      })}`}><strong>Cambios:</strong> {version.changeDescription}</p>
-                    )}
-                    {version.description && (
-                      <p className={`text-sm ${conditionalClasses({
-                        light: 'text-gray-600',
-                        dark: 'text-gray-300'
-                      })}`}><strong>Descripción:</strong> {version.description}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Create Folder Modal */}
-      {showCreateFolderModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className={`rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({
-            light: 'bg-white border-gray-200',
-            dark: 'bg-gray-800 border-gray-600'
-          })}`}>
-            <div className="sticky top-0 bg-linear-to-r from-green-600 to-green-700 p-4 lg:p-6 z-10">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl lg:text-2xl font-bold text-white">Nueva Carpeta</h2>
-                <button
-                  onClick={() => setShowCreateFolderModal(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
-                >
-                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
-                </button>
-              </div>
-            </div>
-
-            <form onSubmit={handleCreateFolder} className="p-6 space-y-5">
-              <div>
-                <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                  light: 'text-gray-700',
-                  dark: 'text-gray-300'
-                })}`}>
-                  Nombre <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="Nombre de la carpeta"
-                  value={folderFormData.name}
-                  onChange={(e) => setFolderFormData({ ...folderFormData, name: e.target.value })}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all ${conditionalClasses({
-                    light: 'border-gray-300 bg-white',
-                    dark: 'border-gray-600 bg-gray-700 text-white'
-                  })}`}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                  light: 'text-gray-700',
-                  dark: 'text-gray-300'
-                })}`}>Descripción</label>
-                <textarea
-                  placeholder="Descripción de la carpeta (opcional)"
-                  value={folderFormData.description}
-                  onChange={(e) => setFolderFormData({ ...folderFormData, description: e.target.value })}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none ${conditionalClasses({
-                    light: 'border-gray-300 bg-white',
-                    dark: 'border-gray-600 bg-gray-700 text-white'
-                  })}`}
-                  rows="3"
-                />
-              </div>
-
-              <div className={`flex gap-3 pt-4 border-t ${conditionalClasses({
-                light: 'border-gray-200',
-                dark: 'border-gray-600'
-              })}`}>
-                <button
-                  type="button"
-                  onClick={() => setShowCreateFolderModal(false)}
-                  className={`flex-1 px-6 py-3 font-semibold rounded-xl transition-all ${conditionalClasses({
-                    light: 'bg-gray-100 hover:bg-gray-200 text-gray-700',
-                    dark: 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                  })}`}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-6 py-3 bg-linear-to-r from-green-600 to-green-600 hover:from-green-700 hover:to-green-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
-                >
-                  Crear Carpeta
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Folder Modal */}
-      {showEditFolderModal && editingFolder && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className={`rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({
-            light: 'bg-white border-gray-200',
-            dark: 'bg-gray-800 border-gray-600'
-          })}`}>
-            <div className="sticky top-0 bg-linear-to-r from-blue-600 to-blue-700 p-4 lg:p-6 z-10">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl lg:text-2xl font-bold text-white">Editar Carpeta</h2>
-                <button
-                  onClick={() => setShowEditFolderModal(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
-                >
-                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
-                </button>
-              </div>
-            </div>
-
-            <form onSubmit={handleUpdateFolder} className="p-6 space-y-5">
-              <div>
-                <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                  light: 'text-gray-700',
-                  dark: 'text-gray-300'
-                })}`}>
-                  Nombre <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="Nombre de la carpeta"
-                  value={editFolderFormData.name}
-                  onChange={(e) => setEditFolderFormData({ ...editFolderFormData, name: e.target.value })}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${conditionalClasses({
-                    light: 'border-gray-300 bg-white',
-                    dark: 'border-gray-600 bg-gray-700 text-white'
-                  })}`}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                  light: 'text-gray-700',
-                  dark: 'text-gray-300'
-                })}`}>Descripción</label>
-                <textarea
-                  placeholder="Descripción de la carpeta (opcional)"
-                  value={editFolderFormData.description}
-                  onChange={(e) => setEditFolderFormData({ ...editFolderFormData, description: e.target.value })}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none ${conditionalClasses({
-                    light: 'border-gray-300 bg-white',
-                    dark: 'border-gray-600 bg-gray-700 text-white'
-                  })}`}
-                  rows="3"
-                />
-              </div>
-
-              <div className={`flex gap-3 pt-4 border-t ${conditionalClasses({
-                light: 'border-gray-200',
-                dark: 'border-gray-600'
-              })}`}>
-                <button
-                  type="button"
-                  onClick={() => setShowEditFolderModal(false)}
-                  className={`flex-1 px-6 py-3 font-semibold rounded-xl transition-all ${conditionalClasses({
-                    light: 'bg-gray-100 hover:bg-gray-200 text-gray-700',
-                    dark: 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                  })}`}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-6 py-3 bg-linear-to-r from-blue-600 to-blue-600 hover:from-blue-700 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
-                >
-                  Actualizar Carpeta
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Permissions Modal */}
-      {showPermissionsModal && selectedItemForPermissions && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className={`rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({
-            light: 'bg-white border-gray-200',
-            dark: 'bg-gray-800 border-gray-600'
-          })}`}>
-            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl lg:text-2xl font-bold text-white">Gestionar Permisos</h2>
-                <button
-                  onClick={() => setShowPermissionsModal(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
-                >
-                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
-                </button>
-              </div>
-            </div>
-
-            <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-5rem)]">
-              {/* Current Permissions */}
-              <div>
-                <h3 className={`text-lg font-semibold mb-4 ${conditionalClasses({
-                  light: 'text-gray-900',
-                  dark: 'text-white'
-                })}`}>Permisos Actuales</h3>
-                {permissions.length === 0 ? (
-                  <p className={`text-center py-4 ${conditionalClasses({
-                    light: 'text-gray-500',
-                    dark: 'text-gray-400'
-                  })}`}>No hay permisos asignados</p>
-                ) : (
-                  <div className="space-y-3">
-                    {permissions.map((permission) => (
-                      <div key={permission.id} className={`flex items-center justify-between p-4 rounded-lg ${conditionalClasses({
-                        light: 'bg-gray-50',
-                        dark: 'bg-gray-700'
-                      })}`}>
-                        <div className="flex items-center space-x-3">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${conditionalClasses({
-                            light: 'bg-[#f3ebf9]',
-                            dark: 'bg-purple-900/50'
-                          })}`}>
-                            <FaUser className={`w-4 h-4 ${conditionalClasses({
-                              light: 'text-[#662d91]',
-                              dark: 'text-purple-300'
-                            })}`} />
-                          </div>
-                          <div>
-                            <p className={`font-medium ${conditionalClasses({
-                              light: 'text-gray-900',
-                              dark: 'text-white'
-                            })}`}>
-                              {permission.user?.name || permission.user?.username}
-                            </p>
-                            <p className={`text-sm ${conditionalClasses({
-                              light: 'text-gray-500',
-                              dark: 'text-gray-400'
-                            })}`}>{permission.user?.email}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            permission.permissionType === 'write'
-                              ? conditionalClasses({
-                                light: 'bg-green-100 text-green-700',
-                                dark: 'bg-green-900/50 text-green-300'
-                              })
-                              : conditionalClasses({
-                                light: 'bg-blue-100 text-blue-700',
-                                dark: 'bg-blue-900/50 text-blue-300'
-                              })
-                          }`}>
-                            {permission.permissionType === 'write' ? 'Lectura y Escritura' : 'Solo Lectura'}
-                          </span>
-                          <button
-                            onClick={() => handleRevokePermission(permission.id)}
-                            className={`p-2 rounded-lg transition-colors ${conditionalClasses({
-                              light: 'text-red-600 hover:bg-red-50',
-                              dark: 'text-red-400 hover:bg-red-900/20'
-                            })}`}
-                            title="Revocar permiso"
-                          >
-                            <FaTrash className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Grant New Permissions */}
-              <div className={`border-t pt-6 ${conditionalClasses({
-                light: 'border-gray-200',
-                dark: 'border-gray-600'
-              })}`}>
-                <h3 className={`text-lg font-semibold mb-4 ${conditionalClasses({
-                  light: 'text-gray-900',
-                  dark: 'text-white'
-                })}`}>Otorgar Nuevos Permisos</h3>
-
-                {/* Permission Type */}
-                <div className="mb-4">
-                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                    light: 'text-gray-700',
-                    dark: 'text-gray-300'
-                  })}`}>Tipo de Permiso</label>
-                  <div className="flex gap-4">
-                    <label className={`flex items-center ${conditionalClasses({
-                      light: 'text-gray-700',
-                      dark: 'text-gray-300'
-                    })}`}>
-                      <input
-                        type="radio"
-                        name="permissionType"
-                        value="read"
-                        checked={permissionType === 'read'}
-                        onChange={(e) => setPermissionType(e.target.value)}
-                        className="mr-2"
-                      />
-                      <span className={`text-sm ${conditionalClasses({
-                        light: 'text-gray-700',
-                        dark: 'text-gray-300'
-                      })}`}>Solo Lectura (ver y descargar)</span>
-                    </label>
-                    <label className={`flex items-center ${conditionalClasses({
-                      light: 'text-gray-700',
-                      dark: 'text-gray-300'
-                    })}`}>
-                      <input
-                        type="radio"
-                        name="permissionType"
-                        value="write"
-                        checked={permissionType === 'write'}
-                        onChange={(e) => setPermissionType(e.target.value)}
-                        className="mr-2"
-                      />
-                      <span className={`text-sm ${conditionalClasses({
-                        light: 'text-gray-700',
-                        dark: 'text-gray-300'
-                      })}`}>Lectura y Escritura (crear, editar, eliminar)</span>
-                    </label>
-                  </div>
-                </div>
-
-                {/* User Selection */}
-                <div className="mb-4">
-                  <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
-                    light: 'text-gray-700',
-                    dark: 'text-gray-300'
-                  })}`}>Seleccionar Usuarios</label>
-
-                  {/* Search Bar */}
-                  <div className="mb-3 relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className={`h-5 w-5 ${conditionalClasses({
-                        light: 'text-gray-400',
-                        dark: 'text-gray-500'
-                      })}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                      </svg>
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Buscar usuarios por nombre, usuario o email..."
-                      value={userSearchTerm}
-                      onChange={(e) => setUserSearchTerm(e.target.value)}
-                      className={`block w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-[#662d91] focus:border-[#662d91] text-sm ${conditionalClasses({
-                        light: 'border-gray-300 bg-white',
-                        dark: 'border-gray-600 bg-gray-700 text-white'
-                      })}`}
-                    />
-                  </div>
-
-                  {/* Selection Controls */}
-                  <div className="flex gap-2 mb-3">
-                    <button
-                      type="button"
-                      onClick={handleSelectAllUsers}
-                      className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${conditionalClasses({
-                        light: 'bg-[#f3ebf9] text-[#662d91] hover:bg-[#e8d5f5]',
-                        dark: 'bg-purple-900/50 text-purple-300 hover:bg-purple-800'
-                      })}`}
-                    >
-                      Seleccionar Todos
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleDeselectAllUsers}
-                      className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${conditionalClasses({
-                        light: 'bg-gray-100 text-gray-700 hover:bg-gray-200',
-                        dark: 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                      })}`}
-                    >
-                      Deseleccionar Todos
-                    </button>
-                    <span className={`text-xs self-center ml-auto ${conditionalClasses({
-                      light: 'text-gray-500',
-                      dark: 'text-gray-400'
-                    })}`}>
-                      {selectedUsers.length} seleccionados
-                    </span>
-                  </div>
-
-                  {/* Users List */}
-                  <div className={`border rounded-lg max-h-60 overflow-y-auto ${conditionalClasses({
-                    light: 'border-gray-300',
-                    dark: 'border-gray-600'
-                  })}`}>
-                    {filteredUsers.length === 0 ? (
-                      <div className={`p-4 text-center text-sm ${conditionalClasses({
-                        light: 'text-gray-500',
-                        dark: 'text-gray-400'
-                      })}`}>
-                        {userSearchTerm ? (
-                          `No se encontraron usuarios para "${userSearchTerm}"`
-                        ) : allUsers.length === 0 ? (
-                          <div>
-                            <p className={`${conditionalClasses({
-                              light: 'text-gray-600',
-                              dark: 'text-gray-300'
-                            })}`}>No hay usuarios disponibles</p>
-                            <p className={`text-xs mt-1 ${conditionalClasses({
-                              light: 'text-gray-500',
-                              dark: 'text-gray-400'
-                            })}`}>Verifica que tengas permisos para ver usuarios</p>
-                          </div>
-                        ) : (
-                          'No hay usuarios que coincidan con los criterios'
-                        )}
-                      </div>
-                    ) : (
-                      <div className={`divide-y ${conditionalClasses({
-                        light: 'divide-gray-200',
-                        dark: 'divide-gray-600'
-                      })}`}>
-                        {filteredUsers.map((u) => (
-                          <label key={u.id} className={`flex items-center p-3 cursor-pointer ${conditionalClasses({
-                            light: 'hover:bg-gray-50',
-                            dark: 'hover:bg-gray-700'
-                          })}`}>
-                            <input
-                              type="checkbox"
-                              checked={selectedUsers.includes(u.id)}
-                              onChange={() => handleUserToggle(u.id)}
-                              className="mr-3 h-4 w-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
-                            />
-                            <div className="flex items-center space-x-3 flex-1">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${conditionalClasses({
-                                light: 'bg-[#f3ebf9]',
-                                dark: 'bg-purple-900/50'
-                              })}`}>
-                                <span className={`text-sm font-medium ${conditionalClasses({
-                                  light: 'text-[#662d91]',
-                                  dark: 'text-purple-300'
-                                })}`}>
-                                  {(u.name || u.username || 'U').charAt(0).toUpperCase()}
-                                </span>
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className={`font-medium text-sm truncate ${conditionalClasses({
-                                  light: 'text-gray-900',
-                                  dark: 'text-white'
-                                })}`}>
-                                  {u.name || u.username || 'Usuario sin nombre'}
-                                </p>
-                                <p className={`text-xs truncate ${conditionalClasses({
-                                  light: 'text-gray-500',
-                                  dark: 'text-gray-400'
-                                })}`}>
-                                  {u.email || 'Sin email'}
-                                </p>
-                                {u.Role && (
-                                  <p className={`text-xs truncate ${conditionalClasses({
-                                    light: 'text-[#662d91]',
-                                    dark: 'text-purple-300'
-                                  })}`}>
-                                    {u.Role.name}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          </label>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className={`flex gap-3 pt-4 border-t ${conditionalClasses({
-                  light: 'border-gray-200',
-                  dark: 'border-gray-600'
-                })}`}>
-                  <button
-                    onClick={() => setShowPermissionsModal(false)}
-                    className={`flex-1 px-6 py-3 font-semibold rounded-xl transition-all ${conditionalClasses({
-                      light: 'bg-gray-100 hover:bg-gray-200 text-gray-700',
-                      dark: 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                    })}`}
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={handleGrantPermissions}
-                    disabled={selectedUsers.length === 0}
-                    className="flex-1 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Otorgar Permisos
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+        <PermissionsModal
+          showPermissionsModal={showPermissionsModal}
+          setShowPermissionsModal={setShowPermissionsModal}
+          selectedItemForPermissions={selectedItemForPermissions}
+          permissions={permissions}
+          allUsers={allUsers}
+          userSearchTerm={userSearchTerm}
+          setUserSearchTerm={setUserSearchTerm}
+          selectedUsers={selectedUsers}
+          setSelectedUsers={setSelectedUsers}
+          permissionType={permissionType}
+          setPermissionType={setPermissionType}
+          handleGrantPermissions={handleGrantPermissions}
+          handleRevokePermission={handleRevokePermission}
+          handleSelectAllUsers={handleSelectAllUsers}
+          handleDeselectAllUsers={handleDeselectAllUsers}
+          handleUserToggle={handleUserToggle}
+          filteredUsers={filteredUsers}
+        />
+      </Suspense>
     </div>
   );
 };
