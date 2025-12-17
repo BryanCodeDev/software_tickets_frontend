@@ -16,6 +16,11 @@ const HistoryModal = lazy(() => import('./modals/HistoryModal.jsx'));
 const CreateFolderModal = lazy(() => import('./modals/CreateFolderModal.jsx'));
 const EditFolderModal = lazy(() => import('./modals/EditFolderModal.jsx'));
 const PermissionsModal = lazy(() => import('./modals/PermissionsModal.jsx'));
+import DocumentCard from './components/DocumentCard.jsx';
+import FolderCard from './components/FolderCard.jsx';
+import DocumentHeader from './components/DocumentHeader.jsx';
+import FilterSection from './components/FilterSection.jsx';
+import EmptyState from './components/EmptyState.jsx';
 import {
   onDocumentCreated,
   onDocumentUpdated,
@@ -657,116 +662,29 @@ const Documents = () => {
         onConfirm={handleConfirm}
       />
 
-      {/* Header */}
-      <div className={`shadow-sm border-b ${conditionalClasses({
-        light: 'bg-white border-gray-200',
-        dark: 'bg-gray-800 border-gray-700'
-      })}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center space-x-4">
-              <div className="w-14 h-14 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-2xl flex items-center justify-center shadow-lg">
-                <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div>
-                <h1 className={`text-3xl font-bold ${conditionalClasses({
-                  light: 'text-gray-900',
-                  dark: 'text-white'
-                })}`}>
-                  {currentFolder ? `Carpeta: ${currentFolder.name}` : 'Control de Versiones'}
-                </h1>
-                <p className={`mt-1 ${conditionalClasses({
-                  light: 'text-gray-600',
-                  dark: 'text-gray-300'
-                })}`}>
-                  {currentFolder ? currentFolder.description || 'Gestiona versiones de políticas y documentos oficiales' : 'Gestiona versiones de políticas y documentos oficiales'}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 flex-wrap">
-              <div className={`flex items-center space-x-2 px-4 py-2 rounded-xl ${conditionalClasses({
-                light: 'bg-[#f3ebf9] text-gray-700',
-                dark: 'bg-gray-700 text-gray-300'
-              })}`}>
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium">{totalUniqueDocuments} documentos</span>
-              </div>
-              {currentFolder && (
-                <button
-                  onClick={handleGoBack}
-                  className={`inline-flex items-center px-5 py-2.5 font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all ${conditionalClasses({
-                    light: 'bg-gray-100 hover:bg-gray-200 text-gray-700',
-                    dark: 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                  })}`}
-                >
-                  <FaArrowLeft className="mr-2" />
-                  Atrás
-                </button>
-              )}
-              {/* Nueva Carpeta - Solo para Administradores y Técnicos */}
-              {(user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico') && (
-                <button
-                  onClick={() => setShowCreateFolderModal(true)}
-                  className="inline-flex items-center px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all mr-3"
-                >
-                  <FaPlus className="mr-2" />
-                  Nueva Carpeta
-                </button>
-              )}
-
-              {/* Nuevo Documento - Para Administradores, Técnicos y empleados con permisos de escritura */}
-              {((user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico') || canWriteInCurrentFolder) && (
-                <button
-                  onClick={() => setShowUploadModal(true)}
-                  className="inline-flex items-center px-5 py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
-                >
-                  <FaUpload className="mr-2" />
-                  Nuevo Documento
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+      <DocumentHeader
+        currentFolder={currentFolder}
+        totalUniqueDocuments={totalUniqueDocuments}
+        handleGoBack={handleGoBack}
+        user={user}
+        setShowCreateFolderModal={setShowCreateFolderModal}
+        canWriteInCurrentFolder={canWriteInCurrentFolder}
+        setShowUploadModal={setShowUploadModal}
+      />
 
 
-      {/* Filter Panel */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <FilterPanel
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          filters={[
-            {
-              label: 'Tipo',
-              value: filterType,
-              onChange: setFilterType,
-              type: 'select',
-              options: uniqueTypes.map(type => ({ value: type, label: type }))
-            }
-          ]}
-          sortBy={sortBy}
-          sortOrder={sortOrder}
-          onSortChange={setSortBy}
-          onSortOrderChange={(order) => setSortOrder(order)}
-          sortOptions={[
-            { value: 'createdAt', label: 'Fecha de creación' },
-            { value: 'title', label: 'Título' },
-            { value: 'type', label: 'Tipo' },
-            { value: 'version', label: 'Versión' }
-          ]}
-        />
-
-        <div className="flex items-center justify-between mb-4">
-          <p className={`text-sm font-medium ${conditionalClasses({
-            light: 'text-gray-600',
-            dark: 'text-gray-300'
-          })}`}>
-            Mostrando <span className="font-bold text-[#662d91]">{filteredDocumentsList.length}</span> documentos
-          </p>
-        </div>
-      </div>
+      <FilterSection
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        filterType={filterType}
+        setFilterType={setFilterType}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        setSortBy={setSortBy}
+        setSortOrder={setSortOrder}
+        uniqueTypes={uniqueTypes}
+        filteredDocumentsList={filteredDocumentsList}
+      />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
@@ -803,272 +721,40 @@ const Documents = () => {
 
           <div className="p-6">
             {currentFolders.length === 0 && filteredDocumentsList.length === 0 ? (
-              <div className="text-center py-16">
-                <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 ${conditionalClasses({
-                  light: 'bg-gray-100',
-                  dark: 'bg-gray-700'
-                })}`}>
-                  <FaFileAlt className={`w-10 h-10 ${conditionalClasses({
-                    light: 'text-gray-400',
-                    dark: 'text-gray-500'
-                  })}`} />
-                </div>
-                <h3 className={`text-xl font-semibold mb-2 ${conditionalClasses({
-                  light: 'text-gray-900',
-                  dark: 'text-white'
-                })}`}>
-                  {searchTerm || filterType !== 'all'
-                    ? 'No se encontraron elementos'
-                    : 'Sin elementos disponibles'}
-                </h3>
-                <p className={`max-w-sm mx-auto ${conditionalClasses({
-                  light: 'text-gray-600',
-                  dark: 'text-gray-300'
-                })}`}>
-                  {searchTerm || filterType !== 'all'
-                    ? 'Intenta ajustar los filtros de búsqueda'
-                    : 'Comienza agregando tu primera carpeta o documento'}
-                </p>
-              </div>
+              <EmptyState searchTerm={searchTerm} filterType={filterType} />
             ) : (
               <>
                 {/* NUEVA FUNCIONALIDAD: Vista de cuadrícula con carpetas y documentos */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {/* Mostrar carpetas primero */}
                     {currentFolders.map((folder) => (
-                      <div
+                      <FolderCard
                         key={`folder-${folder.id}`}
-                        onClick={() => handleEnterFolder(folder)}
-                        className={`group rounded-xl p-5 border transition-all duration-200 cursor-pointer ${conditionalClasses({
-                          light: 'bg-linear-to-r from-blue-50 to-indigo-50 border-blue-200 hover:border-blue-300 hover:shadow-md',
-                          dark: 'bg-gray-800 border-gray-600 hover:border-blue-400 hover:shadow-lg'
-                        })}`}
-                      >
-                        <div className="flex items-start space-x-4 mb-4">
-                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${conditionalClasses({
-                            light: 'bg-linear-to-br from-blue-100 to-indigo-100',
-                            dark: 'bg-gray-700'
-                          })}`}>
-                            <FaFolder className={`text-xl ${conditionalClasses({
-                              light: 'text-blue-600',
-                              dark: 'text-blue-400'
-                            })}`} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className={`font-bold mb-2 text-lg ${conditionalClasses({
-                              light: 'text-gray-900',
-                              dark: 'text-white'
-                            })}`}>{folder.name}</h3>
-                            {folder.description && (
-                              <p className={`text-sm mb-2 ${conditionalClasses({
-                                light: 'text-gray-600',
-                                dark: 'text-gray-300'
-                              })}`}>{folder.description}</p>
-                            )}
-                            <div className={`flex items-center gap-3 text-xs ${conditionalClasses({
-                              light: 'text-gray-500',
-                              dark: 'text-gray-400'
-                            })}`}>
-                              {folder.createdAt && (
-                                <span className="flex items-center gap-1">
-                                  <FaClock className="w-3 h-3" />
-                                  {getTimeAgo(folder.createdAt)}
-                                </span>
-                              )}
-                              {folder.creator && (
-                                <span className="flex items-center gap-1">
-                                  <FaUser className="w-3 h-3" />
-                                  {folder.creator.name || folder.creator.username}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Actions */}
-                        <div className={`flex flex-wrap gap-2 pt-3 border-t ${conditionalClasses({
-                          light: 'border-gray-100',
-                          dark: 'border-gray-600'
-                        })}`}>
-                          {canEdit(folder) && (
-                            <>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleEditFolder(folder);
-                                }}
-                                className={`inline-flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all ${conditionalClasses({
-                                  light: 'bg-blue-50 hover:bg-blue-100 text-blue-700',
-                                  dark: 'bg-blue-900/50 hover:bg-blue-800 text-blue-300'
-                                })}`}
-                              >
-                                <FaEdit className="mr-1" />
-                                Editar
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteFolder(folder.id);
-                                }}
-                                className={`inline-flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all ${conditionalClasses({
-                                  light: 'bg-red-50 hover:bg-red-100 text-red-700',
-                                  dark: 'bg-red-900/50 hover:bg-red-800 text-red-300'
-                                })}`}
-                              >
-                                <FaTrash className="mr-1" />
-                                Eliminar
-                              </button>
-                            </>
-                          )}
-                          {canEdit(folder) && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleOpenPermissionsModal(folder, 'folder');
-                              }}
-                              className={`inline-flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all ${conditionalClasses({
-                                light: 'bg-[#f3ebf9] hover:bg-[#f3ebf9] text-[#662d91]',
-                                dark: 'bg-purple-900/50 hover:bg-purple-800 text-purple-300'
-                              })}`}
-                            >
-                              <FaUser className="mr-1" />
-                              Permisos
-                            </button>
-                          )}
-                        </div>
-                      </div>
+                        folder={folder}
+                        getTimeAgo={getTimeAgo}
+                        handleEnterFolder={handleEnterFolder}
+                        canEdit={canEdit}
+                        handleEditFolder={handleEditFolder}
+                        handleDeleteFolder={handleDeleteFolder}
+                        handleOpenPermissionsModal={handleOpenPermissionsModal}
+                      />
                     ))}
 
                     {/* Mostrar documentos */}
-                    {filteredDocumentsList.map((doc) => {
-                      return (
-                        <div
-                          key={doc.id}
-                          className={`group rounded-xl p-5 border transition-all duration-200 ${conditionalClasses({
-                            light: 'bg-linear-to-r from-gray-50 to-white border-gray-200 hover:border-[#8e4dbf] hover:shadow-md',
-                            dark: 'bg-gray-800 border-gray-600 hover:border-[#8e4dbf] hover:shadow-lg'
-                          })}`}
-                        >
-                          {/* Document Header with Icon and Info */}
-                          <div className="flex items-start space-x-4 mb-4">
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${conditionalClasses({
-                              light: 'bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5]',
-                              dark: 'bg-gray-700'
-                            })}`}>
-                              {getFileIcon(doc.filePath)}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h3 className={`font-bold mb-2 text-lg ${conditionalClasses({
-                                light: 'text-gray-900',
-                                dark: 'text-white'
-                              })}`}>{doc.title}</h3>
-                              <div className="flex flex-wrap gap-2 mb-2">
-                                {doc.type && (
-                                  <span className={`inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-lg ${conditionalClasses({
-                                    light: 'bg-blue-50 text-blue-700',
-                                    dark: 'bg-blue-900 text-blue-300'
-                                  })}`}>
-                                    <FaTag className={`mr-1.5 text-xs ${conditionalClasses({
-                                      light: 'text-blue-700',
-                                      dark: 'text-blue-300'
-                                    })}`} />
-                                    {doc.type}
-                                  </span>
-                                )}
-                                {doc.category && (
-                                  <span className={`inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-lg ${conditionalClasses({
-                                    light: 'bg-green-50 text-green-700',
-                                    dark: 'bg-green-900 text-green-300'
-                                  })}`}>
-                                    {doc.category}
-                                  </span>
-                                )}
-                                {doc.version && (
-                                  <span className={`inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-lg ${conditionalClasses({
-                                    light: 'bg-[#f3ebf9] text-[#662d91]',
-                                    dark: 'bg-purple-900/50 text-purple-300'
-                                  })}`}>
-                                    v{doc.version}
-                                  </span>
-                                )}
-                              </div>
-                              {doc.description && (
-                                <p className={`text-sm mb-2 ${conditionalClasses({
-                                  light: 'text-gray-600',
-                                  dark: 'text-gray-300'
-                                })}`}>{doc.description}</p>
-                              )}
-                              {/* NUEVA FUNCIONALIDAD: Información adicional */}
-                              <div className={`flex items-center gap-3 text-xs mb-2 ${conditionalClasses({
-                                light: 'text-gray-500',
-                                dark: 'text-gray-400'
-                              })}`}>
-                                {doc.createdAt && (
-                                  <span className="flex items-center gap-1">
-                                    <FaClock className="w-3 h-3" />
-                                    {getTimeAgo(doc.createdAt)}
-                                  </span>
-                                )}
-                                {doc.createdByUser && (
-                                  <span className="flex items-center gap-1">
-                                    <FaUser className="w-3 h-3" />
-                                    {doc.createdByUser.name || doc.createdByUser.username}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-  
-                          {/* Actions */}
-                          <div className={`flex flex-wrap gap-2 pt-3 border-t ${conditionalClasses({
-                            light: 'border-gray-100',
-                            dark: 'border-gray-600'
-                          })}`}>
-                            <button
-                              onClick={() => handleDownloadDocument(doc.id, getDownloadName(doc))}
-                              className="inline-flex items-center px-4 py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all"
-                            >
-                              <FaDownload className="mr-2" />
-                              Descargar
-                            </button>
-                            <button
-                              onClick={() => handleViewHistory(doc)}
-                              className={`inline-flex items-center px-4 py-2.5 text-sm font-semibold rounded-lg transition-all ${conditionalClasses({
-                                light: 'bg-green-50 hover:bg-green-100 text-green-700',
-                                dark: 'bg-green-900/50 hover:bg-green-800 text-green-300'
-                              })}`}
-                            >
-                              <FaClock className="mr-2" />
-                              Ver Versiones
-                            </button>
-                            {canEdit(doc) && (
-                              <>
-                                <button
-                                  onClick={() => handleEdit(doc)}
-                                  className={`inline-flex items-center px-4 py-2.5 text-sm font-semibold rounded-lg transition-all ${conditionalClasses({
-                                    light: 'bg-blue-50 hover:bg-blue-100 text-blue-700',
-                                    dark: 'bg-blue-900/50 hover:bg-blue-800 text-blue-300'
-                                  })}`}
-                                >
-                                  <FaEdit className="mr-2" />
-                                  Editar
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(doc.id)}
-                                  className={`inline-flex items-center px-4 py-2.5 text-sm font-semibold rounded-lg transition-all ${conditionalClasses({
-                                    light: 'bg-red-50 hover:bg-red-100 text-red-700',
-                                    dark: 'bg-red-900/50 hover:bg-red-800 text-red-300'
-                                  })}`}
-                                >
-                                  <FaTrash className="mr-2" />
-                                  Eliminar
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
+                    {filteredDocumentsList.map((doc) => (
+                      <DocumentCard
+                        key={doc.id}
+                        doc={doc}
+                        getFileIcon={getFileIcon}
+                        getTimeAgo={getTimeAgo}
+                        getDownloadName={getDownloadName}
+                        handleDownloadDocument={handleDownloadDocument}
+                        handleViewHistory={handleViewHistory}
+                        canEdit={canEdit}
+                        handleEdit={handleEdit}
+                        handleDelete={handleDelete}
+                      />
+                    ))}
                   </div>
               </>
             )}
