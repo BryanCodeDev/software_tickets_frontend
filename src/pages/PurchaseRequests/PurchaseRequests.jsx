@@ -15,6 +15,7 @@ import AuthContext from '../../context/AuthContext';
 import { purchaseRequestsAPI } from '../../api';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
+import { useNotifications } from '../../hooks/useNotifications';
 import { joinPurchaseRequestRoom, leavePurchaseRequestRoom, onPurchaseRequestUpdated, onPurchaseRequestCreated, onPurchaseRequestDeleted, onPurchaseRequestsListUpdated, offPurchaseRequestUpdated, offPurchaseRequestCreated, offPurchaseRequestDeleted, offPurchaseRequestsListUpdated } from '../../api/socket';
 import {
   PurchaseRequestCreateModal,
@@ -37,6 +38,7 @@ ChartJS.register(
 
 const PurchaseRequests = () => {
   const { conditionalClasses } = useThemeClasses();
+  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -63,7 +65,6 @@ const PurchaseRequests = () => {
   });
 
   const [formLoading, setFormLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
@@ -119,7 +120,7 @@ const PurchaseRequests = () => {
       const data = await purchaseRequestsAPI.fetchPurchaseRequests({});
       setRequests(data.requests || []);
     } catch (err) {
-      showNotification('Error al cargar las solicitudes de compra. Por favor, recarga la página.', 'error');
+      notifyError('Error al cargar las solicitudes de compra. Por favor, recarga la página.');
     } finally {
       setLoading(false);
     }
@@ -245,10 +246,10 @@ const PurchaseRequests = () => {
       setSelectedRequest(data);
     } catch (err) {
       if (err.response?.status === 403) {
-        showNotification('No tienes permisos para ver los detalles de esta solicitud', 'error');
+        notifyError('No tienes permisos para ver los detalles de esta solicitud');
         return;
       }
-      showNotification('Error al cargar los detalles de la solicitud.', 'error');
+      notifyError('Error al cargar los detalles de la solicitud.');
     }
     setShowDetailModal(true);
   };
@@ -264,10 +265,10 @@ const PurchaseRequests = () => {
       async () => {
         try {
           await purchaseRequestsAPI.deletePurchaseRequest(request.id);
-          showNotification('Solicitud eliminada exitosamente', 'success');
+          notifySuccess('Solicitud eliminada exitosamente');
           fetchPurchaseRequests();
         } catch (err) {
-          showNotification('Error al eliminar la solicitud', 'error');
+          notifyError('Error al eliminar la solicitud');
         }
       }
     );
@@ -326,15 +327,10 @@ const PurchaseRequests = () => {
     ];
 
     XLSX.writeFile(wb, `solicitudes_compra_${new Date().toISOString().split('T')[0]}.xlsx`);
-    showNotification('Solicitudes exportadas exitosamente', 'success');
+    notifySuccess('Solicitudes exportadas exitosamente');
   };
 
   const canCreate = ['Administrador', 'Técnico', 'Empleado', 'Jefe', 'Coordinadora Administrativa'].includes(userRole);
-
-  const showNotification = (message, type = 'info') => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  };
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });
@@ -365,41 +361,6 @@ const PurchaseRequests = () => {
       light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-2 px-2 sm:py-4 sm:px-3 lg:py-6 lg:px-8',
       dark: 'min-h-screen bg-gray-900 py-2 px-2 sm:py-4 sm:px-3 lg:py-6 lg:px-8'
     })}>
-      {/* Notification */}
-      {notification && (
-        <div className="fixed top-3 right-3 left-3 sm:top-4 sm:right-4 sm:left-auto z-50 max-w-sm animate-slide-in-right">
-          <div className={`flex items-center p-3 sm:p-4 rounded-xl shadow-2xl border-2 transition-all duration-300 ${conditionalClasses({
-            light: notification.type === 'success'
-              ? 'bg-white border-green-400 text-green-800'
-              : 'bg-white border-red-400 text-red-800',
-            dark: notification.type === 'success'
-              ? 'bg-gray-800 border-green-600 text-green-300'
-              : 'bg-gray-800 border-red-600 text-red-300'
-          })}`}>
-            <div className="shrink-0">
-              {notification.type === 'success' ? (
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <FaCheck className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-                </div>
-              ) : (
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 rounded-full flex items-center justify-center">
-                  <FaTimes className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
-                </div>
-              )}
-            </div>
-            <div className="ml-3 sm:ml-4 flex-1">
-              <p className="text-xs sm:text-sm font-semibold">{notification.message}</p>
-            </div>
-            <button
-              onClick={() => setNotification(null)}
-              className="ml-3 sm:ml-4 text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <FaTimes className="w-3 h-3 sm:w-4 sm:h-4" />
-            </button>
-          </div>
-        </div>
-      )}
-
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-4 sm:mb-6 lg:mb-8">
@@ -879,9 +840,15 @@ const PurchaseRequests = () => {
           setFormData={setFormData}
           userRole={userRole}
           onSuccess={(message, type = 'success') => {
-            showNotification(message, type);
             if (type === 'success') {
+              notifySuccess(message);
               fetchPurchaseRequests(); // Refrescar la lista
+            } else if (type === 'error') {
+              notifyError(message);
+            } else if (type === 'warning') {
+              notifyWarning(message);
+            } else {
+              notifyInfo(message);
             }
           }}
         />
@@ -891,9 +858,15 @@ const PurchaseRequests = () => {
           setShowEditModal={setShowEditModal}
           editingRequest={editingRequest}
           onSuccess={(message, type = 'success') => {
-            showNotification(message, type);
             if (type === 'success') {
+              notifySuccess(message);
               fetchPurchaseRequests(); // Refrescar la lista
+            } else if (type === 'error') {
+              notifyError(message);
+            } else if (type === 'warning') {
+              notifyWarning(message);
+            } else {
+              notifyInfo(message);
             }
           }}
         />

@@ -4,12 +4,14 @@ import { inventoryAPI } from '../../api';
 import { corporatePhoneAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
+import { useNotifications } from '../../hooks/useNotifications';
 import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSearch, FaFilter, FaUserShield, FaUserCog, FaUser, FaChartBar, FaDownload, FaSortAmountDown, FaSortAmountUp, FaClock, FaEnvelope, FaKey, FaToggleOn, FaToggleOff, FaBan, FaShieldAlt, FaCrown, FaClipboardList } from 'react-icons/fa';
 import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 import { onUserUpdated, onUsersListUpdated, offUserUpdated, offUsersListUpdated } from '../../api/socket';
 
 const Users = () => {
   const { conditionalClasses } = useThemeClasses();
+  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -19,7 +21,6 @@ const Users = () => {
   const [formLoading, setFormLoading] = useState(false);
   const [uniqueITs, setUniqueITs] = useState([]);
   const [inventoryItems, setInventoryItems] = useState([]);
-  const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [availablePhones, setAvailablePhones] = useState([]);
   const [searchPhone, setSearchPhone] = useState('');
@@ -232,7 +233,7 @@ const Users = () => {
     
     setFormData({ ...formData, password });
     setPasswordStrength(checkPasswordStrength(password));
-    showNotification('Contraseña segura generada', 'success');
+    notifySuccess('Contraseña segura generada');
   };
 
 
@@ -343,17 +344,17 @@ const Users = () => {
         fetchUsers();
 
         if (response.deactivated) {
-          showNotification('Usuario desactivado exitosamente (tenía registros relacionados)', 'success');
+          notifySuccess('Usuario desactivado exitosamente (tenía registros relacionados)');
         } else {
-          showNotification('Usuario eliminado exitosamente', 'success');
+          notifySuccess('Usuario eliminado exitosamente');
         }
       } catch (err) {
         if (err.response?.data?.error?.includes('registros relacionados')) {
-          showNotification(err.response.data.error, 'error');
+          notifyError(err.response.data.error);
         } else if (err.response?.data?.error?.includes('propio usuario')) {
-          showNotification(err.response.data.error, 'error');
+          notifyError(err.response.data.error);
         } else {
-          showNotification('Error al eliminar el usuario. Por favor, inténtalo de nuevo.', 'error');
+          notifyError('Error al eliminar el usuario. Por favor, inténtalo de nuevo.');
         }
       }
     });
@@ -367,7 +368,7 @@ const Users = () => {
         const updateData = { roleId: formData.roleId, it: formData.it, hasCorporatePhone: formData.hasCorporatePhone, corporatePhone: formData.corporatePhone };
         if (formData.password) updateData.password = formData.password;
         await usersAPI.updateUser(editingUser.id, updateData);
-        showNotification('Usuario actualizado exitosamente', 'success');
+        notifySuccess('Usuario actualizado exitosamente');
       } else {
         await authAPI.register(
           formData.name,
@@ -379,20 +380,15 @@ const Users = () => {
           formData.hasCorporatePhone,
           formData.corporatePhone
         );
-        showNotification('Usuario creado exitosamente', 'success');
+        notifySuccess('Usuario creado exitosamente');
       }
       fetchUsers();
       setShowModal(false);
     } catch (err) {
-      showNotification('Error al guardar el usuario. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
+      notifyError('Error al guardar el usuario. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setFormLoading(false);
     }
-  };
-
-  const showNotification = (message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
   };
 
   const showConfirmDialog = (message, onConfirm) => {
@@ -421,12 +417,6 @@ const Users = () => {
       light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4 sm:px-6 lg:px-8',
       dark: 'min-h-screen bg-gray-900 py-8 px-4 sm:px-6 lg:px-8'
     })}>
-      {/* Notification */}
-      <NotificationSystem
-        notification={notification}
-        onClose={() => setNotification(null)}
-      />
-
       {/* Confirm Dialog */}
       <ConfirmDialog
         confirmDialog={confirmDialog}

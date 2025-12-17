@@ -12,6 +12,7 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
+import { useNotifications } from '../../hooks/useNotifications';
 import AuthContext from '../../context/AuthContext';
 import ticketsAPI from '../../api/ticketsAPI';
 import messagesAPI from '../../api/messagesAPI';
@@ -56,6 +57,7 @@ ChartJS.register(
 
 const Tickets = () => {
   const { conditionalClasses } = useThemeClasses();
+  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
   const { user, checkPermission } = useContext(AuthContext);
   
   // Estados principales
@@ -110,7 +112,6 @@ const Tickets = () => {
   
   // Estados de UI
   const [formLoading, setFormLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   
   const userRole = user?.role?.name;
@@ -210,7 +211,7 @@ const Tickets = () => {
       const data = await ticketsAPI.fetchTickets({});
       setTickets(data.tickets || []);
     } catch (err) {
-      showNotification('Error al cargar los tickets. Por favor, recarga la página.', 'error');
+      notifyError('Error al cargar los tickets. Por favor, recarga la página.');
     } finally {
       setLoading(false);
     }
@@ -389,7 +390,7 @@ const Tickets = () => {
 
   const handleEdit = useCallback((ticket) => {
     if (!canEditTicket(ticket)) {
-      showNotification('No tienes permisos para editar este ticket', 'error');
+      notifyError('No tienes permisos para editar este ticket');
       return;
     }
 
@@ -421,19 +422,19 @@ const Tickets = () => {
 
   const handleDelete = useCallback(async (ticket) => {
     if (!canDeleteTicket(ticket)) {
-      showNotification('No tienes permisos para eliminar este ticket', 'error');
+      notifyError('No tienes permisos para eliminar este ticket');
       return;
     }
 
     showConfirmDialog('¿Estás seguro de que deseas eliminar este ticket? Esta acción no se puede deshacer.', async () => {
       try {
         await ticketsAPI.deleteTicket(ticket.id);
-        showNotification('Ticket eliminado exitosamente', 'success');
+        notifySuccess('Ticket eliminado exitosamente');
       } catch (err) {
         if (err.response?.status === 403) {
-          showNotification('No tienes permisos para eliminar este ticket', 'error');
+          notifyError('No tienes permisos para eliminar este ticket');
         } else {
-          showNotification('Error al eliminar el ticket.', 'error');
+          notifyError('Error al eliminar el ticket.');
         }
       }
     });
@@ -462,7 +463,7 @@ const Tickets = () => {
 
         await ticketsAPI.createTicketWithAttachment(formDataToSend);
         setShowCreateModal(false);
-        showNotification('Ticket creado exitosamente', 'success');
+        notifySuccess('Ticket creado exitosamente');
       } else {
         const ticketData = {
           title: formData.title,
@@ -475,13 +476,13 @@ const Tickets = () => {
 
         await ticketsAPI.createTicket(ticketData);
         setShowCreateModal(false);
-        showNotification('Ticket creado exitosamente', 'success');
+        notifySuccess('Ticket creado exitosamente');
       }
     } catch (err) {
       if (err.response?.status === 403) {
-        showNotification('No tienes permisos para crear tickets', 'error');
+        notifyError('No tienes permisos para crear tickets');
       } else {
-        showNotification('Error al crear el ticket.', 'error');
+        notifyError('Error al crear el ticket.');
       }
     } finally {
       setFormLoading(false);
@@ -496,12 +497,12 @@ const Tickets = () => {
       const updateData = { ...editFormData, assignedTo: assignedToValue || null };
       await ticketsAPI.updateTicket(editingTicket.id, updateData);
       setShowEditModal(false);
-      showNotification('Ticket actualizado exitosamente', 'success');
+      notifySuccess('Ticket actualizado exitosamente');
     } catch (err) {
       if (err.response?.status === 403) {
-        showNotification('No tienes permisos para editar este ticket', 'error');
+        notifyError('No tienes permisos para editar este ticket');
       } else {
-        showNotification('Error al actualizar el ticket.', 'error');
+        notifyError('Error al actualizar el ticket.');
       }
     } finally {
       setFormLoading(false);
@@ -519,14 +520,14 @@ const Tickets = () => {
       setMessages(messagesData);
     } catch (err) {
       if (err.response?.status === 403) {
-        showNotification('No tienes permisos para ver los detalles de este ticket', 'error');
+        notifyError('No tienes permisos para ver los detalles de este ticket');
         return;
       }
       if (err.response?.status === 401) {
-        showNotification('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.', 'error');
+        notifyError('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
         return;
       }
-      showNotification('Error al cargar los detalles del ticket.', 'error');
+      notifyError('Error al cargar los detalles del ticket.');
     }
     setShowDetailModal(true);
   };
@@ -536,19 +537,19 @@ const Tickets = () => {
     if (!newMessage.trim()) return;
 
     if (!canSendMessage(selectedTicket)) {
-      showNotification('No tienes permisos para enviar mensajes en este ticket', 'error');
+      notifyError('No tienes permisos para enviar mensajes en este ticket');
       return;
     }
 
     try {
       await messagesAPI.createMessage(selectedTicket.id, { content: newMessage });
       setNewMessage('');
-      showNotification('Mensaje enviado exitosamente', 'success');
+      notifySuccess('Mensaje enviado exitosamente');
     } catch (err) {
       if (err.response?.status === 403) {
-        showNotification('No tienes permisos para enviar mensajes en este ticket', 'error');
+        notifyError('No tienes permisos para enviar mensajes en este ticket');
       } else {
-        showNotification('Error al enviar mensaje.', 'error');
+        notifyError('Error al enviar mensaje.');
       }
     }
   };
@@ -611,16 +612,11 @@ const Tickets = () => {
     ];
 
     XLSX.writeFile(wb, `tickets_${new Date().toISOString().split('T')[0]}.xlsx`);
-    showNotification('Tickets exportados exitosamente', 'success');
+    notifySuccess('Tickets exportados exitosamente');
   };
 
 
   // Funciones de UI
-  const showNotification = (message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  };
-
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });
   };
@@ -648,38 +644,6 @@ const Tickets = () => {
       dark: "min-h-screen bg-gray-900 py-4 px-3 sm:py-6 sm:px-4 lg:px-8"
     })}>
       <div className="max-w-7xl mx-auto">
-        {/* Notification */}
-        {notification && (
-          <div className="fixed top-3 right-3 left-3 sm:top-4 sm:right-4 sm:left-auto z-50 max-w-sm animate-slide-in-right">
-            <div className={`flex items-center p-3 sm:p-4 rounded-xl shadow-2xl border-2 transition-all duration-300 ${
-              notification.type === 'success'
-                ? 'bg-white border-green-400 text-green-800'
-                : 'bg-white border-red-400 text-red-800'
-            }`}>
-              <div className="shrink-0">
-                {notification.type === 'success' ? (
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <FaCheck className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-                  </div>
-                ) : (
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 rounded-full flex items-center justify-center">
-                    <FaTimes className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
-                  </div>
-                )}
-              </div>
-              <div className="ml-3 sm:ml-4 flex-1">
-                <p className="text-xs sm:text-sm font-semibold">{notification.message}</p>
-              </div>
-              <button
-                onClick={() => setNotification(null)}
-                className="ml-3 sm:ml-4 text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <FaTimes className="w-3 h-3 sm:w-4 sm:h-4" />
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Confirm Dialog */}
         {confirmDialog && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4 animate-fade-in">

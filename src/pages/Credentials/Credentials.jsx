@@ -2,11 +2,13 @@ import React, { useState, useEffect, useContext } from 'react';
 import { credentialsAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { useThemeClasses } from '../../hooks/useThemeClasses.js';
+import { useNotifications } from '../../hooks/useNotifications';
 import { FaLock, FaPlus, FaEdit, FaTrash, FaEye, FaEyeSlash, FaCheck, FaTimes, FaSearch, FaFilter, FaCopy, FaKey, FaExclamationTriangle, FaSortAmountDown, FaSortAmountUp, FaHistory, FaClock, FaArrowLeft, FaFolder, FaFolderOpen } from 'react-icons/fa';
 import { NotificationSystem, ConfirmDialog, FilterPanel } from '../../components/common';
 
 const Credentials = () => {
   const { conditionalClasses } = useThemeClasses();
+  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
   const [credentials, setCredentials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -27,7 +29,6 @@ const Credentials = () => {
   const [folders, setFolders] = useState([]);
   const [currentFolder, setCurrentFolder] = useState(null);
   const [loadingFolders, setLoadingFolders] = useState(true);
-  const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user, checkPermission } = useContext(AuthContext);
 
@@ -255,7 +256,7 @@ const Credentials = () => {
       // Intentar con la API moderna
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(text);
-        showNotification(`${label} copiado al portapapeles`, 'success');
+        notifySuccess(`${label} copiado al portapapeles`);
         return;
       }
     } catch (err) {
@@ -277,13 +278,13 @@ const Credentials = () => {
       document.body.removeChild(textArea);
 
       if (successful) {
-        showNotification(`${label} copiado al portapapeles`, 'success');
+        notifySuccess(`${label} copiado al portapapeles`);
       } else {
         throw new Error('execCommand failed');
       }
     } catch (fallbackErr) {
       console.error('Fallback copy failed:', fallbackErr);
-      showNotification('Error al copiar al portapapeles. Intente copiar manualmente.', 'error');
+      notifyError('Error al copiar al portapapeles. Intente copiar manualmente.');
     }
   };
 
@@ -309,7 +310,7 @@ const Credentials = () => {
     
     setFormData({ ...formData, password });
     setPasswordStrength(checkPasswordStrength(password));
-    showNotification('Contraseña segura generada', 'success');
+    notifySuccess('Contraseña segura generada');
   };
 
 
@@ -367,9 +368,9 @@ const Credentials = () => {
       try {
         await credentialsAPI.deleteCredential(id);
         fetchCredentials();
-        showNotification('Credencial eliminada exitosamente', 'success');
+        notifySuccess('Credencial eliminada exitosamente');
       } catch (err) {
-        showNotification('Error al eliminar la credencial. Por favor, inténtalo de nuevo.', 'error');
+        notifyError('Error al eliminar la credencial. Por favor, inténtalo de nuevo.');
       }
     });
   };
@@ -381,19 +382,19 @@ const Credentials = () => {
       const credentialData = { ...formData };
       if (editingCredential) {
         await credentialsAPI.updateCredential(editingCredential.id, credentialData);
-        showNotification('Credencial actualizada exitosamente', 'success');
+        notifySuccess('Credencial actualizada exitosamente');
       } else {
         // Si estamos en una carpeta, asignar la carpeta actual
         if (currentFolder) {
           credentialData.credentialFolderId = currentFolder.id;
         }
         await credentialsAPI.createCredential(credentialData);
-        showNotification('Credencial creada exitosamente', 'success');
+        notifySuccess('Credencial creada exitosamente');
       }
       fetchCredentials();
       setShowModal(false);
     } catch (err) {
-      showNotification('Error al guardar la credencial. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
+      notifyError('Error al guardar la credencial. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setFormLoading(false);
     }
@@ -405,10 +406,10 @@ const Credentials = () => {
     try {
       await credentialsAPI.createFolder(folderFormData);
       fetchFolders();
-      showNotification('Carpeta creada exitosamente', 'success');
+      notifySuccess('Carpeta creada exitosamente');
       setShowFolderModal(false);
     } catch (err) {
-      showNotification('Error al crear la carpeta. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
+      notifyError('Error al crear la carpeta. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setFolderFormLoading(false);
     }
@@ -425,9 +426,9 @@ const Credentials = () => {
       try {
         await credentialsAPI.deleteFolder(id);
         fetchFolders();
-        showNotification('Carpeta eliminada exitosamente', 'success');
+        notifySuccess('Carpeta eliminada exitosamente');
       } catch (err) {
-        showNotification('Error al eliminar la carpeta. Por favor, inténtalo de nuevo.', 'error');
+        notifyError('Error al eliminar la carpeta. Por favor, inténtalo de nuevo.');
       }
     });
   };
@@ -438,11 +439,11 @@ const Credentials = () => {
     try {
       await credentialsAPI.updateFolder(editingFolder.id, editFolderFormData);
       fetchFolders();
-      showNotification('Carpeta actualizada exitosamente', 'success');
+      notifySuccess('Carpeta actualizada exitosamente');
       setShowEditFolderModal(false);
       setEditingFolder(null);
     } catch (err) {
-      showNotification('Error al actualizar la carpeta. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
+      notifyError('Error al actualizar la carpeta. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setEditFolderFormLoading(false);
     }
@@ -464,11 +465,6 @@ const Credentials = () => {
       setPasswordStrength(null);
     }
   }, [formData.password]);
-
-  const showNotification = (message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  };
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });
@@ -502,12 +498,6 @@ const Credentials = () => {
 
   return (
     <div className={`min-h-screen py-4 sm:py-6 md:py-8 px-2 sm:px-4 md:px-6 lg:px-8 ${conditionalClasses({ light: 'bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]', dark: 'bg-gray-900' })}`}>
-      {/* Notification */}
-      <NotificationSystem
-        notification={notification}
-        onClose={() => setNotification(null)}
-      />
-
       {/* Confirm Dialog */}
       <ConfirmDialog
         confirmDialog={confirmDialog}

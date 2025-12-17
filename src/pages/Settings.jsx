@@ -3,16 +3,17 @@ import AuthContext from '../context/AuthContext.jsx';
 import { usersAPI } from '../api';
 import ThemeToggle from '../components/ThemeToggle';
 import { useThemeClasses } from '../hooks/useThemeClasses';
+import { useNotifications } from '../hooks/useNotifications';
 import { FaCheck, FaTimes, FaEye, FaEyeSlash, FaCog, FaLock, FaShieldAlt, FaKey, FaPalette } from 'react-icons/fa';
 
 const Settings = () => {
   const { user } = useContext(AuthContext);
   const { conditionalClasses } = useThemeClasses();
+  const { notifySuccess, notifyError } = useNotifications();
   const [settings, setSettings] = useState(() => {
     return {};
   });
   const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
@@ -64,17 +65,12 @@ const Settings = () => {
 
     try {
       await usersAPI.updateSettings(settings);
-      showNotification('Configuración guardada exitosamente', 'success');
+      notifySuccess('Configuración guardada exitosamente');
     } catch (error) {
-      showNotification('Error al guardar la configuración. Por favor, inténtalo de nuevo.', 'error');
+      notifyError('Error al guardar la configuración. Por favor, inténtalo de nuevo.');
     } finally {
       setLoading(false);
     }
-  };
-
-  const showNotification = (message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
   };
 
   const handlePasswordChange = (e) => {
@@ -96,7 +92,7 @@ const Settings = () => {
     setPasswordLoading(true);
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      showNotification('Las contraseñas no coinciden', 'error');
+      notifyError('Las contraseñas no coinciden');
       setPasswordLoading(false);
       return;
     }
@@ -106,7 +102,7 @@ const Settings = () => {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       });
-      showNotification('Contraseña cambiada exitosamente. Serás redirigido al login.', 'success');
+      notifySuccess('Contraseña cambiada exitosamente. Serás redirigido al login.');
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
       setShowPasswords({ current: false, new: false, confirm: false });
 
@@ -117,7 +113,7 @@ const Settings = () => {
         window.location.href = '/login';
       }, 2000);
     } catch (error) {
-      showNotification(error.response?.data?.error || error || 'Error al cambiar la contraseña. Por favor, inténtalo de nuevo.', 'error');
+      notifyError(error.response?.data?.error || error || 'Error al cambiar la contraseña. Por favor, inténtalo de nuevo.');
     } finally {
       setPasswordLoading(false);
     }
@@ -129,7 +125,7 @@ const Settings = () => {
       if (twoFactorData.isEnabled) {
         await usersAPI.disable2FA();
         setTwoFactorData(prev => ({ ...prev, isEnabled: false }));
-        showNotification('Autenticación de dos factores deshabilitada', 'success');
+        notifySuccess('Autenticación de dos factores deshabilitada');
       } else {
         const response = await usersAPI.enable2FA();
         setTwoFactorData(prev => ({
@@ -140,7 +136,7 @@ const Settings = () => {
         setShow2FAModal(true);
       }
     } catch (error) {
-      showNotification(error || 'Error al cambiar configuración 2FA', 'error');
+      notifyError(error || 'Error al cambiar configuración 2FA');
     } finally {
       setTwoFactorLoading(false);
     }
@@ -160,9 +156,9 @@ const Settings = () => {
         token: ''
       }));
       setShow2FAModal(false);
-      showNotification('Autenticación de dos factores habilitada exitosamente', 'success');
+      notifySuccess('Autenticación de dos factores habilitada exitosamente');
     } catch (error) {
-      showNotification(error || 'Código de verificación incorrecto', 'error');
+      notifyError(error || 'Código de verificación incorrecto');
     } finally {
       setTwoFactorLoading(false);
     }
@@ -182,63 +178,6 @@ const Settings = () => {
     })}>
       <div className="max-w-5xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         
-        {/* Notification Toast */}
-        {notification && (
-          <div className="fixed top-4 right-4 z-50 max-w-sm">
-            <div className={conditionalClasses({
-              light: `flex items-center gap-3 p-4 rounded-lg shadow-lg border backdrop-blur-sm transition-all duration-300 ${
-                notification.type === 'success'
-                  ? 'bg-green-50 border-green-200 text-green-800'
-                  : 'bg-red-50 border-red-200 text-red-800'
-              }`,
-              dark: `flex items-center gap-3 p-4 rounded-lg shadow-lg border backdrop-blur-sm transition-all duration-300 ${
-                notification.type === 'success'
-                  ? 'bg-green-900/30 border-green-800 text-green-300'
-                  : 'bg-red-900/30 border-red-800 text-red-300'
-              }`
-            })}>
-              <div className={conditionalClasses({
-                light: `p-2 rounded-full shrink-0 ${
-                  notification.type === 'success' ? 'bg-green-100' : 'bg-red-100'
-                }`,
-                dark: `p-2 rounded-full shrink-0 ${
-                  notification.type === 'success' ? 'bg-green-800/50' : 'bg-red-800/50'
-                }`
-              })}>
-                {notification.type === 'success' ? (
-                  <FaCheck className={conditionalClasses({
-                    light: 'w-4 h-4 text-green-600',
-                    dark: 'w-4 h-4 text-green-400'
-                  })} />
-                ) : (
-                  <FaTimes className={conditionalClasses({
-                    light: 'w-4 h-4 text-red-600',
-                    dark: 'w-4 h-4 text-red-400'
-                  })} />
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className={conditionalClasses({
-                  light: 'text-sm font-medium',
-                  dark: 'text-sm font-medium'
-                })}>{notification.message}</p>
-              </div>
-              <button
-                onClick={() => setNotification(null)}
-                className={conditionalClasses({
-                  light: 'shrink-0 p-1 rounded-md hover:bg-black/5 transition-colors',
-                  dark: 'shrink-0 p-1 rounded-md hover:bg-white/10 transition-colors'
-                })}
-              >
-                <FaTimes className={conditionalClasses({
-                  light: 'w-3.5 h-3.5',
-                  dark: 'w-3.5 h-3.5'
-                })} />
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Header Section */}
         <div className="mb-6 lg:mb-8">
           <div className="flex items-center gap-3 mb-2">

@@ -4,12 +4,14 @@ import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeClasses } from '../../hooks/useThemeClasses.js';
+import { useNotifications } from '../../hooks/useNotifications';
 import inventoryAPI from '../../api/inventoryAPI';
 import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 import ActaEntregaHistoryModal from '../../components/ActasEntrega/ActaEntregaHistoryModal';
 
 const Inventory = () => {
   const { conditionalClasses } = useThemeClasses();
+  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
   const [inventory, setInventory] = useState([]);
   const [filteredInventory, setFilteredInventory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +33,6 @@ const Inventory = () => {
     cost: ''
   });
   const [formLoading, setFormLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [detectingHardware, setDetectingHardware] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -62,7 +63,7 @@ const Inventory = () => {
       const data = await inventoryAPI.fetchInventory();
       setInventory(data);
     } catch (err) {
-      showNotification('Error al cargar el inventario. Por favor, recarga la página.', 'error');
+      notifyError('Error al cargar el inventario. Por favor, recarga la página.');
     } finally {
       setLoading(false);
     }
@@ -189,9 +190,9 @@ const Inventory = () => {
       try {
         await inventoryAPI.deleteInventoryItem(id);
         fetchInventory();
-        showNotification('Equipo eliminado exitosamente', 'success');
+        notifySuccess('Equipo eliminado exitosamente');
       } catch (err) {
-        showNotification('Error al eliminar el equipo. Por favor, inténtalo de nuevo.', 'error');
+        notifyError('Error al eliminar el equipo. Por favor, inténtalo de nuevo.');
       }
     });
   };
@@ -205,7 +206,7 @@ const Inventory = () => {
       const history = await inventoryAPI.getHistory(item.id);
       // El modal manejará la carga de datos internamente
     } catch (err) {
-      showNotification('Error al cargar el historial. Por favor, inténtalo de nuevo.', 'error');
+      notifyError('Error al cargar el historial. Por favor, inténtalo de nuevo.');
       setShowHistoryModal(false);
     } finally {
       setHistoryLoading(false);
@@ -218,15 +219,15 @@ const Inventory = () => {
     try {
       if (editingItem) {
         await inventoryAPI.updateInventoryItem(editingItem.id, formData);
-        showNotification('Equipo actualizado exitosamente', 'success');
+        notifySuccess('Equipo actualizado exitosamente');
       } else {
         await inventoryAPI.createInventoryItem(formData);
-        showNotification('Equipo creado exitosamente', 'success');
+        notifySuccess('Equipo creado exitosamente');
       }
       fetchInventory();
       setShowModal(false);
     } catch (err) {
-      showNotification('Error al guardar el equipo. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
+      notifyError('Error al guardar el equipo. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setFormLoading(false);
     }
@@ -243,9 +244,9 @@ const Inventory = () => {
         ram: hardwareData.ram !== 'No detectado' ? hardwareData.ram : prev.ram,
         marca: hardwareData.marca !== 'No detectado' ? hardwareData.marca : prev.marca,
       }));
-      showNotification('Hardware detectado automáticamente', 'success');
+      notifySuccess('Hardware detectado automáticamente');
     } catch (err) {
-      showNotification('Error al detectar hardware. Verifica la conexión.', 'error');
+      notifyError('Error al detectar hardware. Verifica la conexión.');
     } finally {
       setDetectingHardware(false);
     }
@@ -320,18 +321,13 @@ const Inventory = () => {
     ];
 
     XLSX.writeFile(wb, `inventario_${new Date().toISOString().split('T')[0]}.xlsx`);
-    showNotification('Inventario exportado exitosamente', 'success');
+    notifySuccess('Inventario exportado exitosamente');
   };
 
   const canCreate = checkPermission('inventory', 'create');
   const canEdit = checkPermission('inventory', 'edit');
   const canDelete = checkPermission('inventory', 'delete');
   const canView = checkPermission('inventory', 'view');
-
-  const showNotification = (message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  };
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });
@@ -378,12 +374,6 @@ const Inventory = () => {
       light: 'bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]',
       dark: 'bg-gray-900'
     })}`}>
-      {/* Notification */}
-      <NotificationSystem
-        notification={notification}
-        onClose={() => setNotification(null)}
-      />
-
       {/* Confirm Dialog */}
       <ConfirmDialog
         confirmDialog={confirmDialog}

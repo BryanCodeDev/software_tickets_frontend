@@ -5,12 +5,14 @@ import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
 import { corporatePhoneAPI } from '../../api';
-import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
+import { ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 import ActaEntregaHistoryModal from '../../components/ActasEntrega/ActaEntregaHistoryModal';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
+import { useNotifications } from '../../hooks/useNotifications';
 
 const CorporatePhones = () => {
   const { conditionalClasses } = useThemeClasses();
+  const { notifySuccess, notifyError } = useNotifications();
   const [corporatePhones, setCorporatePhones] = useState([]);
   const [filteredPhones, setFilteredPhones] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +39,6 @@ const CorporatePhones = () => {
     status: 'activo'
   });
   const [formLoading, setFormLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -66,7 +67,7 @@ const CorporatePhones = () => {
       const data = await corporatePhoneAPI.fetchCorporatePhones();
       setCorporatePhones(data);
     } catch (err) {
-      showNotification('Error al cargar los teléfonos corporativos. Por favor, recarga la página.', 'error');
+      notifyError('Error al cargar los teléfonos corporativos. Por favor, recarga la página.');
     } finally {
       setLoading(false);
     }
@@ -192,9 +193,9 @@ const CorporatePhones = () => {
       try {
         await corporatePhoneAPI.deleteCorporatePhone(id);
         fetchCorporatePhones();
-        showNotification('Teléfono corporativo eliminado exitosamente', 'success');
+        notifySuccess('Teléfono corporativo eliminado exitosamente');
       } catch (err) {
-        showNotification('Error al eliminar el teléfono corporativo. Por favor, inténtalo de nuevo.', 'error');
+        notifyError('Error al eliminar el teléfono corporativo. Por favor, inténtalo de nuevo.');
       }
     });
   };
@@ -203,12 +204,12 @@ const CorporatePhones = () => {
     setHistoryItem(item);
     setHistoryLoading(true);
     setShowHistoryModal(true);
-    
+
     try {
       const history = await corporatePhoneAPI.getHistory(item.id);
       // El modal manejará la carga de datos internamente
     } catch (err) {
-      showNotification('Error al cargar el historial. Por favor, inténtalo de nuevo.', 'error');
+      notifyError('Error al cargar el historial. Por favor, inténtalo de nuevo.');
       setShowHistoryModal(false);
     } finally {
       setHistoryLoading(false);
@@ -221,15 +222,15 @@ const CorporatePhones = () => {
     try {
       if (editingItem) {
         await corporatePhoneAPI.updateCorporatePhone(editingItem.id, formData);
-        showNotification('Teléfono corporativo actualizado exitosamente', 'success');
+        notifySuccess('Teléfono corporativo actualizado exitosamente');
       } else {
         await corporatePhoneAPI.createCorporatePhone(formData);
-        showNotification('Teléfono corporativo creado exitosamente', 'success');
+        notifySuccess('Teléfono corporativo creado exitosamente');
       }
       fetchCorporatePhones();
       setShowModal(false);
     } catch (err) {
-      showNotification('Error al guardar el teléfono corporativo. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
+      notifyError('Error al guardar el teléfono corporativo. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setFormLoading(false);
     }
@@ -306,18 +307,13 @@ const CorporatePhones = () => {
     ];
 
     XLSX.writeFile(wb, `telefonos_corporativos_${new Date().toISOString().split('T')[0]}.xlsx`);
-    showNotification('Teléfonos corporativos exportados exitosamente', 'success');
+    notifySuccess('Teléfonos corporativos exportados exitosamente');
   };
 
   const canCreate = checkPermission('corporate_phones', 'create');
   const canEdit = checkPermission('corporate_phones', 'edit');
   const canDelete = checkPermission('corporate_phones', 'delete');
   const canView = checkPermission('corporate_phones', 'view');
-
-  const showNotification = (message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  };
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });
@@ -376,12 +372,6 @@ const CorporatePhones = () => {
       light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8',
       dark: 'min-h-screen bg-gray-900 py-4 px-3 sm:py-6 sm:px-4 lg:px-8'
     })}>
-      {/* Notification */}
-      <NotificationSystem
-        notification={notification}
-        onClose={() => setNotification(null)}
-      />
-
       {/* Confirm Dialog */}
       <ConfirmDialog
         confirmDialog={confirmDialog}

@@ -5,10 +5,12 @@ import { corporatePhoneAPI } from '../api';
 import { FaCheck, FaTimes, FaUser, FaEnvelope, FaIdCard, FaPhone, FaShieldAlt, FaSave, FaSearch, FaMobile } from 'react-icons/fa';
 import { onUserUpdated, offUserUpdated } from '../api/socket';
 import { useThemeClasses } from '../hooks/useThemeClasses';
+import { useNotifications } from '../hooks/useNotifications';
 
 const Profile = () => {
   const { user, updateUser } = useContext(AuthContext);
   const { conditionalClasses } = useThemeClasses();
+  const { notifySuccess, notifyError } = useNotifications();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,7 +20,6 @@ const Profile = () => {
     corporatePhone: ''
   });
   const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
   const [uniqueITs, setUniqueITs] = useState([]);
   const [availablePhones, setAvailablePhones] = useState([]);
   const [searchPhone, setSearchPhone] = useState('');
@@ -101,17 +102,12 @@ const Profile = () => {
     try {
       const updatedUser = await usersAPI.updateProfile(formData);
       updateUser(updatedUser);
-      showNotification('Perfil actualizado exitosamente', 'success');
+      notifySuccess('Perfil actualizado exitosamente');
     } catch (error) {
-      showNotification('Error al actualizar el perfil. Por favor, inténtalo de nuevo.', 'error');
+      notifyError('Error al actualizar el perfil. Por favor, inténtalo de nuevo.');
     } finally {
       setLoading(false);
     }
-  };
-
-  const showNotification = (message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
   };
 
   return (
@@ -121,63 +117,6 @@ const Profile = () => {
     })}>
       <div className="max-w-5xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         
-        {/* Notification Toast */}
-        {notification && (
-          <div className="fixed top-4 right-4 z-50 max-w-sm">
-            <div className={conditionalClasses({
-              light: `flex items-center gap-3 p-4 rounded-lg shadow-lg border backdrop-blur-sm transition-all duration-300 ${
-                notification.type === 'success'
-                  ? 'bg-green-50 border-green-200 text-green-800'
-                  : 'bg-red-50 border-red-200 text-red-800'
-              }`,
-              dark: `flex items-center gap-3 p-4 rounded-lg shadow-lg border backdrop-blur-sm transition-all duration-300 ${
-                notification.type === 'success'
-                  ? 'bg-green-900/30 border-green-800 text-green-300'
-                  : 'bg-red-900/30 border-red-800 text-red-300'
-              }`
-            })}>
-              <div className={conditionalClasses({
-                light: `p-2 rounded-full shrink-0 ${
-                  notification.type === 'success' ? 'bg-green-100' : 'bg-red-100'
-                }`,
-                dark: `p-2 rounded-full shrink-0 ${
-                  notification.type === 'success' ? 'bg-green-800/50' : 'bg-red-800/50'
-                }`
-              })}>
-                {notification.type === 'success' ? (
-                  <FaCheck className={conditionalClasses({
-                    light: 'w-4 h-4 text-green-600',
-                    dark: 'w-4 h-4 text-green-400'
-                  })} />
-                ) : (
-                  <FaTimes className={conditionalClasses({
-                    light: 'w-4 h-4 text-red-600',
-                    dark: 'w-4 h-4 text-red-400'
-                  })} />
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className={conditionalClasses({
-                  light: 'text-sm font-medium',
-                  dark: 'text-sm font-medium'
-                })}>{notification.message}</p>
-              </div>
-              <button
-                onClick={() => setNotification(null)}
-                className={conditionalClasses({
-                  light: 'shrink-0 p-1 rounded-md hover:bg-black/5 transition-colors',
-                  dark: 'shrink-0 p-1 rounded-md hover:bg-white/10 transition-colors'
-                })}
-              >
-                <FaTimes className={conditionalClasses({
-                  light: 'w-3.5 h-3.5',
-                  dark: 'w-3.5 h-3.5'
-                })} />
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Header Section */}
         <div className="mb-6 lg:mb-8">
           <div className="flex items-center gap-3 mb-2">

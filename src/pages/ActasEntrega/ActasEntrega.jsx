@@ -9,15 +9,17 @@ import tabletInventoryAPI from '../../api/tabletInventoryAPI';
 import pdaInventoryAPI from '../../api/pdaInventoryAPI';
 import usersAPI from '../../api/usersAPI';
 import { getSocket, onActaEntregaCreated, onActaEntregaUpdated, onActaEntregaDeleted, onActasEntregaListUpdated } from '../../api/socket';
-import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
+import { ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
 import ActaEntregaCard from './ActaEntregaCard';
 import ActaEntregaTable from './ActaEntregaTable';
 import ActaEntregaModal from './ActaEntregaModal';
 import ActaEntregaHistoryModal from './ActaEntregaHistoryModal';
+import { useNotifications } from '../../context/NotificationContext';
 
 const ActasEntrega = () => {
   const { conditionalClasses } = useThemeClasses();
+  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
   const [actas, setActas] = useState([]);
   const [filteredActas, setFilteredActas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -60,7 +62,6 @@ const ActasEntrega = () => {
     plan_datos: ''
   });
   const [formLoading, setFormLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -139,9 +140,9 @@ const ActasEntrega = () => {
       setActas(actasData);
     } catch (err) {
       if (err.response && err.response.status === 403) {
-        showNotification('No tienes permisos para ver las actas de entrega.', 'error');
+        notifyError('No tienes permisos para ver las actas de entrega.');
       } else {
-        showNotification('Error al cargar las actas de entrega. Por favor, recarga la página.', 'error');
+        notifyError('Error al cargar las actas de entrega. Por favor, recarga la página.');
       }
       setActas([]);
     } finally {
@@ -199,12 +200,12 @@ const ActasEntrega = () => {
       setEquiposDisponibles(equipos);
 
       if (equipos.length === 0) {
-        showNotification('No hay equipos disponibles en este momento. Contacte al administrador.', 'warning');
+        notifyWarning('No hay equipos disponibles en este momento. Contacte al administrador.');
       }
 
     } catch (err) {
       setEquiposDisponibles([]);
-      
+
       let errorMessage = 'Error al cargar los equipos disponibles.';
       if (err.response) {
         errorMessage += ` Error del servidor: ${err.response.status}`;
@@ -213,8 +214,8 @@ const ActasEntrega = () => {
       } else {
         errorMessage += ` ${err.message}`;
       }
-      
-      showNotification(errorMessage, 'error');
+
+      notifyError(errorMessage);
     }
   };
 
@@ -373,9 +374,9 @@ const ActasEntrega = () => {
       try {
         await actaEntregaAPI.delete(id);
         fetchActas();
-        showNotification('Acta de entrega eliminada exitosamente', 'success');
+        notifySuccess('Acta de entrega eliminada exitosamente');
       } catch (err) {
-        showNotification('Error al eliminar el acta. Por favor, inténtalo de nuevo.', 'error');
+        notifyError('Error al eliminar el acta. Por favor, inténtalo de nuevo.');
       }
     });
   };
@@ -391,10 +392,10 @@ const ActasEntrega = () => {
     try {
       if (editingItem) {
         await actaEntregaAPI.update(editingItem.id, formData);
-        showNotification('Acta de entrega actualizada exitosamente', 'success');
+        notifySuccess('Acta de entrega actualizada exitosamente');
       } else {
         await actaEntregaAPI.create(formData);
-        showNotification('Acta de entrega creada exitosamente', 'success');
+        notifySuccess('Acta de entrega creada exitosamente');
       }
 
       // Recargar datos y esperar a que se completen
@@ -407,7 +408,7 @@ const ActasEntrega = () => {
       if (err.response && err.response.data && err.response.data.error) {
         errorMessage = err.response.data.error;
       }
-      showNotification(errorMessage, 'error');
+      notifyError(errorMessage);
     } finally {
       setFormLoading(false);
     }
@@ -418,11 +419,6 @@ const ActasEntrega = () => {
   const canEdit = checkPermission('actas-entrega', 'edit');
   const canDelete = checkPermission('actas-entrega', 'delete');
   const canView = checkPermission('actas-entrega', 'view');
-
-  const showNotification = (message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  };
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });
@@ -457,11 +453,6 @@ const ActasEntrega = () => {
       light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8',
       dark: 'min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 py-4 px-3 sm:py-6 sm:px-4 lg:px-8'
     })}>
-      <NotificationSystem
-        notification={notification}
-        onClose={() => setNotification(null)}
-      />
-
       <ConfirmDialog
         confirmDialog={confirmDialog}
         onClose={() => setConfirmDialog(null)}

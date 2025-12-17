@@ -4,12 +4,14 @@ import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
 import tabletInventoryAPI from '../../api/tabletInventoryAPI';
-import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
+import { ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 import ActaEntregaHistoryModal from '../../components/ActasEntrega/ActaEntregaHistoryModal';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
+import { useNotifications } from '../../context/NotificationContext';
 
 const Tablets = () => {
   const { conditionalClasses } = useThemeClasses();
+  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
   const [tablets, setTablets] = useState([]);
   const [filteredTablets, setFilteredTablets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +36,6 @@ const Tablets = () => {
     cost: ''
   });
   const [formLoading, setFormLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -64,7 +65,7 @@ const Tablets = () => {
       const data = await tabletInventoryAPI.fetchTabletInventory();
       setTablets(data);
     } catch (err) {
-      showNotification('Error al cargar las tablets. Por favor, recarga la página.', 'error');
+      notifyError('Error al cargar las tablets. Por favor, recarga la página.');
     } finally {
       setLoading(false);
     }
@@ -197,9 +198,9 @@ const Tablets = () => {
       try {
         await tabletInventoryAPI.deleteTabletInventoryItem(id);
         fetchTablets();
-        showNotification('Tablet eliminada exitosamente', 'success');
+        notifySuccess('Tablet eliminada exitosamente');
       } catch (err) {
-        showNotification('Error al eliminar la tablet. Por favor, inténtalo de nuevo.', 'error');
+        notifyError('Error al eliminar la tablet. Por favor, inténtalo de nuevo.');
       }
     });
   };
@@ -208,12 +209,12 @@ const Tablets = () => {
     setHistoryItem(item);
     setHistoryLoading(true);
     setShowHistoryModal(true);
-    
+
     try {
       const history = await tabletInventoryAPI.getHistory(item.id);
       // El modal manejará la carga de datos internamente
     } catch (err) {
-      showNotification('Error al cargar el historial. Por favor, inténtalo de nuevo.', 'error');
+      notifyError('Error al cargar el historial. Por favor, inténtalo de nuevo.');
       setShowHistoryModal(false);
     } finally {
       setHistoryLoading(false);
@@ -226,15 +227,15 @@ const Tablets = () => {
     try {
       if (editingItem) {
         await tabletInventoryAPI.updateTabletInventoryItem(editingItem.id, formData);
-        showNotification('Tablet actualizada exitosamente', 'success');
+        notifySuccess('Tablet actualizada exitosamente');
       } else {
         await tabletInventoryAPI.createTabletInventoryItem(formData);
-        showNotification('Tablet creada exitosamente', 'success');
+        notifySuccess('Tablet creada exitosamente');
       }
       fetchTablets();
       setShowModal(false);
     } catch (err) {
-      showNotification('Error al guardar la tablet. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
+      notifyError('Error al guardar la tablet. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setFormLoading(false);
     }
@@ -315,18 +316,13 @@ const Tablets = () => {
     ];
 
     XLSX.writeFile(wb, `tablets_${new Date().toISOString().split('T')[0]}.xlsx`);
-    showNotification('Tablets exportadas exitosamente', 'success');
+    notifySuccess('Tablets exportadas exitosamente');
   };
 
   const canCreate = checkPermission('tablets', 'create');
   const canEdit = checkPermission('tablets', 'edit');
   const canDelete = checkPermission('tablets', 'delete');
   const canView = checkPermission('tablets', 'view');
-
-  const showNotification = (message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  };
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });
@@ -373,12 +369,6 @@ const Tablets = () => {
       light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8',
       dark: 'min-h-screen bg-gray-900 py-4 px-3 sm:py-6 sm:px-4 lg:px-8'
     })}>
-      {/* Notification */}
-      <NotificationSystem
-        notification={notification}
-        onClose={() => setNotification(null)}
-      />
-
       {/* Confirm Dialog */}
       <ConfirmDialog
         confirmDialog={confirmDialog}

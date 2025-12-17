@@ -3,11 +3,13 @@ import { rolesAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
+import { useNotifications } from '../../hooks/useNotifications';
 import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaShieldAlt, FaKey, FaUserShield, FaUserCog, FaUser, FaChartBar, FaSave, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
+import { ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 
 const Roles = () => {
   const { conditionalClasses } = useThemeClasses();
+  const { notifySuccess, notifyError } = useNotifications();
   const [roles, setRoles] = useState([]);
   const [permissions, setPermissions] = useState([]);
   const [permissionsByModule, setPermissionsByModule] = useState({});
@@ -22,7 +24,6 @@ const Roles = () => {
     permissionIds: []
   });
   const [formLoading, setFormLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
@@ -46,7 +47,7 @@ const Roles = () => {
       const data = await rolesAPI.fetchRoles();
       setRoles(data);
     } catch (err) {
-      showNotification('Error al cargar roles', 'error');
+      notifyError('Error al cargar roles');
     } finally {
       setLoading(false);
     }
@@ -61,7 +62,7 @@ const Roles = () => {
       setPermissions(allPermissions);
       setPermissionsByModule(groupedPermissions);
     } catch (err) {
-      showNotification('Error al cargar permisos', 'error');
+      notifyError('Error al cargar permisos');
     }
   };
 
@@ -140,10 +141,10 @@ const Roles = () => {
       async () => {
         try {
           await rolesAPI.deleteRole(roleId);
-          showNotification('Rol eliminado exitosamente', 'success');
+          notifySuccess('Rol eliminado exitosamente');
           fetchRoles();
         } catch (err) {
-          showNotification('Error al eliminar el rol', 'error');
+          notifyError('Error al eliminar el rol');
         }
       }
     );
@@ -165,18 +166,18 @@ const Roles = () => {
         // Update permissions
         await rolesAPI.updateRolePermissions(editingRole.id, formData.permissionIds);
 
-        showNotification('Rol actualizado exitosamente', 'success');
+        notifySuccess('Rol actualizado exitosamente');
         setShowEditModal(false);
       } else {
         // Create role
         await rolesAPI.createRole(formData);
-        showNotification('Rol creado exitosamente', 'success');
+        notifySuccess('Rol creado exitosamente');
         setShowCreateModal(false);
       }
 
       fetchRoles();
     } catch (err) {
-      showNotification('Error al guardar el rol', 'error');
+      notifyError('Error al guardar el rol');
     } finally {
       setFormLoading(false);
     }
@@ -208,11 +209,6 @@ const Roles = () => {
         permissionIds: [...new Set([...prev.permissionIds, ...modulePermissionIds])]
       }));
     }
-  };
-
-  const showNotification = (message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
   };
 
   const showConfirmDialog = (message, onConfirm) => {
@@ -277,12 +273,6 @@ const Roles = () => {
       light: "min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4 sm:px-6 lg:px-8",
       dark: "min-h-screen bg-gray-900 py-8 px-4 sm:px-6 lg:px-8"
     })}>
-      {/* Notification */}
-      <NotificationSystem
-        notification={notification}
-        onClose={() => setNotification(null)}
-      />
-
       {/* Confirm Dialog */}
       <ConfirmDialog
         confirmDialog={confirmDialog}

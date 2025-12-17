@@ -2,14 +2,15 @@ import React, { useState, useEffect, useContext } from 'react';
 import { trashAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
+import { useNotifications } from '../../hooks/useNotifications';
 import { FaTrash, FaUndo, FaTimes, FaSearch, FaFilter, FaChartBar, FaCalendarAlt, FaUser, FaFileAlt, FaTicketAlt, FaDatabase, FaPhone, FaTabletAlt, FaCog, FaHistory, FaEye, FaExclamationTriangle, FaDumpster, FaShieldAlt } from 'react-icons/fa';
-import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
+import { ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 
 const Trash = () => {
   const { conditionalClasses } = useThemeClasses();
+  const { notifySuccess, notifyError } = useNotifications();
   const [trashItems, setTrashItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
 
@@ -44,7 +45,7 @@ const Trash = () => {
       setTrashItems(data.trash);
       setPagination(data.pagination);
     } catch (err) {
-      showNotification('Error al cargar elementos de la papelera', 'error');
+      notifyError('Error al cargar elementos de la papelera');
     } finally {
       setLoading(false);
     }
@@ -67,9 +68,9 @@ const Trash = () => {
           await trashAPI.restoreTrash(item.id);
           fetchTrashItems();
           fetchStats();
-          showNotification('Elemento restaurado exitosamente', 'success');
+          notifySuccess('Elemento restaurado exitosamente');
         } catch (err) {
-          showNotification('Error al restaurar el elemento', 'error');
+          notifyError('Error al restaurar el elemento');
         }
       }
     );
@@ -83,9 +84,9 @@ const Trash = () => {
           await trashAPI.deleteTrash(item.id);
           fetchTrashItems();
           fetchStats();
-          showNotification('Elemento eliminado permanentemente', 'success');
+          notifySuccess('Elemento eliminado permanentemente');
         } catch (err) {
-          showNotification('Error al eliminar el elemento', 'error');
+          notifyError('Error al eliminar el elemento');
         }
       }
     );
@@ -99,17 +100,12 @@ const Trash = () => {
           await trashAPI.emptyTrash();
           fetchTrashItems();
           fetchStats();
-          showNotification('Papelera vaciada exitosamente', 'success');
+          notifySuccess('Papelera vaciada exitosamente');
         } catch (err) {
-          showNotification('Error al vaciar la papelera', 'error');
+          notifyError('Error al vaciar la papelera');
         }
       }
     );
-  };
-
-  const showNotification = (message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
   };
 
   const showConfirmDialog = (message, onConfirm) => {
@@ -212,12 +208,6 @@ const Trash = () => {
       light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4 sm:px-6 lg:px-8',
       dark: 'min-h-screen bg-gray-900 py-8 px-4 sm:px-6 lg:px-8'
     })}>
-      {/* Notification */}
-      <NotificationSystem
-        notification={notification}
-        onClose={() => setNotification(null)}
-      />
-
       {/* Confirm Dialog */}
       <ConfirmDialog
         confirmDialog={confirmDialog}

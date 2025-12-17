@@ -4,12 +4,14 @@ import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
 import pdaInventoryAPI from '../../api/pdaInventoryAPI';
-import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
+import { ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 import ActaEntregaHistoryModal from '../../components/ActasEntrega/ActaEntregaHistoryModal';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
+import { useNotifications } from '../../context/NotificationContext';
 
 const PDAs = () => {
   const { conditionalClasses } = useThemeClasses();
+  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
   const [pdas, setPdas] = useState([]);
   const [filteredPdas, setFilteredPdas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +35,6 @@ const PDAs = () => {
     cost: ''
   });
   const [formLoading, setFormLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -63,7 +64,7 @@ const PDAs = () => {
       const data = await pdaInventoryAPI.fetchPDAInventory();
       setPdas(data);
     } catch (err) {
-      showNotification('Error al cargar las PDAs. Por favor, recarga la página.', 'error');
+      notifyError('Error al cargar las PDAs. Por favor, recarga la página.');
     } finally {
       setLoading(false);
     }
@@ -194,9 +195,9 @@ const PDAs = () => {
       try {
         await pdaInventoryAPI.deletePDAInventoryItem(id);
         fetchPdas();
-        showNotification('PDA eliminada exitosamente', 'success');
+        notifySuccess('PDA eliminada exitosamente');
       } catch (err) {
-        showNotification('Error al eliminar la PDA. Por favor, inténtalo de nuevo.', 'error');
+        notifyError('Error al eliminar la PDA. Por favor, inténtalo de nuevo.');
       }
     });
   };
@@ -205,12 +206,12 @@ const PDAs = () => {
     setHistoryItem(item);
     setHistoryLoading(true);
     setShowHistoryModal(true);
-    
+
     try {
       const history = await pdaInventoryAPI.getHistory(item.id);
       // El modal manejará la carga de datos internamente
     } catch (err) {
-      showNotification('Error al cargar el historial. Por favor, inténtalo de nuevo.', 'error');
+      notifyError('Error al cargar el historial. Por favor, inténtalo de nuevo.');
       setShowHistoryModal(false);
     } finally {
       setHistoryLoading(false);
@@ -223,15 +224,15 @@ const PDAs = () => {
     try {
       if (editingItem) {
         await pdaInventoryAPI.updatePDAInventoryItem(editingItem.id, formData);
-        showNotification('PDA actualizada exitosamente', 'success');
+        notifySuccess('PDA actualizada exitosamente');
       } else {
         await pdaInventoryAPI.createPDAInventoryItem(formData);
-        showNotification('PDA creada exitosamente', 'success');
+        notifySuccess('PDA creada exitosamente');
       }
       fetchPdas();
       setShowModal(false);
     } catch (err) {
-      showNotification('Error al guardar la PDA. Por favor, verifica los datos e inténtalo de nuevo.', 'error');
+      notifyError('Error al guardar la PDA. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setFormLoading(false);
     }
@@ -310,18 +311,13 @@ const PDAs = () => {
     ];
 
     XLSX.writeFile(wb, `pdas_${new Date().toISOString().split('T')[0]}.xlsx`);
-    showNotification('PDAs exportadas exitosamente', 'success');
+    notifySuccess('PDAs exportadas exitosamente');
   };
 
   const canCreate = checkPermission('pdas', 'create');
   const canEdit = checkPermission('pdas', 'edit');
   const canDelete = checkPermission('pdas', 'delete');
   const canView = checkPermission('pdas', 'view');
-
-  const showNotification = (message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  };
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });
@@ -368,12 +364,6 @@ const PDAs = () => {
       light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8',
       dark: 'min-h-screen bg-gray-900 py-4 px-3 sm:py-6 sm:px-4 lg:px-8'
     })}>
-      {/* Notification */}
-      <NotificationSystem
-        notification={notification}
-        onClose={() => setNotification(null)}
-      />
-
       {/* Confirm Dialog */}
       <ConfirmDialog
         confirmDialog={confirmDialog}
