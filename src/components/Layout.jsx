@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
+import NotificationSystem from './common/NotificationSystem';
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -18,6 +19,7 @@ const Layout = ({ children }) => {
           {children}
         </main>
       </div>
+      <NotificationSystem />
     </div>
   );
 };

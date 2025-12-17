@@ -2,8 +2,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import { documentsAPI, getServerBaseURL } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { useThemeClasses } from '../../hooks/useThemeClasses.js';
+import { useNotifications } from '../../hooks/useNotifications.js';
 import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes, FaFileAlt, FaTag, FaSearch, FaSortAmountDown, FaSortAmountUp, FaFilePdf, FaFileWord, FaFileExcel, FaFileImage, FaFileArchive, FaClock, FaUser, FaFolder, FaFolderOpen, FaPlus, FaArrowLeft } from 'react-icons/fa';
-import { NotificationSystem, ConfirmDialog, FilterPanel } from '../../components/common';
+import { ConfirmDialog, FilterPanel } from '../../components/common';
 import {
   onDocumentCreated,
   onDocumentUpdated,
@@ -27,6 +28,7 @@ import {
 
 const Documents = () => {
   const { conditionalClasses } = useThemeClasses();
+  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -37,7 +39,6 @@ const Documents = () => {
   const [editingDocument, setEditingDocument] = useState(null);
   const [formData, setFormData] = useState({ title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' });
   const [editFormData, setEditFormData] = useState({ title: '', description: '', type: '', category: '', expiryDate: '' });
-  const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
 
@@ -92,17 +93,17 @@ const Documents = () => {
   useEffect(() => {
     const handleDocumentCreated = (document) => {
       fetchDocuments();
-      showNotification('Nuevo documento agregado', 'success');
+      notifySuccess('Nuevo documento agregado');
     };
 
     const handleDocumentUpdated = (data) => {
       fetchDocuments();
-      showNotification('Documento actualizado', 'success');
+      notifySuccess('Documento actualizado');
     };
 
     const handleDocumentDeleted = (documentId) => {
       fetchDocuments();
-      showNotification('Documento eliminado', 'success');
+      notifySuccess('Documento eliminado');
     };
 
     const handleDocumentsListUpdated = () => {
@@ -111,18 +112,18 @@ const Documents = () => {
 
     const handleFolderCreated = (folder) => {
       fetchFolders();
-      showNotification('Nueva carpeta agregada', 'success');
+      notifySuccess('Nueva carpeta agregada');
     };
 
     const handleFolderUpdated = (data) => {
       fetchFolders();
-      showNotification('Carpeta actualizada', 'success');
+      notifySuccess('Carpeta actualizada');
     };
 
     const handleFolderDeleted = (folderId) => {
       fetchFolders();
       fetchDocuments(); // También recargar documentos por si se eliminó una carpeta con documentos
-      showNotification('Carpeta eliminada', 'success');
+      notifySuccess('Carpeta eliminada');
     };
 
     const handleFoldersListUpdated = () => {
@@ -134,7 +135,7 @@ const Documents = () => {
       if (showPermissionsModal && selectedItemForPermissions) {
         handleOpenPermissionsModal(selectedItemForPermissions, selectedItemForPermissions.type);
       }
-      showNotification('Permisos actualizados', 'success');
+      notifySuccess('Permisos actualizados');
     };
 
     // Register WebSocket listeners
@@ -439,9 +440,9 @@ const Documents = () => {
       // WebSocket will handle the list update automatically
       setFormData({ title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '', selectedFolderForVersion: null });
       setShowUploadModal(false);
-      showNotification('Documento subido exitosamente', 'success');
+      // Notification will be handled by WebSocket listener
     } catch (err) {
-      showNotification('Error al subir el documento. Por favor, inténtalo de nuevo.', 'error');
+      notifyError('Error al subir el documento. Por favor, inténtalo de nuevo.');
       setFormData({ title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' });
     } finally {
       setUploadLoading(false);
@@ -459,9 +460,9 @@ const Documents = () => {
       // WebSocket will handle the list update automatically
       setFolderFormData({ name: '', description: '', parentFolderId: null });
       setShowCreateFolderModal(false);
-      showNotification('Carpeta creada exitosamente', 'success');
+      // Notification will be handled by WebSocket listener
     } catch (err) {
-      showNotification('Error al crear la carpeta. Por favor, inténtalo de nuevo.', 'error');
+      notifyError('Error al crear la carpeta. Por favor, inténtalo de nuevo.');
     }
   };
 
@@ -492,9 +493,9 @@ const Documents = () => {
       await documentsAPI.updateFolder(editingFolder.id, editFolderFormData);
       // WebSocket will handle the list update automatically
       setShowEditFolderModal(false);
-      showNotification('Carpeta actualizada exitosamente', 'success');
+      // Notification will be handled by WebSocket listener
     } catch (err) {
-      showNotification('Error al actualizar la carpeta. Por favor, inténtalo de nuevo.', 'error');
+      notifyError('Error al actualizar la carpeta. Por favor, inténtalo de nuevo.');
     }
   };
 
@@ -506,9 +507,9 @@ const Documents = () => {
         if (currentFolder && currentFolder.id === folderId) {
           setCurrentFolder(null);
         }
-        showNotification('Carpeta eliminada exitosamente', 'success');
+        // Notification will be handled by WebSocket listener
       } catch (err) {
-        showNotification(err.response?.data?.error || 'Error al eliminar la carpeta. Por favor, inténtalo de nuevo.', 'error');
+        notifyError(err.response?.data?.error || 'Error al eliminar la carpeta. Por favor, inténtalo de nuevo.');
       }
     });
   };
@@ -537,9 +538,9 @@ const Documents = () => {
       await documentsAPI.updateDocument(editingDocument.id, editFormData);
       // WebSocket will handle the list update automatically
       setShowEditModal(false);
-      showNotification('Documento actualizado exitosamente', 'success');
+      // Notification will be handled by WebSocket listener
     } catch (err) {
-      showNotification('Error al actualizar el documento. Por favor, inténtalo de nuevo.', 'error');
+      notifyError('Error al actualizar el documento. Por favor, inténtalo de nuevo.');
     }
   };
 
@@ -548,9 +549,9 @@ const Documents = () => {
       try {
         await documentsAPI.deleteDocument(id);
         // WebSocket will handle the list update automatically
-        showNotification('Documento eliminado exitosamente', 'success');
+        // Notification will be handled by WebSocket listener
       } catch (err) {
-        showNotification('Error al eliminar el documento. Por favor, inténtalo de nuevo.', 'error');
+        notifyError('Error al eliminar el documento. Por favor, inténtalo de nuevo.');
       }
     });
   };
@@ -560,9 +561,9 @@ const Documents = () => {
       try {
         await documentsAPI.deleteDocument(versionId);
         // WebSocket will handle the list update automatically
-        showNotification('Versión eliminada exitosamente', 'success');
+        // Notification will be handled by WebSocket listener
       } catch (err) {
-        showNotification('Error al eliminar la versión. Por favor, inténtalo de nuevo.', 'error');
+        notifyError('Error al eliminar la versión. Por favor, inténtalo de nuevo.');
       }
     });
   };
@@ -593,9 +594,12 @@ const Documents = () => {
     return false;
   };
 
+  // Función de compatibilidad para código existente
   const showNotification = (message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
+    if (type === 'success') notifySuccess(message);
+    else if (type === 'error') notifyError(message);
+    else if (type === 'warning') notifyWarning(message);
+    else notifyInfo(message);
   };
 
   const showConfirmDialog = (message, onConfirm) => {
@@ -658,14 +662,12 @@ const Documents = () => {
         permissionType
       );
 
-      showNotification(result.message, 'success');
-
       // WebSocket will handle the permissions update automatically
 
       // Limpiar selección
       setSelectedUsers([]);
     } catch (err) {
-      showNotification('Error al otorgar permisos', 'error');
+      notifyError('Error al otorgar permisos');
     }
   };
 
@@ -682,10 +684,10 @@ const Documents = () => {
 
       // WebSocket will handle the permissions update automatically
 
-      showNotification('Permiso revocado exitosamente', 'success');
+      // Notification will be handled by WebSocket listener
     } catch (err) {
       console.error('Error revoking permission:', err);
-      showNotification('Error al revocar permiso', 'error');
+      notifyError('Error al revocar permiso');
     }
   };
 
@@ -824,12 +826,6 @@ const Documents = () => {
       light: 'bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]',
       dark: 'bg-gray-900'
     })}`}>
-      {/* Notification */}
-      <NotificationSystem
-        notification={notification}
-        onClose={() => setNotification(null)}
-      />
-
       {/* Confirm Dialog */}
       <ConfirmDialog
         confirmDialog={confirmDialog}

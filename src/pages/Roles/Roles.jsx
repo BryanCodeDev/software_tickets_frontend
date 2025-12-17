@@ -456,7 +456,10 @@ const Roles = () => {
                   })}>
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 bg-[#f3ebf9] rounded-full flex items-center justify-center">
+                        <div className={conditionalClasses({
+                          light: "w-10 h-10 bg-[#f3ebf9] rounded-full flex items-center justify-center",
+                          dark: "w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center"
+                        })}>
                           {getRoleIcon(role.name)}
                         </div>
                         <h3 className={conditionalClasses({
@@ -484,7 +487,10 @@ const Roles = () => {
                         })}>Permisos asignados:</p>
                         <div className="flex flex-wrap gap-1">
                           {role.permissions?.slice(0, 3).map((permission) => (
-                            <span key={permission.id} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                            <span key={permission.id} className={conditionalClasses({
+                              light: "px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full",
+                              dark: "px-2 py-1 bg-blue-900 text-blue-300 text-xs rounded-full"
+                            })}>
                               {permission.action}
                             </span>
                           ))}

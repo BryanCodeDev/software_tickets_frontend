@@ -11,46 +11,83 @@ export const useNotifications = () => {
 };
 
 export const NotificationProvider = ({ children }) => {
-  const [notification, setNotification] = useState(null);
+  const [notifications, setNotifications] = useState([]);
 
-  const showNotification = useCallback((message, type = 'info', duration = 5000) => {
-    setNotification({ message, type });
+  const addNotification = useCallback((notification) => {
+    const id = Date.now() + Math.random();
+    const newNotification = {
+      id,
+      type: 'info', // default type
+      duration: 5000, // default 5 seconds
+      ...notification
+    };
 
-    if (duration > 0) {
+    setNotifications(prev => [...prev, newNotification]);
+
+    // Auto-remove after duration (except for persistent notifications)
+    if (newNotification.duration && newNotification.duration > 0) {
       setTimeout(() => {
-        setNotification(null);
-      }, duration);
+        removeNotification(id);
+      }, newNotification.duration);
     }
+
+    return id;
   }, []);
 
-  const hideNotification = useCallback(() => {
-    setNotification(null);
+  const removeNotification = useCallback((id) => {
+    setNotifications(prev => prev.filter(notification => notification.id !== id));
   }, []);
 
-  const showSuccess = useCallback((message, duration) => {
-    showNotification(message, 'success', duration);
-  }, [showNotification]);
+  const clearAllNotifications = useCallback(() => {
+    setNotifications([]);
+  }, []);
 
-  const showError = useCallback((message, duration) => {
-    showNotification(message, 'error', duration);
-  }, [showNotification]);
+  // Convenience methods for different notification types
+  const notifySuccess = useCallback((message, options = {}) => {
+    return addNotification({
+      type: 'success',
+      message,
+      duration: 4000, // 4 seconds for success
+      ...options
+    });
+  }, [addNotification]);
 
-  const showWarning = useCallback((message, duration) => {
-    showNotification(message, 'warning', duration);
-  }, [showNotification]);
+  const notifyError = useCallback((message, options = {}) => {
+    return addNotification({
+      type: 'error',
+      message,
+      duration: 0, // Don't auto-close errors
+      ...options
+    });
+  }, [addNotification]);
 
-  const showInfo = useCallback((message, duration) => {
-    showNotification(message, 'info', duration);
-  }, [showNotification]);
+  const notifyWarning = useCallback((message, options = {}) => {
+    return addNotification({
+      type: 'warning',
+      message,
+      duration: 6000, // 6 seconds for warnings
+      ...options
+    });
+  }, [addNotification]);
+
+  const notifyInfo = useCallback((message, options = {}) => {
+    return addNotification({
+      type: 'info',
+      message,
+      duration: 5000, // 5 seconds for info
+      ...options
+    });
+  }, [addNotification]);
 
   const value = {
-    notification,
-    showNotification,
-    hideNotification,
-    showSuccess,
-    showError,
-    showWarning,
-    showInfo
+    notifications,
+    addNotification,
+    removeNotification,
+    clearAllNotifications,
+    notifySuccess,
+    notifyError,
+    notifyWarning,
+    notifyInfo
   };
 
   return (
@@ -61,4 +98,3 @@ export const NotificationProvider = ({ children }) => {
 };
 
 export default NotificationContext;
-

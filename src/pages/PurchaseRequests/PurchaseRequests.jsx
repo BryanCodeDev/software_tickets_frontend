@@ -636,7 +636,10 @@ const PurchaseRequests = () => {
             light: 'bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center',
             dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-700 p-6 lg:p-12 text-center'
           })}>
-            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className={conditionalClasses({
+              light: "w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4",
+              dark: "w-16 h-16 lg:w-20 lg:h-20 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4"
+            })}>
               <FaClipboardList className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
             </div>
             <h3 className={conditionalClasses({

@@ -382,8 +382,8 @@ const Profile = () => {
                   </label>
                   <div className="flex gap-3 flex-wrap">
                     <label className={conditionalClasses({
-                      light: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9] flex-1 min-w-[100px]',
-                      dark: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-700 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9]/20 flex-1 min-w-[100px]'
+                      light: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9] has-checked:text-[#662d91] flex-1 min-w-[100px] border-gray-300',
+                      dark: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-700 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9]/20 has-checked:text-[#662d91] flex-1 min-w-[100px] border-gray-600'
                     })}>
                       <input
                         type="radio"
@@ -398,8 +398,8 @@ const Profile = () => {
                       })}>Sí</span>
                     </label>
                     <label className={conditionalClasses({
-                      light: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9] flex-1 min-w-[100px]',
-                      dark: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-700 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9]/20 flex-1 min-w-[100px]'
+                      light: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9] has-checked:text-[#662d91] flex-1 min-w-[100px] border-gray-300',
+                      dark: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-700 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9]/20 has-checked:text-[#662d91] flex-1 min-w-[100px] border-gray-600'
                     })}>
                       <input
                         type="radio"
