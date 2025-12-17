@@ -1,8 +1,8 @@
 import React, { memo } from 'react';
 import { FaEdit, FaEye, FaExclamationTriangle, FaSpinner, FaCheckCircle, FaCheck, FaClock, FaUserCircle } from 'react-icons/fa';
-import { useThemeClasses } from '../../hooks/useThemeClasses';
+import { useThemeClasses } from '../../../hooks/useThemeClasses';
 
-const TicketCard = ({
+const TicketCalidadCard = ({
   ticket,
   onViewDetail,
   onEdit,
@@ -133,7 +133,7 @@ const TicketCard = ({
                 light: 'text-gray-500',
                 dark: 'text-gray-400'
               })}
-            `}>Ticket #{ticket.id}</p>
+            `}>Ticket Calidad #{ticket.id}</p>
           </div>
           {canEditTicket(ticket) && (
             <div className="flex gap-1 lg:gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" onClick={(e) => e.stopPropagation()}>
@@ -282,7 +282,7 @@ const TicketCard = ({
 };
 
 // Memoización para evitar re-renders innecesarios
-const MemoizedTicketCard = memo(TicketCard);
-MemoizedTicketCard.displayName = 'TicketCard';
+const MemoizedTicketCalidadCard = memo(TicketCalidadCard);
+MemoizedTicketCalidadCard.displayName = 'TicketCalidadCard';
 
-export default MemoizedTicketCard;
+export default MemoizedTicketCalidadCard;

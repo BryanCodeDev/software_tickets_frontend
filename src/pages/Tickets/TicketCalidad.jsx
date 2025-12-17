@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
-import { FaEdit, FaTrash, FaComment, FaPlus, FaCheck, FaTimes, FaEye, FaImage, FaVideo, FaFile, FaPaperPlane, FaEllipsisV, FaPen, FaTrashAlt, FaSearch, FaFilter, FaDownload, FaChartBar, FaClock, FaExclamationTriangle, FaCheckCircle, FaSpinner, FaUserCircle, FaClipboardList, FaFileExport, FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
+import React, { useState, useEffect, useContext, useRef, useCallback, useMemo } from 'react';
+import { FaPlus, FaCheck, FaTimes } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
 import { qualityTicketsAPI, qualityMessagesAPI, usersAPI } from '../../api';
@@ -11,6 +11,7 @@ import {
   TicketCard,
   TicketStats
 } from '../../components/Tickets';
+import { TicketCalidadHeader, TicketCalidadFilters, TicketCalidadList } from '../../components/Tickets/TicketCalidad';
 import { getTimeAgo } from '../../utils';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
 
@@ -56,7 +57,7 @@ const TicketCalidad = () => {
   const [administrators, setAdministrators] = useState([]);
   const [calidadUsers, setCalidadUsers] = useState([]);
 
-  const standardizedTitles = [
+  const standardizedTitles = useMemo(() => [
     'Problemas en documentación',
     'Cambios de versiones documentales',
     'Errores en procedimientos',
@@ -72,7 +73,7 @@ const TicketCalidad = () => {
     'Errores en formularios',
     'Actualizaciones de procedimientos',
     'Problemas con versiones de documentos'
-  ];
+  ], []);
 
   const [formLoading, setFormLoading] = useState(false);
   const [notification, setNotification] = useState(null);
@@ -126,8 +127,8 @@ const TicketCalidad = () => {
   };
 
   useEffect(() => {
-    fetchTickets();
     fetchUsers();
+    fetchTickets();
   }, []);
 
   // WebSocket listeners for real-time ticket list updates
@@ -187,7 +188,7 @@ const TicketCalidad = () => {
     }
   };
 
-  const filterAndSortTickets = () => {
+  const filteredTickets = useMemo(() => {
     if (!Array.isArray(tickets)) return [];
     let filtered = [...tickets];
 
@@ -240,11 +241,9 @@ const TicketCalidad = () => {
     });
 
     return filtered;
-  };
+  }, [tickets, userRole, user?.id, searchTerm, filterStatus, filterPriority, titleFilter, sortBy, sortOrder]);
 
-  const filteredTickets = filterAndSortTickets();
-
-  const calculateStats = () => {
+  const stats = useMemo(() => {
     if (!Array.isArray(tickets)) return { total: 0, abiertos: 0, enProgreso: 0, resueltos: 0, alta: 0, resolutionRate: 0 };
     const total = tickets.length;
     const abiertos = tickets.filter(t => t.status?.toLowerCase() === 'abierto').length;
@@ -256,9 +255,7 @@ const TicketCalidad = () => {
     const resolutionRate = total > 0 ? ((resueltos / total) * 100).toFixed(1) : 0;
 
     return { total, abiertos, enProgreso, resueltos, alta, resolutionRate };
-  };
-
-  const stats = calculateStats();
+  }, [tickets]);
 
   const handleCreate = useCallback(() => {
     setFormData({
@@ -272,7 +269,7 @@ const TicketCalidad = () => {
     setShowCreateModal(true);
   }, []);
 
-  const handleEdit = (ticket) => {
+  const handleEdit = useCallback((ticket) => {
     if (!canEditTicket(ticket)) {
       showNotification('No tienes permisos para editar este ticket de calidad', 'error');
       return;
@@ -304,9 +301,9 @@ const TicketCalidad = () => {
 
     setEditingTicket(ticket);
     setShowEditModal(true);
-  };
+  }, [user?.role?.name]);
 
-  const handleDelete = async (ticket) => {
+  const handleDelete = useCallback(async (ticket) => {
     if (!canDeleteTicket(ticket)) {
       showNotification('No tienes permisos para eliminar este ticket de calidad', 'error');
       return;
@@ -325,7 +322,7 @@ const TicketCalidad = () => {
         }
       }
     });
-  };
+  }, []);
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
@@ -453,7 +450,7 @@ const TicketCalidad = () => {
     }
   };
 
-  const exportToExcel = () => {
+  const exportToExcel = useCallback(() => {
     const headers = ['ID', 'Título', 'Descripción', 'Prioridad', 'Estado', 'Creado por', 'Asignado a', 'Fecha Creación'];
     const rows = filteredTickets.map(ticket => [
       ticket.id,
@@ -513,12 +510,12 @@ const TicketCalidad = () => {
 
     XLSX.writeFile(wb, `tickets_calidad_${new Date().toISOString().split('T')[0]}.xlsx`);
     showNotification('Tickets de calidad exportados exitosamente', 'success');
-  };
+  }, [filteredTickets]);
 
   const canCreate = userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Empleado';
 
   // Funciones helper para verificar permisos por ticket específico
-  const canEditTicket = (ticket) => {
+  const canEditTicket = useCallback((ticket) => {
     if (userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad') {
       return true;
     }
@@ -526,9 +523,9 @@ const TicketCalidad = () => {
       return ticket.userId === user?.id;
     }
     return false;
-  };
+  }, [userRole, user?.id]);
 
-  const canDeleteTicket = (ticket) => {
+  const canDeleteTicket = useCallback((ticket) => {
     if (userRole === 'Administrador' || userRole === 'Calidad') {
       return true;
     }
@@ -539,9 +536,9 @@ const TicketCalidad = () => {
       return ticket.userId === user?.id;
     }
     return false;
-  };
+  }, [userRole, user?.id]);
 
-  const canSendMessage = (ticket) => {
+  const canSendMessage = useCallback((ticket) => {
     if (userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad') {
       return true;
     }
@@ -549,45 +546,16 @@ const TicketCalidad = () => {
       return ticket.userId === user?.id;
     }
     return false;
-  };
+  }, [userRole, user?.id]);
 
-  const showNotification = (message, type) => {
+  const showNotification = useCallback((message, type) => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 5000);
-  };
+  }, []);
 
-  const showConfirmDialog = (message, onConfirm) => {
+  const showConfirmDialog = useCallback((message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });
-  };
-
-  const getStatusColor = (status) => {
-    const colors = {
-      'abierto': 'bg-[#f3ebf9] text-[#662d91] border-[#e8d5f5]',
-      'en progreso': 'bg-blue-100 text-blue-700 border-blue-200',
-      'cerrado': 'bg-gray-200 text-gray-700 border-gray-300',
-      'resuelto': 'bg-green-100 text-green-700 border-green-200'
-    };
-    return colors[status?.toLowerCase()] || 'bg-gray-100 text-gray-600 border-gray-200';
-  };
-
-  const getPriorityColor = (priority) => {
-    const colors = {
-      'alta': 'bg-red-100 text-red-700 border-red-200',
-      'media': 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      'baja': 'bg-green-100 text-green-700 border-green-200'
-    };
-    return colors[priority?.toLowerCase()] || 'bg-gray-100 text-gray-600 border-gray-200';
-  };
-
-  const getStatusIcon = (status) => {
-    switch(status?.toLowerCase()) {
-      case 'abierto': return <FaExclamationTriangle />;
-      case 'en progreso': return <FaSpinner className="animate-spin" />;
-      case 'resuelto': return <FaCheckCircle />;
-      case 'cerrado': return <FaCheck />;
-      default: return <FaClock />;
-    }
-  };
+  }, []);
 
   if (loading) {
     return (
@@ -653,7 +621,9 @@ const TicketCalidad = () => {
             <div className="p-4 lg:p-6">
               <div className="flex items-center justify-center mb-4">
                 <div className="w-12 h-12 lg:w-16 lg:h-16 bg-linear-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
-                  <FaExclamationTriangle className="w-6 h-6 lg:w-8 lg:h-8 text-white" />
+                  <svg className="w-6 h-6 lg:w-8 lg:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
                 </div>
               </div>
               <h3 className={`text-lg lg:text-xl font-bold text-center mb-3 ${conditionalClasses({
@@ -690,494 +660,57 @@ const TicketCalidad = () => {
       )}
 
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-6 lg:mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 lg:gap-4 mb-3">
-                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-2xl flex items-center justify-center shadow-xl shrink-0">
-                  <FaClipboardList className="text-white text-xl lg:text-2xl" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h1 className={conditionalClasses({
-                    light: 'text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight truncate',
-                    dark: 'text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-100 leading-tight truncate'
-                  })}>
-                    Sistema de Tickets de Calidad
-                  </h1>
-                  <p className={conditionalClasses({
-                    light: 'text-xs sm:text-sm text-gray-600 mt-1',
-                    dark: 'text-xs sm:text-sm text-gray-300 mt-1'
-                  })}>
-                    Gestión de reportes de calidad y cambios documentales
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-2 lg:gap-3">
-              {(userRole === 'Administrador' || userRole === 'Técnico') && (
-                <>
-                  <button
-                    onClick={() => setShowStats(!showStats)}
-                    className={conditionalClasses({
-                      light: 'flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base',
-                      dark: 'flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold rounded-xl border-2 border-gray-600 transition-all duration-200 hover:shadow-lg text-sm lg:text-base'
-                    })}
-                  >
-                    <FaChartBar className="w-4 h-4" />
-                    <span className="hidden sm:inline">Estadísticas</span>
-                  </button>
-                  <button
-                    onClick={exportToExcel}
-                    className={conditionalClasses({
-                      light: 'flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-sm lg:text-base',
-                      dark: 'flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold rounded-xl border-2 border-gray-600 transition-all duration-200 hover:shadow-lg text-sm lg:text-base'
-                    })}
-                  >
-                    <FaDownload className="w-4 h-4" />
-                    <span className="hidden sm:inline">Exportar</span>
-                  </button>
-                </>
-              )}
-              {canCreate && (
-                <button
-                  onClick={handleCreate}
-                  className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
-                >
-                  <FaPlus className="w-4 h-4" />
-                  <span>Nuevo Ticket Calidad</span>
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+        {/* Header Component */}
+        <TicketCalidadHeader
+          userRole={userRole}
+          showStats={showStats}
+          setShowStats={setShowStats}
+          exportToExcel={exportToExcel}
+          canCreate={canCreate}
+          handleCreate={handleCreate}
+        />
 
         {/* Stats Cards */}
         {showStats && <TicketStats stats={stats} />}
 
-        {/* Search and Filters */}
-        <div className={conditionalClasses({
-          light: 'bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 mb-6',
-          dark: 'bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-600 p-4 lg:p-6 mb-6'
-        })}>
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 relative">
-                <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Buscar por título, descripción o creador..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className={conditionalClasses({
-                    light: 'w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-gray-700 font-medium text-sm lg:text-base',
-                    dark: 'w-full pl-12 pr-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-gray-200 font-medium text-sm lg:text-base bg-gray-700'
-                  })}
-                />
-              </div>
+        {/* Filters Component */}
+        <TicketCalidadFilters
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          filterStatus={filterStatus}
+          setFilterStatus={setFilterStatus}
+          filterPriority={filterPriority}
+          setFilterPriority={setFilterPriority}
+          titleFilter={titleFilter}
+          setTitleFilter={setTitleFilter}
+          showFilters={showFilters}
+          setShowFilters={setShowFilters}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          standardizedTitles={standardizedTitles}
+        />
 
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={conditionalClasses({
-                  light: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${
-                    showFilters ? 'bg-[#662d91] text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`,
-                  dark: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${
-                    showFilters ? 'bg-[#662d91] text-white shadow-lg' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                  }`
-                })}
-              >
-                <FaFilter className="w-4 h-4" />
-                <span>Filtros</span>
-              </button>
-            </div>
-
-            {showFilters && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6 border-t-2 border-gray-100 animate-fade-in">
-                <div>
-                  <label className={conditionalClasses({
-                    light: 'block text-sm font-semibold text-gray-700 mb-2',
-                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
-                  })}>Estado</label>
-                  <select
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                    className={conditionalClasses({
-                      light: 'w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm',
-                      dark: 'w-full px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-gray-700 text-gray-200'
-                    })}
-                  >
-                    <option value="all">Todos los estados</option>
-                    <option value="abierto">Abierto</option>
-                    <option value="en progreso">En Progreso</option>
-                    <option value="resuelto">Resuelto</option>
-                    <option value="cerrado">Cerrado</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className={conditionalClasses({
-                    light: 'block text-sm font-semibold text-gray-700 mb-2',
-                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
-                  })}>Prioridad</label>
-                  <select
-                    value={filterPriority}
-                    onChange={(e) => setFilterPriority(e.target.value)}
-                    className={conditionalClasses({
-                      light: 'w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm',
-                      dark: 'w-full px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-gray-700 text-gray-200'
-                    })}
-                  >
-                    <option value="all">Todas las prioridades</option>
-                    <option value="alta">Alta</option>
-                    <option value="media">Media</option>
-                    <option value="baja">Baja</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className={conditionalClasses({
-                    light: 'block text-sm font-semibold text-gray-700 mb-2',
-                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
-                  })}>Categoría</label>
-                  <select
-                    value={titleFilter}
-                    onChange={(e) => setTitleFilter(e.target.value)}
-                    className={conditionalClasses({
-                      light: 'w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm',
-                      dark: 'w-full px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-gray-700 text-gray-200'
-                    })}
-                  >
-                    <option value="">Todas las categorías</option>
-                    {standardizedTitles.map((title, index) => (
-                      <option key={index} value={title}>{title}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className={conditionalClasses({
-                    light: 'block text-sm font-semibold text-gray-700 mb-2',
-                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
-                  })}>Ordenar por</label>
-                  <div className="flex gap-2">
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className={conditionalClasses({
-                        light: 'flex-1 px-3 lg:px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm',
-                        dark: 'flex-1 px-3 lg:px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-gray-700 text-gray-200'
-                      })}
-                    >
-                      <option value="createdAt">Fecha creación</option>
-                      <option value="updatedAt">Última actualización</option>
-                      <option value="priority">Prioridad</option>
-                      <option value="status">Estado</option>
-                    </select>
-                    <button
-                      onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                      className={conditionalClasses({
-                        light: 'px-3 lg:px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all',
-                        dark: 'px-3 lg:px-4 py-2.5 bg-gray-700 hover:bg-gray-600 rounded-xl transition-all text-gray-200'
-                      })}
-                    >
-                      {sortOrder === 'asc' ? <FaSortAmountDown className="w-4 h-4 lg:w-5 lg:h-5" /> : <FaSortAmountUp className="w-4 h-4 lg:w-5 lg:h-5" />}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Results Summary */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <p className={conditionalClasses({
-            light: 'text-sm text-gray-600 font-medium',
-            dark: 'text-sm text-gray-300 font-medium'
-          })}>
-            Mostrando <span className="font-bold text-[#662d91]">{filteredTickets.length}</span> de <span className="font-bold">{tickets.length}</span> tickets de calidad
-          </p>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setViewMode('cards')}
-              className={conditionalClasses({
-                light: `px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
-                  viewMode === 'cards' ? 'bg-[#662d91] text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
-                }`,
-                dark: `px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
-                  viewMode === 'cards' ? 'bg-[#662d91] text-white shadow-md' : 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600'
-                }`
-              })}
-            >
-              <FaClipboardList className="w-4 h-4" />
-              <span className="hidden sm:inline ml-2">Tarjetas</span>
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={conditionalClasses({
-                light: `px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
-                  viewMode === 'list' ? 'bg-[#662d91] text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
-                }`,
-                dark: `px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-sm lg:text-base ${
-                  viewMode === 'list' ? 'bg-[#662d91] text-white shadow-md' : 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600'
-                }`
-              })}
-            >
-              <FaChartBar className="w-4 h-4" />
-              <span className="hidden sm:inline ml-2">Lista</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Tickets Display */}
-        {filteredTickets.length === 0 ? (
-          <div className={conditionalClasses({
-            light: 'bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center',
-            dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-600 p-6 lg:p-12 text-center'
-          })}>
-            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4">
-              <FaClipboardList className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
-            </div>
-            <h3 className={conditionalClasses({
-              light: 'text-lg lg:text-xl font-bold text-gray-900 mb-2',
-              dark: 'text-lg lg:text-xl font-bold text-gray-100 mb-2'
-            })}>
-              {searchTerm || filterStatus !== 'all' || filterPriority !== 'all' || titleFilter
-                ? 'No se encontraron tickets de calidad'
-                : 'No hay tickets de calidad disponibles'}
-            </h3>
-            <p className={conditionalClasses({
-              light: 'text-sm lg:text-base text-gray-600 max-w-md mx-auto mb-4 lg:mb-6',
-              dark: 'text-sm lg:text-base text-gray-300 max-w-md mx-auto mb-4 lg:mb-6'
-            })}>
-              {searchTerm || filterStatus !== 'all' || filterPriority !== 'all' || titleFilter
-                ? 'Intenta ajustar los filtros de búsqueda'
-                : 'Comienza creando un nuevo ticket de calidad para reportar problemas documentales'}
-            </p>
-            {canCreate && (
-              <button
-                onClick={handleCreate}
-                className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
-              >
-                <FaPlus className="w-4 h-4" />
-                Nuevo Ticket Calidad
-              </button>
-            )}
-          </div>
-        ) : (
-          <>
-            {/* Cards View */}
-            {viewMode === 'cards' && (
-              <div className={conditionalClasses({
-                light: 'bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6',
-                dark: 'bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-600 p-4 lg:p-6'
-              })}>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
-                  {filteredTickets.map((ticket) => (
-                    <TicketCard
-                      key={ticket.id}
-                      ticket={ticket}
-                      onViewDetail={handleViewDetail}
-                      onEdit={handleEdit}
-                      canEditTicket={canEditTicket}
-                      userRole={userRole}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* List View */}
-            {viewMode === 'list' && (
-              <div className={conditionalClasses({
-                light: 'bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 overflow-hidden',
-                dark: 'bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-600 p-4 lg:p-6 overflow-hidden'
-              })}>
-                {/* Mobile Card View for List Mode */}
-                <div className="block md:hidden">
-                  <div className={conditionalClasses({
-                    light: 'divide-y divide-gray-200',
-                    dark: 'divide-y divide-gray-600'
-                  })}>
-                    {filteredTickets.map((ticket) => (
-                      <div key={ticket.id} className={conditionalClasses({
-                        light: 'p-4 hover:bg-[#f3ebf9] transition-colors',
-                        dark: 'p-4 hover:bg-gray-700 transition-colors'
-                      })}>
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="font-bold text-[#662d91]">#{ticket.id}</span>
-                              <span className={`px-2 py-1 rounded-full text-xs font-bold ${getStatusColor(ticket.status)}`}>
-                                {ticket.status}
-                              </span>
-                              <span className={`px-2 py-1 rounded-full text-xs font-bold ${getPriorityColor(ticket.priority)}`}>
-                                {ticket.priority}
-                              </span>
-                            </div>
-                            <h3 className={conditionalClasses({
-                              light: 'font-semibold text-gray-900 text-sm mb-1 truncate',
-                              dark: 'font-semibold text-gray-100 text-sm mb-1 truncate'
-                            })}>{ticket.title}</h3>
-                            <p className={conditionalClasses({
-                              light: 'text-xs text-gray-500 line-clamp-2',
-                              dark: 'text-xs text-gray-400 line-clamp-2'
-                            })}>{ticket.description}</p>
-                          </div>
-                          <div className="flex gap-1 ml-2">
-                            <button
-                              onClick={() => handleViewDetail(ticket)}
-                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation"
-                              title="Ver detalles"
-                            >
-                              <FaEye className="w-4 h-4" />
-                            </button>
-                            {canEditTicket(ticket) && (
-                              <button
-                                onClick={() => handleEdit(ticket)}
-                                className={conditionalClasses({
-                                  light: 'p-2 text-[#662d91] hover:bg-[#f3ebf9] rounded-lg transition-all touch-manipulation',
-                                  dark: 'p-2 text-[#662d91] hover:bg-gray-700 rounded-lg transition-all touch-manipulation'
-                                })}
-                                title="Editar"
-                              >
-                                <FaEdit className="w-4 h-4" />
-                              </button>
-                            )}
-                            {canDeleteTicket(ticket) && (
-                              <button
-                                onClick={() => handleDelete(ticket)}
-                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all touch-manipulation"
-                                title="Eliminar"
-                              >
-                                <FaTrash className="w-4 h-4" />
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                {/* Desktop Table View for List Mode */}
-                <div className="hidden md:block">
-                  <table className="min-w-full">
-                    <thead className={conditionalClasses({
-                      light: 'bg-gray-50',
-                      dark: 'bg-gray-700'
-                    })}>
-                      <tr>
-                        <th className={conditionalClasses({
-                          light: 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                          dark: 'px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
-                        })}>ID</th>
-                        <th className={conditionalClasses({
-                          light: 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                          dark: 'px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
-                        })}>Título</th>
-                        <th className={conditionalClasses({
-                          light: 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                          dark: 'px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
-                        })}>Estado</th>
-                        <th className={conditionalClasses({
-                          light: 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                          dark: 'px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
-                        })}>Prioridad</th>
-                        <th className={conditionalClasses({
-                          light: 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                          dark: 'px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
-                        })}>Creado por</th>
-                        <th className={conditionalClasses({
-                          light: 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                          dark: 'px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
-                        })}>Asignado a</th>
-                        <th className={conditionalClasses({
-                          light: 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                          dark: 'px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
-                        })}>Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody className={conditionalClasses({
-                      light: 'bg-white divide-y divide-gray-200',
-                      dark: 'bg-gray-800 divide-y divide-gray-600'
-                    })}>
-                      {filteredTickets.map((ticket) => (
-                        <tr key={ticket.id} className={conditionalClasses({
-                          light: 'hover:bg-gray-50',
-                          dark: 'hover:bg-gray-700'
-                        })}>
-                          <td className={conditionalClasses({
-                            light: 'px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900',
-                            dark: 'px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'
-                          })}>#{ticket.id}</td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className={conditionalClasses({
-                              light: 'text-sm font-medium text-gray-900',
-                              dark: 'text-sm font-medium text-gray-100'
-                            })}>{ticket.title}</div>
-                            <div className={conditionalClasses({
-                              light: 'text-sm text-gray-500 truncate max-w-xs',
-                              dark: 'text-sm text-gray-400 truncate max-w-xs'
-                            })}>{ticket.description}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(ticket.status)}`}>
-                              {getStatusIcon(ticket.status)} {ticket.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(ticket.priority)}`}>
-                              {ticket.priority}
-                            </span>
-                          </td>
-                          <td className={conditionalClasses({
-                            light: 'px-6 py-4 whitespace-nowrap text-sm text-gray-500',
-                            dark: 'px-6 py-4 whitespace-nowrap text-sm text-gray-400'
-                          })}>{ticket.creator?.name || '-'}</td>
-                          <td className={conditionalClasses({
-                            light: 'px-6 py-4 whitespace-nowrap text-sm text-gray-500',
-                            dark: 'px-6 py-4 whitespace-nowrap text-sm text-gray-400'
-                          })}>{ticket.assignee?.name || 'Sin asignar'}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div className="flex items-center space-x-2">
-                              <button
-                                onClick={() => handleViewDetail(ticket)}
-                                className="text-blue-600 hover:text-blue-900 p-1"
-                                title="Ver detalles"
-                              >
-                                <FaEye className="w-4 h-4" />
-                              </button>
-                              {canEditTicket(ticket) && (
-                                <button
-                                  onClick={() => handleEdit(ticket)}
-                                  className="text-[#662d91] hover:text-[#662d91] p-1"
-                                  title="Editar"
-                                >
-                                  <FaEdit className="w-4 h-4" />
-                                </button>
-                              )}
-                              {canDeleteTicket(ticket) && (
-                                <button
-                                  onClick={() => handleDelete(ticket)}
-                                  className="text-red-600 hover:text-red-900 p-1"
-                                  title="Eliminar"
-                                >
-                                  <FaTrash className="w-4 h-4" />
-                                </button>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-          </>
-        )}
+        {/* List Component */}
+        <TicketCalidadList
+          filteredTickets={filteredTickets}
+          tickets={tickets}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          handleViewDetail={handleViewDetail}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+          canEditTicket={canEditTicket}
+          canDeleteTicket={canDeleteTicket}
+          userRole={userRole}
+          handleCreate={handleCreate}
+          canCreate={canCreate}
+          searchTerm={searchTerm}
+          filterStatus={filterStatus}
+          filterPriority={filterPriority}
+          titleFilter={titleFilter}
+        />
 
         {/* Detail Modal */}
         <TicketDetailModal
@@ -1234,4 +767,3 @@ const TicketCalidad = () => {
 };
 
 export default TicketCalidad;
-

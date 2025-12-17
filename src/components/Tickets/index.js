@@ -4,3 +4,6 @@ export { default as TicketDetailModal } from './modals/TicketDetailModal';
 export { default as TicketCard } from './TicketCard';
 export { default as TicketStats } from './TicketStats';
 export { default as TicketPagination } from './TicketPagination';
+export { default as TicketFilters } from './TicketFilters';
+export { default as TicketHeader } from './TicketHeader';
+export { default as TicketList } from './TicketList';
