@@ -45,12 +45,12 @@ const TicketFilters = ({
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={conditionalClasses({
-              light: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${
+              light: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-30 ${
                 showFilters
                   ? 'bg-[#662d91] text-white shadow-lg'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`,
-              dark: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${
+              dark: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-30 ${
                 showFilters
                   ? 'bg-[#662d91] text-white shadow-lg'
                   : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
@@ -63,7 +63,10 @@ const TicketFilters = ({
         </div>
 
         {showFilters && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6 border-t-2 border-gray-100 animate-fade-in">
+          <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6 border-t-2 animate-fade-in ${conditionalClasses({
+            light: 'border-gray-100',
+            dark: 'border-gray-600'
+          })}`}>
             <div>
               <label className={conditionalClasses({
                 light: "block text-sm font-semibold text-gray-700 mb-2",
@@ -72,7 +75,10 @@ const TicketFilters = ({
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm"
+                className={conditionalClasses({
+                  light: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-white text-gray-700",
+                  dark: "w-full px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-gray-700 text-gray-200"
+                })}
               >
                 <option value="all">Todos los estados</option>
                 <option value="abierto">Abierto</option>
@@ -90,7 +96,10 @@ const TicketFilters = ({
               <select
                 value={filterPriority}
                 onChange={(e) => setFilterPriority(e.target.value)}
-                className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm"
+                className={conditionalClasses({
+                  light: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-white text-gray-700",
+                  dark: "w-full px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-gray-700 text-gray-200"
+                })}
               >
                 <option value="all">Todas las prioridades</option>
                 <option value="alta">Alta</option>
@@ -107,7 +116,10 @@ const TicketFilters = ({
               <select
                 value={titleFilter}
                 onChange={(e) => setTitleFilter(e.target.value)}
-                className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm"
+                className={conditionalClasses({
+                  light: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-white text-gray-700",
+                  dark: "w-full px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-gray-700 text-gray-200"
+                })}
               >
                 <option value="">Todas las categorías</option>
                 {standardizedTitles.map((title, index) => (
@@ -125,7 +137,10 @@ const TicketFilters = ({
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="flex-1 px-3 lg:px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm"
+                  className={conditionalClasses({
+                    light: "flex-1 px-3 lg:px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-white text-gray-700",
+                    dark: "flex-1 px-3 lg:px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-gray-700 text-gray-200"
+                  })}
                 >
                   <option value="createdAt">Fecha creación</option>
                   <option value="updatedAt">Última actualización</option>
@@ -134,7 +149,10 @@ const TicketFilters = ({
                 </select>
                 <button
                   onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                  className="px-3 lg:px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all"
+                  className={conditionalClasses({
+                    light: "px-3 lg:px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all",
+                    dark: "px-3 lg:px-4 py-2.5 bg-gray-600 hover:bg-gray-500 rounded-xl transition-all"
+                  })}
                 >
                   {sortOrder === 'asc' ? <FaSortAmountDown className="w-4 h-4 lg:w-5 lg:h-5" /> : <FaSortAmountUp className="w-4 h-4 lg:w-5 lg:h-5" />}
                 </button>
