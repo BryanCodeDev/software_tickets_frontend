@@ -639,8 +639,14 @@ const ActasEntrega = () => {
             light: 'bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center',
             dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-600 p-6 lg:p-12 text-center'
           })}>
-            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#dbeafe] rounded-full flex items-center justify-center mx-auto mb-4">
-              <FaClipboardCheck className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
+            <div className={conditionalClasses({
+              light: 'w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#dbeafe] rounded-full flex items-center justify-center mx-auto mb-4',
+              dark: 'w-16 h-16 lg:w-20 lg:h-20 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-gray-600'
+            })}>
+              <FaClipboardCheck className={conditionalClasses({
+                light: 'w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]',
+                dark: 'w-8 h-8 lg:w-10 lg:h-10 text-purple-400'
+              })} />
             </div>
             <h3 className={conditionalClasses({
               light: 'text-lg lg:text-xl font-bold text-gray-900 mb-2',

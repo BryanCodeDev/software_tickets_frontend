@@ -426,7 +426,7 @@ const Users = () => {
 
       <div>
         <div className="mb-8">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
               <h1 className={conditionalClasses({
                 light: 'text-2xl sm:text-3xl font-bold text-gray-900 flex items-center',
@@ -436,9 +436,7 @@ const Users = () => {
                   light: 'w-12 h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg',
                   dark: 'w-12 h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg'
                 })}>
-                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                  </svg>
+                  <FaUsers className="w-6 h-6 text-white" />
                 </div>
                 Usuarios
               </h1>
@@ -446,6 +444,8 @@ const Users = () => {
                 light: 'mt-2 text-gray-600',
                 dark: 'mt-2 text-gray-300'
               })}>Gestiona los usuarios del sistema</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setShowStats(!showStats)}
                 className={conditionalClasses({
@@ -455,14 +455,14 @@ const Users = () => {
                 title="Ver estadísticas"
               >
                 <FaChartBar className="mr-2" />
-                <span className="hidden sm:inline">Estadísticas</span>
+                Estadísticas
               </button>
               <button
                 onClick={handleCreate}
-                className="flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                className="inline-flex items-center px-6 py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
               >
-                <FaPlus className="w-5 h-5" />
-                <span className="hidden sm:inline">Nuevo Usuario</span>
+                <FaPlus className="w-5 h-5 mr-2" />
+                Nuevo Usuario
               </button>
             </div>
           </div>

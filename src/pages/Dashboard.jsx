@@ -135,7 +135,7 @@ const Dashboard = () => {
       light: 'min-h-screen bg-linear-to-br from-gray-50 via-gray-50 to-gray-100',
       dark: 'min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900'
     })}>
-      <div className="max-w-[1600px] mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8">
+      <div className="max-w-400 mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8">
         
         {/* Header Section - Profesional y limpio */}
         <div className="bg-linear-to-r from-[#662d91] to-[#7a3da8] rounded-xl shadow-lg mb-6 lg:mb-8">
@@ -241,8 +241,14 @@ const Dashboard = () => {
           })}>
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-purple-100 rounded-lg">
-                  <FaTicketAlt className="text-purple-600 text-lg" />
+                <div className={conditionalClasses({
+                  light: 'p-2.5 bg-purple-100 rounded-lg',
+                  dark: 'p-2.5 bg-purple-900/30 rounded-lg'
+                })}>
+                  <FaTicketAlt className={conditionalClasses({
+                    light: 'text-purple-600 text-lg',
+                    dark: 'text-purple-400 text-lg'
+                  })} />
                 </div>
                 <div>
                   <h2 className={conditionalClasses({
@@ -311,8 +317,14 @@ const Dashboard = () => {
           })}>
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-emerald-100 rounded-lg">
-                  <FaShieldAlt className="text-emerald-600 text-lg" />
+                <div className={conditionalClasses({
+                  light: 'p-2.5 bg-emerald-100 rounded-lg',
+                  dark: 'p-2.5 bg-emerald-900/30 rounded-lg'
+                })}>
+                  <FaShieldAlt className={conditionalClasses({
+                    light: 'text-emerald-600 text-lg',
+                    dark: 'text-emerald-400 text-lg'
+                  })} />
                 </div>
                 <div>
                   <h2 className={conditionalClasses({
@@ -383,9 +395,15 @@ const Dashboard = () => {
             light: 'bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6',
             dark: 'bg-gray-800 rounded-xl shadow-sm border border-gray-600 p-4 sm:p-6'
           })}>
-            <div className="flex items-center gap-3 mb-4 sm:mb-6">
-              <div className="p-2.5 bg-blue-100 rounded-lg">
-                <FaServer className="text-blue-600 text-lg" />
+            <div className="flex items-center gap-3">
+              <div className={conditionalClasses({
+                light: 'p-2.5 bg-blue-100 rounded-lg',
+                dark: 'p-2.5 bg-blue-900/30 rounded-lg'
+              })}>
+                <FaServer className={conditionalClasses({
+                  light: 'text-blue-600 text-lg',
+                  dark: 'text-blue-400 text-lg'
+                })} />
               </div>
               <div>
                 <h2 className={conditionalClasses({
@@ -498,9 +516,15 @@ const Dashboard = () => {
             light: 'bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6',
             dark: 'bg-gray-800 rounded-xl shadow-sm border border-gray-600 p-4 sm:p-6'
           })}>
-            <div className="flex items-center gap-3 mb-4 sm:mb-6">
-              <div className="p-2.5 bg-green-100 rounded-lg">
-                <FaChartBar className="text-green-600 text-lg" />
+            <div className="flex items-center gap-3">
+              <div className={conditionalClasses({
+                light: 'p-2.5 bg-green-100 rounded-lg',
+                dark: 'p-2.5 bg-green-900/30 rounded-lg'
+              })}>
+                <FaChartBar className={conditionalClasses({
+                  light: 'text-green-600 text-lg',
+                  dark: 'text-green-400 text-lg'
+                })} />
               </div>
               <div>
                 <h2 className={conditionalClasses({
@@ -610,9 +634,15 @@ const Dashboard = () => {
             light: 'bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6',
             dark: 'bg-gray-800 rounded-xl shadow-sm border border-gray-600 p-4 sm:p-6'
           })}>
-            <div className="flex items-center gap-3 mb-4 sm:mb-6">
-              <div className="p-2.5 bg-blue-100 rounded-lg">
-                <FaShieldAlt className="text-blue-600 text-lg" />
+            <div className="flex items-center gap-3">
+              <div className={conditionalClasses({
+                light: 'p-2.5 bg-blue-100 rounded-lg',
+                dark: 'p-2.5 bg-blue-900/30 rounded-lg'
+              })}>
+                <FaShieldAlt className={conditionalClasses({
+                  light: 'text-blue-600 text-lg',
+                  dark: 'text-blue-400 text-lg'
+                })} />
               </div>
               <div>
                 <h2 className={conditionalClasses({

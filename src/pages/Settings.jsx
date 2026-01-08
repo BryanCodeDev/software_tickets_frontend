@@ -244,8 +244,14 @@ const Settings = () => {
                   dark: 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 rounded-lg border border-gray-600 hover:border-[#662d91] hover:bg-gray-700 transition-all'
                 })}>
                   <div className="flex items-start gap-3 flex-1">
-                    <div className="p-2 bg-purple-100 rounded-lg shrink-0 mt-0.5">
-                      <FaLock className="text-[#662d91] text-sm" />
+                    <div className={conditionalClasses({
+                      light: 'p-2 bg-purple-100 rounded-lg shrink-0 mt-0.5',
+                      dark: 'p-2 bg-gray-700 rounded-lg shrink-0 mt-0.5'
+                    })}>
+                      <FaLock className={conditionalClasses({
+                        light: 'text-[#662d91] text-sm',
+                        dark: 'text-purple-400 text-sm'
+                      })} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <label className={conditionalClasses({
@@ -280,8 +286,14 @@ const Settings = () => {
                   dark: 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 rounded-lg border border-gray-600 hover:border-[#662d91] hover:bg-gray-700 transition-all'
                 })}>
                   <div className="flex items-start gap-3 flex-1">
-                    <div className="p-2 bg-purple-100 rounded-lg shrink-0 mt-0.5">
-                      <FaKey className="text-[#662d91] text-sm" />
+                    <div className={conditionalClasses({
+                      light: 'p-2 bg-purple-100 rounded-lg shrink-0 mt-0.5',
+                      dark: 'p-2 bg-gray-700 rounded-lg shrink-0 mt-0.5'
+                    })}>
+                      <FaKey className={conditionalClasses({
+                        light: 'text-[#662d91] text-sm',
+                        dark: 'text-purple-400 text-sm'
+                      })} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <label className={conditionalClasses({
@@ -357,8 +369,14 @@ const Settings = () => {
                   dark: 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 rounded-lg border border-gray-600 hover:border-[#662d91] hover:bg-gray-700 transition-all'
                 })}>
                   <div className="flex items-start gap-3 flex-1">
-                    <div className="p-2 bg-purple-100 rounded-lg shrink-0 mt-0.5">
-                      <FaPalette className="text-[#662d91] text-sm" />
+                    <div className={conditionalClasses({
+                      light: 'p-2 bg-purple-100 rounded-lg shrink-0 mt-0.5',
+                      dark: 'p-2 bg-gray-700 rounded-lg shrink-0 mt-0.5'
+                    })}>
+                      <FaPalette className={conditionalClasses({
+                        light: 'text-[#662d91] text-sm',
+                        dark: 'text-purple-400 text-sm'
+                      })} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <label className={conditionalClasses({
@@ -487,7 +505,10 @@ const Settings = () => {
                     light: 'flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2',
                     dark: 'flex items-center gap-2 text-sm font-semibold text-gray-200 mb-2'
                   })}>
-                    <FaLock className="text-[#662d91] text-xs" />
+                    <FaLock className={conditionalClasses({
+                      light: 'text-[#662d91] text-xs',
+                      dark: 'text-purple-400 text-xs'
+                    })} />
                     Contraseña Actual *
                   </label>
                   <div className="relative">
@@ -521,7 +542,10 @@ const Settings = () => {
                     light: 'flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2',
                     dark: 'flex items-center gap-2 text-sm font-semibold text-gray-200 mb-2'
                   })}>
-                    <FaKey className="text-[#662d91] text-xs" />
+                    <FaKey className={conditionalClasses({
+                      light: 'text-[#662d91] text-xs',
+                      dark: 'text-purple-400 text-xs'
+                    })} />
                     Nueva Contraseña *
                   </label>
                   <div className="relative">
@@ -555,7 +579,10 @@ const Settings = () => {
                     light: 'flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2',
                     dark: 'flex items-center gap-2 text-sm font-semibold text-gray-200 mb-2'
                   })}>
-                    <FaKey className="text-[#662d91] text-xs" />
+                    <FaKey className={conditionalClasses({
+                      light: 'text-[#662d91] text-xs',
+                      dark: 'text-purple-400 text-xs'
+                    })} />
                     Confirmar Nueva Contraseña *
                   </label>
                   <div className="relative">
@@ -682,7 +709,10 @@ const Settings = () => {
                     light: 'flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2',
                     dark: 'flex items-center gap-2 text-sm font-semibold text-gray-200 mb-2'
                   })}>
-                    <FaKey className="text-[#662d91] text-xs" />
+                    <FaKey className={conditionalClasses({
+                      light: 'text-[#662d91] text-xs',
+                      dark: 'text-purple-400 text-xs'
+                    })} />
                     Código de Verificación *
                   </label>
                   <input
