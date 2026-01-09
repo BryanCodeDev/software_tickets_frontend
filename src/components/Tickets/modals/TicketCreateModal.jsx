@@ -145,7 +145,7 @@ const TicketCreateModal = ({
               })}>Puedes subir imágenes o videos (máx. 10MB)</p>
             </div>
 
-            {(userRole === 'Administrador' || userRole === 'Técnico') && (
+            {(userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Empleado') && (
               <div className="md:col-span-2">
                 <label className={conditionalClasses({
                   light: 'block text-sm font-semibold text-gray-700 mb-2',

@@ -318,7 +318,7 @@ const Tickets = () => {
   }, [userRole, user?.id, checkPermission]);
 
   const canSendMessage = useCallback((ticket) => {
-    const privilegedRoles = ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa'];
+    const privilegedRoles = ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa', 'Empleado'];
     if (privilegedRoles.includes(userRole)) return true;
     if (checkPermission('tickets', 'comment')) return true;
     if (ticket.userId === user?.id && checkPermission('tickets', 'comment_own')) return true;
