@@ -173,15 +173,13 @@ const TicketCalidad = () => {
 
   const fetchUsers = async () => {
     try {
-      // Cargar usuarios para todos los roles que pueden ver el campo de asignación
-      if (['Administrador', 'Jefe', 'Compras', 'Coordinadora Administrativa', 'Calidad', 'Empleado'].includes(user?.role?.name)) {
-        const users = await usersAPI.fetchUsers();
-        const techUsers = users.filter(u => u.Role?.name === 'Técnico');
-        const calidadUsersFiltered = users.filter(u => u.Role?.name === 'Calidad');
-        setTechnicians(techUsers);
-        setAdministrators(calidadUsersFiltered);
-        setCalidadUsers(calidadUsersFiltered);
-      }
+      // Cargar usuarios siempre para que todos los roles puedan ver el listado
+      const users = await usersAPI.fetchUsers();
+      const techUsers = users.filter(u => u.Role?.name === 'Técnico');
+      const calidadUsersFiltered = users.filter(u => u.Role?.name === 'Calidad');
+      setTechnicians(techUsers);
+      setAdministrators(calidadUsersFiltered);
+      setCalidadUsers(calidadUsersFiltered);
     } catch (err) {
       console.error('Error al cargar usuarios:', err);
     }
