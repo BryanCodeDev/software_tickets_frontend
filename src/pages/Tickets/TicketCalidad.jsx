@@ -58,21 +58,20 @@ const TicketCalidad = () => {
   const [calidadUsers, setCalidadUsers] = useState([]);
 
   const standardizedTitles = useMemo(() => [
-    'Problemas en documentación',
-    'Cambios de versiones documentales',
-    'Errores en procedimientos',
-    'Actualizaciones de calidad',
-    'Reportes de no conformidades',
-    'Mejoras en procesos documentales',
-    'Problemas con versiones de software',
+    'Control de documentación',
+    'Errores en documentos del SGC',
+    'Cambios y actualización de documentos',
+    'Control de versiones documentales',
+    'No conformidades',
+    'Acciones correctivas',
+    'Acciones preventivas',
+    'Oportunidades de mejora',
     'Cambios en políticas de calidad',
-    'Errores en manuales',
-    'Actualizaciones de estándares',
-    'Problemas con certificaciones',
-    'Cambios en documentación técnica',
-    'Errores en formularios',
-    'Actualizaciones de procedimientos',
-    'Problemas con versiones de documentos'
+    'Actualización de procedimientos',
+    'Errores en formatos y registros',
+    'Cumplimiento de requisitos ISO 9001',
+    'Auditorías internas',
+    'Certificación y recertificación ISO'
   ], []);
 
   const [formLoading, setFormLoading] = useState(false);

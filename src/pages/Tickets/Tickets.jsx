@@ -116,20 +116,29 @@ const Tickets = () => {
   
   const userRole = user?.role?.name;
   const standardizedTitles = useMemo(() => [
-    'Problemas con SAP',
-    'Problemas con Impresoras',
-    'Problemas con Contraseña',
-    'Problemas con Heinsohn',
-    'Problemas con Excel, Word, PDF',
-    'Problemas con Acceso a carpetas',
-    'Problemas con El navegador',
+    // 🔐 Accesos y servicios
+    'Accesos y credenciales',
+    'Correo electrónico',
+    'Carpetas compartidas y permisos',
+
+    // 🧠 Aplicaciones generales
+    'Ofimática (Excel, Word, PDF)',
+    'Navegadores web',
+    'Instalación y actualización de software',
+    'Soporte a sistemas internos',
+
+    // 🖥️ Infraestructura
+    'Hardware y equipos de cómputo',
+    'Impresoras y escáneres',
+    'Red y conectividad',
+
+    // 🚨 Sistemas críticos (alto volumen)
     'Problemas con R-SALES',
-    'Problemas con Envio',
-    'Problemas con Correo',
-    'Problemas con Hardware',
-    'Problemas con Red',
-    'Problemas con Instalacion',
-    'Problemas con Software',
+    'Problemas con SAP',
+    'Problemas con Heinsohn',
+
+    // 📦 Otros
+    'Otros requerimientos de TI'
   ], []);
 
   // Socket listeners
