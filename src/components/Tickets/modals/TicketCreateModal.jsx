@@ -16,6 +16,8 @@ const TicketCreateModal = ({
   isCalidad = false
 }) => {
   const { conditionalClasses } = useThemeClasses();
+  const canShowAssignment = ['Jefe', 'Compras', 'Coordinadora Administrativa', 'Calidad', 'Empleado'].includes(userRole);
+  
   if (!showCreateModal) return null;
 
   return (
@@ -145,7 +147,7 @@ const TicketCreateModal = ({
               })}>Puedes subir imágenes o videos (máx. 10MB)</p>
             </div>
 
-            {(userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Empleado') && (
+            {canShowAssignment && (
               <div className="md:col-span-2">
                 <label className={conditionalClasses({
                   light: 'block text-sm font-semibold text-gray-700 mb-2',
@@ -173,7 +175,7 @@ const TicketCreateModal = ({
                     </optgroup>
                   )}
                   {administrators.length > 0 && (
-                    <optgroup label={isCalidad ? "🛡️ Calidad" : "‍💼 Administradores"}>
+                    <optgroup label={isCalidad ? "🛡️ Calidad" : "👨‍💼 Administradores"}>
                       <option value={isCalidad ? "all-calidad" : "all-administrators"}>
                         {isCalidad ? "Todos los de calidad" : "Todos los administradores"}
                       </option>
@@ -229,4 +231,3 @@ const TicketCreateModal = ({
 };
 
 export default TicketCreateModal;
-

@@ -173,7 +173,7 @@ const TicketCalidad = () => {
 
   const fetchUsers = async () => {
     try {
-      if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Empleado' || user?.role?.name === 'Calidad') {
+      if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Empleado' || user?.role?.name === 'Calidad' || user?.role?.name === 'Jefe' || user?.role?.name === 'Compras' || user?.role?.name === 'Coordinadora Administrativa') {
         const users = await usersAPI.fetchUsers();
         const techUsers = users.filter(user => user.Role?.name === 'Técnico');
         const adminUsers = users.filter(user => user.Role?.name === 'Administrador');

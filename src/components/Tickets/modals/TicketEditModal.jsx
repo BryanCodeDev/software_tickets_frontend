@@ -17,6 +17,8 @@ const TicketEditModal = ({
   isCalidad = false
 }) => {
   const { conditionalClasses } = useThemeClasses();
+  const canShowAssignment = ['Jefe', 'Compras', 'Coordinadora Administrativa', 'Calidad', 'Empleado'].includes(userRole);
+  
   if (!showEditModal || !editingTicket) return null;
 
   return (
@@ -130,7 +132,7 @@ const TicketEditModal = ({
               </div>
             )}
 
-            {(userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Coordinadora Administrativa' || userRole === 'Empleado') && (
+            {canShowAssignment && (
               <div className="md:col-span-2">
                 <label className={conditionalClasses({
                   light: 'block text-sm font-semibold text-gray-700 mb-2',
@@ -149,6 +151,7 @@ const TicketEditModal = ({
                   <option value="">Sin asignar</option>
                   {technicians.length > 0 && (
                     <optgroup label="👨‍💻 Técnicos">
+                      <option value="all-technicians">Todos los técnicos</option>
                       {technicians.map((tech) => (
                         <option key={tech.id} value={tech.id}>
                           {tech.name || tech.username}
@@ -158,6 +161,9 @@ const TicketEditModal = ({
                   )}
                   {administrators.length > 0 && (
                     <optgroup label={isCalidad ? "👨‍💼 Usuarios de Calidad" : "👨‍💼 Administradores"}>
+                      <option value={isCalidad ? "all-calidad" : "all-administrators"}>
+                        {isCalidad ? "Todos los de calidad" : "Todos los administradores"}
+                      </option>
                       {administrators.map((admin) => (
                         <option key={admin.id} value={admin.id}>
                           {admin.name || admin.username}
@@ -213,4 +219,3 @@ const TicketEditModal = ({
 };
 
 export default TicketEditModal;
-
