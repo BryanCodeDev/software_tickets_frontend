@@ -173,17 +173,17 @@ const TicketCalidad = () => {
 
   const fetchUsers = async () => {
     try {
-      if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Empleado' || user?.role?.name === 'Calidad' || user?.role?.name === 'Jefe' || user?.role?.name === 'Compras' || user?.role?.name === 'Coordinadora Administrativa') {
+      // Cargar usuarios para todos los roles que pueden ver el campo de asignación
+      if (['Administrador', 'Jefe', 'Compras', 'Coordinadora Administrativa', 'Calidad', 'Empleado'].includes(user?.role?.name)) {
         const users = await usersAPI.fetchUsers();
-        const techUsers = users.filter(user => user.Role?.name === 'Técnico');
-        const adminUsers = users.filter(user => user.Role?.name === 'Administrador');
-        const calidadUsersFiltered = users.filter(user => user.Role?.name === 'Calidad');
+        const techUsers = users.filter(u => u.Role?.name === 'Técnico');
+        const calidadUsersFiltered = users.filter(u => u.Role?.name === 'Calidad');
         setTechnicians(techUsers);
-        setAdministrators(adminUsers);
+        setAdministrators(calidadUsersFiltered);
         setCalidadUsers(calidadUsersFiltered);
       }
     } catch (err) {
-      // Error handling silenciado
+      console.error('Error al cargar usuarios:', err);
     }
   };
 

@@ -16,7 +16,7 @@ const TicketCreateModal = ({
   isCalidad = false
 }) => {
   const { conditionalClasses } = useThemeClasses();
-  const canShowAssignment = ['Jefe', 'Compras', 'Coordinadora Administrativa', 'Calidad', 'Empleado'].includes(userRole);
+  const canShowAssignment = ['Administrador', 'Jefe', 'Compras', 'Coordinadora Administrativa', 'Calidad', 'Empleado'].includes(userRole);
   
   if (!showCreateModal) return null;
 
