@@ -325,14 +325,16 @@ const Roles = () => {
   };
 
   const getRoleIcon = (roleName) => {
+    const isDark = document.documentElement.classList.contains('dark');
+    
     switch(roleName) {
-      case 'Administrador': return <FaUserShield className="w-4 h-4 text-[#662d91]" />;
-      case 'Coordinadora Administrativa': return <FaUserShield className="w-4 h-4 text-orange-600" />;
-      case 'Técnico': return <FaUserCog className="w-4 h-4 text-blue-600" />;
-      case 'Calidad': return <FaShieldAlt className="w-4 h-4 text-emerald-600" />;
-      case 'Jefe': return <FaUserCog className="w-4 h-4 text-yellow-600" />;
-      case 'Compras': return <FaKey className="w-4 h-4 text-teal-600" />;
-      default: return <FaUser className="w-4 h-4 text-green-600" />;
+      case 'Administrador': return <FaUserShield className={`w-4 h-4 ${isDark ? 'text-purple-400' : 'text-[#662d91]'}`} />;
+      case 'Coordinadora Administrativa': return <FaUserShield className={`w-4 h-4 ${isDark ? 'text-orange-400' : 'text-orange-600'}`} />;
+      case 'Técnico': return <FaUserCog className={`w-4 h-4 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />;
+      case 'Calidad': return <FaShieldAlt className={`w-4 h-4 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />;
+      case 'Jefe': return <FaUserCog className={`w-4 h-4 ${isDark ? 'text-yellow-400' : 'text-yellow-600'}`} />;
+      case 'Compras': return <FaKey className={`w-4 h-4 ${isDark ? 'text-teal-400' : 'text-teal-600'}`} />;
+      default: return <FaUser className={`w-4 h-4 ${isDark ? 'text-green-400' : 'text-green-600'}`} />;
     }
   };
 
@@ -372,10 +374,55 @@ const Roles = () => {
   };
 
   if (!user || !checkPermission('roles', 'view')) {
-    return <div className="container mx-auto p-6">Acceso Denegado</div>;
+    return (
+      <div className={conditionalClasses({
+        light: "container mx-auto p-6 bg-white min-h-screen",
+        dark: "container mx-auto p-6 bg-gray-900 min-h-screen"
+      })}>
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center">
+            <div className={conditionalClasses({
+              light: "w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4",
+              dark: "w-16 h-16 bg-red-900/50 rounded-full flex items-center justify-center mx-auto mb-4"
+            })}>
+              <FaExclamationTriangle className={conditionalClasses({
+                light: "w-8 h-8 text-red-600",
+                dark: "w-8 h-8 text-red-400"
+              })} />
+            </div>
+            <h2 className={conditionalClasses({
+              light: "text-2xl font-bold text-gray-900 mb-2",
+              dark: "text-2xl font-bold text-white mb-2"
+            })}>Acceso Denegado</h2>
+            <p className={conditionalClasses({
+              light: "text-gray-600",
+              dark: "text-gray-300"
+            })}>No tienes permisos para acceder a esta sección.</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  if (loading) return <div>Cargando...</div>;
+  if (loading) return (
+    <div className={conditionalClasses({
+      light: "min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] flex items-center justify-center",
+      dark: "min-h-screen bg-gray-900 flex items-center justify-center"
+    })}>
+      <div className="text-center">
+        <div className="flex justify-center mb-4">
+          <svg className="animate-spin h-8 w-8 text-[#662d91]" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+        <p className={conditionalClasses({
+          light: "text-gray-600 text-lg",
+          dark: "text-gray-300 text-lg"
+        })}>Cargando...</p>
+      </div>
+    </div>
+  );
 
   return (
     <div className={conditionalClasses({
@@ -563,7 +610,10 @@ const Roles = () => {
                   light: "w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4",
                   dark: "w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4"
                 })}>
-                  <FaShieldAlt className="w-8 h-8 text-gray-400" />
+                  <FaShieldAlt className={conditionalClasses({
+                    light: "w-8 h-8 text-gray-400",
+                    dark: "w-8 h-8 text-gray-500"
+                  })} />
                 </div>
                 <h3 className={conditionalClasses({
                   light: "text-lg font-medium text-gray-900 mb-2",
@@ -699,7 +749,10 @@ const Roles = () => {
                 <h2 className="text-xl lg:text-2xl font-bold text-white">Crear Nuevo Rol</h2>
                 <button
                   onClick={() => setShowCreateModal(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                  className={conditionalClasses({
+                    light: "p-2 hover:bg-white/20 rounded-lg transition-all text-white",
+                    dark: "p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                  })}
                 >
                   <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
                 </button>
@@ -804,7 +857,10 @@ const Roles = () => {
                               type="checkbox"
                               checked={formData.permissionIds.includes(permission.id)}
                               onChange={() => handlePermissionToggle(permission.id)}
-                              className="rounded border-gray-300 text-[#662d91] focus:ring-[#662d91]"
+                              className={conditionalClasses({
+                                light: "rounded border-gray-300 text-[#662d91] focus:ring-[#662d91]",
+                                dark: "rounded border-gray-600 text-purple-500 focus:ring-purple-500 bg-gray-700"
+                              })}
                             />
                             <span className={conditionalClasses({
                               light: "text-sm text-gray-700",
@@ -846,7 +902,10 @@ const Roles = () => {
                 >
                   {formLoading ? (
                     <>
-                      <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+                      <svg className={conditionalClasses({
+                        light: "animate-spin h-5 w-5 mr-2 text-white",
+                        dark: "animate-spin h-5 w-5 mr-2 text-white"
+                      })} fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
@@ -874,7 +933,10 @@ const Roles = () => {
                 <h2 className="text-xl lg:text-2xl font-bold text-white">Editar Rol</h2>
                 <button
                   onClick={() => setShowEditModal(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                  className={conditionalClasses({
+                    light: "p-2 hover:bg-white/20 rounded-lg transition-all text-white",
+                    dark: "p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                  })}
                 >
                   <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
                 </button>
@@ -983,7 +1045,10 @@ const Roles = () => {
                               type="checkbox"
                               checked={formData.permissionIds.includes(permission.id)}
                               onChange={() => handlePermissionToggle(permission.id)}
-                              className="rounded border-gray-300 text-[#662d91] focus:ring-[#662d91] dark:border-gray-500"
+                              className={conditionalClasses({
+                                light: "rounded border-gray-300 text-[#662d91] focus:ring-[#662d91]",
+                                dark: "rounded border-gray-600 text-purple-500 focus:ring-purple-500 bg-gray-700"
+                              })}
                               disabled={editingRole.name === 'Administrador'}
                             />
                             <span className={conditionalClasses({
@@ -1026,7 +1091,10 @@ const Roles = () => {
                 >
                   {formLoading ? (
                     <>
-                      <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+                      <svg className={conditionalClasses({
+                        light: "animate-spin h-5 w-5 mr-2 text-white",
+                        dark: "animate-spin h-5 w-5 mr-2 text-white"
+                      })} fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
@@ -1052,7 +1120,10 @@ const Roles = () => {
             <div className="sticky top-0 bg-linear-to-r from-purple-600 to-purple-700 p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                  <div className={conditionalClasses({
+                    light: "w-10 h-10 bg-white/20 rounded-full flex items-center justify-center",
+                    dark: "w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
+                  })}>
                     {getRoleIcon(selectedRoleForPreview.name)}
                   </div>
                   <div>
@@ -1066,7 +1137,10 @@ const Roles = () => {
                 </div>
                 <button
                   onClick={() => setShowPermissionPreview(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                  className={conditionalClasses({
+                    light: "p-2 hover:bg-white/20 rounded-lg transition-all text-white",
+                    dark: "p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                  })}
                 >
                   <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
                 </button>
@@ -1148,9 +1222,10 @@ const Roles = () => {
                             const hasPermission = rolePermissionsInModule.some(rp => rp.id === permission.id);
                             return (
                               <div key={permission.id} className="flex items-center space-x-2">
-                                <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
-                                  hasPermission ? 'bg-green-500' : 'bg-gray-300'
-                                }`}>
+                                <div className={`w-4 h-4 rounded-full flex items-center justify-center ${conditionalClasses({
+                                  light: hasPermission ? 'bg-green-500' : 'bg-gray-300',
+                                  dark: hasPermission ? 'bg-green-600' : 'bg-gray-600'
+                                })}`}>
                                   {hasPermission && <FaCheck className="w-2 h-2 text-white" />}
                                 </div>
                                 <span className={conditionalClasses({
@@ -1170,7 +1245,10 @@ const Roles = () => {
               </div>
 
               {/* Acciones */}
-              <div className="flex space-x-3 pt-6 border-t border-gray-200 dark:border-gray-600">
+              <div className={conditionalClasses({
+                light: "flex space-x-3 pt-6 border-t border-gray-200",
+                dark: "flex space-x-3 pt-6 border-t border-gray-600"
+              })}>
                 <button
                   onClick={() => setShowPermissionPreview(false)}
                   className={conditionalClasses({

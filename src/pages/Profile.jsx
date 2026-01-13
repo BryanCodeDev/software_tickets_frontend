@@ -283,12 +283,12 @@ const Profile = () => {
                   >
                     <option value="" className={conditionalClasses({
                       light: 'text-gray-900',
-                      dark: 'text-gray-900 bg-gray-700'
+                      dark: 'text-gray-100 bg-gray-700'
                     })}>Seleccionar código IT</option>
                     {uniqueITs.map((item) => (
                       <option key={item.it} value={item.it} className={conditionalClasses({
                         light: 'text-gray-900',
-                        dark: 'text-gray-900 bg-gray-700'
+                        dark: 'text-gray-100 bg-gray-700'
                       })}>
                         {item.it} ({item.area})
                       </option>
@@ -558,14 +558,20 @@ const Profile = () => {
                 light: 'flex items-center gap-2 text-xs sm:text-sm text-gray-500',
                 dark: 'flex items-center gap-2 text-xs sm:text-sm text-gray-400'
               })}>
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <div className={conditionalClasses({
+                  light: 'w-2 h-2 bg-green-500 rounded-full animate-pulse',
+                  dark: 'w-2 h-2 bg-green-400 rounded-full animate-pulse'
+                })}></div>
                 <span>Todos los cambios se guardan de forma segura</span>
               </div>
 
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
+                className={conditionalClasses({
+                  light: 'w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl',
+                  dark: 'w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5]/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl'
+                })}
               >
                 {loading ? (
                   <>
