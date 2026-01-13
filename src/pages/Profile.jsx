@@ -281,9 +281,15 @@ const Profile = () => {
                       dark: 'w-full px-4 py-2.5 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-[#7a3da8] focus:border-transparent transition-all text-sm sm:text-base hover:border-gray-500 text-gray-100'
                     })}
                   >
-                    <option value="">Seleccionar código IT</option>
+                    <option value="" className={conditionalClasses({
+                      light: 'text-gray-900',
+                      dark: 'text-gray-900 bg-gray-700'
+                    })}>Seleccionar código IT</option>
                     {uniqueITs.map((item) => (
-                      <option key={item.it} value={item.it}>
+                      <option key={item.it} value={item.it} className={conditionalClasses({
+                        light: 'text-gray-900',
+                        dark: 'text-gray-900 bg-gray-700'
+                      })}>
                         {item.it} ({item.area})
                       </option>
                     ))}
@@ -321,15 +327,18 @@ const Profile = () => {
                   </label>
                   <div className="flex gap-3 flex-wrap">
                     <label className={conditionalClasses({
-                      light: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9] has-checked:text-[#662d91] flex-1 min-w-[100px] border-gray-300',
-                      dark: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-700 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9]/20 has-checked:text-[#662d91] flex-1 min-w-[100px] border-gray-600'
+                      light: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9] has-checked:text-[#662d91] flex-1 min-w-25 border-gray-300',
+                      dark: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-700 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9]/20 has-checked:text-[#662d91] flex-1 min-w-25 border-gray-600'
                     })}>
                       <input
                         type="radio"
                         name="hasCorporatePhone"
                         checked={formData.hasCorporatePhone === true}
                         onChange={() => setFormData({ ...formData, hasCorporatePhone: true })}
-                        className="w-4 h-4 text-[#662d91] focus:ring-[#7a3da8]"
+                        className={conditionalClasses({
+                          light: 'w-4 h-4 text-[#662d91] focus:ring-[#7a3da8]',
+                          dark: 'w-4 h-4 text-[#662d91] focus:ring-[#7a3da8] bg-gray-800 border-gray-600'
+                        })}
                       />
                       <span className={conditionalClasses({
                         light: 'text-sm font-medium text-gray-700',
@@ -337,8 +346,8 @@ const Profile = () => {
                       })}>Sí</span>
                     </label>
                     <label className={conditionalClasses({
-                      light: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9] has-checked:text-[#662d91] flex-1 min-w-[100px] border-gray-300',
-                      dark: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-700 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9]/20 has-checked:text-[#662d91] flex-1 min-w-[100px] border-gray-600'
+                      light: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9] has-checked:text-[#662d91] flex-1 min-w-25 border-gray-300',
+                      dark: 'flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-700 has-checked:border-[#662d91] has-checked:bg-[#f3ebf9]/20 has-checked:text-[#662d91] flex-1 min-w-25 border-gray-600'
                     })}>
                       <input
                         type="radio"
@@ -348,7 +357,10 @@ const Profile = () => {
                           setFormData({ ...formData, hasCorporatePhone: false, corporatePhone: '' });
                           setSearchPhone('');
                         }}
-                        className="w-4 h-4 text-[#662d91] focus:ring-[#7a3da8]"
+                        className={conditionalClasses({
+                          light: 'w-4 h-4 text-[#662d91] focus:ring-[#7a3da8]',
+                          dark: 'w-4 h-4 text-[#662d91] focus:ring-[#7a3da8] bg-gray-800 border-gray-600'
+                        })}
                       />
                       <span className={conditionalClasses({
                         light: 'text-sm font-medium text-gray-700',
@@ -402,7 +414,7 @@ const Profile = () => {
                       {showPhoneDropdown && (
                         <div className={conditionalClasses({
                           light: 'absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl max-h-64 overflow-y-auto',
-                          dark: 'absolute z-50 w-full mt-1 bg-gray-700 border border-gray-600 rounded-lg shadow-xl max-h-64 overflow-y-auto'
+                          dark: 'absolute z-50 w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-xl max-h-64 overflow-y-auto'
                         })}>
                           {phonesFiltered.length > 0 ? (
                             <div className="py-1">
@@ -411,7 +423,7 @@ const Profile = () => {
                                   key={phone.id}
                                   className={conditionalClasses({
                                     light: 'px-4 py-3 hover:bg-[#f3ebf9] cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors',
-                                    dark: 'px-4 py-3 hover:bg-gray-600 cursor-pointer border-b border-gray-600 last:border-b-0 transition-colors'
+                                    dark: 'px-4 py-3 hover:bg-gray-700 cursor-pointer border-b border-gray-600 last:border-b-0 transition-colors'
                                   })}
                                   onClick={() => {
                                     setFormData({ ...formData, corporatePhone: phone.numero_celular });
@@ -441,7 +453,10 @@ const Profile = () => {
                               ))}
                             </div>
                           ) : (
-                            <div className="px-4 py-8 text-center">
+                            <div className={conditionalClasses({
+                              light: 'px-4 py-8 text-center bg-white',
+                              dark: 'px-4 py-8 text-center bg-gray-800'
+                            })}>
                               <FaPhone className={conditionalClasses({
                                 light: 'mx-auto text-gray-400 text-2xl mb-2',
                                 dark: 'mx-auto text-gray-500 text-2xl mb-2'
@@ -462,7 +477,7 @@ const Profile = () => {
                     {selectedPhone && (
                       <div className={conditionalClasses({
                         light: 'mt-2 p-3 bg-green-50 border border-green-200 rounded-lg',
-                        dark: 'mt-2 p-3 bg-green-900/30 border border-green-800 rounded-lg'
+                        dark: 'mt-2 p-3 bg-green-900/40 border border-green-700 rounded-lg'
                       })}>
                         <div className="flex items-center gap-2">
                           <FaCheck className={conditionalClasses({
