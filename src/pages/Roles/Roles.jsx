@@ -4,7 +4,7 @@ import AuthContext from '../../context/AuthContext.jsx';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
 import { useNotifications } from '../../hooks/useNotifications';
-import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaShieldAlt, FaKey, FaUserShield, FaUserCog, FaUser, FaChartBar, FaSave, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaShieldAlt, FaKey, FaUserShield, FaUserCog, FaUser, FaChartBar, FaSave, FaEye, FaEyeSlash, FaExclamationTriangle, FaInfoCircle, FaCopy, FaDownload } from 'react-icons/fa';
 import { ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 
 const Roles = () => {
@@ -27,6 +27,12 @@ const Roles = () => {
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
+  
+  // Estados adicionales para mejor gestión
+  const [showPermissionPreview, setShowPermissionPreview] = useState(false);
+  const [selectedRoleForPreview, setSelectedRoleForPreview] = useState(null);
+  const [permissionChanges, setPermissionChanges] = useState({});
+  const [showBulkActions, setShowBulkActions] = useState(false);
 
   // Search and filter states
   const [searchTerm, setSearchTerm] = useState('');
@@ -183,13 +189,25 @@ const Roles = () => {
     }
   };
 
+  // Función mejorada para manejar cambios de permisos con seguimiento
   const handlePermissionToggle = (permissionId) => {
+    const wasSelected = formData.permissionIds.includes(permissionId);
+    const newPermissionIds = wasSelected
+      ? formData.permissionIds.filter(id => id !== permissionId)
+      : [...formData.permissionIds, permissionId];
+    
     setFormData(prev => ({
       ...prev,
-      permissionIds: prev.permissionIds.includes(permissionId)
-        ? prev.permissionIds.filter(id => id !== permissionId)
-        : [...prev.permissionIds, permissionId]
+      permissionIds: newPermissionIds
     }));
+
+    // Registrar cambios para vista previa
+    if (editingRole) {
+      setPermissionChanges(prev => ({
+        ...prev,
+        [permissionId]: !wasSelected
+      }));
+    }
   };
 
   const handleModulePermissionsToggle = (modulePermissions) => {
@@ -209,6 +227,97 @@ const Roles = () => {
         permissionIds: [...new Set([...prev.permissionIds, ...modulePermissionIds])]
       }));
     }
+  };
+
+  // Función para previsualizar permisos antes de guardar
+  const handlePreviewPermissions = (role) => {
+    setSelectedRoleForPreview(role);
+    setShowPermissionPreview(true);
+  };
+
+  // Función para copiar permisos de un rol a otro
+  const handleCopyPermissions = async (sourceRoleId, targetRoleId) => {
+    try {
+      const sourceRole = roles.find(r => r.id === sourceRoleId);
+      const targetRole = roles.find(r => r.id === targetRoleId);
+      
+      if (!sourceRole || !targetRole) {
+        notifyError('Roles no encontrados');
+        return;
+      }
+
+      const sourcePermissionIds = sourceRole.permissions?.map(p => p.id) || [];
+      await rolesAPI.updateRolePermissions(targetRoleId, sourcePermissionIds);
+      
+      notifySuccess(`Permisos copiados de ${sourceRole.name} a ${targetRole.name}`);
+      fetchRoles();
+    } catch (err) {
+      notifyError('Error al copiar permisos');
+    }
+  };
+
+  // Función para exportar configuración de roles
+  const handleExportRoles = async () => {
+    try {
+      const exportData = {
+        roles: roles.map(role => ({
+          name: role.name,
+          level: role.level,
+          description: role.description,
+          permissions: role.permissions?.map(p => ({
+            module: p.module,
+            action: p.action,
+            description: p.description
+          })) || []
+        })),
+        exportDate: new Date().toISOString(),
+        exportedBy: user?.name || user?.username
+      };
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+        type: 'application/json'
+      });
+      
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `roles-config-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      notifySuccess('Configuración de roles exportada exitosamente');
+    } catch (err) {
+      notifyError('Error al exportar configuración');
+    }
+  };
+
+  // Función para validar configuración de permisos
+  const validatePermissionConfiguration = () => {
+    const warnings = [];
+    const errors = [];
+
+    roles.forEach(role => {
+      const permissionCount = role.permissions?.length || 0;
+      
+      // Validaciones básicas
+      if (permissionCount === 0 && role.name !== 'Empleado') {
+        warnings.push(`El rol "${role.name}" no tiene permisos asignados`);
+      }
+      
+      // Validar roles críticos
+      if (['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa', 'Jefe', 'Compras'].includes(role.name)) {
+        const criticalModules = ['tickets', 'purchase_requests', 'quality_tickets', 'documents'];
+        const hasCriticalPermissions = role.permissions?.some(p => criticalModules.includes(p.module));
+        
+        if (!hasCriticalPermissions) {
+          errors.push(`El rol "${role.name}" debe tener permisos en módulos críticos`);
+        }
+      }
+    });
+
+    return { warnings, errors };
   };
 
   const showConfirmDialog = (message, onConfirm) => {
@@ -313,18 +422,50 @@ const Roles = () => {
                 <FaChartBar className="mr-2" />
                 <span className="hidden sm:inline">Estadísticas</span>
               </button>
-              {checkPermission('roles', 'create') && (
+              
+              {/* Botones de acciones rápidas */}
+              <div className="flex items-center gap-2">
                 <button
-                  onClick={handleCreate}
+                  onClick={() => setShowBulkActions(!showBulkActions)}
                   className={conditionalClasses({
-                    light: "flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200",
-                    dark: "flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                    light: "inline-flex items-center px-3 py-2 bg-white hover:bg-gray-50 border-2 border-gray-200 text-gray-700 font-medium rounded-xl transition-all text-sm",
+                    dark: "inline-flex items-center px-3 py-2 bg-gray-800 hover:bg-gray-700 border-2 border-gray-600 text-gray-200 font-medium rounded-xl transition-all text-sm"
                   })}
+                  title="Acciones rápidas"
                 >
-                  <FaPlus className="w-5 h-5" />
-                  <span>Nuevo Rol</span>
+                  <FaFilter className="mr-1" />
+                  <span className="hidden sm:inline">Acciones</span>
                 </button>
-              )}
+                
+                {showBulkActions && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleExportRoles}
+                      className={conditionalClasses({
+                        light: "inline-flex items-center px-3 py-2 bg-green-100 hover:bg-green-200 text-green-700 font-medium rounded-lg transition-all text-sm",
+                        dark: "inline-flex items-center px-3 py-2 bg-green-900 hover:bg-green-800 text-green-300 font-medium rounded-lg transition-all text-sm"
+                      })}
+                      title="Exportar configuración"
+                    >
+                      <FaDownload className="mr-1" />
+                      <span className="hidden sm:inline">Exportar</span>
+                    </button>
+                  </div>
+                )}
+                
+                {checkPermission('roles', 'create') && (
+                  <button
+                    onClick={handleCreate}
+                    className={conditionalClasses({
+                      light: "flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200",
+                      dark: "flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                    })}
+                  >
+                    <FaPlus className="w-5 h-5" />
+                    <span>Nuevo Rol</span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -504,11 +645,25 @@ const Roles = () => {
                             dark: "flex items-center space-x-1 px-3 py-1 bg-blue-900 text-blue-300 text-xs font-medium rounded-lg hover:bg-blue-800 transition-colors"
                           })}
                           disabled={role.name === 'Administrador'}
+                          title="Editar rol y permisos"
                         >
                           <FaEdit />
                           <span>Editar</span>
                         </button>
                       )}
+                      
+                      <button
+                        onClick={() => handlePreviewPermissions(role)}
+                        className={conditionalClasses({
+                          light: "flex items-center space-x-1 px-3 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-lg hover:bg-purple-200 transition-colors",
+                          dark: "flex items-center space-x-1 px-3 py-1 bg-purple-900 text-purple-300 text-xs font-medium rounded-lg hover:bg-purple-800 transition-colors"
+                        })}
+                        title="Vista previa de permisos"
+                      >
+                        <FaEye />
+                        <span>Ver</span>
+                      </button>
+                      
                       {checkPermission('roles', 'delete') && (
                         <button
                           onClick={() => handleDelete(role.id)}
@@ -517,6 +672,7 @@ const Roles = () => {
                             dark: "flex items-center space-x-1 px-3 py-1 bg-red-900 text-red-300 text-xs font-medium rounded-lg hover:bg-red-800 transition-colors"
                           })}
                           disabled={role.name === 'Administrador'}
+                          title="Eliminar rol"
                         >
                           <FaTrash />
                           <span>Eliminar</span>
@@ -882,6 +1038,164 @@ const Roles = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Vista Previa de Permisos */}
+      {showPermissionPreview && selectedRoleForPreview && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+          <div className={conditionalClasses({
+            light: "bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in",
+            dark: "bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-700 animate-scale-in"
+          })}>
+            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-purple-700 p-4 lg:p-6 z-10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                    {getRoleIcon(selectedRoleForPreview.name)}
+                  </div>
+                  <div>
+                    <h2 className="text-xl lg:text-2xl font-bold text-white">
+                      Permisos: {selectedRoleForPreview.name}
+                    </h2>
+                    <p className="text-purple-200 text-sm">
+                      Nivel {selectedRoleForPreview.level} • {selectedRoleForPreview.permissions?.length || 0} permisos asignados
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowPermissionPreview(false)}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                >
+                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-3 sm:p-4 md:p-6">
+              {/* Resumen de permisos */}
+              <div className="mb-6">
+                <div className={conditionalClasses({
+                  light: "bg-blue-50 border border-blue-200 rounded-lg p-4",
+                  dark: "bg-blue-900/30 border border-blue-700 rounded-lg p-4"
+                })}>
+                  <div className="flex items-start gap-3">
+                    <FaInfoCircle className="text-blue-600 dark:text-blue-400 mt-0.5" />
+                    <div>
+                      <h4 className={conditionalClasses({
+                        light: "font-semibold text-blue-900 mb-1",
+                        dark: "font-semibold text-blue-200 mb-1"
+                      })}>Resumen de Permisos</h4>
+                      <p className={conditionalClasses({
+                        light: "text-sm text-blue-700",
+                        dark: "text-sm text-blue-300"
+                      })}>
+                        Este rol tiene acceso a {selectedRoleForPreview.permissions?.length || 0} permisos distribuidos en {Object.keys(permissionsByModule).length} módulos del sistema.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Permisos por módulo */}
+              <div className="space-y-4">
+                <h3 className={conditionalClasses({
+                  light: "text-lg font-semibold text-gray-900 mb-4",
+                  dark: "text-lg font-semibold text-white mb-4"
+                })}>Permisos por Módulo</h3>
+                
+                {Object.entries(permissionsByModule).map(([module, modulePermissions]) => {
+                  const rolePermissionsInModule = selectedRoleForPreview.permissions?.filter(
+                    p => p.module === module
+                  ) || [];
+                  
+                  const hasAllPermissions = modulePermissions.length === rolePermissionsInModule.length;
+                  const hasSomePermissions = rolePermissionsInModule.length > 0;
+                  
+                  return (
+                    <div key={module} className={conditionalClasses({
+                      light: "border border-gray-200 rounded-lg p-4",
+                      dark: "border border-gray-600 rounded-lg p-4"
+                    })}>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <h4 className={conditionalClasses({
+                            light: "font-medium text-gray-900 capitalize",
+                            dark: "font-medium text-white capitalize"
+                          })}>{module.replace('_', ' ')}</h4>
+                          <span className={conditionalClasses({
+                            light: "text-xs px-2 py-1 rounded-full",
+                            dark: "text-xs px-2 py-1 rounded-full"
+                          }, hasAllPermissions ? "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300" :
+                             hasSomePermissions ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300" :
+                             "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400")}>
+                            {rolePermissionsInModule.length}/{modulePermissions.length}
+                          </span>
+                        </div>
+                        <div className={conditionalClasses({
+                          light: "text-sm text-gray-600",
+                          dark: "text-sm text-gray-400"
+                        })}>
+                          {hasAllPermissions ? 'Acceso completo' :
+                           hasSomePermissions ? 'Acceso parcial' : 'Sin acceso'}
+                        </div>
+                      </div>
+                      
+                      {hasSomePermissions && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {modulePermissions.map((permission) => {
+                            const hasPermission = rolePermissionsInModule.some(rp => rp.id === permission.id);
+                            return (
+                              <div key={permission.id} className="flex items-center space-x-2">
+                                <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
+                                  hasPermission ? 'bg-green-500' : 'bg-gray-300'
+                                }`}>
+                                  {hasPermission && <FaCheck className="w-2 h-2 text-white" />}
+                                </div>
+                                <span className={conditionalClasses({
+                                  light: `text-sm ${hasPermission ? 'text-gray-900' : 'text-gray-400'}`,
+                                  dark: `text-sm ${hasPermission ? 'text-white' : 'text-gray-500'}`
+                                })}>
+                                  {permission.action}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Acciones */}
+              <div className="flex space-x-3 pt-6 border-t border-gray-200 dark:border-gray-600">
+                <button
+                  onClick={() => setShowPermissionPreview(false)}
+                  className={conditionalClasses({
+                    light: "flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors",
+                    dark: "flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-500 text-gray-200 font-medium rounded-xl transition-colors"
+                  })}
+                >
+                  Cerrar
+                </button>
+                {checkPermission('roles', 'edit') && selectedRoleForPreview.name !== 'Administrador' && (
+                  <button
+                    onClick={() => {
+                      setShowPermissionPreview(false);
+                      handleEdit(selectedRoleForPreview);
+                    }}
+                    className={conditionalClasses({
+                      light: "flex-1 px-4 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200",
+                      dark: "flex-1 px-4 py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                    })}
+                  >
+                    Editar Permisos
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}
