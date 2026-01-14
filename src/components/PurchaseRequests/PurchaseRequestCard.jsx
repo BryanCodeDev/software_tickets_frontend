@@ -164,7 +164,7 @@ const PurchaseRequestCard = ({ request, onViewDetail, onEdit, onDelete, userRole
             </h3>
           </div>
           <div className="flex items-center gap-1 shrink-0 self-end sm:self-start">
-            {userRole === 'Administrador' && (
+            {(userRole === 'Administrador' || (userRole === 'Calidad' && request.userId === user?.id)) && (
               <button
                 onClick={() => onEdit && onEdit(request)}
                 className={conditionalClasses({

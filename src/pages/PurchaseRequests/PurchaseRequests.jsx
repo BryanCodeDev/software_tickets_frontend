@@ -131,8 +131,8 @@ const PurchaseRequests = () => {
     let filtered = [...requests];
 
     // Permission-based filtering
-    if (!checkPermission('purchase_requests', 'view_all')) {
-      // Si no tiene permiso para ver todas, solo ver sus propias solicitudes
+    if (!checkPermission('purchase_requests', 'view_all') || userRole === 'Calidad') {
+      // Si no tiene permiso para ver todas o es rol Calidad, solo ver sus propias solicitudes
       filtered = filtered.filter(request => request.userId === user?.id);
     }
 
@@ -330,7 +330,7 @@ const PurchaseRequests = () => {
     notifySuccess('Solicitudes exportadas exitosamente');
   };
 
-  const canCreate = ['Administrador', 'Técnico', 'Empleado', 'Jefe', 'Coordinadora Administrativa'].includes(userRole);
+  const canCreate = ['Administrador', 'Técnico', 'Empleado', 'Jefe', 'Coordinadora Administrativa', 'Calidad'].includes(userRole);
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });

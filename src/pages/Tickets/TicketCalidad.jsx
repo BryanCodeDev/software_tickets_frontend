@@ -164,7 +164,7 @@ const TicketCalidad = () => {
     if (userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad') {
       return true;
     }
-    if (userRole === 'Empleado') {
+    if (userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' || userRole === 'Coordinadora Administrativa') {
       return ticket.userId === user?.id;
     }
     return false;
@@ -177,7 +177,7 @@ const TicketCalidad = () => {
     if (userRole === 'Técnico') {
       return (ticket.userId === user?.id || ticket.assignedTo === user?.id) && ticket.status?.toLowerCase() === 'cerrado';
     }
-    if (userRole === 'Empleado') {
+    if (userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' || userRole === 'Coordinadora Administrativa') {
       return ticket.userId === user?.id;
     }
     return false;
@@ -187,7 +187,7 @@ const TicketCalidad = () => {
     if (userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad') {
       return true;
     }
-    if (userRole === 'Empleado') {
+    if (userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' || userRole === 'Coordinadora Administrativa') {
       return ticket.userId === user?.id;
     }
     return false;
@@ -553,7 +553,7 @@ const TicketCalidad = () => {
     showNotification('Tickets de calidad exportados exitosamente', 'success');
   }, [filteredTickets, showNotification]);
 
-  const canCreate = userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Empleado';
+  const canCreate = userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' || userRole === 'Coordinadora Administrativa';
 
 
   if (loading) {
