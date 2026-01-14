@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { FaClipboardList, FaChartBar, FaEye, FaEdit, FaTrash, FaExclamationTriangle, FaSpinner, FaCheckCircle, FaCheck, FaClock } from 'react-icons/fa';
-import { useThemeClasses } from '../../hooks/useThemeClasses';
 import TicketCard from './TicketCard';
 import { getTimeAgo } from '../../utils';
 
@@ -13,7 +12,6 @@ const TicketList = ({
   handleDelete,
   canEditTicket,
   canDeleteTicket,
-  user,
   viewMode,
   setViewMode
 }) => {
@@ -158,7 +156,6 @@ const TicketList = ({
                 onViewDetail={handleViewDetail}
                 onEdit={handleEdit}
                 canEditTicket={canEditTicket}
-                userRole={user?.role?.name}
               />
             ))}
           </div>

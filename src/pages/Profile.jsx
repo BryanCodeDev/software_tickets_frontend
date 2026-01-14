@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useCallback } from 'react';
 import AuthContext from '../context/AuthContext.jsx';
 import { usersAPI, inventoryAPI } from '../api';
 import { corporatePhoneAPI } from '../api';
@@ -25,6 +25,25 @@ const Profile = () => {
   const [searchPhone, setSearchPhone] = useState('');
   const [showPhoneDropdown, setShowPhoneDropdown] = useState(false);
 
+  const fetchUniqueITs = useCallback(async () => {
+    try {
+      const data = await inventoryAPI.fetchUniqueITs();
+      setUniqueITs(data);
+    } catch (err) {
+      console.error('Error al cargar ITs:', err);
+    }
+  }, []);
+
+  const fetchAvailablePhones = useCallback(async () => {
+    try {
+      const phones = await corporatePhoneAPI.fetchCorporatePhones();
+      const activePhones = phones.filter(phone => phone.status === 'activo');
+      setAvailablePhones(activePhones);
+    } catch (err) {
+      console.error('Error al cargar teléfonos corporativos:', err);
+    }
+  }, []);
+
   useEffect(() => {
     if (user) {
       setFormData({
@@ -38,7 +57,7 @@ const Profile = () => {
     }
     fetchUniqueITs();
     fetchAvailablePhones();
-  }, [user]);
+  }, [user, fetchUniqueITs, fetchAvailablePhones]);
 
   const selectedPhone = availablePhones.find(phone => phone.numero_celular === formData.corporatePhone);
 
@@ -69,31 +88,12 @@ const Profile = () => {
     return () => offUserUpdated(handleUserUpdated);
   }, [user, updateUser]);
 
-  const fetchUniqueITs = async () => {
-    try {
-      const data = await inventoryAPI.fetchUniqueITs();
-      setUniqueITs(data);
-    } catch (err) {
-      console.error('Error al cargar ITs:', err);
-    }
-  };
-
-  const fetchAvailablePhones = async () => {
-    try {
-      const phones = await corporatePhoneAPI.fetchCorporatePhones();
-      const activePhones = phones.filter(phone => phone.status === 'activo');
-      setAvailablePhones(activePhones);
-    } catch (err) {
-      console.error('Error al cargar teléfonos corporativos:', err);
-    }
-  };
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
+  const handleChange = useCallback((e) => {
+    setFormData(prev => ({
+      ...prev,
       [e.target.name]: e.target.value
-    });
-  };
+    }));
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -103,7 +103,7 @@ const Profile = () => {
       const updatedUser = await usersAPI.updateProfile(formData);
       updateUser(updatedUser);
       notifySuccess('Perfil actualizado exitosamente');
-    } catch (error) {
+    } catch {
       notifyError('Error al actualizar el perfil. Por favor, inténtalo de nuevo.');
     } finally {
       setLoading(false);
@@ -334,7 +334,7 @@ const Profile = () => {
                         type="radio"
                         name="hasCorporatePhone"
                         checked={formData.hasCorporatePhone === true}
-                        onChange={() => setFormData({ ...formData, hasCorporatePhone: true })}
+                        onChange={() => setFormData(prev => ({ ...prev, hasCorporatePhone: true }))}
                         className={conditionalClasses({
                           light: 'w-4 h-4 text-[#662d91] focus:ring-[#7a3da8]',
                           dark: 'w-4 h-4 text-[#662d91] focus:ring-[#7a3da8] bg-gray-800 border-gray-600'
@@ -354,7 +354,7 @@ const Profile = () => {
                         name="hasCorporatePhone"
                         checked={formData.hasCorporatePhone === false}
                         onChange={() => {
-                          setFormData({ ...formData, hasCorporatePhone: false, corporatePhone: '' });
+                          setFormData(prev => ({ ...prev, hasCorporatePhone: false, corporatePhone: '' }));
                           setSearchPhone('');
                         }}
                         className={conditionalClasses({
@@ -399,7 +399,7 @@ const Profile = () => {
                         value={selectedPhone ? `${selectedPhone.numero_celular} - ${selectedPhone.nombre} (${selectedPhone.category})` : searchPhone}
                         onChange={(e) => {
                           setSearchPhone(e.target.value);
-                          setFormData({ ...formData, corporatePhone: '' });
+                          setFormData(prev => ({ ...prev, corporatePhone: '' }));
                           setShowPhoneDropdown(true);
                         }}
                         onFocus={() => setShowPhoneDropdown(true)}
@@ -426,7 +426,7 @@ const Profile = () => {
                                     dark: 'px-4 py-3 hover:bg-gray-700 cursor-pointer border-b border-gray-600 last:border-b-0 transition-colors'
                                   })}
                                   onClick={() => {
-                                    setFormData({ ...formData, corporatePhone: phone.numero_celular });
+                                    setFormData(prev => ({ ...prev, corporatePhone: phone.numero_celular }));
                                     setSearchPhone('');
                                     setShowPhoneDropdown(false);
                                   }}

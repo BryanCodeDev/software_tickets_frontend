@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { FaBox, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaFileExport, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory, FaIndustry, FaFlask, FaCalculator, FaShoppingCart, FaUsers, FaBuilding, FaTools, FaLaptop, FaClipboardCheck } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
@@ -11,7 +11,7 @@ import ActaEntregaHistoryModal from '../../components/ActasEntrega/ActaEntregaHi
 
 const Inventory = () => {
   const { conditionalClasses } = useThemeClasses();
-  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
+  const { notifySuccess, notifyError, notifyWarning: _notifyWarning, notifyInfo: _notifyInfo } = useNotifications();
   const [inventory, setInventory] = useState([]);
   const [filteredInventory, setFilteredInventory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,29 +47,21 @@ const Inventory = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyItem, setHistoryItem] = useState(null);
   const [historyLoading, setHistoryLoading] = useState(false);
-  const { user } = useContext(AuthContext);
+  const { user: _user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
 
-  useEffect(() => {
-    fetchInventory();
-  }, []);
-
-  useEffect(() => {
-    filterAndSortInventory();
-  }, [inventory, searchTerm, filterStatus, filterArea, filterPropiedad, sortBy, sortOrder]);
-
-  const fetchInventory = async () => {
+  const fetchInventory = useCallback(async () => {
     try {
       const data = await inventoryAPI.fetchInventory();
       setInventory(data);
-    } catch (err) {
+    } catch {
       notifyError('Error al cargar el inventario. Por favor, recarga la página.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [notifyError]);
 
-  const filterAndSortInventory = () => {
+  const filterAndSortInventory = useCallback(() => {
     let filtered = [...inventory];
 
     // Búsqueda
@@ -112,7 +104,15 @@ const Inventory = () => {
     });
 
     setFilteredInventory(filtered);
-  };
+  }, [inventory, searchTerm, filterStatus, filterArea, filterPropiedad, sortBy, sortOrder]);
+
+  useEffect(() => {
+    fetchInventory();
+  }, [fetchInventory]);
+
+  useEffect(() => {
+    filterAndSortInventory();
+  }, [filterAndSortInventory]);
 
   const calculateStats = () => {
     const total = inventory.length;
@@ -191,7 +191,7 @@ const Inventory = () => {
         await inventoryAPI.deleteInventoryItem(id);
         fetchInventory();
         notifySuccess('Equipo eliminado exitosamente');
-      } catch (err) {
+      } catch {
         notifyError('Error al eliminar el equipo. Por favor, inténtalo de nuevo.');
       }
     });
@@ -203,9 +203,9 @@ const Inventory = () => {
     setShowHistoryModal(true);
     
     try {
-      const history = await inventoryAPI.getHistory(item.id);
+      const _history = await inventoryAPI.getHistory(item.id);
       // El modal manejará la carga de datos internamente
-    } catch (err) {
+    } catch {
       notifyError('Error al cargar el historial. Por favor, inténtalo de nuevo.');
       setShowHistoryModal(false);
     } finally {
@@ -226,7 +226,7 @@ const Inventory = () => {
       }
       fetchInventory();
       setShowModal(false);
-    } catch (err) {
+    } catch {
       notifyError('Error al guardar el equipo. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setFormLoading(false);
@@ -245,7 +245,7 @@ const Inventory = () => {
         marca: hardwareData.marca !== 'No detectado' ? hardwareData.marca : prev.marca,
       }));
       notifySuccess('Hardware detectado automáticamente');
-    } catch (err) {
+    } catch {
       notifyError('Error al detectar hardware. Verifica la conexión.');
     } finally {
       setDetectingHardware(false);
@@ -327,7 +327,7 @@ const Inventory = () => {
   const canCreate = checkPermission('inventory', 'create');
   const canEdit = checkPermission('inventory', 'edit');
   const canDelete = checkPermission('inventory', 'delete');
-  const canView = checkPermission('inventory', 'view');
+  const _canView = checkPermission('inventory', 'view');
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });
@@ -1364,7 +1364,7 @@ const Inventory = () => {
                   <button
                     type="button"
                     onClick={handleDetectHardware}
-                    className="flex items-center justify-center gap-2 px-3 lg:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all disabled:opacity-50 text-sm lg:text-base min-w-[140px]"
+                    className="flex items-center justify-center gap-2 px-3 lg:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all disabled:opacity-50 text-sm lg:text-base min-w-35"
                     disabled={formLoading || detectingHardware}
                   >
                     {detectingHardware ? (

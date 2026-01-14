@@ -8,7 +8,6 @@ const PurchaseRequestCreateModal = ({
   setShowCreateModal,
   formData,
   setFormData,
-  userRole,
   onSuccess // Nueva prop para callback
 }) => {
   const { conditionalClasses } = useThemeClasses();

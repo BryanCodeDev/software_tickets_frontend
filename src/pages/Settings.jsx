@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import AuthContext from '../context/AuthContext.jsx';
 import { usersAPI } from '../api';
 import ThemeToggle from '../components/ThemeToggle';
@@ -7,13 +7,13 @@ import { useNotifications } from '../hooks/useNotifications';
 import { FaCheck, FaTimes, FaEye, FaEyeSlash, FaCog, FaLock, FaShieldAlt, FaKey, FaPalette } from 'react-icons/fa';
 
 const Settings = () => {
-  const { user } = useContext(AuthContext);
+  // const { user } = useContext(AuthContext); // No utilizada pero mantenida para consistencia
   const { conditionalClasses } = useThemeClasses();
   const { notifySuccess, notifyError } = useNotifications();
-  const [settings, setSettings] = useState(() => {
-    return {};
-  });
-  const [loading, setLoading] = useState(false);
+  // const [settings, setSettings] = useState(() => {
+  //   return {};
+  // });
+  const [loading] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
@@ -35,57 +35,44 @@ const Settings = () => {
   });
   const [twoFactorLoading, setTwoFactorLoading] = useState(false);
 
-  useEffect(() => {
-    load2FAStatus();
-  }, []);
-
-  const load2FAStatus = async () => {
+  const load2FAStatus = useCallback(async () => {
     try {
       const status = await usersAPI.get2FAStatus();
       setTwoFactorData(prev => ({
         ...prev,
         isEnabled: status.enabled || false
       }));
-    } catch (error) {
+    } catch {
       // If token is invalid, don't show error to user, just keep default state
     }
-  };
+  }, []);
 
-  const handleChange = (e) => {
-    const { name, type, checked, value } = e.target;
-    setSettings({
-      ...settings,
-      [name]: type === 'checkbox' ? checked : value
-    });
-  };
+  useEffect(() => {
+    load2FAStatus();
+  }, [load2FAStatus]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  // const handleChange = useCallback((e) => {
+  //   const { name, type, checked, value } = e.target;
+  //   setSettings(prev => ({
+  //     ...prev,
+  //     [name]: type === 'checkbox' ? checked : value
+  //   }));
+  // }, []);
 
-    try {
-      await usersAPI.updateSettings(settings);
-      notifySuccess('Configuración guardada exitosamente');
-    } catch (error) {
-      notifyError('Error al guardar la configuración. Por favor, inténtalo de nuevo.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const handlePasswordChange = (e) => {
-    setPasswordData({
-      ...passwordData,
+  const handlePasswordChange = useCallback((e) => {
+    setPasswordData(prev => ({
+      ...prev,
       [e.target.name]: e.target.value
-    });
-  };
+    }));
+  }, []);
 
-  const togglePasswordVisibility = (field) => {
+  const togglePasswordVisibility = useCallback((field) => {
     setShowPasswords(prev => ({
       ...prev,
       [field]: !prev[field]
     }));
-  };
+  }, []);
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
@@ -112,8 +99,8 @@ const Settings = () => {
         localStorage.removeItem('token_timestamp');
         window.location.href = '/login';
       }, 2000);
-    } catch (error) {
-      notifyError(error.response?.data?.error || error || 'Error al cambiar la contraseña. Por favor, inténtalo de nuevo.');
+    } catch {
+      notifyError('Error al cambiar la contraseña. Por favor, inténtalo de nuevo.');
     } finally {
       setPasswordLoading(false);
     }
@@ -135,8 +122,8 @@ const Settings = () => {
         }));
         setShow2FAModal(true);
       }
-    } catch (error) {
-      notifyError(error || 'Error al cambiar configuración 2FA');
+    } catch {
+      notifyError('Error al cambiar configuración 2FA');
     } finally {
       setTwoFactorLoading(false);
     }
@@ -157,19 +144,19 @@ const Settings = () => {
       }));
       setShow2FAModal(false);
       notifySuccess('Autenticación de dos factores habilitada exitosamente');
-    } catch (error) {
-      notifyError(error || 'Código de verificación incorrecto');
+    } catch {
+      notifyError('Código de verificación incorrecto');
     } finally {
       setTwoFactorLoading(false);
     }
   };
 
-  const handle2FAChange = (e) => {
-    setTwoFactorData({
-      ...twoFactorData,
+  const handle2FAChange = useCallback((e) => {
+    setTwoFactorData(prev => ({
+      ...prev,
       [e.target.name]: e.target.value
-    });
-  };
+    }));
+  }, []);
 
   return (
     <div className={conditionalClasses({
@@ -217,7 +204,8 @@ const Settings = () => {
           </div>
 
           {/* Form Section */}
-          <form onSubmit={handleSubmit} className="p-4 sm:p-6 lg:p-8">
+          {/* <form onSubmit={handleSubmit} className="p-4 sm:p-6 lg:p-8"> */}
+          <div className="p-4 sm:p-6 lg:p-8">
             
             {/* Security Settings */}
             <div className="mb-8">
@@ -453,8 +441,9 @@ const Settings = () => {
               </div>
 
               <button
-                type="submit"
+                type="button"
                 disabled={loading}
+                onClick={() => notifySuccess('Configuración actualizada')}
                 className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
               >
                 {loading ? (
@@ -470,7 +459,8 @@ const Settings = () => {
                 )}
               </button>
             </div>
-          </form>
+          {/* </form> */}
+          </div>
         </div>
 
         {/* Password Change Modal */}

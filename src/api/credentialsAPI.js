@@ -2,82 +2,46 @@ import api from './api';
 
 const credentialsAPI = {
   fetchCredentials: async () => {
-    try {
-      const response = await api.get('/credentials');
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.get('/credentials');
+    return response.data;
   },
 
   fetchCredentialById: async (id) => {
-    try {
-      const response = await api.get(`/credentials/${id}`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.get(`/credentials/${id}`);
+    return response.data;
   },
 
   createCredential: async (credentialData) => {
-    try {
-      const response = await api.post('/credentials', credentialData);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.post('/credentials', credentialData);
+    return response.data;
   },
 
   updateCredential: async (id, credentialData) => {
-    try {
-      const response = await api.put(`/credentials/${id}`, credentialData);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.put(`/credentials/${id}`, credentialData);
+    return response.data;
   },
 
   deleteCredential: async (id) => {
-    try {
-      await api.delete(`/credentials/${id}`);
-    } catch (error) {
-      throw error;
-    }
+    await api.delete(`/credentials/${id}`);
   },
 
   fetchFolders: async () => {
-    try {
-      const response = await api.get('/credentials/folders');
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.get('/credentials/folders');
+    return response.data;
   },
 
   createFolder: async (folderData) => {
-    try {
-      const response = await api.post('/credentials/folders', folderData);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.post('/credentials/folders', folderData);
+    return response.data;
   },
 
   updateFolder: async (id, folderData) => {
-    try {
-      const response = await api.put(`/credentials/folders/${id}`, folderData);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.put(`/credentials/folders/${id}`, folderData);
+    return response.data;
   },
 
   deleteFolder: async (id) => {
-    try {
-      await api.delete(`/credentials/folders/${id}`);
-    } catch (error) {
-      throw error;
-    }
+    await api.delete(`/credentials/folders/${id}`);
   },
 };
 

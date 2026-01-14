@@ -179,7 +179,7 @@ export const exportToPDF = async (acta, equipo) => {
     '• Al retiro, entregar todos los equipos al área IT para revisión'
   ];
 
-  politicas.forEach((pol, i) => {
+  politicas.forEach((pol) => {
     const lines = pdf.splitTextToSize(pol, contentWidth - 4);
     pdf.text(lines, margin + 2, yPos);
     yPos += lines.length * 3.5;

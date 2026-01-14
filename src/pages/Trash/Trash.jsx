@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { trashAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
@@ -26,14 +26,7 @@ const Trash = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
 
-  useEffect(() => {
-    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Tecnico')) {
-      fetchTrashItems();
-      fetchStats();
-    }
-  }, [user, searchTerm, filterModule, pagination.current]);
-
-  const fetchTrashItems = async () => {
+  const fetchTrashItems = useCallback(async () => {
     try {
       setLoading(true);
       const data = await trashAPI.getFilteredTrash({
@@ -44,21 +37,41 @@ const Trash = () => {
       });
       setTrashItems(data.trash);
       setPagination(data.pagination);
-    } catch (err) {
+    } catch {
       notifyError('Error al cargar elementos de la papelera');
     } finally {
       setLoading(false);
     }
-  };
+  }, [notifyError, pagination.current, filterModule, searchTerm]);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const data = await trashAPI.getTrashStats();
       setStats(data);
     } catch (err) {
       console.error('Error fetching stats:', err);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Tecnico')) {
+      fetchTrashItems();
+      fetchStats();
+    }
+  }, [user, fetchTrashItems, fetchStats]);
+
+  useEffect(() => {
+    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Tecnico')) {
+      setPagination(prev => ({ ...prev, current: 1 }));
+      fetchTrashItems();
+    }
+  }, [searchTerm, filterModule, fetchTrashItems]);
+
+  useEffect(() => {
+    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Tecnico')) {
+      fetchTrashItems();
+    }
+  }, [pagination.current, fetchTrashItems]);
 
   const handleRestore = async (item) => {
     showConfirmDialog(
@@ -69,7 +82,7 @@ const Trash = () => {
           fetchTrashItems();
           fetchStats();
           notifySuccess('Elemento restaurado exitosamente');
-        } catch (err) {
+        } catch {
           notifyError('Error al restaurar el elemento');
         }
       }
@@ -85,7 +98,7 @@ const Trash = () => {
           fetchTrashItems();
           fetchStats();
           notifySuccess('Elemento eliminado permanentemente');
-        } catch (err) {
+        } catch {
           notifyError('Error al eliminar el elemento');
         }
       }
@@ -101,7 +114,7 @@ const Trash = () => {
           fetchTrashItems();
           fetchStats();
           notifySuccess('Papelera vaciada exitosamente');
-        } catch (err) {
+        } catch {
           notifyError('Error al vaciar la papelera');
         }
       }

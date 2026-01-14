@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaTimes, FaHistory, FaUser, FaCalendarAlt, FaEdit, FaPlus, FaTrash, FaEye } from 'react-icons/fa';
 import actaEntregaAPI from '../../api/actaEntregaAPI';
 
@@ -7,13 +7,7 @@ const ActaEntregaHistoryModal = ({ showModal, onClose, actaId }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (showModal && actaId) {
-      fetchHistory();
-    }
-  }, [showModal, actaId]);
-
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -25,7 +19,14 @@ const ActaEntregaHistoryModal = ({ showModal, onClose, actaId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [actaId]);
+
+  useEffect(() => {
+    if (showModal && actaId) {
+      fetchHistory();
+    }
+  }, [showModal, actaId, fetchHistory]);
+
 
   const getActionIcon = (action) => {
     switch (action) {
@@ -147,7 +148,7 @@ const ActaEntregaHistoryModal = ({ showModal, onClose, actaId }) => {
             </div>
           ) : (
             <div className="p-4 lg:p-6 space-y-4">
-              {historyData.history.map((record, index) => (
+              {historyData.history.map((record) => (
                 <div key={record.id} className="bg-gray-50 rounded-xl p-4 lg:p-5 border border-gray-200">
                   {/* Header del registro */}
                   <div className="flex items-start justify-between mb-4 pb-3 border-b border-gray-200">

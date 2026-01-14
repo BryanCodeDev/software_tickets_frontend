@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaClipboardCheck, FaPlus, FaBox, FaFileExport } from 'react-icons/fa';
 import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
@@ -66,7 +66,6 @@ const ActasEntrega = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [viewMode, setViewMode] = useState('cards');
-  const { user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
 
   const [equiposDisponibles, setEquiposDisponibles] = useState([]);
@@ -81,15 +80,15 @@ const ActasEntrega = () => {
 
     const setupWebSocketListeners = () => {
       if (socket && socket.connected) {
-        onActaEntregaCreated((acta) => {
+        onActaEntregaCreated(() => {
           fetchActas();
         });
 
-        onActaEntregaUpdated((data) => {
+        onActaEntregaUpdated(() => {
           fetchActas();
         });
 
-        onActaEntregaDeleted((data) => {
+        onActaEntregaDeleted(() => {
           fetchActas();
         });
 
@@ -116,13 +115,13 @@ const ActasEntrega = () => {
         socket.off('connect');
       }
     };
-  }, []);
+  }, [fetchActas, fetchEquiposDisponibles, fetchUsuarios]);
 
   useEffect(() => {
     filterAndSortActas();
-  }, [actas, searchTerm, filterStatus, filterTipo, sortBy, sortOrder]);
+  }, [filterAndSortActas]);
 
-  const fetchActas = async () => {
+  const fetchActas = useCallback(async () => {
     try {
       const response = await actaEntregaAPI.getAll();
       const actasData = Array.isArray(response.data) ? response.data : [];
@@ -138,9 +137,9 @@ const ActasEntrega = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchEquiposDisponibles = async () => {
+  const fetchEquiposDisponibles = useCallback(async () => {
     try {
       const [inventoryData, phonesData, tabletData, pdaData] = await Promise.all([
         inventoryAPI.fetchInventory(),
@@ -204,18 +203,18 @@ const ActasEntrega = () => {
       
       showNotification(errorMessage, 'error');
     }
-  };
+  }, []);
 
-  const fetchUsuarios = async () => {
+  const fetchUsuarios = useCallback(async () => {
     try {
       const data = await usersAPI.fetchUsers();
       setUsuarios(data || []);
     } catch (err) {
       console.error('Error fetching usuarios:', err);
     }
-  };
+  }, []);
 
-  const filterAndSortActas = () => {
+  const filterAndSortActas = useCallback(() => {
     let filtered = Array.isArray(actas) ? [...actas] : [];
 
     if (searchTerm) {
@@ -253,7 +252,7 @@ const ActasEntrega = () => {
     });
 
     setFilteredActas(filtered);
-  };
+  }, [actas, searchTerm, filterStatus, filterTipo, sortBy, sortOrder]);
 
   const calculateStats = () => {
     const actasArray = Array.isArray(actas) ? actas : [];
@@ -362,6 +361,7 @@ const ActasEntrega = () => {
         fetchActas();
         showNotification('Acta de entrega eliminada exitosamente', 'success');
       } catch (err) {
+        console.error('Error deleting acta:', err);
         showNotification('Error al eliminar el acta. Por favor, inténtalo de nuevo.', 'error');
       }
     });
@@ -396,7 +396,6 @@ const ActasEntrega = () => {
   const canCreate = checkPermission('actas-entrega', 'create');
   const canEdit = checkPermission('actas-entrega', 'edit');
   const canDelete = checkPermission('actas-entrega', 'delete');
-  const canView = checkPermission('actas-entrega', 'view');
 
   const showNotification = (message, type) => {
     setNotification({ message, type });

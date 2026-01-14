@@ -1,9 +1,7 @@
 import React from 'react';
 import { FaClipboardList, FaExclamationTriangle, FaSpinner, FaCheckCircle, FaChartBar } from 'react-icons/fa';
-import { useThemeClasses } from '../../hooks/useThemeClasses';
 
 const TicketStats = ({ stats }) => {
-  const { conditionalClasses } = useThemeClasses();
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 lg:gap-4 mb-6 animate-fade-in">

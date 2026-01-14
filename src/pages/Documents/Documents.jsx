@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext, useCallback, useMemo, Suspense, lazy } from 'react';
-import { documentsAPI, getServerBaseURL } from '../../api';
+import React, { useState, useEffect, useContext, useCallback, Suspense, lazy } from 'react';
+import { documentsAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { useThemeClasses } from '../../hooks/useThemeClasses.js';
 import { useNotifications } from '../../hooks/useNotifications.js';
@@ -81,6 +81,14 @@ const Documents = () => {
     setConfirmDialog({ message, onConfirm });
   };
 
+  // Función de compatibilidad para código existente (definida antes de los hooks)
+  const showNotification = useCallback((message, type) => {
+    if (type === 'success') notifySuccess(message);
+    else if (type === 'error') notifyError(message);
+    else if (type === 'warning') notifyWarning(message);
+    else notifyInfo(message);
+  }, [notifySuccess, notifyError, notifyWarning, notifyInfo]);
+
   // Custom hooks
   const foldersHook = useFolders(showConfirmDialog, notifyError);
   const permissionsHook = usePermissions(user);
@@ -106,9 +114,7 @@ const Documents = () => {
 
   const {
     permissions,
-    setPermissions,
     allUsers,
-    setAllUsers,
     selectedUsers,
     setSelectedUsers,
     permissionType,
@@ -129,14 +135,25 @@ const Documents = () => {
   // Usar hook de filtros
   const filteredDocumentsList = useDocumentFilters(documents, searchTerm, filterType, sortBy, sortOrder, currentFolder);
 
+  const fetchDocuments = useCallback(async () => {
+    try {
+      const data = await documentsAPI.fetchDocuments();
+      setDocuments(data);
+    } catch {
+      // Error handled silently
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchDocuments();
     fetchFolders();
     fetchUsers(); // Cargar usuarios al inicio
-  }, [fetchFolders, fetchUsers]);
+  }, [fetchFolders, fetchUsers, fetchDocuments]);
 
   // Función para verificar si el usuario puede ver una carpeta
-  const canViewFolder = async (folder) => {
+  const canViewFolder = useCallback(async (folder) => {
     // Administradores, técnicos y calidad ven todo
     if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') return true;
     // Creadores ven sus carpetas
@@ -147,10 +164,10 @@ const Documents = () => {
       return permission.hasAccess;
     }
     return false;
-  };
+  }, [user, checkUserPermission]);
 
   // Función para verificar si el usuario puede ver un documento
-  const canViewDocument = async (doc) => {
+  const canViewDocument = useCallback(async (doc) => {
     // Administradores, técnicos y calidad ven todo
     if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') return true;
     // Creadores ven sus documentos
@@ -172,10 +189,32 @@ const Documents = () => {
     }
 
     return false;
-  };
+  }, [user, checkUserPermission, folders]);
+
+  // Función para determinar si el usuario puede escribir en la carpeta actual
+  const canUserWriteInCurrentFolder = useCallback(async () => {
+    // Administradores, técnicos y calidad siempre pueden escribir
+    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') {
+      return true;
+    }
+
+    // Si no hay carpeta actual (estamos en raíz), verificar permisos para la raíz
+    if (!currentFolder) {
+      // Para la raíz, no hay permisos específicos de carpeta, así que empleados no pueden crear
+      return false;
+    }
+
+    // Para empleados, verificar permisos de escritura en la carpeta actual
+    if (user?.role?.name === 'Empleado') {
+      const permission = await checkUserPermission(currentFolder, 'folder');
+      return permission.hasAccess && permission.permissionType === 'write';
+    }
+
+    return false;
+  }, [user, currentFolder, checkUserPermission]);
 
   // Función para filtrar elementos con permisos
-  const getFilteredItems = async () => {
+  const getFilteredItems = useCallback(async () => {
     const baseFilteredDocuments = filteredDocumentsList;
 
     // Filtrar carpetas basadas en permisos
@@ -213,7 +252,7 @@ const Documents = () => {
       folders: filteredFolders,
       documents: filteredDocuments
     };
-  };
+  }, [filteredDocumentsList, folders, currentFolder, user, canViewDocument, canViewFolder]);
 
   // Cargar elementos filtrados cuando cambian los datos
   useEffect(() => {
@@ -222,7 +261,12 @@ const Documents = () => {
       setFilteredItems(items);
     };
     loadFilteredItems();
-  }, [documents, folders, currentFolder, user, filteredDocumentsList]);
+  }, [documents, folders, currentFolder, user, filteredDocumentsList, getFilteredItems]);
+
+  // Funciones de permisos
+  const handleOpenPermissionsModal = useCallback(async (item, type) => {
+    await handleOpenPermissionsModalHook(item, type, setSelectedItemForPermissions, setShowPermissionsModal, showNotification);
+  }, [handleOpenPermissionsModalHook, setSelectedItemForPermissions, setShowPermissionsModal, showNotification]);
 
   // Actualizar permisos de escritura cuando cambia la carpeta actual o el usuario
   useEffect(() => {
@@ -231,21 +275,21 @@ const Documents = () => {
       setCanWriteInCurrentFolder(canWrite);
     };
     updateWritePermissions();
-  }, [currentFolder, user]);
+  }, [currentFolder, user, canUserWriteInCurrentFolder]);
 
   // WebSocket listeners for real-time document updates
   useEffect(() => {
-    const handleDocumentCreated = (document) => {
+    const handleDocumentCreated = () => {
       fetchDocuments();
       notifySuccess('Nuevo documento agregado');
     };
 
-    const handleDocumentUpdated = (data) => {
+    const handleDocumentUpdated = () => {
       fetchDocuments();
       notifySuccess('Documento actualizado');
     };
 
-    const handleDocumentDeleted = (documentId) => {
+    const handleDocumentDeleted = () => {
       fetchDocuments();
       notifySuccess('Documento eliminado');
     };
@@ -254,17 +298,17 @@ const Documents = () => {
       fetchDocuments();
     };
 
-    const handleFolderCreated = (folder) => {
+    const handleFolderCreated = () => {
       fetchFolders();
       notifySuccess('Nueva carpeta agregada');
     };
 
-    const handleFolderUpdated = (data) => {
+    const handleFolderUpdated = () => {
       fetchFolders();
       notifySuccess('Carpeta actualizada');
     };
 
-    const handleFolderDeleted = (folderId) => {
+    const handleFolderDeleted = () => {
       fetchFolders();
       fetchDocuments(); // También recargar documentos por si se eliminó una carpeta con documentos
       notifySuccess('Carpeta eliminada');
@@ -274,7 +318,7 @@ const Documents = () => {
       fetchFolders();
     };
 
-    const handleDocumentPermissionsUpdated = (data) => {
+    const handleDocumentPermissionsUpdated = () => {
       // Si estamos en el modal de permisos, recargar los permisos
       if (showPermissionsModal && selectedItemForPermissions) {
         handleOpenPermissionsModal(selectedItemForPermissions, selectedItemForPermissions.type);
@@ -305,17 +349,7 @@ const Documents = () => {
       offFoldersListUpdated(handleFoldersListUpdated);
       offDocumentPermissionsUpdated(handleDocumentPermissionsUpdated);
     };
-  }, [showPermissionsModal, selectedItemForPermissions]);
-
-  const fetchDocuments = async () => {
-    try {
-      const data = await documentsAPI.fetchDocuments();
-      setDocuments(data);
-    } catch (err) {
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [showPermissionsModal, selectedItemForPermissions, handleOpenPermissionsModal, fetchFolders, fetchDocuments, notifySuccess]);
 
 
 
@@ -416,7 +450,7 @@ const Documents = () => {
       setForms(prev => ({ ...prev, upload: { title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' } }));
       setShowUploadModal(false);
       // Notification will be handled by WebSocket listener
-    } catch (err) {
+    } catch {
       notifyError('Error al subir el documento. Por favor, inténtalo de nuevo.');
       setForms(prev => ({ ...prev, upload: { title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' } }));
     } finally {
@@ -467,7 +501,7 @@ const Documents = () => {
       // WebSocket will handle the list update automatically
       setShowEditModal(false);
       // Notification will be handled by WebSocket listener
-    } catch (err) {
+    } catch {
       notifyError('Error al actualizar el documento. Por favor, inténtalo de nuevo.');
     }
   };
@@ -478,7 +512,7 @@ const Documents = () => {
         await documentsAPI.deleteDocument(id);
         // WebSocket will handle the list update automatically
         // Notification will be handled by WebSocket listener
-      } catch (err) {
+      } catch {
         notifyError('Error al eliminar el documento. Por favor, inténtalo de nuevo.');
       }
     });
@@ -490,13 +524,13 @@ const Documents = () => {
         await documentsAPI.deleteDocument(versionId);
         // WebSocket will handle the list update automatically
         // Notification will be handled by WebSocket listener
-      } catch (err) {
+      } catch {
         notifyError('Error al eliminar la versión. Por favor, inténtalo de nuevo.');
       }
     });
   };
 
-  const canEdit = (item, type = 'document') => {
+  const canEdit = (item) => {
     // Administradores, técnicos y calidad pueden editar todo
     if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') {
       return true;
@@ -508,27 +542,6 @@ const Documents = () => {
     return false;
   };
 
-  // Función adicional para verificar permisos detallados (para casos donde se necesitan permisos específicos)
-  const hasWritePermission = async (item, type = 'document') => {
-    // Administradores, técnicos y calidad siempre tienen permisos
-    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') {
-      return true;
-    }
-    // Empleados necesitan permisos específicos
-    if (user?.role?.name === 'Empleado') {
-      const permission = await checkUserPermission(item, type);
-      return permission.hasAccess && permission.permissionType === 'write';
-    }
-    return false;
-  };
-
-  // Función de compatibilidad para código existente
-  const showNotification = (message, type) => {
-    if (type === 'success') notifySuccess(message);
-    else if (type === 'error') notifyError(message);
-    else if (type === 'warning') notifyWarning(message);
-    else notifyInfo(message);
-  };
 
 
   const handleConfirm = () => {
@@ -542,10 +555,6 @@ const Documents = () => {
     setConfirmDialog(null);
   };
 
-  // Funciones de permisos
-  const handleOpenPermissionsModal = useCallback(async (item, type) => {
-    await handleOpenPermissionsModalHook(item, type, setSelectedItemForPermissions, setShowPermissionsModal, showNotification);
-  }, [handleOpenPermissionsModalHook, setSelectedItemForPermissions, setShowPermissionsModal, showNotification]);
 
   const handleGrantPermissions = useCallback(async () => {
     await handleGrantPermissionsHook(selectedItemForPermissions, notifyError);
@@ -556,63 +565,7 @@ const Documents = () => {
   }, [handleRevokePermissionHook, showNotification, notifyError]);
 
 
-  // Función para determinar si el usuario puede editar un documento/carpeta
-  const canUserEdit = (item, type) => {
-    // Administradores y técnicos pueden editar todo
-    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico') {
-      return true;
-    }
 
-    // Empleados solo pueden editar sus propios elementos
-    if (user?.role?.name === 'Empleado') {
-      return item.createdBy === user.id;
-    }
-
-    return false;
-  };
-
-  // Función para determinar si el usuario puede ver un documento/carpeta
-  const canUserView = async (item, type) => {
-    // Administradores, técnicos y calidad siempre pueden ver todo
-    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') {
-      return true;
-    }
-
-    // Creadores siempre pueden ver sus elementos
-    if (item.createdBy === user.id) {
-      return true;
-    }
-
-    // Empleados solo ven elementos con permisos específicos
-    if (user?.role?.name === 'Empleado') {
-      const permission = await checkUserPermission(item, type);
-      return permission.hasAccess;
-    }
-
-    return false;
-  };
-
-  // Función para determinar si el usuario puede escribir en la carpeta actual
-  const canUserWriteInCurrentFolder = async () => {
-    // Administradores, técnicos y calidad siempre pueden escribir
-    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') {
-      return true;
-    }
-
-    // Si no hay carpeta actual (estamos en raíz), verificar permisos para la raíz
-    if (!currentFolder) {
-      // Para la raíz, no hay permisos específicos de carpeta, así que empleados no pueden crear
-      return false;
-    }
-
-    // Para empleados, verificar permisos de escritura en la carpeta actual
-    if (user?.role?.name === 'Empleado') {
-      const permission = await checkUserPermission(currentFolder, 'folder');
-      return permission.hasAccess && permission.permissionType === 'write';
-    }
-
-    return false;
-  };
 
 
 
@@ -620,11 +573,11 @@ const Documents = () => {
     try {
       await documentsAPI.downloadDocument(documentId, fileName);
       showNotification('Documento descargado exitosamente', 'success');
-    } catch (err) {
-      console.error('Error downloading document:', err);
+    } catch (_err) {
+      console.error('Error downloading document:', _err);
 
       // Si el documento no existe (404), refrescar la lista de documentos
-      if (err.response?.status === 404) {
+      if (_err.response?.status === 404) {
         showNotification('El documento no existe o ha sido eliminado. Actualizando lista...', 'warning');
         fetchDocuments();
       } else {

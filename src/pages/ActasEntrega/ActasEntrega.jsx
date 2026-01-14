@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaClipboardCheck, FaPlus, FaBox, FaFileExport, FaFileWord, FaFilePdf, FaPrint } from 'react-icons/fa';
 import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
@@ -19,7 +19,7 @@ import { useNotifications } from '../../context/NotificationContext';
 
 const ActasEntrega = () => {
   const { conditionalClasses } = useThemeClasses();
-  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
+  const { notifySuccess, notifyError, notifyWarning } = useNotifications();
   const [actas, setActas] = useState([]);
   const [filteredActas, setFilteredActas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -71,69 +71,13 @@ const ActasEntrega = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [viewMode, setViewMode] = useState('cards');
-  const { user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
 
   // Datos adicionales
   const [equiposDisponibles, setEquiposDisponibles] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
 
-  useEffect(() => {
-    fetchActas();
-    fetchEquiposDisponibles();
-    fetchUsuarios();
-
-    // Configurar WebSocket para actas de entrega
-    const socket = getSocket();
-
-    // Función para configurar los listeners de WebSocket
-    const setupWebSocketListeners = () => {
-      if (socket && socket.connected) {
-        onActaEntregaCreated((acta) => {
-          fetchActas();
-        });
-
-        onActaEntregaUpdated((data) => {
-          fetchActas();
-        });
-
-        onActaEntregaDeleted((data) => {
-          fetchActas();
-        });
-
-        onActasEntregaListUpdated(() => {
-          fetchActas();
-        });
-      } else if (socket) {
-        // Si el socket existe pero no está conectado, esperar a que se conecte
-        const connectListener = () => {
-          setupWebSocketListeners();
-          socket.off('connect', connectListener);
-        };
-        socket.on('connect', connectListener);
-      }
-    };
-
-    // Configurar listeners inicialmente
-    setupWebSocketListeners();
-
-    return () => {
-      // Limpiar listeners al desmontar el componente
-      if (socket) {
-        socket.off('acta-entrega-created');
-        socket.off('acta-entrega-updated');
-        socket.off('acta-entrega-deleted');
-        socket.off('actas-entrega-list-updated');
-        socket.off('connect');
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    filterAndSortActas();
-  }, [actas, searchTerm, filterStatus, filterTipo, sortBy, sortOrder]);
-
-  const fetchActas = async () => {
+  const fetchActas = useCallback(async () => {
     try {
       const response = await actaEntregaAPI.getAll();
       const actasData = Array.isArray(response.data) ? response.data : [];
@@ -148,9 +92,9 @@ const ActasEntrega = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [notifyError]);
 
-  const fetchEquiposDisponibles = async () => {
+  const fetchEquiposDisponibles = useCallback(async () => {
     try {
       const [inventoryData, phonesData, tabletData, pdaData] = await Promise.all([
         inventoryAPI.fetchInventory(),
@@ -217,17 +161,18 @@ const ActasEntrega = () => {
 
       notifyError(errorMessage);
     }
-  };
+  }, [notifyError, notifyWarning]);
 
-  const fetchUsuarios = async () => {
+  const fetchUsuarios = useCallback(async () => {
     try {
       const data = await usersAPI.fetchUsers();
       setUsuarios(data || []);
-    } catch (err) {
+    } catch {
+      // Error silencioso
     }
-  };
+  }, []);
 
-  const filterAndSortActas = () => {
+  const filterAndSortActas = useCallback(() => {
     let filtered = Array.isArray(actas) ? [...actas] : [];
 
     if (searchTerm) {
@@ -265,7 +210,62 @@ const ActasEntrega = () => {
     });
 
     setFilteredActas(filtered);
-  };
+  }, [actas, searchTerm, filterStatus, filterTipo, sortBy, sortOrder]);
+
+  useEffect(() => {
+    fetchActas();
+    fetchEquiposDisponibles();
+    fetchUsuarios();
+
+    // Configurar WebSocket para actas de entrega
+    const socket = getSocket();
+
+    // Función para configurar los listeners de WebSocket
+    const setupWebSocketListeners = () => {
+      if (socket && socket.connected) {
+        onActaEntregaCreated(() => {
+          fetchActas();
+        });
+
+        onActaEntregaUpdated(() => {
+          fetchActas();
+        });
+
+        onActaEntregaDeleted(() => {
+          fetchActas();
+        });
+
+        onActasEntregaListUpdated(() => {
+          fetchActas();
+        });
+      } else if (socket) {
+        // Si el socket existe pero no está conectado, esperar a que se conecte
+        const connectListener = () => {
+          setupWebSocketListeners();
+          socket.off('connect', connectListener);
+        };
+        socket.on('connect', connectListener);
+      }
+    };
+
+    // Configurar listeners inicialmente
+    setupWebSocketListeners();
+
+    return () => {
+      // Limpiar listeners al desmontar el componente
+      if (socket) {
+        socket.off('acta-entrega-created');
+        socket.off('acta-entrega-updated');
+        socket.off('acta-entrega-deleted');
+        socket.off('actas-entrega-list-updated');
+        socket.off('connect');
+      }
+    };
+  }, [fetchActas, fetchEquiposDisponibles, fetchUsuarios]);
+
+  useEffect(() => {
+    filterAndSortActas();
+  }, [filterAndSortActas]);
 
   const calculateStats = () => {
     const actasArray = Array.isArray(actas) ? actas : [];
@@ -375,7 +375,7 @@ const ActasEntrega = () => {
         await actaEntregaAPI.delete(id);
         fetchActas();
         notifySuccess('Acta de entrega eliminada exitosamente');
-      } catch (err) {
+      } catch {
         notifyError('Error al eliminar el acta. Por favor, inténtalo de nuevo.');
       }
     });
@@ -418,7 +418,6 @@ const ActasEntrega = () => {
   const canCreate = checkPermission('actas-entrega', 'create');
   const canEdit = checkPermission('actas-entrega', 'edit');
   const canDelete = checkPermission('actas-entrega', 'delete');
-  const canView = checkPermission('actas-entrega', 'view');
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });

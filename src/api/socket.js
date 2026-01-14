@@ -46,7 +46,7 @@ const createSocket = () => {
   });
 
   // Add error handling
-  socket.on('connect_error', (error) => {
+  socket.on('connect_error', () => {
     // Intentar reconectar después de un error
     setTimeout(() => {
       if (socket && !socket.connected) {
@@ -71,7 +71,7 @@ const createSocket = () => {
   });
 
   // Handle authentication errors
-  socket.on('unauthorized', (error) => {
+  socket.on('unauthorized', () => {
     // Optionally, redirect to login or refresh token
   });
 

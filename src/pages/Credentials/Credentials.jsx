@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { credentialsAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { useThemeClasses } from '../../hooks/useThemeClasses.js';
@@ -8,7 +8,7 @@ import { NotificationSystem, ConfirmDialog, FilterPanel } from '../../components
 
 const Credentials = () => {
   const { conditionalClasses } = useThemeClasses();
-  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
+  const { notifySuccess, notifyError } = useNotifications();
   const [credentials, setCredentials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -27,20 +27,20 @@ const Credentials = () => {
 
   // Estados para navegación de carpetas
   const [folders, setFolders] = useState([]);
+  // const [loadingFolders, setLoadingFolders] = useState(true);
   const [currentFolder, setCurrentFolder] = useState(null);
-  const [loadingFolders, setLoadingFolders] = useState(true);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user, checkPermission } = useContext(AuthContext);
 
   // Función helper para verificar permisos incluyendo rol de administrador
-  const hasPermission = (module, action) => {
+  const hasPermission = useCallback((module, action) => {
     // Los administradores tienen acceso completo
     if (user?.role?.name === 'Administrador') {
       return true;
     }
     // Para otros roles, usar la verificación normal de permisos
     return checkPermission(module, action);
-  };
+  }, [user, checkPermission]);
 
   // NUEVAS FUNCIONALIDADES: Estados para búsqueda, filtros y ordenamiento
   const [searchTerm, setSearchTerm] = useState('');
@@ -49,39 +49,40 @@ const Credentials = () => {
   const [sortOrder, setSortOrder] = useState('asc');
   const [passwordStrength, setPasswordStrength] = useState(null);
 
-  useEffect(() => {
-    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Técnico')) {
-      fetchCredentials();
-      fetchFolders();
-    } else {
-      setLoading(false);
-      setLoadingFolders(false);
-    }
-  }, [user]);
-
-  const fetchCredentials = async () => {
+  const fetchCredentials = useCallback(async () => {
     try {
       const data = await credentialsAPI.fetchCredentials();
       setCredentials(data);
-    } catch (err) {
+    } catch (_err) {
+      console.error('Error fetching credentials:', _err);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchFolders = async () => {
+  const fetchFolders = useCallback(async () => {
     try {
       const data = await credentialsAPI.fetchFolders();
       setFolders(data);
     } catch (err) {
       console.error('Error fetching folders:', err);
     } finally {
-      setLoadingFolders(false);
+      // setLoadingFolders(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Técnico')) {
+      fetchCredentials();
+      fetchFolders();
+    } else {
+      setLoading(false);
+      // setLoadingFolders(false);
+    }
+  }, [user, fetchCredentials, fetchFolders]);
 
   // NUEVA FUNCIONALIDAD: Filtrado y ordenamiento mejorado
-  const filterAndSortCredentials = () => {
+  const filterAndSortCredentials = useCallback(() => {
     let filtered = [...credentials];
 
     // Filtrar por carpeta actual
@@ -120,10 +121,10 @@ const Credentials = () => {
     });
 
     return filtered;
-  };
+  }, [credentials, currentFolder, searchTerm, sortBy, sortOrder]);
 
   // NUEVA FUNCIONALIDAD: Filtrado global de credenciales (sin importar carpetas)
-  const filterCredentialsGlobally = () => {
+  const filterCredentialsGlobally = useCallback(() => {
     let filtered = [...credentials];
 
     // Búsqueda global en TODAS las credenciales
@@ -157,10 +158,10 @@ const Credentials = () => {
     });
 
     return filtered;
-  };
+  }, [credentials, searchTerm, sortBy, sortOrder]);
 
   // Obtener elementos filtrados según el contexto
-  const getFilteredItems = () => {
+  const getFilteredItems = useCallback(() => {
     if (currentFolder) {
       return filterAndSortCredentials();
     } else {
@@ -172,10 +173,10 @@ const Credentials = () => {
         return folders.filter(folder => !folder.parentFolderId);
       }
     }
-  };
+  }, [currentFolder, searchTerm, folders, filterAndSortCredentials, filterCredentialsGlobally]);
 
   // Obtener opciones de ordenamiento según el contexto
-  const getSortOptions = () => {
+  const getSortOptions = useCallback(() => {
     if (currentFolder || (searchTerm && !currentFolder)) {
       // Para vista de credenciales (dentro de carpeta o búsqueda global)
       return [
@@ -190,33 +191,31 @@ const Credentials = () => {
         { value: 'createdAt', label: 'Fecha de creación' }
       ];
     }
-  };
+  }, [currentFolder, searchTerm]);
 
   // Obtener el valor de ordenamiento por defecto según el contexto
-  const getDefaultSortBy = () => {
+  const getDefaultSortBy = useCallback(() => {
     if (currentFolder || (searchTerm && !currentFolder)) {
       return 'service';
     } else {
       return 'name';
     }
-  };
+  }, [currentFolder, searchTerm]);
 
   // Actualizar sortBy cuando cambie el contexto
   useEffect(() => {
     if (sortBy !== getDefaultSortBy()) {
       setSortBy(getDefaultSortBy());
     }
-  }, [currentFolder, searchTerm]);
+  }, [currentFolder, searchTerm, sortBy, getDefaultSortBy]);
 
   // Filtrar carpetas de la raíz (solo cuando no hay carpeta actual y no hay búsqueda)
   const rootFolders = folders.filter(folder => !folder.parentFolderId);
 
-  const filteredCredentials = filterAndSortCredentials();
-  const filteredGlobalCredentials = filterCredentialsGlobally();
   const filteredItems = getFilteredItems();
 
   // NUEVA FUNCIONALIDAD: Verificar fortaleza de contraseña
-  const checkPasswordStrength = (password) => {
+  const checkPasswordStrength = useCallback((password) => {
     if (!password) return null;
     
     let strength = 0;
@@ -247,11 +246,11 @@ const Credentials = () => {
     }
 
     return { level, color, strength, feedback };
-  };
+  }, []);
 
 
   // NUEVA FUNCIONALIDAD: Copiar al portapapeles
-  const copyToClipboard = async (text, label) => {
+  const copyToClipboard = useCallback(async (text, label) => {
     try {
       // Intentar con la API moderna
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -286,10 +285,10 @@ const Credentials = () => {
       console.error('Fallback copy failed:', fallbackErr);
       notifyError('Error al copiar al portapapeles. Intente copiar manualmente.');
     }
-  };
+  }, [notifySuccess, notifyError]);
 
   // NUEVA FUNCIONALIDAD: Generar contraseña segura
-  const generateSecurePassword = () => {
+  const generateSecurePassword = useCallback(() => {
     const length = 16;
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
     let password = '';
@@ -311,11 +310,11 @@ const Credentials = () => {
     setFormData({ ...formData, password });
     setPasswordStrength(checkPasswordStrength(password));
     notifySuccess('Contraseña segura generada');
-  };
+  }, [formData, setPasswordStrength, notifySuccess, checkPasswordStrength]);
 
 
   // NUEVA FUNCIONALIDAD: Tiempo relativo
-  const getTimeAgo = (date) => {
+  const getTimeAgo = useCallback((date) => {
     if (!date) return 'Desconocido';
     const seconds = Math.floor((new Date() - new Date(date)) / 1000);
     if (seconds < 60) return 'Hace un momento';
@@ -328,7 +327,7 @@ const Credentials = () => {
     const months = Math.floor(days / 30);
     if (months < 12) return `Hace ${months}m`;
     return `Hace ${Math.floor(months / 12)}a`;
-  };
+  }, []);
 
   const handleCreate = () => {
     setEditingCredential(null);
@@ -369,7 +368,8 @@ const Credentials = () => {
         await credentialsAPI.deleteCredential(id);
         fetchCredentials();
         notifySuccess('Credencial eliminada exitosamente');
-      } catch (err) {
+      } catch (_err) {
+        console.error('Error deleting credential:', _err);
         notifyError('Error al eliminar la credencial. Por favor, inténtalo de nuevo.');
       }
     });
@@ -393,7 +393,7 @@ const Credentials = () => {
       }
       fetchCredentials();
       setShowModal(false);
-    } catch (err) {
+    } catch {
       notifyError('Error al guardar la credencial. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setFormLoading(false);
@@ -408,7 +408,7 @@ const Credentials = () => {
       fetchFolders();
       notifySuccess('Carpeta creada exitosamente');
       setShowFolderModal(false);
-    } catch (err) {
+    } catch {
       notifyError('Error al crear la carpeta. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setFolderFormLoading(false);
@@ -427,7 +427,8 @@ const Credentials = () => {
         await credentialsAPI.deleteFolder(id);
         fetchFolders();
         notifySuccess('Carpeta eliminada exitosamente');
-      } catch (err) {
+      } catch (_err) {
+        console.error('Error deleting folder:', _err);
         notifyError('Error al eliminar la carpeta. Por favor, inténtalo de nuevo.');
       }
     });
@@ -442,7 +443,7 @@ const Credentials = () => {
       notifySuccess('Carpeta actualizada exitosamente');
       setShowEditFolderModal(false);
       setEditingFolder(null);
-    } catch (err) {
+    } catch {
       notifyError('Error al actualizar la carpeta. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setEditFolderFormLoading(false);
@@ -464,7 +465,7 @@ const Credentials = () => {
     } else {
       setPasswordStrength(null);
     }
-  }, [formData.password]);
+  }, [formData.password, checkPasswordStrength]);
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });

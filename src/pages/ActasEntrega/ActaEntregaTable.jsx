@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { FaEdit, FaTrash, FaHistory, FaFilePdf, FaFileWord, FaPrint, FaDownload } from 'react-icons/fa';
 import { exportToPDF, exportToWord, printActa } from './ActaEntregaExporter';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
@@ -9,12 +9,10 @@ const ActaEntregaTable = ({
   onDelete,
   canEdit,
   canDelete,
-  onHistory,
-  onExport
+  onHistory
 }) => {
   const { conditionalClasses } = useThemeClasses();
   const [exportMenuVisible, setExportMenuVisible] = useState(null);
-  const menuRefs = useRef({});
 
   const handleExport = async (acta, type) => {
     try {
@@ -26,7 +24,7 @@ const ActaEntregaTable = ({
         // Aquí podrías obtener los datos del equipo desde la respuesta
         // Por ahora usamos datos básicos
         equipo = actaData;
-      } catch (err) {
+      } catch {
         console.log('Usando datos básicos del acta para exportación');
       }
 

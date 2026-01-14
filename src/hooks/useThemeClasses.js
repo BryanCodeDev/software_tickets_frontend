@@ -1,4 +1,4 @@
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from './useTheme';
 
 /**
  * Hook personalizado que proporciona clases automáticamente adaptadas al tema

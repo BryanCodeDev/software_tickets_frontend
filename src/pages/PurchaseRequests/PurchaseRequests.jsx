@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { FaEdit, FaTrash, FaPlus, FaCheck, FaTimes, FaEye, FaSearch, FaFilter, FaDownload, FaChartBar, FaClock, FaExclamationTriangle, FaCheckCircle, FaSpinner, FaUserCircle, FaClipboardList, FaFileExport, FaSortAmountDown, FaSortAmountUp, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import {
@@ -64,12 +64,23 @@ const PurchaseRequests = () => {
     justification: ''
   });
 
-  const [formLoading, setFormLoading] = useState(false);
+  // const [formLoading, setFormLoading] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
 
   const userRole = user?.role?.name;
+
+  const fetchPurchaseRequests = useCallback(async () => {
+    try {
+      const data = await purchaseRequestsAPI.fetchPurchaseRequests({});
+      setRequests(data.requests || []);
+    } catch {
+      notifyError('Error al cargar las solicitudes de compra. Por favor, recarga la página.');
+    } finally {
+      setLoading(false);
+    }
+  }, [notifyError]);
 
   // WebSocket listeners for real-time updates
   useEffect(() => {
@@ -92,11 +103,11 @@ const PurchaseRequests = () => {
   useEffect(() => {
     fetchPurchaseRequests();
 
-    const handlePurchaseRequestCreated = (newRequest) => {
+    const handlePurchaseRequestCreated = () => {
       fetchPurchaseRequests();
     };
 
-    const handlePurchaseRequestDeleted = (data) => {
+    const handlePurchaseRequestDeleted = () => {
       fetchPurchaseRequests();
     };
 
@@ -113,20 +124,9 @@ const PurchaseRequests = () => {
       offPurchaseRequestDeleted(handlePurchaseRequestDeleted);
       offPurchaseRequestsListUpdated(handlePurchaseRequestsListUpdated);
     };
-  }, []);
+  }, [fetchPurchaseRequests]);
 
-  const fetchPurchaseRequests = async () => {
-    try {
-      const data = await purchaseRequestsAPI.fetchPurchaseRequests({});
-      setRequests(data.requests || []);
-    } catch (err) {
-      notifyError('Error al cargar las solicitudes de compra. Por favor, recarga la página.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterAndSortRequests = () => {
+  const filterAndSortRequests = useCallback(() => {
     if (!Array.isArray(requests)) return [];
     let filtered = [...requests];
 
@@ -172,7 +172,7 @@ const PurchaseRequests = () => {
     });
 
     return filtered;
-  };
+  }, [requests, checkPermission, user, searchTerm, filterStatus, filterItemType, sortBy, sortOrder]);
 
   const filteredRequests = filterAndSortRequests();
 
@@ -267,7 +267,7 @@ const PurchaseRequests = () => {
           await purchaseRequestsAPI.deletePurchaseRequest(request.id);
           notifySuccess('Solicitud eliminada exitosamente');
           fetchPurchaseRequests();
-        } catch (err) {
+        } catch {
           notifyError('Error al eliminar la solicitud');
         }
       }
@@ -463,8 +463,8 @@ const PurchaseRequests = () => {
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className={conditionalClasses({
-                  light: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${showFilters ? 'bg-[#662d91] text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`,
-                  dark: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${showFilters ? 'bg-[#662d91] text-white shadow-lg' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`
+                  light: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-30 ${showFilters ? 'bg-[#662d91] text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`,
+                  dark: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-30 ${showFilters ? 'bg-[#662d91] text-white shadow-lg' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`
                 })}
               >
                 <FaFilter className="w-4 h-4" />

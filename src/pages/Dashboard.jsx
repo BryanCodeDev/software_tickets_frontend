@@ -13,7 +13,6 @@ const Dashboard = () => {
   });
   const [ticketStats, setTicketStats] = useState({ pending: 0, inProgress: 0, resolved: 0 });
   const [qualityTicketStats, setQualityTicketStats] = useState({ pending: 0, inProgress: 0, resolved: 0 });
-  const [recentActivity, setRecentActivity] = useState([]);
   const [systemHealth, setSystemHealth] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -52,16 +51,15 @@ const Dashboard = () => {
         });
       }
 
-      setRecentActivity(data.recentActivity || []);
       setSystemHealth(data.systemHealth || {});
       setLoading(false);
-    } catch (err) {
+    } catch {
       setLoading(false);
     }
   };
 
   // Componente de tarjeta principal con diseño profesional
-  const StatCard = ({ title, value, description, icon: Icon, colorClass, bgClass }) => (
+  const StatCard = ({ title, value, description, colorClass, bgClass, icon }) => (
     <div className={conditionalClasses({
       light: `relative overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 ${bgClass || 'bg-white'}`,
       dark: `relative overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-600 ${bgClass || 'bg-gray-800'}`
@@ -71,7 +69,7 @@ const Dashboard = () => {
           <div className="flex-1 min-w-0">
             <div className="flex items-center mb-2">
               <div className={`p-2 rounded-lg ${colorClass} bg-opacity-10 mr-3`}>
-                <Icon className={`text-lg ${colorClass}`} />
+                {icon || <FaBox className={`${colorClass} text-lg`} />}
               </div>
               <p className={conditionalClasses({
                 light: 'text-xs sm:text-sm font-medium text-gray-600 uppercase tracking-wide',
@@ -98,14 +96,14 @@ const Dashboard = () => {
   );
 
   // Componente de métrica rápida
-  const MetricCard = ({ icon: Icon, label, value, color, subtext }) => (
+  const MetricCard = ({ label, value, color, subtext, icon }) => (
     <div className={conditionalClasses({
       light: 'bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-all duration-200',
       dark: 'bg-gray-800 rounded-lg border border-gray-600 p-4 hover:shadow-md transition-all duration-200'
     })}>
       <div className="flex items-center justify-between mb-2">
         <div className={`p-2.5 rounded-lg ${color} bg-opacity-10`}>
-          <Icon className={`text-base ${color}`} />
+          {icon || <FaChartLine className={`${color} text-lg`} />}
         </div>
         <span className={conditionalClasses({
           light: `text-2xl font-bold ${loading ? 'animate-pulse text-gray-300' : 'text-gray-900'}`,
@@ -174,29 +172,29 @@ const Dashboard = () => {
             title="Tickets IT"
             value={stats.tickets}
             description="Solicitudes de soporte"
-            icon={FaTicketAlt}
             colorClass="text-purple-600"
+            icon={<FaTicketAlt className="text-purple-600 text-lg" />}
           />
           <StatCard
             title="Calidad"
             value={stats.qualityTickets}
             description="Reportes y documentación"
-            icon={FaShieldAlt}
             colorClass="text-emerald-600"
+            icon={<FaShieldAlt className="text-emerald-600 text-lg" />}
           />
           <StatCard
             title="Compras"
             value={stats.purchaseRequests}
             description="Solicitudes pendientes"
-            icon={FaShoppingCart}
             colorClass="text-orange-600"
+            icon={<FaShoppingCart className="text-orange-600 text-lg" />}
           />
           <StatCard
             title="Actas"
             value={stats.deliveryRecords}
             description="Entregas registradas"
-            icon={FaClipboardCheck}
             colorClass="text-indigo-600"
+            icon={<FaClipboardCheck className="text-indigo-600 text-lg" />}
           />
         </div>
 
@@ -206,29 +204,29 @@ const Dashboard = () => {
             title="Computadores"
             value={stats.inventory.computers}
             description="Equipos de escritorio"
-            icon={FaServer}
             colorClass="text-blue-600"
+            icon={<FaBox className="text-blue-600 text-lg" />}
           />
           <StatCard
             title="Celulares"
             value={stats.inventory.phones}
             description="Teléfonos corporativos"
-            icon={FaLock}
             colorClass="text-cyan-600"
+            icon={<FaBox className="text-cyan-600 text-lg" />}
           />
           <StatCard
             title="Tablets"
             value={stats.inventory.tablets}
             description="Dispositivos móviles"
-            icon={FaBox}
             colorClass="text-indigo-600"
+            icon={<FaBox className="text-indigo-600 text-lg" />}
           />
           <StatCard
             title="PDAs"
             value={stats.inventory.pdas}
             description="Asistentes digitales"
-            icon={FaChartLine}
             colorClass="text-green-600"
+            icon={<FaBox className="text-green-600 text-lg" />}
           />
         </div>
 
@@ -265,22 +263,22 @@ const Dashboard = () => {
             
             <div className="grid grid-cols-3 gap-3 mb-4">
               <MetricCard
-                icon={FaExclamationTriangle}
                 label="Pendientes"
                 value={ticketStats.pending}
                 color="text-amber-600"
+                icon={<FaExclamationTriangle className="text-amber-600 text-lg" />}
               />
               <MetricCard
-                icon={FaUserClock}
                 label="En Progreso"
                 value={ticketStats.inProgress}
                 color="text-blue-600"
+                icon={<FaUserClock className="text-blue-600 text-lg" />}
               />
               <MetricCard
-                icon={FaCheckCircle}
                 label="Resueltos"
                 value={ticketStats.resolved}
                 color="text-green-600"
+                icon={<FaCheckCircle className="text-green-600 text-lg" />}
               />
             </div>
 
@@ -341,22 +339,22 @@ const Dashboard = () => {
             
             <div className="grid grid-cols-3 gap-3 mb-4">
               <MetricCard
-                icon={FaExclamationTriangle}
                 label="Pendientes"
                 value={qualityTicketStats.pending}
                 color="text-amber-600"
+                icon={<FaExclamationTriangle className="text-amber-600 text-lg" />}
               />
               <MetricCard
-                icon={FaUserClock}
                 label="En Progreso"
                 value={qualityTicketStats.inProgress}
                 color="text-blue-600"
+                icon={<FaUserClock className="text-blue-600 text-lg" />}
               />
               <MetricCard
-                icon={FaCheckCircle}
                 label="Resueltos"
                 value={qualityTicketStats.resolved}
                 color="text-green-600"
+                icon={<FaCheckCircle className="text-green-600 text-lg" />}
               />
             </div>
 
@@ -677,7 +675,7 @@ const Dashboard = () => {
                       {systemHealth.database === 'online' ? 'Conexión estable' : 'Problemas de conexión'}
                     </p>
                   </div>
-                  <FaServer className="text-green-500 text-lg" />
+                  <FaCheckCircle className="text-green-500 text-lg" />
                 </div>
               </div>
 
@@ -701,7 +699,7 @@ const Dashboard = () => {
                       {systemHealth.api === 'online' ? 'Funcionando correctamente' : 'Servicios interrumpidos'}
                     </p>
                   </div>
-                  <FaChartLine className="text-blue-500 text-lg" />
+                  <FaCheckCircle className="text-blue-500 text-lg" />
                 </div>
               </div>
 
@@ -735,7 +733,7 @@ const Dashboard = () => {
                   dark: 'mt-4 p-4 bg-linear-to-r from-purple-700 to-purple-800 rounded-lg text-white'
                 })}>
                   <div className="flex items-center justify-center gap-2">
-                    <FaLock className="text-sm" />
+                    <FaUserClock className="text-sm" />
                     <span className="text-xs font-semibold">Acceso Administrativo Activo</span>
                   </div>
                 </div>

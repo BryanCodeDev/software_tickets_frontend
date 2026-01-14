@@ -2,96 +2,60 @@ import api from './api';
 
 const ticketsAPI = {
   fetchTickets: async (params = {}) => {
-    try {
-      const queryParams = new URLSearchParams();
-      if (params.page) queryParams.append('page', params.page);
-      if (params.limit) queryParams.append('limit', params.limit);
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append('page', params.page);
+    if (params.limit) queryParams.append('limit', params.limit);
 
-      const url = `/tickets${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
-      const response = await api.get(url);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const url = `/tickets${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+    const response = await api.get(url);
+    return response.data;
   },
 
   searchTickets: async (query) => {
-    try {
-      const response = await api.get(`/tickets/search?q=${encodeURIComponent(query)}`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.get(`/tickets/search?q=${encodeURIComponent(query)}`);
+    return response.data;
   },
 
   fetchTicketById: async (id) => {
-    try {
-      const response = await api.get(`/tickets/${id}`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.get(`/tickets/${id}`);
+    return response.data;
   },
 
   createTicket: async (ticketData) => {
-   try {
-     const response = await api.post('/tickets', ticketData);
-     return response.data;
-   } catch (error) {
-     throw error;
-   }
- },
+    const response = await api.post('/tickets', ticketData);
+    return response.data;
+  },
 
   createTicketWithAttachment: async (formData) => {
-   try {
-     const response = await api.post('/tickets', formData, {
-       headers: {
-         'Content-Type': 'multipart/form-data'
-       }
-     });
-     return response.data;
-   } catch (error) {
-     throw error;
-   }
- },
+    const response = await api.post('/tickets', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  },
 
   updateTicket: async (id, ticketData) => {
-    try {
-      const response = await api.put(`/tickets/${id}`, ticketData);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.put(`/tickets/${id}`, ticketData);
+    return response.data;
   },
 
   deleteTicket: async (id) => {
-    try {
-      await api.delete(`/tickets/${id}`);
-    } catch (error) {
-      throw error;
-    }
+    await api.delete(`/tickets/${id}`);
   },
 
   addComment: async (id, commentData) => {
-    try {
-      const response = await api.post(`/tickets/${id}/comments`, commentData);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.post(`/tickets/${id}/comments`, commentData);
+    return response.data;
   },
 
   uploadAttachment: async (id, formData) => {
-    try {
-      const response = await api.post(`/tickets/${id}/attachments`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.post(`/tickets/${id}/attachments`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
   },
 };
 

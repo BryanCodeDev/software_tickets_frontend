@@ -10,7 +10,8 @@ const DocumentCard = ({
   handleDownloadDocument,
   handleViewHistory,
   canEdit,
-  handleEdit
+  handleEdit,
+  handleDelete
 }) => {
   const { conditionalClasses } = useThemeClasses();
 

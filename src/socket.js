@@ -1,4 +1,4 @@
-const { Comment, User } = require('./models');
+// Comentado temporalmente ya que los modelos no existen en el frontend
 
 let io;
 
@@ -51,7 +51,7 @@ const emitTicketUpdate = (ticketId, ticket) => {
   }
 };
 
-module.exports = {
+export {
   initSocket,
   emitNewMessage,
   emitMessageUpdated,

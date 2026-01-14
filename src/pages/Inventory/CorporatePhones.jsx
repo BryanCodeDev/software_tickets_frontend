@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { FaMobile, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory, FaIndustry, FaFlask, FaCalculator, FaShoppingCart, FaUsers, FaBuilding, FaTools, FaLaptop, FaClipboardCheck, FaEye } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
@@ -51,29 +51,21 @@ const CorporatePhones = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyItem, setHistoryItem] = useState(null);
   const [historyLoading, setHistoryLoading] = useState(false);
-  const { user } = useContext(AuthContext);
+  const { user: _user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
 
-  useEffect(() => {
-    fetchCorporatePhones();
-  }, []);
-
-  useEffect(() => {
-    filterAndSortPhones();
-  }, [corporatePhones, searchTerm, filterStatus, filterCategory, sortBy, sortOrder]);
-
-  const fetchCorporatePhones = async () => {
+  const fetchCorporatePhones = useCallback(async () => {
     try {
       const data = await corporatePhoneAPI.fetchCorporatePhones();
       setCorporatePhones(data);
-    } catch (err) {
+    } catch {
       notifyError('Error al cargar los teléfonos corporativos. Por favor, recarga la página.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [notifyError]);
 
-  const filterAndSortPhones = () => {
+  const filterAndSortPhones = useCallback(() => {
     let filtered = [...corporatePhones];
 
     // Búsqueda
@@ -111,7 +103,15 @@ const CorporatePhones = () => {
     });
 
     setFilteredPhones(filtered);
-  };
+  }, [corporatePhones, searchTerm, filterStatus, filterCategory, sortBy, sortOrder]);
+
+  useEffect(() => {
+    fetchCorporatePhones();
+  }, [fetchCorporatePhones]);
+
+  useEffect(() => {
+    filterAndSortPhones();
+  }, [corporatePhones, searchTerm, filterStatus, filterCategory, sortBy, sortOrder, filterAndSortPhones]);
 
   const calculateStats = () => {
     const total = corporatePhones.length;
@@ -194,7 +194,7 @@ const CorporatePhones = () => {
         await corporatePhoneAPI.deleteCorporatePhone(id);
         fetchCorporatePhones();
         notifySuccess('Teléfono corporativo eliminado exitosamente');
-      } catch (err) {
+      } catch {
         notifyError('Error al eliminar el teléfono corporativo. Por favor, inténtalo de nuevo.');
       }
     });
@@ -206,9 +206,9 @@ const CorporatePhones = () => {
     setShowHistoryModal(true);
 
     try {
-      const history = await corporatePhoneAPI.getHistory(item.id);
+      const _history = await corporatePhoneAPI.getHistory(item.id);
       // El modal manejará la carga de datos internamente
-    } catch (err) {
+    } catch {
       notifyError('Error al cargar el historial. Por favor, inténtalo de nuevo.');
       setShowHistoryModal(false);
     } finally {
@@ -229,7 +229,7 @@ const CorporatePhones = () => {
       }
       fetchCorporatePhones();
       setShowModal(false);
-    } catch (err) {
+    } catch {
       notifyError('Error al guardar el teléfono corporativo. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setFormLoading(false);
@@ -313,7 +313,7 @@ const CorporatePhones = () => {
   const canCreate = checkPermission('corporate_phones', 'create');
   const canEdit = checkPermission('corporate_phones', 'edit');
   const canDelete = checkPermission('corporate_phones', 'delete');
-  const canView = checkPermission('corporate_phones', 'view');
+  const _canView = checkPermission('corporate_phones', 'view');
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });

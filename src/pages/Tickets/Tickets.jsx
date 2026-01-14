@@ -57,7 +57,7 @@ ChartJS.register(
 
 const Tickets = () => {
   const { conditionalClasses } = useThemeClasses();
-  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
+  const { notifySuccess, notifyError, notifyWarning: _notifyWarning, notifyInfo: _notifyInfo } = useNotifications();
   const { user, checkPermission } = useContext(AuthContext);
   
   // Estados principales
@@ -141,6 +141,34 @@ const Tickets = () => {
     'Otros requerimientos de TI'
   ], []);
 
+  const fetchTickets = useCallback(async () => {
+    try {
+      const data = await ticketsAPI.fetchTickets({});
+      setTickets(data.tickets || []);
+    } catch {
+      notifyError('Error al cargar los tickets. Por favor, recarga la página.');
+    } finally {
+      setLoading(false);
+    }
+  }, [notifyError]);
+
+  const fetchUsers = useCallback(async () => {
+    try {
+      // Cargar usuarios siempre para que todos los roles puedan ver el listado
+      const users = await usersAPI.fetchUsers();
+      const techUsers = users.filter(u => u.Role?.name === 'Técnico');
+      const adminUsers = users.filter(u => u.Role?.name === 'Administrador');
+      setTechnicians(techUsers);
+      setAdministrators(adminUsers);
+    } catch (err) {
+      console.error('Error al cargar usuarios:', err);
+    }
+  }, []);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   // Socket listeners
   useEffect(() => {
     if (selectedTicket) {
@@ -180,10 +208,6 @@ const Tickets = () => {
     }
   }, [selectedTicket]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   // WebSocket listeners for real-time ticket list updates
   useEffect(() => {
     const handleTicketCreated = () => {
@@ -207,37 +231,13 @@ const Tickets = () => {
       offTicketDeleted(handleTicketDeleted);
       offTicketsListUpdated(handleTicketsListUpdated);
     };
-  }, []);
+  }, [fetchTickets]);
 
   // Inicialización de datos
   useEffect(() => {
     fetchTickets();
     fetchUsers();
-  }, []);
-
-  const fetchTickets = async () => {
-    try {
-      const data = await ticketsAPI.fetchTickets({});
-      setTickets(data.tickets || []);
-    } catch (err) {
-      notifyError('Error al cargar los tickets. Por favor, recarga la página.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchUsers = async () => {
-    try {
-      // Cargar usuarios siempre para que todos los roles puedan ver el listado
-      const users = await usersAPI.fetchUsers();
-      const techUsers = users.filter(u => u.Role?.name === 'Técnico');
-      const adminUsers = users.filter(u => u.Role?.name === 'Administrador');
-      setTechnicians(techUsers);
-      setAdministrators(adminUsers);
-    } catch (err) {
-      console.error('Error al cargar usuarios:', err);
-    }
-  };
+  }, [fetchTickets, fetchUsers]);
 
   // Filtrado y ordenamiento optimizado
   const filteredTickets = useMemo(() => {
@@ -426,7 +426,7 @@ const Tickets = () => {
 
     setEditingTicket(ticket);
     setShowEditModal(true);
-  }, [userRole]);
+  }, [userRole, canEditTicket, notifyError]);
 
   const handleDelete = useCallback(async (ticket) => {
     if (!canDeleteTicket(ticket)) {
@@ -446,7 +446,7 @@ const Tickets = () => {
         }
       }
     });
-  }, []);
+  }, [canDeleteTicket, notifyError, notifySuccess]);
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();

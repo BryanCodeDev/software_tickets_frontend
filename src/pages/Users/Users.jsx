@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { usersAPI, authAPI } from '../../api';
 import { inventoryAPI } from '../../api';
 import { corporatePhoneAPI } from '../../api';
@@ -11,7 +11,7 @@ import { onUserUpdated, onUsersListUpdated, offUserUpdated, offUsersListUpdated 
 
 const Users = () => {
   const { conditionalClasses } = useThemeClasses();
-  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
+  const { notifySuccess, notifyError } = useNotifications();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -36,6 +36,46 @@ const Users = () => {
   const [showStats, setShowStats] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(null);
 
+  const fetchUsers = useCallback(async () => {
+    try {
+      const data = await usersAPI.fetchUsers();
+      setUsers(data);
+    } catch (error) {
+      console.error('Error al cargar usuarios:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchUniqueITs = useCallback(async () => {
+    try {
+      const data = await inventoryAPI.fetchUniqueITs();
+      setUniqueITs(data);
+    } catch (error) {
+      console.error('Error al cargar ITs únicos:', error);
+    }
+  }, []);
+
+  const fetchInventoryItems = useCallback(async () => {
+    try {
+      const data = await inventoryAPI.fetchInventory();
+      setInventoryItems(data);
+    } catch (error) {
+      console.error('Error al cargar items de inventario:', error);
+    }
+  }, []);
+
+  const fetchAvailablePhones = useCallback(async () => {
+    try {
+      const phones = await corporatePhoneAPI.fetchCorporatePhones();
+      // Filtrar solo los teléfonos activos
+      const activePhones = phones.filter(phone => phone.status === 'activo');
+      setAvailablePhones(activePhones);
+    } catch (err) {
+      console.error('Error al cargar teléfonos corporativos:', err);
+    }
+  }, []);
+
   useEffect(() => {
     if (user && user.role?.name === 'Administrador') {
       fetchUsers();
@@ -43,7 +83,7 @@ const Users = () => {
       fetchInventoryItems();
       fetchAvailablePhones();
     }
-  }, [user]);
+  }, [user, fetchUsers, fetchUniqueITs, fetchInventoryItems, fetchAvailablePhones]);
 
   // Socket listeners for real-time updates
   useEffect(() => {
@@ -65,47 +105,10 @@ const Users = () => {
       offUserUpdated(handleUserUpdated);
       offUsersListUpdated(handleUsersListUpdated);
     };
-  }, []);
-
-  const fetchUsers = async () => {
-    try {
-      const data = await usersAPI.fetchUsers();
-      setUsers(data);
-    } catch (err) {
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchUniqueITs = async () => {
-    try {
-      const data = await inventoryAPI.fetchUniqueITs();
-      setUniqueITs(data);
-    } catch (err) {
-    }
-  };
-
-  const fetchInventoryItems = async () => {
-    try {
-      const data = await inventoryAPI.fetchInventory();
-      setInventoryItems(data);
-    } catch (err) {
-    }
-  };
-
-  const fetchAvailablePhones = async () => {
-    try {
-      const phones = await corporatePhoneAPI.fetchCorporatePhones();
-      // Filtrar solo los teléfonos activos
-      const activePhones = phones.filter(phone => phone.status === 'activo');
-      setAvailablePhones(activePhones);
-    } catch (err) {
-      console.error('Error al cargar teléfonos corporativos:', err);
-    }
-  };
+  }, [fetchUsers]);
 
   // NUEVA FUNCIONALIDAD: Filtrado y ordenamiento
-  const filterAndSortUsers = () => {
+  const filterAndSortUsers = useCallback(() => {
     let filtered = [...users];
 
     // Búsqueda
@@ -147,7 +150,7 @@ const Users = () => {
     });
 
     return filtered;
-  };
+  }, [users, searchTerm, filterRole, sortBy, sortOrder]);
 
   const filteredUsers = filterAndSortUsers();
 
@@ -181,7 +184,7 @@ const Users = () => {
   );
 
   // NUEVA FUNCIONALIDAD: Verificar fortaleza de contraseña
-  const checkPasswordStrength = (password) => {
+  const checkPasswordStrength = useCallback((password) => {
     if (!password) return null;
     
     let strength = 0;
@@ -212,10 +215,10 @@ const Users = () => {
     }
 
     return { level, color, strength, feedback };
-  };
+  }, []);
 
   // NUEVA FUNCIONALIDAD: Generar contraseña segura
-  const generateSecurePassword = () => {
+  const generateSecurePassword = useCallback(() => {
     const length = 12;
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=';
     let password = '';
@@ -234,7 +237,7 @@ const Users = () => {
     setFormData({ ...formData, password });
     setPasswordStrength(checkPasswordStrength(password));
     notifySuccess('Contraseña segura generada');
-  };
+  }, [checkPasswordStrength, notifySuccess, formData]);
 
 
   // NUEVA FUNCIONALIDAD: Obtener icono de rol
@@ -312,7 +315,7 @@ const Users = () => {
     } else {
       setPasswordStrength(null);
     }
-  }, [formData.password]);
+  }, [formData.password, checkPasswordStrength]);
 
   const handleCreate = () => {
     setEditingUser(null);
@@ -348,14 +351,8 @@ const Users = () => {
         } else {
           notifySuccess('Usuario eliminado exitosamente');
         }
-      } catch (err) {
-        if (err.response?.data?.error?.includes('registros relacionados')) {
-          notifyError(err.response.data.error);
-        } else if (err.response?.data?.error?.includes('propio usuario')) {
-          notifyError(err.response.data.error);
-        } else {
-          notifyError('Error al eliminar el usuario. Por favor, inténtalo de nuevo.');
-        }
+      } catch {
+        notifyError('Error al eliminar el usuario. Por favor, inténtalo de nuevo.');
       }
     });
   };
@@ -384,7 +381,7 @@ const Users = () => {
       }
       fetchUsers();
       setShowModal(false);
-    } catch (err) {
+    } catch {
       notifyError('Error al guardar el usuario. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setFormLoading(false);

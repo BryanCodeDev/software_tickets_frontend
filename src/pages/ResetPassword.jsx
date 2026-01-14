@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { authAPI } from '../api';
 import { useThemeClasses } from '../hooks/useThemeClasses';
@@ -18,7 +18,7 @@ const ResetPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
 
-  const calculatePasswordStrength = (password) => {
+  const calculatePasswordStrength = useCallback((password) => {
     let strength = 0;
     if (password.length >= 8) strength++;
     if (password.length >= 12) strength++;
@@ -26,21 +26,21 @@ const ResetPassword = () => {
     if (/[0-9]/.test(password)) strength++;
     if (/[^a-zA-Z0-9]/.test(password)) strength++;
     return strength;
-  };
+  }, []);
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       [name]: value
-    });
+    }));
 
     if (name === 'password') {
       setPasswordStrength(calculatePasswordStrength(value));
     }
-  };
+  }, [calculatePasswordStrength]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -69,19 +69,19 @@ const ResetPassword = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [formData.password, formData.confirmPassword, token, navigate]);
 
-  const getStrengthColor = () => {
+  const getStrengthColor = useCallback(() => {
     if (passwordStrength <= 1) return 'bg-red-500';
     if (passwordStrength <= 3) return 'bg-yellow-500';
     return 'bg-green-500';
-  };
+  }, [passwordStrength]);
 
-  const getStrengthText = () => {
+  const getStrengthText = useCallback(() => {
     if (passwordStrength <= 1) return 'Débil';
     if (passwordStrength <= 3) return 'Media';
     return 'Fuerte';
-  };
+  }, [passwordStrength]);
 
   return (
     <div className={conditionalClasses({
@@ -198,7 +198,7 @@ const ResetPassword = () => {
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={() => setShowPassword(prev => !prev)}
                     className="absolute inset-y-0 right-0 pr-4 flex items-center"
                   >
                     {showPassword ? (
@@ -288,7 +288,7 @@ const ResetPassword = () => {
                   />
                   <button
                     type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    onClick={() => setShowConfirmPassword(prev => !prev)}
                     className="absolute inset-y-0 right-0 pr-4 flex items-center"
                   >
                     {showConfirmPassword ? (

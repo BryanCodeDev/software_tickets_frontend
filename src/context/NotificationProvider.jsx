@@ -1,17 +1,12 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-
-const NotificationContext = createContext();
-
-export const useNotifications = () => {
-  const context = useContext(NotificationContext);
-  if (!context) {
-    throw new Error('useNotifications must be used within a NotificationProvider');
-  }
-  return context;
-};
+import React, { useState, useCallback } from 'react';
+import { NotificationContext } from './NotificationContext';
 
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
+
+  const removeNotification = useCallback((id) => {
+    setNotifications(prev => prev.filter(notification => notification.id !== id));
+  }, []);
 
   const addNotification = useCallback((notification) => {
     const id = Date.now() + Math.random();
@@ -32,11 +27,8 @@ export const NotificationProvider = ({ children }) => {
     }
 
     return id;
-  }, []);
+  }, [removeNotification]);
 
-  const removeNotification = useCallback((id) => {
-    setNotifications(prev => prev.filter(notification => notification.id !== id));
-  }, []);
 
   const clearAllNotifications = useCallback(() => {
     setNotifications([]);
@@ -97,4 +89,4 @@ export const NotificationProvider = ({ children }) => {
   );
 };
 
-export default NotificationContext;
+export default NotificationProvider;

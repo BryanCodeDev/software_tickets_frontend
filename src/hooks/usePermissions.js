@@ -25,7 +25,7 @@ export const usePermissions = (user) => {
         type === 'folder' ? item.id : null
       );
       return permission;
-    } catch (err) {
+    } catch {
       return { hasAccess: false };
     }
   }, []);
@@ -76,7 +76,7 @@ export const usePermissions = (user) => {
 
       // Limpiar selección
       setSelectedUsers([]);
-    } catch (err) {
+    } catch {
       notifyError('Error al otorgar permisos');
     }
   }, [selectedUsers, permissionType]);

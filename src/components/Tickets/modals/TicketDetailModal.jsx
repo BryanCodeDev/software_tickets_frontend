@@ -7,12 +7,10 @@ const TicketDetailModal = ({
   showDetailModal,
   setShowDetailModal,
   selectedTicket,
-  comments,
   messages,
   newMessage,
   setNewMessage,
   handleSendMessage,
-  handleViewDetail,
   handleEdit,
   handleDelete,
   canEditTicket,
@@ -22,10 +20,6 @@ const TicketDetailModal = ({
 }) => {
   const { conditionalClasses } = useThemeClasses();
   const messagesEndRef = useRef(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   const getStatusColor = (status) => {
     const colors = {

@@ -23,7 +23,7 @@ export const debugActasEntrega = {
       } else {
         return false;
       }
-    } catch (error) {
+    } catch {
       return false;
     }
   },
@@ -50,13 +50,13 @@ export const debugActasEntrega = {
       });
 
       if (response.ok) {
-        const actas = await response.json();
+        const _actas = await response.json();
         return true;
       } else {
-        const errorText = await response.text();
+        const _errorText = await response.text();
         return false;
       }
-    } catch (error) {
+    } catch {
       return false;
     }
   },
@@ -81,7 +81,7 @@ export const debugActasEntrega = {
 
       const response = await actaEntregaAPI.create(testData);
       return response;
-    } catch (error) {
+    } catch {
       return null;
     }
   },
@@ -96,13 +96,14 @@ export const debugActasEntrega = {
     }
 
     // Verificar localStorage
-    const token = localStorage.getItem('token');
+    const _token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     
     if (user) {
       try {
-        const userData = JSON.parse(user);
-      } catch (error) {
+        const _userData = JSON.parse(user);
+      } catch {
+        // Error parsing user data, continue
       }
     }
 
@@ -126,7 +127,7 @@ export const debugActasEntrega = {
       
       if (apiWorking) {
         // 4. Probar creación de acta
-        const actaCreated = await this.testCreateActa();
+        const _actaCreated = await this.testCreateActa();
       }
     }
     

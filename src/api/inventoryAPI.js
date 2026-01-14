@@ -2,113 +2,77 @@ import api from './api';
 
 const inventoryAPI = {
   fetchInventory: async () => {
-    try {
-      const response = await api.get('/inventory');
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.get('/inventory');
+    return response.data;
   },
 
   searchInventory: async (query) => {
-    try {
-      const response = await api.get(`/inventory/search?q=${encodeURIComponent(query)}`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.get(`/inventory/search?q=${encodeURIComponent(query)}`);
+    return response.data;
   },
 
   fetchInventoryById: async (id) => {
-    try {
-      const response = await api.get(`/inventory/${id}`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.get(`/inventory/${id}`);
+    return response.data;
   },
 
   createInventoryItem: async (itemData) => {
-    try {
-      const { propiedad, it, area, responsable, serial, capacidad, ram, marca, status, warrantyExpiry, purchaseDate, lastMaintenance, cost } = itemData;
-      const response = await api.post('/inventory', {
-        propiedad,
-        it,
-        area,
-        responsable,
-        serial,
-        capacidad,
-        ram,
-        marca,
-        status,
-        warrantyExpiry,
-        purchaseDate,
-        lastMaintenance,
-        cost
-      });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const { propiedad, it, area, responsable, serial, capacidad, ram, marca, status, warrantyExpiry, purchaseDate, lastMaintenance, cost } = itemData;
+    const response = await api.post('/inventory', {
+      propiedad,
+      it,
+      area,
+      responsable,
+      serial,
+      capacidad,
+      ram,
+      marca,
+      status,
+      warrantyExpiry,
+      purchaseDate,
+      lastMaintenance,
+      cost
+    });
+    return response.data;
   },
 
   updateInventoryItem: async (id, itemData) => {
-    try {
-      const { propiedad, it, area, responsable, serial, capacidad, ram, marca, status, warrantyExpiry, purchaseDate, lastMaintenance, cost } = itemData;
-      const response = await api.put(`/inventory/${id}`, {
-        propiedad,
-        it,
-        area,
-        responsable,
-        serial,
-        capacidad,
-        ram,
-        marca,
-        status,
-        warrantyExpiry,
-        purchaseDate,
-        lastMaintenance,
-        cost
-      });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const { propiedad, it, area, responsable, serial, capacidad, ram, marca, status, warrantyExpiry, purchaseDate, lastMaintenance, cost } = itemData;
+    const response = await api.put(`/inventory/${id}`, {
+      propiedad,
+      it,
+      area,
+      responsable,
+      serial,
+      capacidad,
+      ram,
+      marca,
+      status,
+      warrantyExpiry,
+      purchaseDate,
+      lastMaintenance,
+      cost
+    });
+    return response.data;
   },
 
   deleteInventoryItem: async (id) => {
-    try {
-      await api.delete(`/inventory/${id}`);
-    } catch (error) {
-      throw error;
-    }
+    await api.delete(`/inventory/${id}`);
   },
 
   detectHardware: async () => {
-    try {
-      const response = await api.get('/inventory/detect/hardware');
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.get('/inventory/detect/hardware');
+    return response.data;
   },
 
   fetchUniqueITs: async () => {
-    try {
-      const response = await api.get('/inventory/unique/its');
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.get('/inventory/unique/its');
+    return response.data;
   },
 
   getHistory: async (id) => {
-    try {
-      const response = await api.get(`/inventory/${id}/history`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.get(`/inventory/${id}/history`);
+    return response.data;
   },
 };
 

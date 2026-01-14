@@ -28,7 +28,7 @@ export const useFolders = (showConfirmDialog, notifyError) => {
       await documentsAPI.createFolder(folderData);
       setFolderFormData({ name: '', description: '', parentFolderId: null });
       setShowCreateFolderModal(false);
-    } catch (err) {
+    } catch {
       notifyError('Error al crear la carpeta. Por favor, inténtalo de nuevo.');
     }
   }, [folderFormData, currentFolder, notifyError]);
@@ -58,7 +58,7 @@ export const useFolders = (showConfirmDialog, notifyError) => {
     try {
       await documentsAPI.updateFolder(editingFolder.id, editFolderFormData);
       setShowEditFolderModal(false);
-    } catch (err) {
+    } catch {
       notifyError('Error al actualizar la carpeta. Por favor, inténtalo de nuevo.');
     }
   }, [editingFolder, editFolderFormData, notifyError]);

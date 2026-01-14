@@ -8,7 +8,7 @@ import Button from './base/Button';
  * en cualquier página sin modificar manualmente cada clase
  */
 const ThemeExample = () => {
-  const { getClasses, conditionalClasses } = useThemeClasses();
+  const { conditionalClasses } = useThemeClasses();
 
   // Ejemplo 1: Configuración simple con clases predefinidas
   const cardConfig = {
@@ -65,7 +65,7 @@ const ThemeExample = () => {
  * Ejemplo de componente complejo usando el sistema de temas
  */
 const ComplexComponent = () => {
-  const { getClasses, combineClasses } = useThemeClasses();
+  const { conditionalClasses } = useThemeClasses();
 
   // Configuración más compleja para diferentes estados
   const componentConfig = {

@@ -1,8 +1,6 @@
 import React from 'react';
-import { useThemeClasses } from '../../hooks/useThemeClasses';
 
-const StatsPanel = React.memo(({ stats, showStats, onToggleStats, title, statsConfig }) => {
-  const { conditionalClasses } = useThemeClasses();
+const StatsPanel = React.memo(({ stats, showStats, statsConfig }) => {
 
   if (!showStats) return null;
 

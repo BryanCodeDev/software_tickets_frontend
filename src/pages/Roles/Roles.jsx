@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { rolesAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { useAuth } from '../../hooks/useAuth';
@@ -31,7 +31,7 @@ const Roles = () => {
   // Estados adicionales para mejor gestión
   const [showPermissionPreview, setShowPermissionPreview] = useState(false);
   const [selectedRoleForPreview, setSelectedRoleForPreview] = useState(null);
-  const [permissionChanges, setPermissionChanges] = useState({});
+  // const [permissionChanges, setPermissionChanges] = useState({});
   const [showBulkActions, setShowBulkActions] = useState(false);
 
   // Search and filter states
@@ -41,25 +41,18 @@ const Roles = () => {
   const [sortOrder, setSortOrder] = useState('asc');
   const [showStats, setShowStats] = useState(false);
 
-  useEffect(() => {
-    if (user && checkPermission('roles', 'view')) {
-      fetchRoles();
-      fetchPermissions();
-    }
-  }, [user, checkPermission]);
-
-  const fetchRoles = async () => {
+  const fetchRoles = useCallback(async () => {
     try {
       const data = await rolesAPI.fetchRoles();
       setRoles(data);
-    } catch (err) {
+    } catch {
       notifyError('Error al cargar roles');
     } finally {
       setLoading(false);
     }
-  };
+  }, [notifyError]);
 
-  const fetchPermissions = async () => {
+  const fetchPermissions = useCallback(async () => {
     try {
       const [allPermissions, groupedPermissions] = await Promise.all([
         rolesAPI.fetchAllPermissions(),
@@ -67,10 +60,17 @@ const Roles = () => {
       ]);
       setPermissions(allPermissions);
       setPermissionsByModule(groupedPermissions);
-    } catch (err) {
+    } catch {
       notifyError('Error al cargar permisos');
     }
-  };
+  }, [notifyError]);
+
+  useEffect(() => {
+    if (user && checkPermission('roles', 'view')) {
+      fetchRoles();
+      fetchPermissions();
+    }
+  }, [user, checkPermission, fetchRoles, fetchPermissions]);
 
   // Filter and sort roles
   const filterAndSortRoles = () => {
@@ -149,7 +149,7 @@ const Roles = () => {
           await rolesAPI.deleteRole(roleId);
           notifySuccess('Rol eliminado exitosamente');
           fetchRoles();
-        } catch (err) {
+        } catch {
           notifyError('Error al eliminar el rol');
         }
       }
@@ -182,7 +182,7 @@ const Roles = () => {
       }
 
       fetchRoles();
-    } catch (err) {
+    } catch {
       notifyError('Error al guardar el rol');
     } finally {
       setFormLoading(false);
@@ -202,12 +202,12 @@ const Roles = () => {
     }));
 
     // Registrar cambios para vista previa
-    if (editingRole) {
-      setPermissionChanges(prev => ({
-        ...prev,
-        [permissionId]: !wasSelected
-      }));
-    }
+    // if (editingRole) {
+    //   setPermissionChanges(prev => ({
+    //     ...prev,
+    //     [permissionId]: !wasSelected
+    //   }));
+    // }
   };
 
   const handleModulePermissionsToggle = (modulePermissions) => {
@@ -235,26 +235,25 @@ const Roles = () => {
     setShowPermissionPreview(true);
   };
 
-  // Función para copiar permisos de un rol a otro
-  const handleCopyPermissions = async (sourceRoleId, targetRoleId) => {
-    try {
-      const sourceRole = roles.find(r => r.id === sourceRoleId);
-      const targetRole = roles.find(r => r.id === targetRoleId);
+  // const handleCopyPermissions = async (sourceRoleId, targetRoleId) => {
+  //   try {
+  //     const sourceRole = roles.find(r => r.id === sourceRoleId);
+  //     const targetRole = roles.find(r => r.id === targetRoleId);
       
-      if (!sourceRole || !targetRole) {
-        notifyError('Roles no encontrados');
-        return;
-      }
+  //     if (!sourceRole || !targetRole) {
+  //       notifyError('Roles no encontrados');
+  //       return;
+  //     }
 
-      const sourcePermissionIds = sourceRole.permissions?.map(p => p.id) || [];
-      await rolesAPI.updateRolePermissions(targetRoleId, sourcePermissionIds);
+  //     const sourcePermissionIds = sourceRole.permissions?.map(p => p.id) || [];
+  //     await rolesAPI.updateRolePermissions(targetRoleId, sourcePermissionIds);
       
-      notifySuccess(`Permisos copiados de ${sourceRole.name} a ${targetRole.name}`);
-      fetchRoles();
-    } catch (err) {
-      notifyError('Error al copiar permisos');
-    }
-  };
+  //     notifySuccess(`Permisos copiados de ${sourceRole.name} a ${targetRole.name}`);
+  //     fetchRoles();
+  //   } catch (err) {
+  //     notifyError('Error al copiar permisos');
+  //   }
+  // };
 
   // Función para exportar configuración de roles
   const handleExportRoles = async () => {
@@ -288,37 +287,36 @@ const Roles = () => {
       URL.revokeObjectURL(url);
       
       notifySuccess('Configuración de roles exportada exitosamente');
-    } catch (err) {
+    } catch {
       notifyError('Error al exportar configuración');
     }
   };
 
-  // Función para validar configuración de permisos
-  const validatePermissionConfiguration = () => {
-    const warnings = [];
-    const errors = [];
+  // const validatePermissionConfiguration = () => {
+  //   const warnings = [];
+  //   const errors = [];
 
-    roles.forEach(role => {
-      const permissionCount = role.permissions?.length || 0;
+  //   roles.forEach(role => {
+  //     const permissionCount = role.permissions?.length || 0;
       
-      // Validaciones básicas
-      if (permissionCount === 0 && role.name !== 'Empleado') {
-        warnings.push(`El rol "${role.name}" no tiene permisos asignados`);
-      }
+  //     // Validaciones básicas
+  //     if (permissionCount === 0 && role.name !== 'Empleado') {
+  //       warnings.push(`El rol "${role.name}" no tiene permisos asignados`);
+  //     }
       
-      // Validar roles críticos
-      if (['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa', 'Jefe', 'Compras'].includes(role.name)) {
-        const criticalModules = ['tickets', 'purchase_requests', 'quality_tickets', 'documents'];
-        const hasCriticalPermissions = role.permissions?.some(p => criticalModules.includes(p.module));
+  //     // Validar roles críticos
+  //     if (['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa', 'Jefe', 'Compras'].includes(role.name)) {
+  //       const criticalModules = ['tickets', 'purchase_requests', 'quality_tickets', 'documents'];
+  //       const hasCriticalPermissions = role.permissions?.some(p => criticalModules.includes(p.module));
         
-        if (!hasCriticalPermissions) {
-          errors.push(`El rol "${role.name}" debe tener permisos en módulos críticos`);
-        }
-      }
-    });
+  //       if (!hasCriticalPermissions) {
+  //         errors.push(`El rol "${role.name}" debe tener permisos en módulos críticos`);
+  //       }
+  //     }
+  //   });
 
-    return { warnings, errors };
-  };
+  //   return { warnings, errors };
+  // };
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });

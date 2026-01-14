@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaTimes, FaCheck, FaTimes as FaReject, FaArrowRight, FaCheckCircle, FaClock, FaUserCircle, FaComment, FaPaperclip, FaDownload, FaTrash, FaUpload } from 'react-icons/fa';
 import { purchaseRequestsAPI } from '../../../api';
 import AuthContext from '../../../context/AuthContext';
@@ -19,21 +19,14 @@ const PurchaseRequestDetailModal = ({
   const [actionComments, setActionComments] = useState('');
   const [attachments, setAttachments] = useState([]);
   const [attachmentsLoading, setAttachmentsLoading] = useState(false);
-  const [comments, setComments] = useState([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
+  const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [isInternalComment, setIsInternalComment] = useState(false);
 
   const userRole = user?.role?.name;
 
-  useEffect(() => {
-    if (showDetailModal && selectedRequest?.id) {
-      loadAttachments();
-      loadComments();
-    }
-  }, [showDetailModal, selectedRequest]);
-
-  const loadAttachments = async () => {
+  const loadAttachments = useCallback(async () => {
     if (!selectedRequest?.id) return;
 
     setAttachmentsLoading(true);
@@ -45,9 +38,9 @@ const PurchaseRequestDetailModal = ({
     } finally {
       setAttachmentsLoading(false);
     }
-  };
+  }, [selectedRequest?.id]);
 
-  const loadComments = async () => {
+  const loadComments = useCallback(async () => {
     if (!selectedRequest?.id) return;
 
     setCommentsLoading(true);
@@ -59,7 +52,14 @@ const PurchaseRequestDetailModal = ({
     } finally {
       setCommentsLoading(false);
     }
-  };
+  }, [selectedRequest?.id]);
+
+  useEffect(() => {
+    if (showDetailModal && selectedRequest?.id) {
+      loadAttachments();
+      loadComments();
+    }
+  }, [showDetailModal, selectedRequest, loadAttachments, loadComments]);
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];

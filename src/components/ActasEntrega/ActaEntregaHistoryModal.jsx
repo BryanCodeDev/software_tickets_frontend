@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaTimes, FaHistory, FaUser, FaCalendarAlt, FaEdit, FaPlus, FaTrash, FaEye } from 'react-icons/fa';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
 
@@ -6,7 +6,6 @@ const ActaEntregaHistoryModal = ({
   show,
   onClose,
   title,
-  item,
   loading: externalLoading,
   apiCall,
   moduleName
@@ -20,9 +19,9 @@ const ActaEntregaHistoryModal = ({
     if (show && apiCall) {
       fetchHistory();
     }
-  }, [show, apiCall]);
+  }, [show, apiCall, fetchHistory]);
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -34,7 +33,7 @@ const ActaEntregaHistoryModal = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [apiCall]);
 
   const getActionIcon = (action) => {
     switch (action) {

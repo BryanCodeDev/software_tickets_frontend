@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { FaMobile, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory, FaIndustry, FaFlask, FaCalculator, FaShoppingCart, FaUsers, FaBuilding, FaTools, FaLaptop, FaClipboardCheck } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
@@ -11,7 +11,7 @@ import { useNotifications } from '../../context/NotificationContext';
 
 const PDAs = () => {
   const { conditionalClasses } = useThemeClasses();
-  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
+  const { notifySuccess, notifyError, notifyWarning: _notifyWarning, notifyInfo: _notifyInfo } = useNotifications();
   const [pdas, setPdas] = useState([]);
   const [filteredPdas, setFilteredPdas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -48,29 +48,21 @@ const PDAs = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyItem, setHistoryItem] = useState(null);
   const [historyLoading, setHistoryLoading] = useState(false);
-  const { user } = useContext(AuthContext);
+  const { user: _user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
 
-  useEffect(() => {
-    fetchPdas();
-  }, []);
-
-  useEffect(() => {
-    filterAndSortPdas();
-  }, [pdas, searchTerm, filterStatus, filterArea, filterPropiedad, sortBy, sortOrder]);
-
-  const fetchPdas = async () => {
+  const fetchPdas = useCallback(async () => {
     try {
       const data = await pdaInventoryAPI.fetchPDAInventory();
       setPdas(data);
-    } catch (err) {
+    } catch {
       notifyError('Error al cargar las PDAs. Por favor, recarga la página.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [notifyError]);
 
-  const filterAndSortPdas = () => {
+  const filterAndSortPdas = useCallback(() => {
     let filtered = [...pdas];
 
     // Búsqueda
@@ -113,7 +105,15 @@ const PDAs = () => {
     });
 
     setFilteredPdas(filtered);
-  };
+  }, [pdas, searchTerm, filterStatus, filterArea, filterPropiedad, sortBy, sortOrder]);
+
+  useEffect(() => {
+    fetchPdas();
+  }, [fetchPdas]);
+
+  useEffect(() => {
+    filterAndSortPdas();
+  }, [filterAndSortPdas]);
 
   const calculateStats = () => {
     const total = pdas.length;
@@ -196,7 +196,7 @@ const PDAs = () => {
         await pdaInventoryAPI.deletePDAInventoryItem(id);
         fetchPdas();
         notifySuccess('PDA eliminada exitosamente');
-      } catch (err) {
+      } catch {
         notifyError('Error al eliminar la PDA. Por favor, inténtalo de nuevo.');
       }
     });
@@ -208,9 +208,9 @@ const PDAs = () => {
     setShowHistoryModal(true);
 
     try {
-      const history = await pdaInventoryAPI.getHistory(item.id);
+      // const history = await pdaInventoryAPI.getHistory(item.id);
       // El modal manejará la carga de datos internamente
-    } catch (err) {
+    } catch {
       notifyError('Error al cargar el historial. Por favor, inténtalo de nuevo.');
       setShowHistoryModal(false);
     } finally {
@@ -231,7 +231,7 @@ const PDAs = () => {
       }
       fetchPdas();
       setShowModal(false);
-    } catch (err) {
+    } catch {
       notifyError('Error al guardar la PDA. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setFormLoading(false);
@@ -317,7 +317,7 @@ const PDAs = () => {
   const canCreate = checkPermission('pdas', 'create');
   const canEdit = checkPermission('pdas', 'edit');
   const canDelete = checkPermission('pdas', 'delete');
-  const canView = checkPermission('pdas', 'view');
+  const _canView = checkPermission('pdas', 'view');
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });

@@ -12,7 +12,7 @@ import {
   TicketStats
 } from '../../components/Tickets';
 import { TicketCalidadHeader, TicketCalidadFilters, TicketCalidadList } from '../../components/Tickets/TicketCalidad';
-import { getTimeAgo } from '../../utils';
+// import { getTimeAgo } from '../../utils'; // Comentado por no ser utilizado
 import { useThemeClasses } from '../../hooks/useThemeClasses';
 
 const TicketCalidad = () => {
@@ -54,7 +54,7 @@ const TicketCalidad = () => {
   });
   const [titleFilter, setTitleFilter] = useState('');
   const [technicians, setTechnicians] = useState([]);
-  const [administrators, setAdministrators] = useState([]);
+  // const [administrators, setAdministrators] = useState([]); // No utilizada pero mantenida para consistencia
   const [calidadUsers, setCalidadUsers] = useState([]);
 
   const standardizedTitles = useMemo(() => [
@@ -125,6 +125,74 @@ const TicketCalidad = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const fetchTickets = useCallback(async () => {
+    try {
+      const data = await qualityTicketsAPI.fetchQualityTickets({});
+      setTickets(data.tickets || []);
+    } catch {
+      showNotification('Error al cargar los tickets de calidad. Por favor, recarga la página.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchUsers = useCallback(async () => {
+    try {
+      // Cargar usuarios siempre para que todos los roles puedan ver el listado
+      const users = await usersAPI.fetchUsers();
+      const techUsers = users.filter(u => u.Role?.name === 'Técnico');
+      const calidadUsersFiltered = users.filter(u => u.Role?.name === 'Calidad');
+      setTechnicians(techUsers);
+      // setAdministrators(calidadUsersFiltered); // Comentado por no ser utilizado
+      setCalidadUsers(calidadUsersFiltered);
+    } catch (err) {
+      console.error('Error al cargar usuarios:', err);
+    }
+  }, []);
+
+  // Funciones helper para verificar permisos por ticket específico
+  const canEditTicket = useCallback((ticket) => {
+    if (userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad') {
+      return true;
+    }
+    if (userRole === 'Empleado') {
+      return ticket.userId === user?.id;
+    }
+    return false;
+  }, [userRole, user?.id]);
+
+  const canDeleteTicket = useCallback((ticket) => {
+    if (userRole === 'Administrador' || userRole === 'Calidad') {
+      return true;
+    }
+    if (userRole === 'Técnico') {
+      return (ticket.userId === user?.id || ticket.assignedTo === user?.id) && ticket.status?.toLowerCase() === 'cerrado';
+    }
+    if (userRole === 'Empleado') {
+      return ticket.userId === user?.id;
+    }
+    return false;
+  }, [userRole, user?.id]);
+
+  const canSendMessage = useCallback((ticket) => {
+    if (userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad') {
+      return true;
+    }
+    if (userRole === 'Empleado') {
+      return ticket.userId === user?.id;
+    }
+    return false;
+  }, [userRole, user?.id]);
+
+  const showNotification = useCallback((message, type) => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  }, []);
+
+  const showConfirmDialog = useCallback((message, onConfirm) => {
+    setConfirmDialog({ message, onConfirm });
+  }, []);
+
   useEffect(() => {
     fetchUsers();
     fetchTickets();
@@ -132,12 +200,12 @@ const TicketCalidad = () => {
 
   // WebSocket listeners for real-time ticket list updates
   useEffect(() => {
-    const handleTicketCreated = (newTicket) => {
+    const handleTicketCreated = () => {
       // Refresh to show the new ticket
       fetchTickets();
     };
 
-    const handleTicketDeleted = (data) => {
+    const handleTicketDeleted = () => {
       // Refresh to remove the deleted ticket
       fetchTickets();
     };
@@ -158,32 +226,7 @@ const TicketCalidad = () => {
       offTicketDeleted(handleTicketDeleted);
       offTicketsListUpdated(handleTicketsListUpdated);
     };
-  }, []);
-
-  const fetchTickets = async () => {
-    try {
-      const data = await qualityTicketsAPI.fetchQualityTickets({});
-      setTickets(data.tickets || []);
-    } catch (err) {
-      showNotification('Error al cargar los tickets de calidad. Por favor, recarga la página.', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchUsers = async () => {
-    try {
-      // Cargar usuarios siempre para que todos los roles puedan ver el listado
-      const users = await usersAPI.fetchUsers();
-      const techUsers = users.filter(u => u.Role?.name === 'Técnico');
-      const calidadUsersFiltered = users.filter(u => u.Role?.name === 'Calidad');
-      setTechnicians(techUsers);
-      setAdministrators(calidadUsersFiltered);
-      setCalidadUsers(calidadUsersFiltered);
-    } catch (err) {
-      console.error('Error al cargar usuarios:', err);
-    }
-  };
+  }, [fetchTickets]);
 
   const filteredTickets = useMemo(() => {
     if (!Array.isArray(tickets)) return [];
@@ -298,7 +341,7 @@ const TicketCalidad = () => {
 
     setEditingTicket(ticket);
     setShowEditModal(true);
-  }, [user?.role?.name]);
+  }, [user?.role?.name, canEditTicket, showNotification]);
 
   const handleDelete = useCallback(async (ticket) => {
     if (!canDeleteTicket(ticket)) {
@@ -319,7 +362,7 @@ const TicketCalidad = () => {
         }
       }
     });
-  }, []);
+  }, [canDeleteTicket, fetchTickets, showConfirmDialog, showNotification]);
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
@@ -507,52 +550,10 @@ const TicketCalidad = () => {
 
     XLSX.writeFile(wb, `tickets_calidad_${new Date().toISOString().split('T')[0]}.xlsx`);
     showNotification('Tickets de calidad exportados exitosamente', 'success');
-  }, [filteredTickets]);
+  }, [filteredTickets, showNotification]);
 
   const canCreate = userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Empleado';
 
-  // Funciones helper para verificar permisos por ticket específico
-  const canEditTicket = useCallback((ticket) => {
-    if (userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad') {
-      return true;
-    }
-    if (userRole === 'Empleado') {
-      return ticket.userId === user?.id;
-    }
-    return false;
-  }, [userRole, user?.id]);
-
-  const canDeleteTicket = useCallback((ticket) => {
-    if (userRole === 'Administrador' || userRole === 'Calidad') {
-      return true;
-    }
-    if (userRole === 'Técnico') {
-      return (ticket.userId === user?.id || ticket.assignedTo === user?.id) && ticket.status?.toLowerCase() === 'cerrado';
-    }
-    if (userRole === 'Empleado') {
-      return ticket.userId === user?.id;
-    }
-    return false;
-  }, [userRole, user?.id]);
-
-  const canSendMessage = useCallback((ticket) => {
-    if (userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad') {
-      return true;
-    }
-    if (userRole === 'Empleado') {
-      return ticket.userId === user?.id;
-    }
-    return false;
-  }, [userRole, user?.id]);
-
-  const showNotification = useCallback((message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  }, []);
-
-  const showConfirmDialog = useCallback((message, onConfirm) => {
-    setConfirmDialog({ message, onConfirm });
-  }, []);
 
   if (loading) {
     return (

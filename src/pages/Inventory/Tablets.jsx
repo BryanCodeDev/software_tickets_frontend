@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { FaTablet, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory, FaIndustry, FaFlask, FaCalculator, FaShoppingCart, FaUsers, FaBuilding, FaTools, FaLaptop, FaClipboardCheck } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
@@ -11,7 +11,7 @@ import { useNotifications } from '../../context/NotificationContext';
 
 const Tablets = () => {
   const { conditionalClasses } = useThemeClasses();
-  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
+  const { notifySuccess, notifyError, notifyWarning: _notifyWarning, notifyInfo: _notifyInfo } = useNotifications();
   const [tablets, setTablets] = useState([]);
   const [filteredTablets, setFilteredTablets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -49,29 +49,21 @@ const Tablets = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyItem, setHistoryItem] = useState(null);
   const [historyLoading, setHistoryLoading] = useState(false);
-  const { user } = useContext(AuthContext);
+  const { user: _user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
 
-  useEffect(() => {
-    fetchTablets();
-  }, []);
-
-  useEffect(() => {
-    filterAndSortTablets();
-  }, [tablets, searchTerm, filterStatus, filterArea, filterPropiedad, sortBy, sortOrder]);
-
-  const fetchTablets = async () => {
+  const fetchTablets = useCallback(async () => {
     try {
       const data = await tabletInventoryAPI.fetchTabletInventory();
       setTablets(data);
-    } catch (err) {
+    } catch {
       notifyError('Error al cargar las tablets. Por favor, recarga la página.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [notifyError]);
 
-  const filterAndSortTablets = () => {
+  const filterAndSortTablets = useCallback(() => {
     let filtered = [...tablets];
 
     // Búsqueda
@@ -114,7 +106,15 @@ const Tablets = () => {
     });
 
     setFilteredTablets(filtered);
-  };
+  }, [tablets, searchTerm, filterStatus, filterArea, filterPropiedad, sortBy, sortOrder]);
+
+  useEffect(() => {
+    fetchTablets();
+  }, [fetchTablets]);
+
+  useEffect(() => {
+    filterAndSortTablets();
+  }, [filterAndSortTablets]);
 
   const calculateStats = () => {
     const total = tablets.length;
@@ -199,7 +199,7 @@ const Tablets = () => {
         await tabletInventoryAPI.deleteTabletInventoryItem(id);
         fetchTablets();
         notifySuccess('Tablet eliminada exitosamente');
-      } catch (err) {
+      } catch {
         notifyError('Error al eliminar la tablet. Por favor, inténtalo de nuevo.');
       }
     });
@@ -211,9 +211,9 @@ const Tablets = () => {
     setShowHistoryModal(true);
 
     try {
-      const history = await tabletInventoryAPI.getHistory(item.id);
+      await tabletInventoryAPI.getHistory(item.id);
       // El modal manejará la carga de datos internamente
-    } catch (err) {
+    } catch {
       notifyError('Error al cargar el historial. Por favor, inténtalo de nuevo.');
       setShowHistoryModal(false);
     } finally {
@@ -234,7 +234,7 @@ const Tablets = () => {
       }
       fetchTablets();
       setShowModal(false);
-    } catch (err) {
+    } catch {
       notifyError('Error al guardar la tablet. Por favor, verifica los datos e inténtalo de nuevo.');
     } finally {
       setFormLoading(false);
@@ -322,7 +322,7 @@ const Tablets = () => {
   const canCreate = checkPermission('tablets', 'create');
   const canEdit = checkPermission('tablets', 'edit');
   const canDelete = checkPermission('tablets', 'delete');
-  const canView = checkPermission('tablets', 'view');
+  const _canView = checkPermission('tablets', 'view');
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });

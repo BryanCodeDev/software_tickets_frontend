@@ -36,7 +36,7 @@ const HistoryModal = ({
 
           <div className="p-6">
             <div className="space-y-4">
-              {selectedDocument.versions.map((version, index) => (
+              {selectedDocument.versions.map((version) => (
                 <div key={version.id} className={`p-4 rounded-xl border ${conditionalClasses({
                   light: version.isActive ? 'border-[#8e4dbf] bg-[#f3ebf9]' : 'border-gray-200 bg-gray-50',
                   dark: version.isActive ? 'border-purple-500 bg-purple-900/20' : 'border-gray-600 bg-gray-700'

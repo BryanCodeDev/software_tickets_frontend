@@ -6,8 +6,7 @@ const TicketCard = ({
   ticket,
   onViewDetail,
   onEdit,
-  canEditTicket,
-  userRole
+  canEditTicket
 }) => {
   const { conditionalClasses } = useThemeClasses();
 
