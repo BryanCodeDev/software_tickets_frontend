@@ -26,11 +26,11 @@ const Trash = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
 
-  const fetchTrashItems = useCallback(async () => {
+  const fetchTrashItems = useCallback(async (page) => {
     try {
       setLoading(true);
       const data = await trashAPI.getFilteredTrash({
-        page: pagination.current,
+        page: page || 1,
         limit: 12,
         moduleType: filterModule !== 'all' ? filterModule : '',
         search: searchTerm
@@ -42,7 +42,7 @@ const Trash = () => {
     } finally {
       setLoading(false);
     }
-  }, [notifyError, pagination.current, filterModule, searchTerm]);
+  }, [notifyError, filterModule, searchTerm]);
 
   const fetchStats = useCallback(async () => {
     try {
@@ -55,7 +55,7 @@ const Trash = () => {
 
   useEffect(() => {
     if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Tecnico')) {
-      fetchTrashItems();
+      fetchTrashItems(1);
       fetchStats();
     }
   }, [user, fetchTrashItems, fetchStats]);
@@ -63,15 +63,10 @@ const Trash = () => {
   useEffect(() => {
     if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Tecnico')) {
       setPagination(prev => ({ ...prev, current: 1 }));
-      fetchTrashItems();
+      fetchTrashItems(1);
     }
-  }, [searchTerm, filterModule, fetchTrashItems]);
+  }, [searchTerm, filterModule, fetchTrashItems, user]);
 
-  useEffect(() => {
-    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Tecnico')) {
-      fetchTrashItems();
-    }
-  }, [pagination.current, fetchTrashItems]);
 
   const handleRestore = async (item) => {
     showConfirmDialog(
@@ -79,7 +74,7 @@ const Trash = () => {
       async () => {
         try {
           await trashAPI.restoreTrash(item.id);
-          fetchTrashItems();
+          fetchTrashItems(pagination.current);
           fetchStats();
           notifySuccess('Elemento restaurado exitosamente');
         } catch {
@@ -95,7 +90,7 @@ const Trash = () => {
       async () => {
         try {
           await trashAPI.deleteTrash(item.id);
-          fetchTrashItems();
+          fetchTrashItems(pagination.current);
           fetchStats();
           notifySuccess('Elemento eliminado permanentemente');
         } catch {
@@ -111,7 +106,7 @@ const Trash = () => {
       async () => {
         try {
           await trashAPI.emptyTrash();
-          fetchTrashItems();
+          fetchTrashItems(1);
           fetchStats();
           notifySuccess('Papelera vaciada exitosamente');
         } catch {
@@ -507,7 +502,11 @@ const Trash = () => {
                   <div className="flex justify-center mt-8">
                     <nav className="flex items-center space-x-2">
                       <button
-                        onClick={() => setPagination(prev => ({ ...prev, current: Math.max(1, prev.current - 1) }))}
+                        onClick={() => {
+                          const newPage = Math.max(1, pagination.current - 1);
+                          setPagination(prev => ({ ...prev, current: newPage }));
+                          fetchTrashItems(newPage);
+                        }}
                         disabled={pagination.current === 1}
                         className={conditionalClasses({
                           light: 'px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed',
@@ -523,7 +522,11 @@ const Trash = () => {
                         {pagination.current} de {pagination.pages}
                       </span>
                       <button
-                        onClick={() => setPagination(prev => ({ ...prev, current: Math.min(prev.pages, prev.current + 1) }))}
+                        onClick={() => {
+                          const newPage = Math.min(pagination.pages, pagination.current + 1);
+                          setPagination(prev => ({ ...prev, current: newPage }));
+                          fetchTrashItems(newPage);
+                        }}
                         disabled={pagination.current === pagination.pages}
                         className={conditionalClasses({
                           light: 'px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed',

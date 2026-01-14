@@ -81,6 +81,15 @@ const TicketCalidad = () => {
 
   const userRole = user?.role?.name;
 
+  const showNotification = useCallback((message, type) => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  }, []);
+
+  const showConfirmDialog = useCallback((message, onConfirm) => {
+    setConfirmDialog({ message, onConfirm });
+  }, []);
+
   // Socket listeners
   useEffect(() => {
     if (selectedTicket) {
@@ -134,7 +143,7 @@ const TicketCalidad = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [showNotification]);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -184,19 +193,11 @@ const TicketCalidad = () => {
     return false;
   }, [userRole, user?.id]);
 
-  const showNotification = useCallback((message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  }, []);
-
-  const showConfirmDialog = useCallback((message, onConfirm) => {
-    setConfirmDialog({ message, onConfirm });
-  }, []);
 
   useEffect(() => {
     fetchUsers();
     fetchTickets();
-  }, []);
+  }, [fetchUsers, fetchTickets]);
 
   // WebSocket listeners for real-time ticket list updates
   useEffect(() => {
