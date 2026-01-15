@@ -13,27 +13,28 @@ import {
 import { Bar } from 'react-chartjs-2';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
 import { useNotifications } from '../../hooks/useNotifications';
+import { useTicketEdit } from '../../hooks/useTicketEdit';
 import AuthContext from '../../context/AuthContext';
 import ticketsAPI from '../../api/ticketsAPI';
 import messagesAPI from '../../api/messagesAPI';
 import usersAPI from '../../api/usersAPI';
-import { 
-  joinTicketRoom, 
-  leaveTicketRoom, 
-  onNewMessage, 
-  onMessageUpdated, 
-  onMessageDeleted, 
-  onTicketUpdated, 
-  onTicketCreated, 
-  onTicketDeleted, 
-  onTicketsListUpdated, 
-  offNewMessage, 
-  offMessageUpdated, 
-  offMessageDeleted, 
-  offTicketUpdated, 
-  offTicketCreated, 
-  offTicketDeleted, 
-  offTicketsListUpdated 
+import {
+  joinTicketRoom,
+  leaveTicketRoom,
+  onNewMessage,
+  onMessageUpdated,
+  onMessageDeleted,
+  onTicketUpdated,
+  onTicketCreated,
+  onTicketDeleted,
+  onTicketsListUpdated,
+  offNewMessage,
+  offMessageUpdated,
+  offMessageDeleted,
+  offTicketUpdated,
+  offTicketCreated,
+  offTicketDeleted,
+  offTicketsListUpdated
 } from '../../api/socket';
 import {
   TicketCreateModal,
@@ -69,7 +70,6 @@ const Tickets = () => {
   const [showStats, setShowStats] = useState(false);
   
   // Estados de tickets seleccionados
-  const [editingTicket, setEditingTicket] = useState(null);
   const [selectedTicket, setSelectedTicket] = useState(null);
   
   // Estados de mensajes y comentarios
@@ -98,13 +98,8 @@ const Tickets = () => {
     attachment: null
   });
   
-  const [editFormData, setEditFormData] = useState({ 
-    title: '', 
-    description: '', 
-    priority: 'media', 
-    status: 'abierto', 
-    assignedTo: '' 
-  });
+  // Usar el hook personalizado para manejar la edición de tickets
+  const { editingTicket, editFormData, setEditFormData, handleEdit: handleEditTicket, clearEditData } = useTicketEdit();
   
   // Estados de usuarios
   const [technicians, setTechnicians] = useState([]);
@@ -402,31 +397,10 @@ const Tickets = () => {
       return;
     }
 
-    if (userRole === 'Administrador') {
-      setEditFormData({
-        title: ticket.title,
-        description: ticket.description,
-        priority: ticket.priority,
-        status: ticket.status,
-        assignedTo: ticket.assignedTo || ''
-      });
-    } else if (userRole === 'Técnico') {
-      setEditFormData({
-        priority: ticket.priority,
-        status: ticket.status,
-        assignedTo: ticket.assignedTo || ''
-      });
-    } else if (userRole === 'Empleado') {
-      setEditFormData({
-        title: ticket.title,
-        description: ticket.description,
-        priority: ticket.priority
-      });
-    }
-
-    setEditingTicket(ticket);
+    // Usar el hook personalizado para manejar la edición
+    handleEditTicket(ticket, userRole);
     setShowEditModal(true);
-  }, [userRole, canEditTicket, notifyError]);
+  }, [userRole, canEditTicket, notifyError, handleEditTicket]);
 
   const handleDelete = useCallback(async (ticket) => {
     if (!canDeleteTicket(ticket)) {
@@ -820,7 +794,12 @@ const Tickets = () => {
 
         <TicketEditModal
           showEditModal={showEditModal}
-          setShowEditModal={setShowEditModal}
+          setShowEditModal={(show) => {
+            setShowEditModal(show);
+            if (!show) {
+              clearEditData();
+            }
+          }}
           editingTicket={editingTicket}
           editFormData={editFormData}
           setEditFormData={setEditFormData}

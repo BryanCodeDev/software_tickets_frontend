@@ -14,6 +14,7 @@ import {
 import { TicketCalidadHeader, TicketCalidadFilters, TicketCalidadList } from '../../components/Tickets/TicketCalidad';
 // import { getTimeAgo } from '../../utils'; // Comentado por no ser utilizado
 import { useThemeClasses } from '../../hooks/useThemeClasses';
+import { useTicketEdit } from '../../hooks/useTicketEdit';
 
 const TicketCalidad = () => {
   const { conditionalClasses } = useThemeClasses();
@@ -22,7 +23,6 @@ const TicketCalidad = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [editingTicket, setEditingTicket] = useState(null);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [comments, setComments] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -45,13 +45,8 @@ const TicketCalidad = () => {
     assignedTo: '',
     attachment: null
   });
-  const [editFormData, setEditFormData] = useState({
-    title: '',
-    description: '',
-    priority: 'media',
-    status: 'abierto',
-    assignedTo: ''
-  });
+  // Usar el hook personalizado para manejar la edición de tickets
+  const { editingTicket, editFormData, setEditFormData, handleEdit: handleEditTicket, clearEditData } = useTicketEdit();
   const [titleFilter, setTitleFilter] = useState('');
   const [technicians, setTechnicians] = useState([]);
   // const [administrators, setAdministrators] = useState([]); // No utilizada pero mantenida para consistencia
@@ -316,33 +311,10 @@ const TicketCalidad = () => {
       return;
     }
 
-    const userRole = user?.role?.name;
-
-    if (userRole === 'Administrador') {
-      setEditFormData({
-        title: ticket.title,
-        description: ticket.description,
-        priority: ticket.priority,
-        status: ticket.status,
-        assignedTo: ticket.assignedTo || ''
-      });
-    } else if (userRole === 'Técnico' || userRole === 'Calidad') {
-      setEditFormData({
-        priority: ticket.priority,
-        status: ticket.status,
-        assignedTo: ticket.assignedTo || ''
-      });
-    } else if (userRole === 'Empleado') {
-      setEditFormData({
-        title: ticket.title,
-        description: ticket.description,
-        priority: ticket.priority
-      });
-    }
-
-    setEditingTicket(ticket);
+    // Usar el hook personalizado para manejar la edición
+    handleEditTicket(ticket, userRole);
     setShowEditModal(true);
-  }, [user?.role?.name, canEditTicket, showNotification]);
+  }, [userRole, canEditTicket, showNotification, handleEditTicket]);
 
   const handleDelete = useCallback(async (ticket) => {
     if (!canDeleteTicket(ticket)) {
@@ -748,7 +720,12 @@ const TicketCalidad = () => {
         {/* Edit Modal */}
         <TicketEditModal
           showEditModal={showEditModal}
-          setShowEditModal={setShowEditModal}
+          setShowEditModal={(show) => {
+            setShowEditModal(show);
+            if (!show) {
+              clearEditData();
+            }
+          }}
           editingTicket={editingTicket}
           editFormData={editFormData}
           setEditFormData={setEditFormData}

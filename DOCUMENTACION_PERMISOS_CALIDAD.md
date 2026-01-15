@@ -204,6 +204,13 @@ if (!['Administrador', 'Técnico', 'Calidad'].includes(userRole)) {
 | Documentos | ✅ | Todos | Todos | Todos | Acceso completo (sin cambios) |
 | Tickets de Calidad | ✅ | Solo propios | Solo propios | Solo propios | Solo puede ver/editar/eliminar sus propios tickets |
 
+### Rol "Coordinadora Administrativa":
+| Módulo | Crear | Ver | Editar | Eliminar | Restricciones |
+|--------|-------|-----|--------|----------|---------------|
+| Solicitudes de Compra | ✅ | Todos | Todos | Todos | Acceso completo (sin cambios) |
+| Documentos | ✅ | Todos | Todos | Todos | Acceso completo (sin cambios) |
+| Tickets de Calidad | ✅ | Solo propios | Solo propios | Solo propios | Solo puede ver/editar/eliminar sus propios tickets |
+
 ## Validación
 
 Para verificar que los cambios funcionan correctamente:
@@ -249,15 +256,28 @@ Para verificar que los cambios funcionan correctamente:
 4. **Módulo de Documentos**:
    - Verificar que mantiene acceso completo (sin cambios)
 
+### Para el rol "Coordinadora Administrativa":
+1. **Iniciar sesión como usuario con rol "Coordinadora Administrativa"**
+2. **Módulo de Tickets de Calidad**:
+   - Verificar que solo puede ver los tickets que ha creado
+   - Verificar que puede crear nuevos tickets
+   - Verificar que solo puede editar los tickets que ha creado
+   - Verificar que solo puede eliminar los tickets que ha creado
+   - Verificar que solo puede enviar mensajes en los tickets que ha creado
+3. **Módulo de Solicitudes de Compra**:
+   - Verificar que mantiene acceso completo (sin cambios)
+4. **Módulo de Documentos**:
+   - Verificar que mantiene acceso completo (sin cambios)
+
 ## Notas Técnicas
 
 - Los cambios se implementaron manteniendo la compatibilidad con el sistema de permisos existente
 - Se utilizó la función `checkPermission()` para mantener consistencia con el resto de la aplicación
 - El filtrado de solicitudes se realiza tanto a nivel de backend como de frontend para mayor seguridad
-- Para los roles "Jefe" y "Compras" se utilizaron funciones helper (`canEditTicket`, `canDeleteTicket`, `canSendMessage`) para aplicar restricciones a nivel de ticket individual
-- No se modificaron los permisos de otros roles, solo se ajustaron los de los roles "Calidad", "Jefe" y "Compras"
+- Para los roles "Jefe", "Compras" y "Coordinadora Administrativa" se utilizaron funciones helper (`canEditTicket`, `canDeleteTicket`, `canSendMessage`) para aplicar restricciones a nivel de ticket individual
+- No se modificaron los permisos de otros roles, solo se ajustaron los de los roles "Calidad", "Jefe", "Compras" y "Coordinadora Administrativa"
 - Los cambios siguen el patrón existente en la aplicación para mantener consistencia
-- Los roles "Jefe" y "Compras" comparten el mismo nivel de restricciones en el módulo TicketCalidad
+- Los roles "Jefe", "Compras" y "Coordinadora Administrativa" comparten el mismo nivel de restricciones en el módulo TicketCalidad
 
 ### 7. Módulo de Tickets de Calidad - Rol "Compras" (TicketCalidad.jsx)
 
@@ -316,6 +336,77 @@ Para verificar que los cambios funcionan correctamente:
 
 **Filtrado de tickets:**
 El rol "Compras" ya estaba correctamente configurado en el filtrado (líneas 237-241) para ver solo sus propios tickets:
+```javascript
+if (!['Administrador', 'Técnico', 'Calidad'].includes(userRole)) {
+  // Otros roles solo ven sus propios tickets
+  filtered = filtered.filter(ticket => ticket.userId === user?.id);
+}
+```
+
+#### Comportamiento Resultante:
+- ✅ Puede crear tickets de calidad
+- ✅ Solo puede ver los tickets que ha creado
+- ✅ Solo puede editar los tickets que ha creado
+- ✅ Solo puede eliminar los tickets que ha creado
+- ✅ Solo puede enviar mensajes en los tickets que ha creado
+
+### 8. Módulo de Tickets de Calidad - Rol "Coordinadora Administrativa" (TicketCalidad.jsx)
+
+#### Archivo Modificado:
+- `software_tickets_frontend/src/pages/Tickets/TicketCalidad.jsx`
+
+#### Cambios Específicos:
+
+**Funciones helper modificadas:**
+- **Líneas 163-171**: Se modificó `canEditTicket` para que el rol "Coordinadora Administrativa" solo pueda editar sus propios tickets:
+  ```javascript
+  const canEditTicket = useCallback((ticket) => {
+    if (userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad') {
+      return true;
+    }
+    if (userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' || userRole === 'Coordinadora Administrativa') {
+      return ticket.userId === user?.id;
+    }
+    return false;
+  }, [userRole, user?.id]);
+  ```
+
+- **Líneas 173-184**: Se modificó `canDeleteTicket` para que el rol "Coordinadora Administrativa" solo pueda eliminar sus propios tickets:
+  ```javascript
+  const canDeleteTicket = useCallback((ticket) => {
+    if (userRole === 'Administrador' || userRole === 'Calidad') {
+      return true;
+    }
+    if (userRole === 'Técnico') {
+      return (ticket.userId === user?.id || ticket.assignedTo === user?.id) && ticket.status?.toLowerCase() === 'cerrado';
+    }
+    if (userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' || userRole === 'Coordinadora Administrativa') {
+      return ticket.userId === user?.id;
+    }
+    return false;
+  }, [userRole, user?.id]);
+  ```
+
+- **Líneas 186-194**: Se modificó `canSendMessage` para que el rol "Coordinadora Administrativa" solo pueda enviar mensajes en sus propios tickets:
+  ```javascript
+  const canSendMessage = useCallback((ticket) => {
+    if (userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad') {
+      return true;
+    }
+    if (userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' || userRole === 'Coordinadora Administrativa') {
+      return ticket.userId === user?.id;
+    }
+    return false;
+  }, [userRole, user?.id]);
+  ```
+
+- **Línea 556**: Se agregó "Coordinadora Administrativa" a `canCreate` para permitir crear tickets:
+  ```javascript
+  const canCreate = userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' || userRole === 'Coordinadora Administrativa';
+  ```
+
+**Filtrado de tickets:**
+El rol "Coordinadora Administrativa" ya estaba correctamente configurado en el filtrado (líneas 237-241) para ver solo sus propios tickets:
 ```javascript
 if (!['Administrador', 'Técnico', 'Calidad'].includes(userRole)) {
   // Otros roles solo ven sus propios tickets

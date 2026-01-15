@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FaCheck, FaSpinner, FaTimes } from 'react-icons/fa';
 import { useThemeClasses } from '../../../hooks/useThemeClasses';
 
@@ -18,6 +18,24 @@ const TicketEditModal = ({
 }) => {
   const { conditionalClasses } = useThemeClasses();
   const canShowAssignment = ['Administrador', 'Jefe', 'Compras', 'Coordinadora Administrativa', 'Calidad', 'Empleado'].includes(userRole);
+  
+  // useEffect defensivo para asegurar que los datos del formulario estén sincronizados
+  useEffect(() => {
+    if (showEditModal && editingTicket && editFormData) {
+      // Verificar que los datos del formulario correspondan al ticket actual
+      // Si hay discrepancia, actualizar el formulario con los datos del ticket
+      if (!editFormData.title && editingTicket.title) {
+        setEditFormData(prev => ({
+          ...prev,
+          title: editingTicket.title || '',
+          description: editingTicket.description || '',
+          priority: editingTicket.priority || 'media',
+          status: editingTicket.status || 'abierto',
+          assignedTo: editingTicket.assignedTo || ''
+        }));
+      }
+    }
+  }, [showEditModal, editingTicket, editFormData, setEditFormData]);
   
   if (!showEditModal || !editingTicket) return null;
 
