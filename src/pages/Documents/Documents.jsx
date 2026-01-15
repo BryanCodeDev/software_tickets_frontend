@@ -78,6 +78,9 @@ const Documents = () => {
 
   // Estado para permisos de escritura en la carpeta actual
   const [canWriteInCurrentFolder, setCanWriteInCurrentFolder] = useState(false);
+  
+  // Estado para almacenar permisos de edición por elemento
+  const [editPermissions, setEditPermissions] = useState(new Map());
 
   // Función para mostrar diálogo de confirmación (definida antes de los hooks)
   const showConfirmDialog = (message, onConfirm) => {
@@ -533,17 +536,74 @@ const Documents = () => {
     });
   };
 
-  const canEdit = (item) => {
+  const canEdit = async (item) => {
     // Roles con permisos totales pueden editar todo
     if (FULL_ACCESS_ROLES.includes(user?.role?.name)) {
       return true;
     }
-    // Empleados solo pueden editar sus propios elementos
+    
+    // Para empleados, verificar permisos de escritura
     if (user?.role?.name === 'Empleado') {
-      return item.createdBy === user.id;
+      // Si es el creador, puede editar
+      if (item.createdBy === user.id) {
+        return true;
+      }
+      
+      // Verificar si tiene permisos de escritura asignados
+      try {
+        const permission = await checkUserPermission(item, item.type === 'folder' ? 'folder' : 'document');
+        return permission.hasAccess && permission.permissionType === 'write';
+      } catch (error) {
+        console.error('Error checking edit permission:', error);
+        return false;
+      }
     }
+    
     return false;
   };
+
+  // Función para verificar permisos de edición y almacenarlos en caché
+  const checkEditPermission = useCallback(async (item) => {
+    const key = `${item.type}-${item.id}`;
+    if (editPermissions.has(key)) {
+      return editPermissions.get(key);
+    }
+    
+    const hasPermission = await canEdit(item);
+    setEditPermissions(prev => new Map(prev).set(key, hasPermission));
+    return hasPermission;
+  }, [canEdit, editPermissions]);
+
+  // Función síncrona para obtener permisos de edición (para compatibilidad)
+  const getCanEdit = useCallback((item) => {
+    const key = `${item.type}-${item.id}`;
+    return editPermissions.get(key) || false;
+  }, [editPermissions]);
+
+  // Efecto para calcular permisos de edición cuando cambian los elementos
+  useEffect(() => {
+    const calculateEditPermissions = async () => {
+      const newPermissions = new Map();
+      
+      // Calcular para carpetas
+      for (const folder of currentFolders) {
+        const key = `folder-${folder.id}`;
+        const hasPermission = await canEdit(folder);
+        newPermissions.set(key, hasPermission);
+      }
+      
+      // Calcular para documentos
+      for (const doc of filteredDocumentsList) {
+        const key = `document-${doc.id}`;
+        const hasPermission = await canEdit(doc);
+        newPermissions.set(key, hasPermission);
+      }
+      
+      setEditPermissions(newPermissions);
+    };
+    
+    calculateEditPermissions();
+  }, [currentFolders, filteredDocumentsList, user, canEdit]);
 
 
 
@@ -689,7 +749,7 @@ const Documents = () => {
                         folder={folder}
                         getTimeAgo={getTimeAgo}
                         handleEnterFolder={handleEnterFolder}
-                        canEdit={canEdit}
+                        canEdit={getCanEdit}
                         handleEditFolder={handleEditFolder}
                         handleDeleteFolder={handleDeleteFolder}
                         handleOpenPermissionsModal={handleOpenPermissionsModal}
@@ -706,7 +766,7 @@ const Documents = () => {
                         getDownloadName={getDownloadName}
                         handleDownloadDocument={handleDownloadDocument}
                         handleViewHistory={handleViewHistory}
-                        canEdit={canEdit}
+                        canEdit={getCanEdit}
                         handleEdit={handleEdit}
                         handleDelete={handleDelete}
                       />
