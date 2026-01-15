@@ -430,10 +430,10 @@ const Users = () => {
                 dark: 'text-2xl sm:text-3xl font-bold text-gray-100 flex items-center'
               })}>
                 <div className={conditionalClasses({
-                  light: 'w-12 h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg',
-                  dark: 'w-12 h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg'
+                  light: 'w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg',
+                  dark: 'w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg'
                 })}>
-                  <FaUsers className="w-6 h-6 text-white" />
+                  <FaUsers className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 Usuarios
               </h1>
@@ -635,7 +635,7 @@ const Users = () => {
             ) : (
               <>
                 {/* NUEVA FUNCIONALIDAD: Vista de cuadrícula */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                   {filteredUsers.map((usr) => (
                     <div key={usr.id} className={conditionalClasses({
                       light: 'bg-gray-50 rounded-xl p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-shadow',
@@ -779,32 +779,32 @@ const Users = () => {
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
           <div className={conditionalClasses({
-            light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in',
-            dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-600 animate-scale-in'
+            light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in',
+            dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-600 animate-scale-in'
           })}>
             <div className={conditionalClasses({
-              light: 'sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10',
-              dark: 'sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10'
+              light: 'sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 sm:p-5 lg:p-6 z-10',
+              dark: 'sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 sm:p-5 lg:p-6 z-10'
             })}>
               <div className="flex items-center justify-between">
-                <h2 className="text-xl lg:text-2xl font-bold text-white">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">
                   {editingUser ? 'Editar Usuario' : 'Nuevo Usuario'}
                 </h2>
                 <button
                   onClick={() => setShowModal(false)}
                   className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
                 >
-                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                  <FaTimes className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
                 </button>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-4 sm:p-6 md:p-8 space-y-3 sm:space-y-4 md:space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 lg:p-8 space-y-3 sm:space-y-4 lg:space-y-5">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
                 <div>
                   <label className={conditionalClasses({
-                    light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
-                    dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
+                    light: 'block text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1.5 sm:mb-2',
+                    dark: 'block text-xs sm:text-sm lg:text-base font-medium text-gray-200 mb-1.5 sm:mb-2'
                   })}>
                     Username *
                   </label>
@@ -814,8 +814,8 @@ const Users = () => {
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                     className={conditionalClasses({
-                      light: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900',
-                      dark: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-gray-100'
+                      light: 'w-full px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-lg bg-white text-gray-900',
+                      dark: 'w-full px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-lg bg-gray-700 text-gray-100'
                     })}
                     required
                     disabled={editingUser}
@@ -824,8 +824,8 @@ const Users = () => {
 
                 <div>
                   <label className={conditionalClasses({
-                    light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
-                    dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
+                    light: 'block text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1.5 sm:mb-2',
+                    dark: 'block text-xs sm:text-sm lg:text-base font-medium text-gray-200 mb-1.5 sm:mb-2'
                   })}>
                     Email *
                   </label>
@@ -835,8 +835,8 @@ const Users = () => {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className={conditionalClasses({
-                      light: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900',
-                      dark: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-gray-100'
+                      light: 'w-full px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-lg bg-white text-gray-900',
+                      dark: 'w-full px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-lg bg-gray-700 text-gray-100'
                     })}
                     required
                     disabled={editingUser}
@@ -856,8 +856,8 @@ const Users = () => {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className={conditionalClasses({
-                      light: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900',
-                      dark: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-gray-100'
+                      light: 'w-full px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-lg bg-white text-gray-900',
+                      dark: 'w-full px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-lg bg-gray-700 text-gray-100'
                     })}
                     required
                     disabled={editingUser}
@@ -879,8 +879,8 @@ const Users = () => {
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         className={conditionalClasses({
-                          light: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 pr-20 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900',
-                          dark: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 pr-20 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-gray-100'
+                          light: 'w-full px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 pr-20 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-lg bg-white text-gray-900',
+                          dark: 'w-full px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 pr-20 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-lg bg-gray-700 text-gray-100'
                         })}
                         required={!editingUser}
                       />
@@ -967,8 +967,8 @@ const Users = () => {
                     value={formData.roleId}
                     onChange={(e) => setFormData({ ...formData, roleId: parseInt(e.target.value) })}
                     className={conditionalClasses({
-                      light: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900',
-                      dark: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-gray-100'
+                      light: 'w-full px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-lg bg-white text-gray-900',
+                      dark: 'w-full px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-lg bg-gray-700 text-gray-100'
                     })}
                   >
                     <option value={1}>Administrador</option>
