@@ -424,8 +424,8 @@ const Roles = () => {
 
   return (
     <div className={conditionalClasses({
-      light: "min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4 sm:px-6 lg:px-8",
-      dark: "min-h-screen bg-gray-900 py-8 px-4 sm:px-6 lg:px-8"
+      light: "min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-2 sm:py-6 sm:px-4 md:px-6 lg:px-8",
+      dark: "min-h-screen bg-gray-900 py-4 px-2 sm:py-6 sm:px-4 md:px-6 lg:px-8"
     })}>
       {/* Confirm Dialog */}
       <ConfirmDialog
@@ -438,33 +438,33 @@ const Roles = () => {
       />
 
       <div>
-        <div className="mb-8">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className={conditionalClasses({
-                light: "text-3xl font-bold text-gray-900 flex items-center",
-                dark: "text-3xl font-bold text-white flex items-center"
+                light: "text-2xl sm:text-3xl font-bold text-gray-900 flex items-center",
+                dark: "text-2xl sm:text-3xl font-bold text-white flex items-center"
               })}>
-                <div className="w-12 h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg">
-                  <FaShieldAlt className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg">
+                  <FaShieldAlt className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 Gestión de Roles
               </h1>
               <p className={conditionalClasses({
-                light: "mt-2 text-gray-600",
-                dark: "mt-2 text-gray-300"
+                light: "mt-1 sm:mt-2 text-sm sm:text-base text-gray-600",
+                dark: "mt-1 sm:mt-2 text-sm sm:text-base text-gray-300"
               })}>Administra roles y permisos del sistema</p>
             </div>
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
               <button
                 onClick={() => setShowStats(!showStats)}
                 className={conditionalClasses({
-                  light: "inline-flex items-center px-4 py-2.5 bg-white hover:bg-gray-50 border-2 border-gray-200 text-gray-700 font-semibold rounded-xl transition-all",
-                  dark: "inline-flex items-center px-4 py-2.5 bg-gray-800 hover:bg-gray-700 border-2 border-gray-600 text-gray-200 font-semibold rounded-xl transition-all"
+                  light: "inline-flex items-center px-3 sm:px-4 py-2 sm:py-2.5 bg-white hover:bg-gray-50 border-2 border-gray-200 text-gray-700 font-semibold rounded-lg sm:rounded-xl transition-all text-sm sm:text-base",
+                  dark: "inline-flex items-center px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-800 hover:bg-gray-700 border-2 border-gray-600 text-gray-200 font-semibold rounded-lg sm:rounded-xl transition-all text-sm sm:text-base"
                 })}
                 title="Ver estadísticas"
               >
-                <FaChartBar className="mr-2" />
+                <FaChartBar className="mr-1 sm:mr-2 w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="hidden sm:inline">Estadísticas</span>
               </button>
               
@@ -473,12 +473,12 @@ const Roles = () => {
                 <button
                   onClick={() => setShowBulkActions(!showBulkActions)}
                   className={conditionalClasses({
-                    light: "inline-flex items-center px-3 py-2 bg-white hover:bg-gray-50 border-2 border-gray-200 text-gray-700 font-medium rounded-xl transition-all text-sm",
-                    dark: "inline-flex items-center px-3 py-2 bg-gray-800 hover:bg-gray-700 border-2 border-gray-600 text-gray-200 font-medium rounded-xl transition-all text-sm"
+                    light: "inline-flex items-center px-2 sm:px-3 py-2 bg-white hover:bg-gray-50 border-2 border-gray-200 text-gray-700 font-medium rounded-lg sm:rounded-xl transition-all text-xs sm:text-sm",
+                    dark: "inline-flex items-center px-2 sm:px-3 py-2 bg-gray-800 hover:bg-gray-700 border-2 border-gray-600 text-gray-200 font-medium rounded-lg sm:rounded-xl transition-all text-xs sm:text-sm"
                   })}
                   title="Acciones rápidas"
                 >
-                  <FaFilter className="mr-1" />
+                  <FaFilter className="mr-1 w-3 h-3 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">Acciones</span>
                 </button>
                 
@@ -487,12 +487,12 @@ const Roles = () => {
                     <button
                       onClick={handleExportRoles}
                       className={conditionalClasses({
-                        light: "inline-flex items-center px-3 py-2 bg-green-100 hover:bg-green-200 text-green-700 font-medium rounded-lg transition-all text-sm",
-                        dark: "inline-flex items-center px-3 py-2 bg-green-900 hover:bg-green-800 text-green-300 font-medium rounded-lg transition-all text-sm"
+                        light: "inline-flex items-center px-2 sm:px-3 py-2 bg-green-100 hover:bg-green-200 text-green-700 font-medium rounded-lg transition-all text-xs sm:text-sm",
+                        dark: "inline-flex items-center px-2 sm:px-3 py-2 bg-green-900 hover:bg-green-800 text-green-300 font-medium rounded-lg transition-all text-xs sm:text-sm"
                       })}
                       title="Exportar configuración"
                     >
-                      <FaDownload className="mr-1" />
+                      <FaDownload className="mr-1 w-3 h-3 sm:w-4 sm:h-4" />
                       <span className="hidden sm:inline">Exportar</span>
                     </button>
                   </div>
@@ -502,11 +502,11 @@ const Roles = () => {
                   <button
                     onClick={handleCreate}
                     className={conditionalClasses({
-                      light: "flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200",
-                      dark: "flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                      light: "flex items-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base",
+                      dark: "flex items-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base"
                     })}
                   >
-                    <FaPlus className="w-5 h-5" />
+                    <FaPlus className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span>Nuevo Rol</span>
                   </button>
                 )}
@@ -627,11 +627,11 @@ const Roles = () => {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {filteredRoles.map((role) => (
                   <div key={role.id} className={conditionalClasses({
-                    light: "bg-gray-50 rounded-xl p-6 border border-gray-200 hover:shadow-md transition-shadow",
-                    dark: "bg-gray-700 rounded-xl p-6 border border-gray-600 hover:shadow-md transition-shadow"
+                    light: "bg-gray-50 rounded-lg sm:rounded-xl p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-shadow",
+                    dark: "bg-gray-700 rounded-lg sm:rounded-xl p-4 sm:p-6 border border-gray-600 hover:shadow-md transition-shadow"
                   })}>
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
@@ -684,46 +684,46 @@ const Roles = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-wrap gap-2">
                       {checkPermission('roles', 'edit') && (
                         <button
                           onClick={() => handleEdit(role)}
                           className={conditionalClasses({
-                            light: "flex items-center space-x-1 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors",
-                            dark: "flex items-center space-x-1 px-3 py-1 bg-blue-900 text-blue-300 text-xs font-medium rounded-lg hover:bg-blue-800 transition-colors"
+                            light: "flex items-center space-x-1 px-2 sm:px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors",
+                            dark: "flex items-center space-x-1 px-2 sm:px-3 py-1 bg-blue-900 text-blue-300 text-xs font-medium rounded-lg hover:bg-blue-800 transition-colors"
                           })}
                           disabled={role.name === 'Administrador'}
                           title="Editar rol y permisos"
                         >
-                          <FaEdit />
-                          <span>Editar</span>
+                          <FaEdit className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <span className="hidden sm:inline">Editar</span>
                         </button>
                       )}
                       
                       <button
                         onClick={() => handlePreviewPermissions(role)}
                         className={conditionalClasses({
-                          light: "flex items-center space-x-1 px-3 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-lg hover:bg-purple-200 transition-colors",
-                          dark: "flex items-center space-x-1 px-3 py-1 bg-purple-900 text-purple-300 text-xs font-medium rounded-lg hover:bg-purple-800 transition-colors"
+                          light: "flex items-center space-x-1 px-2 sm:px-3 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-lg hover:bg-purple-200 transition-colors",
+                          dark: "flex items-center space-x-1 px-2 sm:px-3 py-1 bg-purple-900 text-purple-300 text-xs font-medium rounded-lg hover:bg-purple-800 transition-colors"
                         })}
                         title="Vista previa de permisos"
                       >
-                        <FaEye />
-                        <span>Ver</span>
+                        <FaEye className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline">Ver</span>
                       </button>
                       
                       {checkPermission('roles', 'delete') && (
                         <button
                           onClick={() => handleDelete(role.id)}
                           className={conditionalClasses({
-                            light: "flex items-center space-x-1 px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors",
-                            dark: "flex items-center space-x-1 px-3 py-1 bg-red-900 text-red-300 text-xs font-medium rounded-lg hover:bg-red-800 transition-colors"
+                            light: "flex items-center space-x-1 px-2 sm:px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors",
+                            dark: "flex items-center space-x-1 px-2 sm:px-3 py-1 bg-red-900 text-red-300 text-xs font-medium rounded-lg hover:bg-red-800 transition-colors"
                           })}
                           disabled={role.name === 'Administrador'}
                           title="Eliminar rol"
                         >
-                          <FaTrash />
-                          <span>Eliminar</span>
+                          <FaTrash className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <span className="hidden sm:inline">Eliminar</span>
                         </button>
                       )}
                     </div>
@@ -737,28 +737,28 @@ const Roles = () => {
 
       {/* Create Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-1 sm:p-2 md:p-4 animate-fade-in">
           <div className={conditionalClasses({
-            light: "bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in",
-            dark: "bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-700 animate-scale-in"
+            light: "bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-2xl md:max-w-4xl max-h-[98vh] sm:max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in",
+            dark: "bg-gray-800 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-2xl md:max-w-4xl max-h-[98vh] sm:max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-700 animate-scale-in"
           })}>
-            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-3 sm:p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl lg:text-2xl font-bold text-white">Crear Nuevo Rol</h2>
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Crear Nuevo Rol</h2>
                 <button
                   onClick={() => setShowCreateModal(false)}
                   className={conditionalClasses({
-                    light: "p-2 hover:bg-white/20 rounded-lg transition-all text-white",
-                    dark: "p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                    light: "p-1 sm:p-2 hover:bg-white/20 rounded-lg transition-all text-white",
+                    dark: "p-1 sm:p-2 hover:bg-white/20 rounded-lg transition-all text-white"
                   })}
                 >
-                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                  <FaTimes className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
                 </button>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4 md:space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+            <form onSubmit={handleSubmit} className="p-2 sm:p-3 md:p-4 lg:p-6 space-y-2 sm:space-y-3 md:space-y-4 lg:space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
                 <div>
                   <label className={conditionalClasses({
                     light: "block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2",
@@ -772,8 +772,8 @@ const Roles = () => {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className={conditionalClasses({
-                      light: "w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900",
-                      dark: "w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-white"
+                      light: "w-full px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900",
+                      dark: "w-full px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-white"
                     })}
                     required
                   />
@@ -793,8 +793,8 @@ const Roles = () => {
                     value={formData.level}
                     onChange={(e) => setFormData({ ...formData, level: parseInt(e.target.value) })}
                     className={conditionalClasses({
-                      light: "w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900",
-                      dark: "w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-white"
+                      light: "w-full px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900",
+                      dark: "w-full px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-white"
                     })}
                     required
                   />
@@ -812,8 +812,8 @@ const Roles = () => {
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     className={conditionalClasses({
-                      light: "w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900",
-                      dark: "w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-white"
+                      light: "w-full px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900",
+                      dark: "w-full px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-white"
                     })}
                     rows="3"
                   />
@@ -826,11 +826,11 @@ const Roles = () => {
                   light: "text-lg font-semibold text-gray-900 mb-4",
                   dark: "text-lg font-semibold text-white mb-4"
                 })}>Permisos</h3>
-                <div className="space-y-4 max-h-96 overflow-y-auto">
+                <div className="space-y-3 sm:space-y-4 max-h-80 sm:max-h-96 overflow-y-auto">
                   {Object.entries(permissionsByModule).map(([module, modulePermissions]) => (
                     <div key={module} className={conditionalClasses({
-                      light: "border border-gray-200 rounded-lg p-4",
-                      dark: "border border-gray-600 rounded-lg p-4"
+                      light: "border border-gray-200 rounded-lg p-3 sm:p-4",
+                      dark: "border border-gray-600 rounded-lg p-3 sm:p-4"
                     })}>
                       <div className="flex items-center justify-between mb-3">
                         <h4 className={conditionalClasses({
@@ -878,13 +878,13 @@ const Roles = () => {
                 </div>
               </div>
 
-              <div className="flex space-x-3 pt-4">
+              <div className="flex flex-col sm:flex-row sm:space-x-3 gap-2 sm:gap-0 pt-3 sm:pt-4">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
                   className={conditionalClasses({
-                    light: "flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors",
-                    dark: "flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-500 text-gray-200 font-medium rounded-xl transition-colors"
+                    light: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base",
+                    dark: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gray-600 hover:bg-gray-500 text-gray-200 font-medium rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base"
                   })}
                   disabled={formLoading}
                 >
@@ -893,8 +893,8 @@ const Roles = () => {
                 <button
                   type="submit"
                   className={conditionalClasses({
-                    light: "flex-1 px-4 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center",
-                    dark: "flex-1 px-4 py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    light: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base",
+                    dark: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base"
                   })}
                   disabled={formLoading}
                 >
@@ -921,28 +921,28 @@ const Roles = () => {
 
       {/* Edit Modal */}
       {showEditModal && editingRole && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-1 sm:p-2 md:p-4 animate-fade-in">
           <div className={conditionalClasses({
-            light: "bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in",
-            dark: "bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-700 animate-scale-in"
+            light: "bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-2xl md:max-w-4xl max-h-[98vh] sm:max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in",
+            dark: "bg-gray-800 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-2xl md:max-w-4xl max-h-[98vh] sm:max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-700 animate-scale-in"
           })}>
-            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-3 sm:p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl lg:text-2xl font-bold text-white">Editar Rol</h2>
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Editar Rol</h2>
                 <button
                   onClick={() => setShowEditModal(false)}
                   className={conditionalClasses({
-                    light: "p-2 hover:bg-white/20 rounded-lg transition-all text-white",
-                    dark: "p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                    light: "p-1 sm:p-2 hover:bg-white/20 rounded-lg transition-all text-white",
+                    dark: "p-1 sm:p-2 hover:bg-white/20 rounded-lg transition-all text-white"
                   })}
                 >
-                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                  <FaTimes className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
                 </button>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4 md:space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+            <form onSubmit={handleSubmit} className="p-2 sm:p-3 md:p-4 lg:p-6 space-y-2 sm:space-y-3 md:space-y-4 lg:space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
                 <div>
                   <label className={conditionalClasses({
                     light: "block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2",
@@ -956,8 +956,8 @@ const Roles = () => {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className={conditionalClasses({
-                      light: "w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900",
-                      dark: "w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-white"
+                      light: "w-full px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900",
+                      dark: "w-full px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-white"
                     })}
                     required
                     disabled={editingRole.name === 'Administrador'}
@@ -978,8 +978,8 @@ const Roles = () => {
                     value={formData.level}
                     onChange={(e) => setFormData({ ...formData, level: parseInt(e.target.value) })}
                     className={conditionalClasses({
-                      light: "w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900",
-                      dark: "w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-white"
+                      light: "w-full px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900",
+                      dark: "w-full px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-white"
                     })}
                     required
                     disabled={editingRole.name === 'Administrador'}
@@ -998,8 +998,8 @@ const Roles = () => {
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     className={conditionalClasses({
-                      light: "w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900",
-                      dark: "w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-white"
+                      light: "w-full px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900",
+                      dark: "w-full px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-white"
                     })}
                     rows="3"
                     disabled={editingRole.name === 'Administrador'}
@@ -1013,11 +1013,11 @@ const Roles = () => {
                   light: "text-lg font-semibold text-gray-900 mb-4",
                   dark: "text-lg font-semibold text-white mb-4"
                 })}>Permisos</h3>
-                <div className="space-y-4 max-h-96 overflow-y-auto">
+                <div className="space-y-3 sm:space-y-4 max-h-80 sm:max-h-96 overflow-y-auto">
                   {Object.entries(permissionsByModule).map(([module, modulePermissions]) => (
                     <div key={module} className={conditionalClasses({
-                      light: "border border-gray-200 rounded-lg p-4",
-                      dark: "border border-gray-600 rounded-lg p-4"
+                      light: "border border-gray-200 rounded-lg p-3 sm:p-4",
+                      dark: "border border-gray-600 rounded-lg p-3 sm:p-4"
                     })}>
                       <div className="flex items-center justify-between mb-3">
                         <h4 className={conditionalClasses({
@@ -1067,13 +1067,13 @@ const Roles = () => {
                 </div>
               </div>
 
-              <div className="flex space-x-3 pt-4">
+              <div className="flex flex-col sm:flex-row sm:space-x-3 gap-2 sm:gap-0 pt-3 sm:pt-4">
                 <button
                   type="button"
                   onClick={() => setShowEditModal(false)}
                   className={conditionalClasses({
-                    light: "flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors",
-                    dark: "flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-500 text-gray-200 font-medium rounded-xl transition-colors"
+                    light: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base",
+                    dark: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gray-600 hover:bg-gray-500 text-gray-200 font-medium rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base"
                   })}
                   disabled={formLoading}
                 >
@@ -1082,8 +1082,8 @@ const Roles = () => {
                 <button
                   type="submit"
                   className={conditionalClasses({
-                    light: "flex-1 px-4 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center",
-                    dark: "flex-1 px-4 py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    light: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base",
+                    dark: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base"
                   })}
                   disabled={formLoading}
                 >
@@ -1110,25 +1110,25 @@ const Roles = () => {
 
       {/* Modal de Vista Previa de Permisos */}
       {showPermissionPreview && selectedRoleForPreview && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-1 sm:p-2 md:p-4 animate-fade-in">
           <div className={conditionalClasses({
-            light: "bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in",
-            dark: "bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-700 animate-scale-in"
+            light: "bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-2xl md:max-w-3xl max-h-[98vh] sm:max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in",
+            dark: "bg-gray-800 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-2xl md:max-w-3xl max-h-[98vh] sm:max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-700 animate-scale-in"
           })}>
-            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-purple-700 p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-purple-700 p-3 sm:p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <div className={conditionalClasses({
-                    light: "w-10 h-10 bg-white/20 rounded-full flex items-center justify-center",
-                    dark: "w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
+                    light: "w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-full flex items-center justify-center",
+                    dark: "w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-full flex items-center justify-center"
                   })}>
                     {getRoleIcon(selectedRoleForPreview.name)}
                   </div>
                   <div>
-                    <h2 className="text-xl lg:text-2xl font-bold text-white">
+                    <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">
                       Permisos: {selectedRoleForPreview.name}
                     </h2>
-                    <p className="text-purple-200 text-sm">
+                    <p className="text-purple-200 text-xs sm:text-sm">
                       Nivel {selectedRoleForPreview.level} • {selectedRoleForPreview.permissions?.length || 0} permisos asignados
                     </p>
                   </div>
@@ -1136,16 +1136,16 @@ const Roles = () => {
                 <button
                   onClick={() => setShowPermissionPreview(false)}
                   className={conditionalClasses({
-                    light: "p-2 hover:bg-white/20 rounded-lg transition-all text-white",
-                    dark: "p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                    light: "p-1 sm:p-2 hover:bg-white/20 rounded-lg transition-all text-white",
+                    dark: "p-1 sm:p-2 hover:bg-white/20 rounded-lg transition-all text-white"
                   })}
                 >
-                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                  <FaTimes className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
                 </button>
               </div>
             </div>
 
-            <div className="p-3 sm:p-4 md:p-6">
+            <div className="p-2 sm:p-3 md:p-4 lg:p-6">
               {/* Resumen de permisos */}
               <div className="mb-6">
                 <div className={conditionalClasses({
@@ -1244,14 +1244,14 @@ const Roles = () => {
 
               {/* Acciones */}
               <div className={conditionalClasses({
-                light: "flex space-x-3 pt-6 border-t border-gray-200",
-                dark: "flex space-x-3 pt-6 border-t border-gray-600"
+                light: "flex flex-col sm:flex-row sm:space-x-3 gap-2 sm:gap-0 pt-4 sm:pt-6 border-t border-gray-200",
+                dark: "flex flex-col sm:flex-row sm:space-x-3 gap-2 sm:gap-0 pt-4 sm:pt-6 border-t border-gray-600"
               })}>
                 <button
                   onClick={() => setShowPermissionPreview(false)}
                   className={conditionalClasses({
-                    light: "flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors",
-                    dark: "flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-500 text-gray-200 font-medium rounded-xl transition-colors"
+                    light: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base",
+                    dark: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gray-600 hover:bg-gray-500 text-gray-200 font-medium rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base"
                   })}
                 >
                   Cerrar
@@ -1263,8 +1263,8 @@ const Roles = () => {
                       handleEdit(selectedRoleForPreview);
                     }}
                     className={conditionalClasses({
-                      light: "flex-1 px-4 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200",
-                      dark: "flex-1 px-4 py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                      light: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base",
+                      dark: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base"
                     })}
                   >
                     Editar Permisos
