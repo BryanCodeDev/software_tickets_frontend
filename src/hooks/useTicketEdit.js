@@ -23,69 +23,14 @@ export const useTicketEdit = () => {
     if (!ticket) return;
 
     // Configurar datos del formulario según el rol
+    // Todos los roles ahora tienen acceso a todos los campos con los datos del ticket
     let formData = {
-      title: '',
-      description: '',
-      priority: 'media',
-      status: 'abierto',
-      assignedTo: ''
+      title: ticket.title || '',
+      description: ticket.description || '',
+      priority: ticket.priority || 'media',
+      status: ticket.status || 'abierto',
+      assignedTo: ticket.assignedTo || ''
     };
-
-    switch (userRole) {
-      case 'Administrador':
-        formData = {
-          title: ticket.title || '',
-          description: ticket.description || '',
-          priority: ticket.priority || 'media',
-          status: ticket.status || 'abierto',
-          assignedTo: ticket.assignedTo || ''
-        };
-        break;
-        
-      case 'Técnico':
-      case 'Calidad':
-        formData = {
-          title: ticket.title || '',
-          description: ticket.description || '',
-          priority: ticket.priority || 'media',
-          status: ticket.status || 'abierto',
-          assignedTo: ticket.assignedTo || ''
-        };
-        break;
-        
-      case 'Empleado':
-        formData = {
-          title: ticket.title || '',
-          description: ticket.description || '',
-          priority: ticket.priority || 'media',
-          status: ticket.status || 'abierto',
-          assignedTo: ticket.assignedTo || ''
-        };
-        break;
-        
-      case 'Jefe':
-      case 'Compras':
-      case 'Coordinadora Administrativa':
-        formData = {
-          title: ticket.title || '',
-          description: ticket.description || '',
-          priority: ticket.priority || 'media',
-          status: ticket.status || 'abierto',
-          assignedTo: ticket.assignedTo || ''
-        };
-        break;
-        
-      default:
-        // Para cualquier otro rol, mostrar todos los campos con los datos del ticket
-        formData = {
-          title: ticket.title || '',
-          description: ticket.description || '',
-          priority: ticket.priority || 'media',
-          status: ticket.status || 'abierto',
-          assignedTo: ticket.assignedTo || ''
-        };
-        break;
-    }
 
     setEditFormData(formData);
     setEditingTicket(ticket);

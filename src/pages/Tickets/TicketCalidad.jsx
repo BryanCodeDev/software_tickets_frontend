@@ -146,9 +146,29 @@ const TicketCalidad = () => {
       const users = await usersAPI.fetchUsers();
       const techUsers = users.filter(u => u.Role?.name === 'Técnico');
       const calidadUsersFiltered = users.filter(u => u.Role?.name === 'Calidad');
+      const comprasUsers = users.filter(u => u.Role?.name === 'Compras');
+      const empleadoUsers = users.filter(u => u.Role?.name === 'Empleado');
+      const jefeUsers = users.filter(u => u.Role?.name === 'Jefe');
+      const coordinadoraUsers = users.filter(u => u.Role?.name === 'Coordinadora Administrativa');
+      
       setTechnicians(techUsers);
-      // setAdministrators(calidadUsersFiltered); // Comentado por no ser utilizado
       setCalidadUsers(calidadUsersFiltered);
+      
+      // Para asegurar que todos los roles tengan opciones de asignación
+      // Combinamos todos los usuarios que pueden ser asignados
+      const allAssignableUsers = [
+        ...techUsers,
+        ...calidadUsersFiltered,
+        ...comprasUsers,
+        ...empleadoUsers,
+        ...jefeUsers,
+        ...coordinadoraUsers
+      ];
+      
+      // Si no hay usuarios de calidad específicos, usar todos los usuarios asignables
+      if (calidadUsersFiltered.length === 0) {
+        setCalidadUsers(allAssignableUsers);
+      }
     } catch (err) {
       console.error('Error al cargar usuarios:', err);
     }

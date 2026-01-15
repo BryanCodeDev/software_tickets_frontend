@@ -153,8 +153,31 @@ const Tickets = () => {
       const users = await usersAPI.fetchUsers();
       const techUsers = users.filter(u => u.Role?.name === 'Técnico');
       const adminUsers = users.filter(u => u.Role?.name === 'Administrador');
+      const calidadUsers = users.filter(u => u.Role?.name === 'Calidad');
+      const comprasUsers = users.filter(u => u.Role?.name === 'Compras');
+      const empleadoUsers = users.filter(u => u.Role?.name === 'Empleado');
+      const jefeUsers = users.filter(u => u.Role?.name === 'Jefe');
+      const coordinadoraUsers = users.filter(u => u.Role?.name === 'Coordinadora Administrativa');
+      
       setTechnicians(techUsers);
       setAdministrators(adminUsers);
+      
+      // Para asegurar que todos los roles tengan opciones de asignación
+      // Combinamos todos los usuarios que pueden ser asignados
+      const allAssignableUsers = [
+        ...techUsers,
+        ...adminUsers,
+        ...calidadUsers,
+        ...comprasUsers,
+        ...empleadoUsers,
+        ...jefeUsers,
+        ...coordinadoraUsers
+      ];
+      
+      // Si no hay administradores específicos, usar todos los usuarios asignables
+      if (adminUsers.length === 0) {
+        setAdministrators(allAssignableUsers);
+      }
     } catch (err) {
       console.error('Error al cargar usuarios:', err);
     }

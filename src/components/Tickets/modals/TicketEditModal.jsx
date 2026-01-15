@@ -59,7 +59,7 @@ const TicketEditModal = ({
 
         <form onSubmit={handleEditSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-            {userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Coordinadora Administrativa' || userRole === 'Empleado' || userRole === 'Jefe' ? (
+            {userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Coordinadora Administrativa' || userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' ? (
               <>
                 <div className="md:col-span-2">
                   <label className={conditionalClasses({
@@ -126,7 +126,7 @@ const TicketEditModal = ({
               </select>
             </div>
 
-            {(userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Coordinadora Administrativa' || userRole === 'Jefe') && (
+            {(userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Coordinadora Administrativa' || userRole === 'Jefe' || userRole === 'Compras') && (
               <div>
                 <label className={conditionalClasses({
                   light: 'block text-sm font-semibold text-gray-700 mb-2',
