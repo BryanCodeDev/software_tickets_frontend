@@ -188,18 +188,18 @@ const Trash = () => {
   if (!user || (user.role?.name !== 'Administrador' && user.role?.name !== 'Tecnico')) {
     return (
       <div className={conditionalClasses({
-        light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4 sm:px-6 lg:px-8',
-        dark: 'min-h-screen bg-gray-900 py-8 px-4 sm:px-6 lg:px-8'
+        light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-6 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8',
+        dark: 'min-h-screen bg-gray-900 py-6 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8'
       })}>
         <div className="container mx-auto">
           <div className={conditionalClasses({
-            light: 'bg-white rounded-2xl shadow-xl p-8 text-center',
-            dark: 'bg-gray-800 rounded-2xl shadow-xl p-8 text-center'
+            light: 'bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-center',
+            dark: 'bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 text-center'
           })}>
-            <FaExclamationTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+            <FaExclamationTriangle className="w-12 h-12 sm:w-16 sm:h-16 text-yellow-500 mx-auto mb-4" />
             <h2 className={conditionalClasses({
-              light: 'text-2xl font-bold text-gray-900 mb-2',
-              dark: 'text-2xl font-bold text-gray-100 mb-2'
+              light: 'text-xl sm:text-2xl font-bold text-gray-900 mb-2',
+              dark: 'text-xl sm:text-2xl font-bold text-gray-100 mb-2'
             })}>Acceso Denegado</h2>
             <p className={conditionalClasses({
               light: 'text-gray-600',
@@ -213,8 +213,8 @@ const Trash = () => {
 
   return (
     <div className={conditionalClasses({
-      light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4 sm:px-6 lg:px-8',
-      dark: 'min-h-screen bg-gray-900 py-8 px-4 sm:px-6 lg:px-8'
+      light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-6 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8',
+      dark: 'min-h-screen bg-gray-900 py-6 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8'
     })}>
       {/* Confirm Dialog */}
       <ConfirmDialog
@@ -224,18 +224,18 @@ const Trash = () => {
       />
 
       <div>
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <h1 className={conditionalClasses({
-                light: 'text-2xl sm:text-3xl font-bold text-gray-900 flex items-center',
-                dark: 'text-2xl sm:text-3xl font-bold text-gray-100 flex items-center'
+                light: 'text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 flex items-center',
+                dark: 'text-xl sm:text-2xl md:text-3xl font-bold text-gray-100 flex items-center'
               })}>
                 <div className={conditionalClasses({
-                  light: 'w-12 h-12 bg-linear-to-r from-gray-600 to-gray-700 rounded-xl flex items-center justify-center mr-3 shadow-lg',
-                  dark: 'w-12 h-12 bg-linear-to-r from-gray-600 to-gray-700 rounded-xl flex items-center justify-center mr-3 shadow-lg'
+                  light: 'w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-r from-gray-600 to-gray-700 rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg',
+                  dark: 'w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-r from-gray-600 to-gray-700 rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg'
                 })}>
-                  <FaDumpster className="w-6 h-6 text-white" />
+                  <FaDumpster className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 Papelera del Sistema
               </h1>
@@ -244,7 +244,7 @@ const Trash = () => {
                 dark: 'mt-2 text-gray-300'
               })}>Recupera o elimina permanentemente elementos eliminados</p>
             </div>
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
               <button
                 onClick={() => setShowStats(!showStats)}
                 className={conditionalClasses({
@@ -326,7 +326,7 @@ const Trash = () => {
         />
 
         {/* Resumen de resultados */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2 sm:gap-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4 gap-2 sm:gap-0">
           <p className={conditionalClasses({
             light: 'text-sm text-gray-600 font-medium',
             dark: 'text-sm text-gray-300 font-medium'
@@ -346,17 +346,17 @@ const Trash = () => {
           dark: 'bg-gray-800 rounded-2xl shadow-xl border border-gray-600 overflow-hidden'
         })}>
           <div className={conditionalClasses({
-            light: 'px-6 py-4 border-b border-gray-200 bg-gray-50',
-            dark: 'px-6 py-4 border-b border-gray-600 bg-gray-700'
+            light: 'px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50',
+            dark: 'px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-600 bg-gray-700'
           })}>
             <h2 className={conditionalClasses({
-              light: 'text-xl font-semibold text-gray-900',
-              dark: 'text-xl font-semibold text-gray-100'
+              light: 'text-lg sm:text-xl font-semibold text-gray-900',
+              dark: 'text-lg sm:text-xl font-semibold text-gray-100'
             })}>Elementos Eliminados</h2>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {loading ? (
-              <div className="text-center py-12">
+              <div className="text-center py-8 sm:py-12">
                 <div className={conditionalClasses({
                   light: 'animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto',
                   dark: 'animate-spin rounded-full h-12 w-12 border-b-2 border-gray-100 mx-auto'
@@ -367,19 +367,19 @@ const Trash = () => {
                 })}>Cargando elementos de la papelera...</p>
               </div>
             ) : trashItems.length === 0 ? (
-              <div className="text-center py-12">
+              <div className="text-center py-8 sm:py-12">
                 <div className={conditionalClasses({
-                  light: 'w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4',
-                  dark: 'w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4'
+                  light: 'w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4',
+                  dark: 'w-12 h-12 sm:w-16 sm:h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4'
                 })}>
                   <FaDumpster className={conditionalClasses({
-                    light: 'w-8 h-8 text-gray-400',
-                    dark: 'w-8 h-8 text-gray-500'
+                    light: 'w-6 h-6 sm:w-8 sm:h-8 text-gray-400',
+                    dark: 'w-6 h-6 sm:w-8 sm:h-8 text-gray-500'
                   })} />
                 </div>
                 <h3 className={conditionalClasses({
-                  light: 'text-lg font-medium text-gray-900 mb-2',
-                  dark: 'text-lg font-medium text-gray-100 mb-2'
+                  light: 'text-base sm:text-lg font-medium text-gray-900 mb-2',
+                  dark: 'text-base sm:text-lg font-medium text-gray-100 mb-2'
                 })}>
                   {searchTerm || filterModule !== 'all'
                     ? 'No se encontraron elementos'
@@ -396,17 +396,17 @@ const Trash = () => {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                   {trashItems.map((item) => (
                     <div key={item.id} className={conditionalClasses({
-                      light: 'bg-gray-50 rounded-xl p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-shadow',
-                      dark: 'bg-gray-700 rounded-xl p-4 sm:p-6 border border-gray-600 hover:shadow-md transition-shadow'
+                      light: 'bg-gray-50 rounded-xl p-3 sm:p-4 md:p-6 border border-gray-200 hover:shadow-md transition-shadow',
+                      dark: 'bg-gray-700 rounded-xl p-3 sm:p-4 md:p-6 border border-gray-600 hover:shadow-md transition-shadow'
                     })}>
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
                           <div className={conditionalClasses({
-                            light: `w-10 h-10 bg-linear-to-r ${getModuleColor(item.moduleType)} rounded-full flex items-center justify-center text-white`,
-                            dark: `w-10 h-10 bg-linear-to-r ${getModuleColor(item.moduleType)} rounded-full flex items-center justify-center text-white`
+                            light: `w-8 h-8 sm:w-10 sm:h-10 bg-linear-to-r ${getModuleColor(item.moduleType)} rounded-full flex items-center justify-center text-white`,
+                            dark: `w-8 h-8 sm:w-10 sm:h-10 bg-linear-to-r ${getModuleColor(item.moduleType)} rounded-full flex items-center justify-center text-white`
                           })}>
                             {getModuleIcon(item.moduleType)}
                           </div>
@@ -425,22 +425,22 @@ const Trash = () => {
                       })}>
                         <div className="flex items-center gap-2">
                           <FaFileAlt className={conditionalClasses({
-                            light: 'w-3 h-3 text-gray-400',
-                            dark: 'w-3 h-3 text-gray-500'
+                            light: 'w-3 h-3 sm:w-4 sm:h-4 text-gray-400',
+                            dark: 'w-3 h-3 sm:w-4 sm:h-4 text-gray-500'
                           })} />
                           <p><strong>Módulo:</strong> {item.moduleName}</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <FaUser className={conditionalClasses({
-                            light: 'w-3 h-3 text-gray-400',
-                            dark: 'w-3 h-3 text-gray-500'
+                            light: 'w-3 h-3 sm:w-4 sm:h-4 text-gray-400',
+                            dark: 'w-3 h-3 sm:w-4 sm:h-4 text-gray-500'
                           })} />
                           <p><strong>Eliminado por:</strong> {item.deleter?.name || 'Usuario desconocido'}</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <FaCalendarAlt className={conditionalClasses({
-                            light: 'w-3 h-3 text-gray-400',
-                            dark: 'w-3 h-3 text-gray-500'
+                            light: 'w-3 h-3 sm:w-4 sm:h-4 text-gray-400',
+                            dark: 'w-3 h-3 sm:w-4 sm:h-4 text-gray-500'
                           })} />
                           <p><strong>Eliminado:</strong> {getTimeAgo(item.deletedAt)}</p>
                         </div>
@@ -470,7 +470,7 @@ const Trash = () => {
                           })}
                         >
                           <FaEye />
-                          <span>Ver detalles</span>
+                          <span className="hidden sm:inline">Ver detalles</span>
                         </button>
                         <button
                           onClick={() => handleRestore(item)}
@@ -480,7 +480,7 @@ const Trash = () => {
                           })}
                         >
                           <FaUndo />
-                          <span>Restaurar</span>
+                          <span className="hidden sm:inline">Restaurar</span>
                         </button>
                         <button
                           onClick={() => handlePermanentDelete(item)}
@@ -490,7 +490,7 @@ const Trash = () => {
                           })}
                         >
                           <FaTrash />
-                          <span>Eliminar</span>
+                          <span className="hidden sm:inline">Eliminar</span>
                         </button>
                       </div>
                     </div>
@@ -499,8 +499,8 @@ const Trash = () => {
 
                 {/* Paginación */}
                 {pagination.pages > 1 && (
-                  <div className="flex justify-center mt-8">
-                    <nav className="flex items-center space-x-2">
+                  <div className="flex justify-center mt-6 sm:mt-8">
+                    <nav className="flex items-center space-x-1 sm:space-x-2">
                       <button
                         onClick={() => {
                           const newPage = Math.max(1, pagination.current - 1);
@@ -546,31 +546,31 @@ const Trash = () => {
 
       {/* Modal para ver detalles */}
       {showDetailModal && selectedItem && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-1 sm:p-2 md:p-4 animate-fade-in">
           <div className={conditionalClasses({
             light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in',
             dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-600 animate-scale-in'
           })}>
             <div className={conditionalClasses({
-              light: 'sticky top-0 bg-linear-to-r from-gray-600 to-gray-700 p-4 lg:p-6 z-10',
-              dark: 'sticky top-0 bg-linear-to-r from-gray-600 to-gray-700 p-4 lg:p-6 z-10'
+              light: 'sticky top-0 bg-linear-to-r from-gray-600 to-gray-700 p-3 sm:p-4 lg:p-6 z-10',
+              dark: 'sticky top-0 bg-linear-to-r from-gray-600 to-gray-700 p-3 sm:p-4 lg:p-6 z-10'
             })}>
               <div className="flex items-center justify-between">
-                <h2 className="text-xl lg:text-2xl font-bold text-white flex items-center gap-2">
-                  <FaHistory className="w-6 h-6" />
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white flex items-center gap-2">
+                  <FaHistory className="w-5 h-5 sm:w-6 sm:h-6" />
                   Detalles del Elemento
                 </h2>
                 <button
                   onClick={() => setShowDetailModal(false)}
                   className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
                 >
-                  <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                  <FaTimes className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
                 </button>
               </div>
             </div>
 
-            <div className="p-4 sm:p-6 md:p-8 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-3 sm:p-4 md:p-6 lg:p-8 space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div>
                   <label className={conditionalClasses({
                     light: 'block text-sm font-medium text-gray-700 mb-1',
@@ -588,8 +588,8 @@ const Trash = () => {
                   })}>Módulo</label>
                   <div className="flex items-center gap-2">
                     <div className={conditionalClasses({
-                      light: `w-6 h-6 bg-linear-to-r ${getModuleColor(selectedItem.moduleType)} rounded-full flex items-center justify-center text-white`,
-                      dark: `w-6 h-6 bg-linear-to-r ${getModuleColor(selectedItem.moduleType)} rounded-full flex items-center justify-center text-white`
+                      light: `w-5 h-5 sm:w-6 sm:h-6 bg-linear-to-r ${getModuleColor(selectedItem.moduleType)} rounded-full flex items-center justify-center text-white`,
+                      dark: `w-5 h-5 sm:w-6 sm:h-6 bg-linear-to-r ${getModuleColor(selectedItem.moduleType)} rounded-full flex items-center justify-center text-white`
                     })}>
                       {getModuleIcon(selectedItem.moduleType)}
                     </div>
@@ -647,12 +647,12 @@ const Trash = () => {
                 </div>
               </div>
 
-              <div className="flex space-x-3 pt-4">
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-3 sm:pt-4">
                 <button
                   onClick={() => setShowDetailModal(false)}
                   className={conditionalClasses({
-                    light: 'flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors',
-                    dark: 'flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-500 text-gray-100 font-medium rounded-xl transition-colors'
+                    light: 'flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors',
+                    dark: 'flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gray-600 hover:bg-gray-500 text-gray-100 font-medium rounded-xl transition-colors'
                   })}
                 >
                   Cerrar
@@ -663,11 +663,11 @@ const Trash = () => {
                     setShowDetailModal(false);
                   }}
                   className={conditionalClasses({
-                    light: 'flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center',
-                    dark: 'flex-1 px-4 py-3 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center'
+                    light: 'flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center',
+                    dark: 'flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center'
                   })}
                 >
-                  <FaUndo className="mr-2" />
+                  <FaUndo className="mr-1 sm:mr-2" />
                   Restaurar Elemento
                 </button>
               </div>
