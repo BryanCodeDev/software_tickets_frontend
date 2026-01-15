@@ -536,19 +536,19 @@ const Documents = () => {
     });
   };
 
-  const canEdit = async (item) => {
+  const canEdit = useCallback(async (item) => {
     // Roles con permisos totales pueden editar todo
     if (FULL_ACCESS_ROLES.includes(user?.role?.name)) {
       return true;
     }
-    
+
     // Para empleados, verificar permisos de escritura
     if (user?.role?.name === 'Empleado') {
       // Si es el creador, puede editar
       if (item.createdBy === user.id) {
         return true;
       }
-      
+
       // Verificar si tiene permisos de escritura asignados
       try {
         const permission = await checkUserPermission(item, item.type === 'folder' ? 'folder' : 'document');
@@ -558,21 +558,10 @@ const Documents = () => {
         return false;
       }
     }
-    
-    return false;
-  };
 
-  // Función para verificar permisos de edición y almacenarlos en caché
-  const checkEditPermission = useCallback(async (item) => {
-    const key = `${item.type}-${item.id}`;
-    if (editPermissions.has(key)) {
-      return editPermissions.get(key);
-    }
-    
-    const hasPermission = await canEdit(item);
-    setEditPermissions(prev => new Map(prev).set(key, hasPermission));
-    return hasPermission;
-  }, [canEdit, editPermissions]);
+    return false;
+  }, [user, checkUserPermission]);
+
 
   // Función síncrona para obtener permisos de edición (para compatibilidad)
   const getCanEdit = useCallback((item) => {

@@ -172,7 +172,7 @@ const PurchaseRequests = () => {
     });
 
     return filtered;
-  }, [requests, checkPermission, user, searchTerm, filterStatus, filterItemType, sortBy, sortOrder]);
+  }, [requests, checkPermission, user, userRole, searchTerm, filterStatus, filterItemType, sortBy, sortOrder]);
 
   const filteredRequests = filterAndSortRequests();
 

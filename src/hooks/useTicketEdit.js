@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 /**
  * Hook personalizado para manejar la edición de tickets
@@ -15,11 +15,10 @@ export const useTicketEdit = () => {
   });
 
   /**
-   * Configura los datos del formulario de edición según el rol del usuario y el ticket
+   * Configura los datos del formulario de edición según el ticket
    * @param {Object} ticket - Ticket a editar
-   * @param {string} userRole - Rol del usuario actual
    */
-  const handleEdit = (ticket, userRole) => {
+  const handleEdit = (ticket) => {
     if (!ticket) return;
 
     // Configurar datos del formulario según el rol
