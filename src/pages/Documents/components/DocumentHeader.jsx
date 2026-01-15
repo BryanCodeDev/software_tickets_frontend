@@ -2,6 +2,9 @@ import React from 'react';
 import { FaArrowLeft, FaPlus, FaUpload } from 'react-icons/fa';
 import { useThemeClasses } from '../../../hooks/useThemeClasses.js';
 
+// Constante con roles que tienen permisos totales en documentos
+const FULL_ACCESS_ROLES = ['Administrador', 'Técnico', 'Calidad'];
+
 const DocumentHeader = ({
   currentFolder,
   totalUniqueDocuments,
@@ -61,8 +64,8 @@ const DocumentHeader = ({
                 Atrás
               </button>
             )}
-            {/* Nueva Carpeta - Solo para Administradores y Técnicos */}
-            {(user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico') && (
+            {/* Nueva Carpeta - Solo para roles con permisos totales */}
+            {FULL_ACCESS_ROLES.includes(user?.role?.name) && (
               <button
                 onClick={() => setShowCreateFolderModal(true)}
                 className="inline-flex items-center px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all mr-3"
@@ -72,8 +75,8 @@ const DocumentHeader = ({
               </button>
             )}
 
-            {/* Nuevo Documento - Para Administradores, Técnicos y empleados con permisos de escritura */}
-            {((user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico') || canWriteInCurrentFolder) && (
+            {/* Nuevo Documento - Para roles con permisos totales y empleados con permisos de escritura */}
+            {(FULL_ACCESS_ROLES.includes(user?.role?.name) || canWriteInCurrentFolder) && (
               <button
                 onClick={() => setShowUploadModal(true)}
                 className="inline-flex items-center px-5 py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"

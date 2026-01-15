@@ -42,6 +42,9 @@ import {
   offDocumentPermissionsUpdated
 } from '../../api/socket';
 
+// Constante con roles que tienen permisos totales en documentos
+const FULL_ACCESS_ROLES = ['Administrador', 'Técnico', 'Calidad'];
+
 const Documents = () => {
   const { conditionalClasses } = useThemeClasses();
   const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
@@ -154,8 +157,8 @@ const Documents = () => {
 
   // Función para verificar si el usuario puede ver una carpeta
   const canViewFolder = useCallback(async (folder) => {
-    // Administradores, técnicos y calidad ven todo
-    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') return true;
+    // Roles con permisos totales ven todo
+    if (FULL_ACCESS_ROLES.includes(user?.role?.name)) return true;
     // Creadores ven sus carpetas
     if (folder.createdBy === user?.id) return true;
     // Empleados no ven carpetas sin permisos específicos
@@ -168,8 +171,8 @@ const Documents = () => {
 
   // Función para verificar si el usuario puede ver un documento
   const canViewDocument = useCallback(async (doc) => {
-    // Administradores, técnicos y calidad ven todo
-    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') return true;
+    // Roles con permisos totales ven todo
+    if (FULL_ACCESS_ROLES.includes(user?.role?.name)) return true;
     // Creadores ven sus documentos
     if (doc.createdBy === user?.id) return true;
 
@@ -193,8 +196,8 @@ const Documents = () => {
 
   // Función para determinar si el usuario puede escribir en la carpeta actual
   const canUserWriteInCurrentFolder = useCallback(async () => {
-    // Administradores, técnicos y calidad siempre pueden escribir
-    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') {
+    // Roles con permisos totales siempre pueden escribir
+    if (FULL_ACCESS_ROLES.includes(user?.role?.name)) {
       return true;
     }
 
@@ -225,8 +228,8 @@ const Documents = () => {
     // Filtrar documentos basados en permisos
     let filteredDocuments = [];
 
-    // Para administradores, técnicos y calidad, mostrar todo
-     if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') {
+    // Para roles con permisos totales, mostrar todo
+     if (FULL_ACCESS_ROLES.includes(user?.role?.name)) {
        filteredDocuments = baseFilteredDocuments;
      } else if (user?.role?.name === 'Empleado') {
       // Para empleados, filtrar solo elementos con permisos o creados por ellos
@@ -531,8 +534,8 @@ const Documents = () => {
   };
 
   const canEdit = (item) => {
-    // Administradores, técnicos y calidad pueden editar todo
-    if (user?.role?.name === 'Administrador' || user?.role?.name === 'Técnico' || user?.role?.name === 'Calidad') {
+    // Roles con permisos totales pueden editar todo
+    if (FULL_ACCESS_ROLES.includes(user?.role?.name)) {
       return true;
     }
     // Empleados solo pueden editar sus propios elementos
