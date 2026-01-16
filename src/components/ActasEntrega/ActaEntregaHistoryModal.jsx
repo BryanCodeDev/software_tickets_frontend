@@ -19,7 +19,7 @@ const ActaEntregaHistoryModal = ({
     if (show && apiCall) {
       fetchHistory();
     }
-  }, [show, apiCall]);
+  }, [show, apiCall, fetchHistory]);
 
   const fetchHistory = useCallback(async () => {
     setLoading(true);
