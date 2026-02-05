@@ -186,7 +186,10 @@ const ActaEntregaHistoryModal = ({
              !historyData.history || historyData.history.length === 0) ? (
             <div className="flex items-center justify-center p-8 lg:p-12">
               <div className="text-center">
-                <FaHistory className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <FaHistory className={conditionalClasses({
+                  light: 'w-16 h-16 text-gray-300 mx-auto mb-4',
+                  dark: 'w-16 h-16 text-gray-500 mx-auto mb-4'
+                })} />
                 <p className={conditionalClasses({
                   light: 'text-gray-600 text-lg',
                   dark: 'text-gray-300 text-lg'
@@ -224,21 +227,37 @@ const ActaEntregaHistoryModal = ({
                           })}>
                             {getActionLabel(record.action)}
                           </h3>
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                            record.action === 'CREATE' ? 'bg-green-100 text-green-800' :
-                            record.action === 'UPDATE' ? 'bg-blue-100 text-blue-800' :
-                            'bg-red-100 text-red-800'
-                          }`}>
+                          <span className={conditionalClasses({
+                            light: `px-2 py-1 text-xs font-medium rounded-full ${
+                              record.action === 'CREATE' ? 'bg-green-100 text-green-800' :
+                              record.action === 'UPDATE' ? 'bg-blue-100 text-blue-800' :
+                              'bg-red-100 text-red-800'
+                            }`,
+                            dark: `px-2 py-1 text-xs font-medium rounded-full ${
+                              record.action === 'CREATE' ? 'bg-green-900/50 text-green-300' :
+                              record.action === 'UPDATE' ? 'bg-blue-900/50 text-blue-300' :
+                              'bg-red-900/50 text-red-300'
+                            }`
+                          })}>
                             {record.action}
                           </span>
                         </div>
-                        <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
+                        <div className={conditionalClasses({
+                          light: 'flex items-center gap-4 mt-1 text-sm text-gray-600',
+                          dark: 'flex items-center gap-4 mt-1 text-sm text-gray-400'
+                        })}>
                           <div className="flex items-center gap-1">
-                            <FaUser className="w-3 h-3" />
+                            <FaUser className={conditionalClasses({
+                              light: 'w-3 h-3 text-gray-500',
+                              dark: 'w-3 h-3 text-gray-400'
+                            })} />
                             {record.user || record.userName || 'Sistema'}
                           </div>
                           <div className="flex items-center gap-1">
-                            <FaCalendarAlt className="w-3 h-3" />
+                            <FaCalendarAlt className={conditionalClasses({
+                              light: 'w-3 h-3 text-gray-500',
+                              dark: 'w-3 h-3 text-gray-400'
+                            })} />
                             {formatDate(record.date || record.createdAt)}
                           </div>
                         </div>

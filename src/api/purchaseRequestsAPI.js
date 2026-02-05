@@ -56,6 +56,30 @@ const purchaseRequestsAPI = {
     }
   },
 
+  // Nuevas funcionalidades v2.0
+  
+  // Reenviar solicitud rechazada para corrección
+  resubmitRejectedRequest: async (id, requestData) => {
+    try {
+      const response = await api.post(`/purchase-requests/${id}/resubmit`, requestData);
+      return response.data;
+    } catch (error) {
+      console.error('Error resubmitting rejected request:', error);
+      throw error;
+    }
+  },
+
+  // Duplicar solicitud
+  duplicatePurchaseRequest: async (id) => {
+    try {
+      const response = await api.post(`/purchase-requests/${id}/duplicate`);
+      return response.data;
+    } catch (error) {
+      console.error('Error duplicating purchase request:', error);
+      throw error;
+    }
+  },
+
   // Aprobar como coordinadora administrativa
   approveAsCoordinator: async (id, data = {}) => {
     try {
@@ -131,6 +155,17 @@ const purchaseRequestsAPI = {
       return response.data;
     } catch (error) {
       console.error('Error getting purchase request stats:', error);
+      throw error;
+    }
+  },
+
+  // Obtener estadísticas del dashboard de compras
+  getPurchaseDashboardStats: async () => {
+    try {
+      const response = await api.get('/purchase-requests/stats/dashboard');
+      return response.data;
+    } catch (error) {
+      console.error('Error getting purchase dashboard stats:', error);
       throw error;
     }
   },

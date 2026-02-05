@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { FaEdit, FaTrash, FaPlus, FaCheck, FaTimes, FaEye, FaSearch, FaFilter, FaDownload, FaChartBar, FaClock, FaExclamationTriangle, FaCheckCircle, FaSpinner, FaUserCircle, FaClipboardList, FaFileExport, FaSortAmountDown, FaSortAmountUp, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlus, FaCheck, FaTimes, FaEye, FaSearch, FaFilter, FaDownload, FaChartBar, FaClock, FaExclamationTriangle, FaCheckCircle, FaSpinner, FaUserCircle, FaClipboardList, FaFileExport, FaSortAmountDown, FaSortAmountUp, FaArrowRight, FaCopy, FaUndo, FaShoppingCart } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import {
   Chart as ChartJS,
@@ -27,14 +27,7 @@ import {
 import { ConfirmDialog } from '../../components/common';
 import { getTimeAgo } from '../../utils';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const PurchaseRequests = () => {
   const { conditionalClasses } = useThemeClasses();
@@ -51,9 +44,14 @@ const PurchaseRequests = () => {
   const [filterItemType, setFilterItemType] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [showStats, setShowStats] = useState(false);
+  const [showPurchasesPanel, setShowPurchasesPanel] = useState(false);
   const [sortBy, setSortBy] = useState('updatedAt');
   const [sortOrder, setSortOrder] = useState('desc');
   const [viewMode, setViewMode] = useState('cards');
+
+  // Dashboard stats
+  const [dashboardStats, setDashboardStats] = useState(null);
+  const [dashboardLoading, setDashboardLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -64,75 +62,73 @@ const PurchaseRequests = () => {
     justification: ''
   });
 
-  // const [formLoading, setFormLoading] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
 
   const userRole = user?.role?.name;
+  const isPurchasesRole = userRole === 'Compras' || userRole === 'Administrador' || userRole === 'Coordinadora Administrativa' || userRole === 'Jefe';
 
   const fetchPurchaseRequests = useCallback(async () => {
     try {
       const data = await purchaseRequestsAPI.fetchPurchaseRequests({});
       setRequests(data.requests || []);
     } catch {
-      notifyError('Error al cargar las solicitudes de compra. Por favor, recarga la página.');
+      notifyError('Error al cargar las solicitudes');
     } finally {
       setLoading(false);
     }
   }, [notifyError]);
 
-  // WebSocket listeners for real-time updates
+  // Fetch dashboard stats for purchases role
+  const fetchDashboardStats = useCallback(async () => {
+    if (!isPurchasesRole) return;
+    setDashboardLoading(true);
+    try {
+      const data = await purchaseRequestsAPI.getPurchaseDashboardStats();
+      setDashboardStats(data);
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+    } finally {
+      setDashboardLoading(false);
+    }
+  }, [isPurchasesRole]);
+
+  // WebSocket listeners
   useEffect(() => {
     if (selectedRequest) {
       joinPurchaseRequestRoom(selectedRequest.id);
-
-      const handlePurchaseRequestUpdated = (updatedRequest) => {
-        setSelectedRequest(updatedRequest);
-      };
-
-      onPurchaseRequestUpdated(handlePurchaseRequestUpdated);
-
+      const handleUpdate = (updatedRequest) => setSelectedRequest(updatedRequest);
+      onPurchaseRequestUpdated(handleUpdate);
       return () => {
         leavePurchaseRequestRoom(selectedRequest.id);
-        offPurchaseRequestUpdated(handlePurchaseRequestUpdated);
+        offPurchaseRequestUpdated(handleUpdate);
       };
     }
   }, [selectedRequest]);
 
   useEffect(() => {
     fetchPurchaseRequests();
-
-    const handlePurchaseRequestCreated = () => {
-      fetchPurchaseRequests();
-    };
-
-    const handlePurchaseRequestDeleted = () => {
-      fetchPurchaseRequests();
-    };
-
-    const handlePurchaseRequestsListUpdated = () => {
-      fetchPurchaseRequests();
-    };
-
-    onPurchaseRequestCreated(handlePurchaseRequestCreated);
-    onPurchaseRequestDeleted(handlePurchaseRequestDeleted);
-    onPurchaseRequestsListUpdated(handlePurchaseRequestsListUpdated);
-
+    fetchDashboardStats();
+    const handleCreated = () => { fetchPurchaseRequests(); fetchDashboardStats(); };
+    const handleDeleted = () => { fetchPurchaseRequests(); fetchDashboardStats(); };
+    const handleListUpdated = () => { fetchPurchaseRequests(); fetchDashboardStats(); };
+    onPurchaseRequestCreated(handleCreated);
+    onPurchaseRequestDeleted(handleDeleted);
+    onPurchaseRequestsListUpdated(handleListUpdated);
     return () => {
-      offPurchaseRequestCreated(handlePurchaseRequestCreated);
-      offPurchaseRequestDeleted(handlePurchaseRequestDeleted);
-      offPurchaseRequestsListUpdated(handlePurchaseRequestsListUpdated);
+      offPurchaseRequestCreated(handleCreated);
+      offPurchaseRequestDeleted(handleDeleted);
+      offPurchaseRequestsListUpdated(handleListUpdated);
     };
-  }, [fetchPurchaseRequests]);
+  }, [fetchPurchaseRequests, fetchDashboardStats]);
 
   const filterAndSortRequests = useCallback(() => {
     if (!Array.isArray(requests)) return [];
     let filtered = [...requests];
 
     // Permission-based filtering
-    if (!checkPermission('purchase_requests', 'view_all') || userRole === 'Calidad') {
-      // Si no tiene permiso para ver todas o es rol Calidad, solo ver sus propias solicitudes
+    if (!checkPermission('purchase_requests', 'view_all') && userRole !== 'Calidad') {
       filtered = filtered.filter(request => request.userId === user?.id);
     }
 
@@ -155,7 +151,6 @@ const PurchaseRequests = () => {
     filtered.sort((a, b) => {
       let aVal = a[sortBy];
       let bVal = b[sortBy];
-
       if (sortBy === 'createdAt' || sortBy === 'updatedAt') {
         aVal = new Date(aVal);
         bVal = new Date(bVal);
@@ -163,12 +158,7 @@ const PurchaseRequests = () => {
         aVal = aVal.toLowerCase();
         bVal = bVal.toLowerCase();
       }
-
-      if (sortOrder === 'asc') {
-        return aVal > bVal ? 1 : -1;
-      } else {
-        return aVal < bVal ? 1 : -1;
-      }
+      return sortOrder === 'asc' ? (aVal > bVal ? 1 : -1) : (aVal < bVal ? 1 : -1);
     });
 
     return filtered;
@@ -177,68 +167,28 @@ const PurchaseRequests = () => {
   const filteredRequests = filterAndSortRequests();
 
   const calculateStats = () => {
-    if (!Array.isArray(requests)) return { total: 0, solicitado: 0, aprobadoCoordinadora: 0, aprobadoJefe: 0, enCompras: 0, completado: 0 };
+    if (!Array.isArray(requests)) return { total: 0, solicitado: 0, pendienteCoordinadora: 0, aprobadoCoordinadora: 0, pendienteJefe: 0, aprobadoJefe: 0, enCompras: 0, completado: 0, rechazados: 0, paraCorreccion: 0 };
 
-    // Permission-based stats - todos ven las mismas estadísticas basadas en los datos filtrados
-    const total = requests.length;
-    const solicitado = requests.filter(r => r.status?.toLowerCase() === 'solicitado').length;
-    const aprobadoCoordinadora = requests.filter(r => r.status?.toLowerCase() === 'aprobado_coordinadora').length;
-    const aprobadoJefe = requests.filter(r => r.status?.toLowerCase() === 'aprobado_jefe').length;
-    const enCompras = requests.filter(r => r.status?.toLowerCase() === 'en_compras').length;
-    const completado = requests.filter(r =>
-      r.status?.toLowerCase() === 'comprado' || r.status?.toLowerCase() === 'entregado'
-    ).length;
-
-    return { total, solicitado, aprobadoCoordinadora, aprobadoJefe, enCompras, completado };
+    const stats = {
+      total: requests.length,
+      solicitado: requests.filter(r => r.status === 'solicitado').length,
+      pendienteCoordinadora: requests.filter(r => r.status === 'pendiente_coordinadora').length,
+      aprobadoCoordinadora: requests.filter(r => r.status === 'aprobado_coordinadora').length,
+      pendienteJefe: requests.filter(r => r.status === 'pendiente_jefe').length,
+      aprobadoJefe: requests.filter(r => r.status === 'aprobado_jefe').length,
+      enCompras: requests.filter(r => r.status === 'en_compras').length,
+      completado: requests.filter(r => ['comprado', 'entregado'].includes(r.status)).length,
+      rechazados: requests.filter(r => r.status === 'rechazado').length,
+      paraCorreccion: requests.filter(r => r.status === 'rechazado_correccion').length
+    };
+    return stats;
   };
 
   const stats = calculateStats();
 
-  const getStatusColor = (status) => {
-    const colors = {
-      'solicitado': 'bg-blue-100 text-blue-700 border-blue-200',
-      'pendiente_coordinadora': 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      'aprobado_coordinadora': 'bg-orange-100 text-orange-700 border-orange-200',
-      'pendiente_jefe': 'bg-[#f3ebf9] text-[#662d91] border-[#e8d5f5]',
-      'aprobado_jefe': 'bg-indigo-100 text-indigo-700 border-indigo-200',
-      'en_compras': 'bg-cyan-100 text-cyan-700 border-cyan-200',
-      'comprado': 'bg-teal-100 text-teal-700 border-teal-200',
-      'entregado': 'bg-green-100 text-green-700 border-green-200',
-      'rechazado': 'bg-red-100 text-red-700 border-red-200'
-    };
-    return colors[status?.toLowerCase()] || 'bg-gray-100 text-gray-600 border-gray-200';
-  };
+  const canCreate = ['Administrador', 'Técnico', 'Empleado', 'Jefe', 'Coordinadora Administrativa', 'Calidad'].includes(userRole);
 
-  const getStatusIcon = (status) => {
-    switch(status?.toLowerCase()) {
-      case 'solicitado':
-      case 'pendiente_coordinadora': return <FaClock />;
-      case 'aprobado_coordinadora':
-      case 'aprobado_jefe': return <FaCheck />;
-      case 'en_compras':
-      case 'comprado': return <FaArrowRight />;
-      case 'entregado': return <FaCheckCircle />;
-      case 'rechazado': return <FaTimes />;
-      default: return <FaClock />;
-    }
-  };
-
-  const handleCreate = () => {
-    setFormData({
-      title: '',
-      itemType: 'periferico',
-      description: '',
-      quantity: 1,
-      estimatedCost: '',
-      justification: ''
-    });
-    setShowCreateModal(true);
-  };
-
-
-
-
-
+  // Actions
   const handleViewDetail = async (request) => {
     setSelectedRequest(request);
     try {
@@ -246,10 +196,10 @@ const PurchaseRequests = () => {
       setSelectedRequest(data);
     } catch (err) {
       if (err.response?.status === 403) {
-        notifyError('No tienes permisos para ver los detalles de esta solicitud');
+        notifyError('No tienes permisos');
         return;
       }
-      notifyError('Error al cargar los detalles de la solicitud.');
+      notifyError('Error al cargar detalles');
     }
     setShowDetailModal(true);
   };
@@ -261,95 +211,143 @@ const PurchaseRequests = () => {
 
   const handleDelete = async (request) => {
     showConfirmDialog(
-      '¿Estás seguro de que deseas eliminar esta solicitud de compra? Esta acción no se puede deshacer.',
+      '¿Eliminar esta solicitud?',
       async () => {
         try {
           await purchaseRequestsAPI.deletePurchaseRequest(request.id);
-          notifySuccess('Solicitud eliminada exitosamente');
+          notifySuccess('Solicitud eliminada');
           fetchPurchaseRequests();
         } catch {
-          notifyError('Error al eliminar la solicitud');
+          notifyError('Error al eliminar');
         }
       }
     );
   };
 
-  const exportToExcel = () => {
-    const headers = ['ID', 'Título', 'Tipo', 'Estado', 'Costo Estimado', 'Solicitante', 'Fecha Creación'];
-    const rows = filteredRequests.map(request => [
-      request.id,
-      request.title,
-      request.itemType,
-      request.status,
-      request.estimatedCost,
-      request.requester?.name || '-',
-      new Date(request.createdAt).toLocaleDateString('es-ES')
-    ]);
-
-    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'SolicitudesCompra');
-
-    const range = XLSX.utils.decode_range(ws['!ref']);
-    for (let row = range.s.r; row <= range.e.r; row++) {
-      for (let col = range.s.c; col <= range.e.c; col++) {
-        const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
-        if (!ws[cellAddress]) continue;
-
-        if (row === 0) {
-          ws[cellAddress].s = {
-            font: { bold: true, color: { rgb: 'FFFFFF' } },
-            fill: { fgColor: { rgb: '6B46C1' } },
-            alignment: { horizontal: 'center' }
-          };
-        } else {
-          ws[cellAddress].s = {
-            alignment: { horizontal: 'left' },
-            border: {
-              top: { style: 'thin', color: { rgb: 'CCCCCC' } },
-              bottom: { style: 'thin', color: { rgb: 'CCCCCC' } },
-              left: { style: 'thin', color: { rgb: 'CCCCCC' } },
-              right: { style: 'thin', color: { rgb: 'CCCCCC' } }
-            }
-          };
-        }
-      }
-    }
-
-    ws['!cols'] = [
-      { wch: 8 },  // ID
-      { wch: 25 }, // Título
-      { wch: 15 }, // Tipo
-      { wch: 20 }, // Estado
-      { wch: 15 }, // Costo
-      { wch: 15 }, // Solicitante
-      { wch: 15 }  // Fecha
-    ];
-
-    XLSX.writeFile(wb, `solicitudes_compra_${new Date().toISOString().split('T')[0]}.xlsx`);
-    notifySuccess('Solicitudes exportadas exitosamente');
+  const handleDuplicate = async (newRequest) => {
+    notifySuccess('Solicitud duplicada exitosamente');
+    fetchPurchaseRequests();
   };
 
-  const canCreate = ['Administrador', 'Técnico', 'Empleado', 'Jefe', 'Coordinadora Administrativa', 'Calidad'].includes(userRole);
+  const exportToExcel = () => {
+    const headers = ['ID', 'Título', 'Tipo', 'Estado', 'Costo', 'Solicitante', 'Fecha', 'Rechazos'];
+    const rows = filteredRequests.map(r => [
+      r.id, r.title, r.itemType, r.status, r.estimatedCost, r.requester?.name, new Date(r.createdAt).toLocaleDateString(), r.rejectionCount || 0
+    ]);
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    ws['!cols'] = [{ wch: 8 }, { wch: 30 }, { wch: 15 }, { wch: 20 }, { wch: 12 }, { wch: 20 }, { wch: 12 }, { wch: 10 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Solicitudes');
+    XLSX.writeFile(wb, `solicitudes_compra_${new Date().toISOString().split('T')[0]}.xlsx`);
+    notifySuccess('Exportado exitosamente');
+  };
 
   const showConfirmDialog = (message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });
   };
 
+  // Panel de Compras
+  const PurchasesPanel = () => {
+    if (!dashboardStats) return null;
+
+    const statCards = [
+      { label: 'Pendiente Coordinadora', value: dashboardStats.summary?.pendingCoordinator || 0, color: 'yellow', icon: FaClock },
+      { label: 'Pendiente Jefe', value: dashboardStats.summary?.pendingManager || 0, color: 'purple', icon: FaClock },
+      { label: 'En Compras', value: dashboardStats.summary?.inPurchases || 0, color: 'cyan', icon: FaShoppingCart },
+      { label: 'Comprados', value: dashboardStats.summary?.purchased || 0, color: 'teal', icon: FaCheck },
+      { label: 'Entregados', value: dashboardStats.summary?.delivered || 0, color: 'green', icon: FaCheckCircle },
+      { label: 'Para Corrección', value: dashboardStats.summary?.rejectedCorrection || 0, color: 'amber', icon: FaUndo }
+    ];
+
+    return (
+      <div className={conditionalClasses({ light: 'bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6 mb-6', dark: 'bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-6 mb-6' })}>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className={conditionalClasses({ light: 'text-xl font-bold text-gray-900', dark: 'text-xl font-bold text-gray-100' })}>
+            Panel de Compras
+          </h2>
+          <button onClick={fetchDashboardStats} className={conditionalClasses({ light: 'p-2 text-gray-500 hover:bg-gray-100 rounded-lg', dark: 'p-2 text-gray-400 hover:bg-gray-700 rounded-lg' })}>
+            <FaSpinner className="w-4 h-4" />
+          </button>
+        </div>
+        
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+          {statCards.map((stat, idx) => (
+            <div key={idx} className={conditionalClasses({
+              light: `p-4 rounded-xl bg-gray-50 border border-gray-200`,
+              dark: `p-4 rounded-xl bg-gray-700 border border-gray-600`
+            })}>
+              <div className={conditionalClasses({
+                light: `w-8 h-8 rounded-full flex items-center justify-center mb-2 bg-${stat.color}-100`,
+                dark: `w-8 h-8 rounded-full flex items-center justify-center mb-2 bg-${stat.color}-900/50`
+              })}>
+                <stat.icon className={conditionalClasses({
+                  light: `w-4 h-4 text-${stat.color}-600`,
+                  dark: `w-4 h-4 text-${stat.color}-400`
+                })} />
+              </div>
+              <p className={conditionalClasses({
+                light: 'text-2xl font-bold text-gray-900',
+                dark: 'text-2xl font-bold text-gray-100'
+              })}>{stat.value}</p>
+              <p className={conditionalClasses({
+                light: 'text-xs text-gray-500',
+                dark: 'text-xs text-gray-400'
+              })}>{stat.label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Recent Requests */}
+          <div>
+            <h3 className={conditionalClasses({ light: 'text-lg font-bold text-gray-900 mb-4', dark: 'text-lg font-bold text-gray-100 mb-4' })}>Solicitudes Recientes</h3>
+            <div className="space-y-3">
+              {dashboardStats.recentRequests?.slice(0, 5).map((req) => (
+                <div key={req.id} className={conditionalClasses({
+                  light: 'p-3 bg-gray-50 rounded-lg border border-gray-200',
+                  dark: 'p-3 bg-gray-700 rounded-lg border border-gray-600'
+                })}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className={conditionalClasses({ light: 'font-bold text-[#662d91]', dark: 'font-bold text-purple-400' })}>#{req.id}</span>
+                      <p className={conditionalClasses({ light: 'text-sm font-medium text-gray-900 truncate max-w-xs', dark: 'text-sm font-medium text-gray-100 truncate max-w-xs' })}>{req.title}</p>
+                    </div>
+                    <button onClick={() => handleViewDetail(req)} className={conditionalClasses({ light: 'p-2 text-blue-600 hover:bg-blue-50 rounded-lg', dark: 'p-2 text-blue-400 hover:bg-blue-900/30 rounded-lg' })}>
+                      <FaEye className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Chart by Type */}
+          <div>
+            <h3 className={conditionalClasses({ light: 'text-lg font-bold text-gray-900 mb-4', dark: 'text-lg font-bold text-gray-100 mb-4' })}>Por Tipo de Ítem</h3>
+            <Bar
+              data={{
+                labels: Object.keys(dashboardStats.byType || {}).map(k => k.charAt(0).toUpperCase() + k.slice(1)),
+                datasets: [{
+                  label: 'Solicitudes',
+                  data: Object.values(dashboardStats.byType || {}),
+                  backgroundColor: ['#6366f1', '#8b5cf6', '#a855f7', '#d946ef']
+                }]
+              }}
+              options={{ responsive: true, plugins: { legend: { display: false } } }}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   if (loading) {
     return (
-      <div className={conditionalClasses({
-        light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]',
-        dark: 'min-h-screen bg-gray-900'
-      })}>
+      <div className={conditionalClasses({ light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]', dark: 'min-h-screen bg-gray-900' })}>
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#662d91] mx-auto mb-4"></div>
-            <p className={conditionalClasses({
-              light: 'text-lg text-gray-600 font-medium',
-              dark: 'text-lg text-gray-300 font-medium'
-            })}>Cargando solicitudes de compra...</p>
+            <p className={conditionalClasses({ light: 'text-gray-600', dark: 'text-gray-300' })}>Cargando solicitudes...</p>
           </div>
         </div>
       </div>
@@ -363,194 +361,135 @@ const PurchaseRequests = () => {
     })}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-4 sm:mb-6 lg:mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 lg:gap-6">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 mb-2 sm:mb-3">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xl shrink-0">
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                  </svg>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h1 className={conditionalClasses({
-                    light: 'text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-900 leading-tight truncate',
-                    dark: 'text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-white leading-tight truncate'
-                  })}>
-                    Solicitudes de Compra
-                  </h1>
-                  <p className={conditionalClasses({
-                    light: 'text-xs sm:text-sm text-gray-600 mt-1 hidden sm:block',
-                    dark: 'text-xs sm:text-sm text-gray-400 mt-1 hidden sm:block'
-                  })}>
-                    Gestión de solicitudes de periféricos y electrodomésticos
-                  </p>
-                </div>
+        <div className="mb-4 sm:mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center shadow-xl">
+                <FaShoppingCart className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className={conditionalClasses({ light: 'text-2xl font-bold text-gray-900', dark: 'text-2xl font-bold text-white' })}>
+                  Solicitudes de Compra
+                </h1>
+                <p className={conditionalClasses({ light: 'text-sm text-gray-600', dark: 'text-sm text-gray-400' })}>
+                  Gestión de solicitudes de periféricos y suministros
+                </p>
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 sm:gap-3">
-              {((checkPermission('purchase_requests', 'view_stats') || checkPermission('purchase_requests', 'export') ||
-                userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Coordinadora Administrativa' || userRole === 'Jefe')) && (
-                <>
-                  {(checkPermission('purchase_requests', 'view_stats') || userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Coordinadora Administrativa' || userRole === 'Jefe') && (
-                    <button
-                      onClick={() => setShowStats(!showStats)}
-                      className={conditionalClasses({
-                        light: 'flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base',
-                        dark: 'flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-600 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base'
-                      })}
-                    >
-                      <FaChartBar className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="hidden sm:inline">Estadísticas</span>
-                    </button>
-                  )}
-                  {(checkPermission('purchase_requests', 'export') || userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Coordinadora Administrativa' || userRole === 'Jefe') && (
-                    <button
-                      onClick={exportToExcel}
-                      className={conditionalClasses({
-                        light: 'flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-200 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base',
-                        dark: 'flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 lg:py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-600 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm lg:text-base'
-                      })}
-                    >
-                      <FaDownload className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="hidden sm:inline">Exportar</span>
-                    </button>
-                  )}
-                </>
+            <div className="flex flex-wrap gap-2">
+              {isPurchasesRole && (
+                <button onClick={() => setShowPurchasesPanel(!showPurchasesPanel)} className={conditionalClasses({
+                  light: 'flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg border-2 border-gray-200',
+                  dark: 'flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold rounded-lg border-2 border-gray-600'
+                })}>
+                  <FaChartBar className="w-4 h-4" />
+                  {showPurchasesPanel ? 'Ocultar Panel' : 'Panel Compras'}
+                </button>
               )}
+              {(checkPermission('purchase_requests', 'view_stats') || isPurchasesRole) && (
+                <button onClick={() => setShowStats(!showStats)} className={conditionalClasses({
+                  light: 'flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg border-2 border-gray-200',
+                  dark: 'flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold rounded-lg border-2 border-gray-600'
+                })}>
+                  <FaChartBar className="w-4 h-4" />
+                  Estadísticas
+                </button>
+              )}
+              <button onClick={exportToExcel} className={conditionalClasses({
+                light: 'flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg border-2 border-gray-200',
+                dark: 'flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold rounded-lg border-2 border-gray-600'
+              })}>
+                <FaDownload className="w-4 h-4" />
+                Exportar
+              </button>
               {canCreate && (
-                <button
-                  onClick={handleCreate}
-                  className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-xs sm:text-sm lg:text-base"
-                >
-                  <FaPlus className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Nueva</span>
-                  <span className="sm:hidden">Nueva</span>
+                <button onClick={() => setShowCreateModal(true)} className="flex items-center gap-2 px-4 py-2 bg-[#662d91] hover:bg-[#7a3da8] text-white font-bold rounded-lg shadow-lg">
+                  <FaPlus className="w-4 h-4" />
+                  Nueva
                 </button>
               )}
             </div>
           </div>
         </div>
 
-        {/* Stats Cards */}
+        {/* Purchases Panel */}
+        {showPurchasesPanel && <PurchasesPanel />}
+
+        {/* Stats */}
         {showStats && <PurchaseRequestStats stats={stats} userRole={userRole} />}
 
-        {/* Search and Filters */}
-        <div className={conditionalClasses({
-          light: 'bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 mb-6',
-          dark: 'bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-4 lg:p-6 mb-6'
-        })}>
+        {/* Search & Filters */}
+        <div className={conditionalClasses({ light: 'bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 mb-6', dark: 'bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-4 lg:p-6 mb-6' })}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1 relative">
-                <FaSearch className={conditionalClasses({
-                  light: 'absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5',
-                  dark: 'absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5'
+                <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input type="text" placeholder="Buscar..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className={conditionalClasses({
+                  light: 'w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] outline-none bg-white text-gray-900',
+                  dark: 'w-full pl-12 pr-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] outline-none bg-gray-700 text-white'
                 })} />
-                <input
-                  type="text"
-                  placeholder="Buscar por título, descripción o solicitante..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className={conditionalClasses({
-                    light: 'w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-gray-700 font-medium text-sm lg:text-base',
-                    dark: 'w-full pl-12 pr-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-white font-medium text-sm lg:text-base bg-gray-700'
-                  })}
-                />
               </div>
-
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={conditionalClasses({
-                  light: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-30 ${showFilters ? 'bg-[#662d91] text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`,
-                  dark: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-30 ${showFilters ? 'bg-[#662d91] text-white shadow-lg' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`
-                })}
-              >
+              <button onClick={() => setShowFilters(!showFilters)} className={conditionalClasses({
+                light: `flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold min-w-30 ${showFilters ? 'bg-[#662d91] text-white' : 'bg-gray-100 text-gray-700'}`,
+                dark: `flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold min-w-30 ${showFilters ? 'bg-[#662d91] text-white' : 'bg-gray-700 text-gray-300'}`
+              })}>
                 <FaFilter className="w-4 h-4" />
-                <span>Filtros</span>
+                Filtros
               </button>
             </div>
 
             {showFilters && (
-              <div className={conditionalClasses({
-                light: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-6 border-t-2 border-gray-100 animate-fade-in',
-                dark: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-6 border-t-2 border-gray-600 animate-fade-in'
-              })}>
+              <div className={conditionalClasses({ light: 'grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-gray-100', dark: 'grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-gray-600' })}>
                 <div>
-                  <label className={conditionalClasses({
-                    light: 'block text-sm font-semibold text-gray-700 mb-2',
-                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
-                  })}>Estado</label>
-                  <select
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                    className={conditionalClasses({
-                      light: 'w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm',
-                      dark: 'w-full px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-gray-700 text-white'
-                    })}
-                  >
-                    <option value="all">Todos los estados</option>
+                  <label className={conditionalClasses({ light: 'block text-sm font-semibold text-gray-700 mb-2', dark: 'block text-sm font-semibold text-gray-300 mb-2' })}>Estado</label>
+                  <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className={conditionalClasses({
+                    light: 'w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] outline-none bg-white text-gray-900',
+                    dark: 'w-full px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] outline-none bg-gray-700 text-white'
+                  })}>
+                    <option value="all">Todos</option>
                     <option value="solicitado">Solicitado</option>
                     <option value="pendiente_coordinadora">Pendiente Coordinadora</option>
-                    <option value="aprobado_coordinadora">Aprobado Coordinadora</option>
+                    <option value="aprobado_coordinadora">Aprobado Coord.</option>
                     <option value="pendiente_jefe">Pendiente Jefe</option>
                     <option value="aprobado_jefe">Aprobado Jefe</option>
                     <option value="en_compras">En Compras</option>
                     <option value="comprado">Comprado</option>
                     <option value="entregado">Entregado</option>
                     <option value="rechazado">Rechazado</option>
+                    <option value="rechazado_correccion">Para Corrección</option>
                   </select>
                 </div>
-
                 <div>
-                  <label className={conditionalClasses({
-                    light: 'block text-sm font-semibold text-gray-700 mb-2',
-                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
-                  })}>Tipo de Ítem</label>
-                  <select
-                    value={filterItemType || 'all'}
-                    onChange={(e) => setFilterItemType(e.target.value)}
-                    className={conditionalClasses({
-                      light: 'w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm',
-                      dark: 'w-full px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-gray-700 text-white'
-                    })}
-                  >
-                    <option value="all">Todos los tipos</option>
+                  <label className={conditionalClasses({ light: 'block text-sm font-semibold text-gray-700 mb-2', dark: 'block text-sm font-semibold text-gray-300 mb-2' })}>Tipo</label>
+                  <select value={filterItemType} onChange={(e) => setFilterItemType(e.target.value)} className={conditionalClasses({
+                    light: 'w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] outline-none bg-white text-gray-900',
+                    dark: 'w-full px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] outline-none bg-gray-700 text-white'
+                  })}>
+                    <option value="all">Todos</option>
                     <option value="periferico">Periférico</option>
                     <option value="electrodomestico">Electrodoméstico</option>
                     <option value="software">Software</option>
                     <option value="otro">Otro</option>
                   </select>
                 </div>
-
                 <div>
-                  <label className={conditionalClasses({
-                    light: 'block text-sm font-semibold text-gray-700 mb-2',
-                    dark: 'block text-sm font-semibold text-gray-300 mb-2'
-                  })}>Ordenar por</label>
+                  <label className={conditionalClasses({ light: 'block text-sm font-semibold text-gray-700 mb-2', dark: 'block text-sm font-semibold text-gray-300 mb-2' })}>Ordenar</label>
                   <div className="flex gap-2">
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className={conditionalClasses({
-                        light: 'flex-1 px-3 lg:px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm',
-                        dark: 'flex-1 px-3 lg:px-4 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm bg-gray-700 text-white'
-                      })}
-                    >
+                    <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className={conditionalClasses({
+                      light: 'flex-1 px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] outline-none bg-white text-gray-900',
+                      dark: 'flex-1 px-3 py-2.5 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#662d91] outline-none bg-gray-700 text-white'
+                    })}>
                       <option value="createdAt">Fecha creación</option>
                       <option value="updatedAt">Última actualización</option>
-                      <option value="estimatedCost">Costo estimado</option>
+                      <option value="estimatedCost">Costo</option>
                       <option value="status">Estado</option>
                     </select>
-                    <button
-                      onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                      className={conditionalClasses({
-                        light: 'px-3 lg:px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all',
-                        dark: 'px-3 lg:px-4 py-2.5 bg-gray-700 hover:bg-gray-600 rounded-xl transition-all'
-                      })}
-                    >
-                      {sortOrder === 'asc' ? <FaSortAmountDown className="w-4 h-4 lg:w-5 lg:h-5" /> : <FaSortAmountUp className="w-4 h-4 lg:w-5 lg:h-5" />}
+                    <button onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} className={conditionalClasses({
+                      light: 'px-3 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl',
+                      dark: 'px-3 py-2.5 bg-gray-700 hover:bg-gray-600 rounded-xl'
+                    })}>
+                      {sortOrder === 'asc' ? <FaSortAmountDown className="w-4 h-4" /> : <FaSortAmountUp className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
@@ -560,381 +499,108 @@ const PurchaseRequests = () => {
         </div>
 
         {/* Results Summary */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 mb-3 sm:mb-4">
-          <p className={conditionalClasses({
-            light: 'text-xs sm:text-sm text-gray-600 font-medium',
-            dark: 'text-xs sm:text-sm text-gray-400 font-medium'
-          })}>
+        <div className="flex items-center justify-between mb-3">
+          <p className={conditionalClasses({ light: 'text-sm text-gray-600', dark: 'text-sm text-gray-400' })}>
             Mostrando <span className="font-bold text-[#662d91]">{filteredRequests.length}</span> de <span className="font-bold">{requests.length}</span> solicitudes
           </p>
-          <div className="flex gap-1 sm:gap-2">
-            <button
-              onClick={() => setViewMode('cards')}
-              className={conditionalClasses({
-                light: `px-2 sm:px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-xs sm:text-sm lg:text-base ${viewMode === 'cards' ? 'bg-[#662d91] text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'}`,
-                dark: `px-2 sm:px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-xs sm:text-sm lg:text-base ${viewMode === 'cards' ? 'bg-[#662d91] text-white shadow-md' : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border border-gray-600'}`
-              })}
-            >
-              <FaClipboardList className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline ml-1 sm:ml-2">Tarjetas</span>
+          <div className="flex gap-2">
+            <button onClick={() => setViewMode('cards')} className={`px-3 py-2 rounded-lg text-sm ${viewMode === 'cards' ? 'bg-[#662d91] text-white' : conditionalClasses({ light: 'bg-white text-gray-600', dark: 'bg-gray-800 text-gray-400' })}`}>
+              <FaClipboardList className="w-4 h-4" />
             </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={conditionalClasses({
-                light: `px-2 sm:px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-xs sm:text-sm lg:text-base ${viewMode === 'list' ? 'bg-[#662d91] text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'}`,
-                dark: `px-2 sm:px-3 lg:px-4 py-2 rounded-lg font-medium transition-all text-xs sm:text-sm lg:text-base ${viewMode === 'list' ? 'bg-[#662d91] text-white shadow-md' : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border border-gray-600'}`
-              })}
-            >
-              <FaChartBar className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline ml-1 sm:ml-2">Lista</span>
+            <button onClick={() => setViewMode('list')} className={`px-3 py-2 rounded-lg text-sm ${viewMode === 'list' ? 'bg-[#662d91] text-white' : conditionalClasses({ light: 'bg-white text-gray-600', dark: 'bg-gray-800 text-gray-400' })}`}>
+              <FaChartBar className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Purchase Requests Display */}
+        {/* Content */}
         {filteredRequests.length === 0 ? (
-          <div className={conditionalClasses({
-            light: 'bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center',
-            dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-700 p-6 lg:p-12 text-center'
-          })}>
-            <div className={conditionalClasses({
-              light: "w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4",
-              dark: "w-16 h-16 lg:w-20 lg:h-20 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4"
-            })}>
-              <FaClipboardList className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
-            </div>
-            <h3 className={conditionalClasses({
-              light: 'text-lg lg:text-xl font-bold text-gray-900 mb-2',
-              dark: 'text-lg lg:text-xl font-bold text-white mb-2'
-            })}>
-              {searchTerm || filterStatus !== 'all'
-                ? 'No se encontraron solicitudes'
-                : 'No hay solicitudes disponibles'}
+          <div className={conditionalClasses({ light: 'bg-white rounded-xl shadow-lg border-2 border-gray-200 p-12 text-center', dark: 'bg-gray-800 rounded-xl shadow-lg border-2 border-gray-700 p-12 text-center' })}>
+            <FaClipboardList className="w-16 h-16 text-[#662d91] mx-auto mb-4" />
+            <h3 className={conditionalClasses({ light: 'text-xl font-bold text-gray-900 mb-2', dark: 'text-xl font-bold text-gray-100 mb-2' })}>
+              {searchTerm || filterStatus !== 'all' ? 'No se encontraron solicitudes' : 'No hay solicitudes'}
             </h3>
-            <p className={conditionalClasses({
-              light: 'text-sm lg:text-base text-gray-600 max-w-md mx-auto mb-4 lg:mb-6',
-              dark: 'text-sm lg:text-base text-gray-400 max-w-md mx-auto mb-4 lg:mb-6'
-            })}>
-              {searchTerm || filterStatus !== 'all'
-                ? 'Intenta ajustar los filtros de búsqueda'
-                : 'Comienza creando una nueva solicitud de compra'}
+            <p className={conditionalClasses({ light: 'text-gray-600 mb-4', dark: 'text-gray-400 mb-4' })}>
+              {searchTerm || filterStatus !== 'all' ? 'Ajusta los filtros de búsqueda' : 'Crea una nueva solicitud de compra'}
             </p>
             {canCreate && (
-              <button
-                onClick={handleCreate}
-                className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
-              >
+              <button onClick={() => setShowCreateModal(true)} className="inline-flex items-center gap-2 px-6 py-3 bg-[#662d91] hover:bg-[#7a3da8] text-white font-bold rounded-xl">
                 <FaPlus className="w-4 h-4" />
                 Nueva Solicitud
               </button>
             )}
           </div>
         ) : (
-          <>
-            {/* Cards View */}
-            {viewMode === 'cards' && (
-              <div className={conditionalClasses({
-                light: 'bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-3 sm:p-4 lg:p-6',
-                dark: 'bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-3 sm:p-4 lg:p-6'
-              })}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-                  {filteredRequests.map((request) => (
-                    <PurchaseRequestCard
-                      key={request.id}
-                      request={request}
-                      onViewDetail={handleViewDetail}
-                      onEdit={handleEdit}
-                      onDelete={handleDelete}
-                      userRole={userRole}
-                      user={user}
-                    />
-                  ))}
-                </div>
+          <div className={conditionalClasses({ light: 'bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6', dark: 'bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-4 lg:p-6' })}>
+            {viewMode === 'cards' ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredRequests.map((request) => (
+                  <PurchaseRequestCard key={request.id} request={request} onViewDetail={handleViewDetail} onEdit={handleEdit} onDelete={handleDelete} user={user} userRole={userRole} />
+                ))}
               </div>
-            )}
-
-            {/* List View */}
-            {viewMode === 'list' && (
-              <div className={conditionalClasses({
-                light: 'bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 overflow-hidden',
-                dark: 'bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-4 lg:p-6 overflow-hidden'
-              })}>
-                {/* Mobile Card View for List Mode */}
-                <div className="block md:hidden">
-                  <div className={conditionalClasses({
-                    light: 'divide-y divide-gray-200',
-                    dark: 'divide-y divide-gray-600'
-                  })}>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-[#662d91] text-white">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-bold uppercase">ID</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold uppercase">Título</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold uppercase">Tipo</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold uppercase">Estado</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold uppercase">Costo</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold uppercase">Solicitante</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold uppercase">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody className={conditionalClasses({ light: 'divide-y divide-gray-200', dark: 'divide-y divide-gray-600' })}>
                     {filteredRequests.map((request) => (
-                      <div key={request.id} className={conditionalClasses({
-                        light: 'p-4 hover:bg-[#f3ebf9] transition-colors',
-                        dark: 'p-4 hover:bg-gray-700/50 transition-colors'
-                      })}>
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="font-bold text-[#662d91]">#{request.id}</span>
-                              <span className={`px-2 py-1 rounded-full text-xs font-bold ${getStatusColor(request.status)}`}>
-                                {request.status}
-                              </span>
-                            </div>
-                            <h3 className={conditionalClasses({
-                              light: 'font-semibold text-gray-900 text-sm mb-1 truncate',
-                              dark: 'font-semibold text-white text-sm mb-1 truncate'
-                            })}>{request.title}</h3>
-                            <p className={conditionalClasses({
-                              light: 'text-xs text-gray-500 line-clamp-2',
-                              dark: 'text-xs text-gray-400 line-clamp-2'
-                            })}>{request.description}</p>
-                          </div>
-                          <button
-                            onClick={() => handleViewDetail(request)}
-                            className={conditionalClasses({
-                              light: 'p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation',
-                              dark: 'p-2 text-blue-400 hover:bg-gray-700 rounded-lg transition-all touch-manipulation'
-                            })}
-                            title="Ver detalles"
-                          >
-                            <FaEye className="w-4 h-4" />
-                          </button>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4 text-xs">
-                          <div>
-                            <span className={conditionalClasses({
-                              light: 'font-medium',
-                              dark: 'font-medium text-gray-300'
-                            })}>Tipo:</span>
-                            <p className={conditionalClasses({
-                              light: 'capitalize',
-                              dark: 'capitalize text-gray-300'
-                            })}>{request.itemType}</p>
-                          </div>
-                          <div>
-                            <span className={conditionalClasses({
-                              light: 'font-medium',
-                              dark: 'font-medium text-gray-300'
-                            })}>Costo:</span>
-                            <p className={conditionalClasses({
-                              light: '',
-                              dark: 'text-gray-300'
-                            })}>${request.estimatedCost}</p>
-                          </div>
-                          <div className="col-span-2">
-                            <span className={conditionalClasses({
-                              light: 'font-medium',
-                              dark: 'font-medium text-gray-300'
-                            })}>Solicitante:</span>
-                            <p className={conditionalClasses({
-                              light: 'truncate',
-                              dark: 'truncate text-gray-300'
-                            })}>{request.requester?.name || 'Usuario'}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Desktop Table View */}
-                <div className="hidden md:block">
-                  <table className="w-full">
-                    <thead className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white">
-                      <tr>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">ID</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Título</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Tipo</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Estado</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Costo</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Solicitante</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Fecha</th>
-                        <th className="px-4 py-4 text-left text-xs font-bold uppercase">Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody className={conditionalClasses({
-                      light: 'divide-y divide-gray-200',
-                      dark: 'divide-y divide-gray-600'
-                    })}>
-                      {filteredRequests.map((request) => (
-                        <tr key={request.id} className={conditionalClasses({
-                          light: 'hover:bg-[#f3ebf9] transition-colors',
-                          dark: 'hover:bg-gray-700/50 transition-colors'
-                        })}>
-                          <td className="px-4 py-4">
-                            <span className="font-bold text-[#662d91]">#{request.id}</span>
-                          </td>
-                          <td className="px-4 py-4">
-                            <div className={conditionalClasses({
-                              light: 'font-semibold text-gray-900',
-                              dark: 'font-semibold text-white'
-                            })}>{request.title}</div>
-                            <div className={conditionalClasses({
-                              light: 'text-xs text-gray-500 truncate max-w-xs',
-                              dark: 'text-xs text-gray-400 truncate max-w-xs'
-                            })}>{request.description}</div>
-                          </td>
-                          <td className={conditionalClasses({
-                            light: 'px-4 py-4 text-sm text-gray-700 capitalize',
-                            dark: 'px-4 py-4 text-sm text-gray-300 capitalize'
-                          })}>
-                            {request.itemType}
-                          </td>
-                          <td className="px-4 py-4">
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1 ${getStatusColor(request.status)}`}>
-                              {getStatusIcon(request.status)}
-                              {request.status}
-                            </span>
-                          </td>
-                          <td className={conditionalClasses({
-                            light: 'px-4 py-4 text-sm text-gray-700',
-                            dark: 'px-4 py-4 text-sm text-gray-300'
-                          })}>
-                            ${request.estimatedCost}
-                          </td>
-                          <td className={conditionalClasses({
-                            light: 'px-4 py-4 text-sm text-gray-700',
-                            dark: 'px-4 py-4 text-sm text-gray-300'
-                          })}>
-                            {request.requester?.name || 'Usuario'}
-                          </td>
-                          <td className={conditionalClasses({
-                            light: 'px-4 py-4 text-sm text-gray-500',
-                            dark: 'px-4 py-4 text-sm text-gray-400'
-                          })}>
-                            {getTimeAgo(request.updatedAt)}
-                          </td>
-                          <td className="px-4 py-4">
-                            <button
-                              onClick={() => handleViewDetail(request)}
-                              className={conditionalClasses({
-                                light: 'p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation',
-                                dark: 'p-2 text-blue-400 hover:bg-gray-700 rounded-lg transition-all touch-manipulation'
-                              })}
-                              title="Ver detalles"
-                            >
+                      <tr key={request.id} className={conditionalClasses({ light: 'hover:bg-gray-50', dark: 'hover:bg-gray-700/50' })}>
+                        <td className="px-4 py-4 font-bold text-[#662d91]">#{request.id}</td>
+                        <td className="px-4 py-4">
+                          <p className={conditionalClasses({ light: 'font-semibold text-gray-900', dark: 'font-semibold text-white' })}>{request.title}</p>
+                          <p className={conditionalClasses({ light: 'text-xs text-gray-500 truncate max-w-xs', dark: 'text-xs text-gray-400 truncate max-w-xs' })}>{request.description}</p>
+                        </td>
+                        <td className={conditionalClasses({ light: 'px-4 py-4 text-gray-700 capitalize', dark: 'px-4 py-4 text-gray-300 capitalize' })}>{request.itemType}</td>
+                        <td className="px-4 py-4">
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold ${['solicitado'].includes(request.status) ? 'bg-blue-100 text-blue-700' : ['pendiente_coordinadora'].includes(request.status) ? 'bg-yellow-100 text-yellow-700' : ['pendiente_jefe'].includes(request.status) ? 'bg-purple-100 text-purple-700' : ['aprobado_jefe', 'aprobado_coordinadora'].includes(request.status) ? 'bg-indigo-100 text-indigo-700' : ['en_compras'].includes(request.status) ? 'bg-cyan-100 text-cyan-700' : ['comprado'].includes(request.status) ? 'bg-teal-100 text-teal-700' : ['entregado'].includes(request.status) ? 'bg-green-100 text-green-700' : ['rechazado_correccion'].includes(request.status) ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
+                            {request.status.replace(/_/g, ' ')}
+                          </span>
+                        </td>
+                        <td className={conditionalClasses({ light: 'px-4 py-4 text-gray-700 font-medium', dark: 'px-4 py-4 text-gray-300 font-medium' })}>${request.estimatedCost}</td>
+                        <td className={conditionalClasses({ light: 'px-4 py-4 text-gray-700', dark: 'px-4 py-4 text-gray-300' })}>{request.requester?.name || '-'}</td>
+                        <td className="px-4 py-4">
+                          <div className="flex gap-2">
+                            <button onClick={() => handleViewDetail(request)} className={conditionalClasses({ light: 'p-2 text-blue-600 hover:bg-blue-50 rounded-lg', dark: 'p-2 text-blue-400 hover:bg-blue-900/30 rounded-lg' })}>
                               <FaEye className="w-4 h-4" />
                             </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                            {canCreate && (
+                              <button onClick={() => handleEdit(request)} className={conditionalClasses({ light: 'p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg', dark: 'p-2 text-yellow-400 hover:bg-yellow-900/30 rounded-lg' })}>
+                                <FaEdit className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
-
-          </>
+          </div>
         )}
 
-        {/* Modals - Always rendered */}
-        <PurchaseRequestDetailModal
-          showDetailModal={showDetailModal}
-          setShowDetailModal={setShowDetailModal}
-          selectedRequest={selectedRequest}
-          user={user}
-        />
-
-        <PurchaseRequestCreateModal
-          showCreateModal={showCreateModal}
-          setShowCreateModal={setShowCreateModal}
-          formData={formData}
-          setFormData={setFormData}
-          userRole={userRole}
-          onSuccess={(message, type = 'success') => {
-            if (type === 'success') {
-              notifySuccess(message);
-              fetchPurchaseRequests(); // Refrescar la lista
-            } else if (type === 'error') {
-              notifyError(message);
-            } else if (type === 'warning') {
-              notifyWarning(message);
-            } else {
-              notifyInfo(message);
-            }
-          }}
-        />
-
-        <PurchaseRequestEditModal
-          showEditModal={showEditModal}
-          setShowEditModal={setShowEditModal}
-          editingRequest={editingRequest}
-          onSuccess={(message, type = 'success') => {
-            if (type === 'success') {
-              notifySuccess(message);
-              fetchPurchaseRequests(); // Refrescar la lista
-            } else if (type === 'error') {
-              notifyError(message);
-            } else if (type === 'warning') {
-              notifyWarning(message);
-            } else {
-              notifyInfo(message);
-            }
-          }}
-        />
+        {/* Modals */}
+        <PurchaseRequestDetailModal showDetailModal={showDetailModal} setShowDetailModal={setShowDetailModal} selectedRequest={selectedRequest} user={user} onDuplicate={handleDuplicate} onSuccess={notifySuccess} />
+        <PurchaseRequestCreateModal showCreateModal={showCreateModal} setShowCreateModal={setShowCreateModal} formData={formData} setFormData={setFormData} userRole={userRole} onSuccess={(msg) => { notifySuccess(msg); fetchPurchaseRequests(); fetchDashboardStats(); }} />
+        <PurchaseRequestEditModal showEditModal={showEditModal} setShowEditModal={setShowEditModal} editingRequest={editingRequest} onSuccess={(msg) => { notifySuccess(msg); fetchPurchaseRequests(); fetchDashboardStats(); }} />
 
         {/* Confirm Dialog */}
         {confirmDialog && (
-          <ConfirmDialog
-            confirmDialog={confirmDialog}
-            onClose={() => setConfirmDialog(null)}
-            onConfirm={() => {
-              if (confirmDialog?.onConfirm) confirmDialog.onConfirm();
-              setConfirmDialog(null);
-            }}
-          />
+          <ConfirmDialog confirmDialog={confirmDialog} onClose={() => setConfirmDialog(null)} onConfirm={() => { confirmDialog.onConfirm(); setConfirmDialog(null); }} />
         )}
       </div>
-
-      <style>{`
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        @keyframes scale-in {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        @keyframes slide-in-right {
-          from {
-            opacity: 0;
-            transform: translateX(100%);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out;
-        }
-
-        .animate-scale-in {
-          animation: scale-in 0.3s ease-out;
-        }
-
-        .animate-slide-in-right {
-          animation: slide-in-right 0.3s ease-out;
-        }
-
-        .line-clamp-3 {
-          display: -webkit-box;
-          -webkit-line-clamp: 3;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-      `}</style>
     </div>
   );
 };
 
 export default PurchaseRequests;
-
-

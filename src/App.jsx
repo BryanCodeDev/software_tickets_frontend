@@ -25,6 +25,7 @@ const Tablets = lazy(() => import('./pages/Inventory/Tablets'));
 const PDAs = lazy(() => import('./pages/Inventory/PDAs'));
 const ActasEntrega = lazy(() => import('./pages/ActasEntrega/ActasEntrega'));
 const Documents = lazy(() => import('./pages/Documents/Documents'));
+const DocumentChangeRequests = lazy(() => import('./pages/DocumentChangeRequests/DocumentChangeRequests'));
 const Credentials = lazy(() => import('./pages/Credentials/Credentials'));
 const Users = lazy(() => import('./pages/Users/Users'));
 const Roles = lazy(() => import('./pages/Roles/Roles'));
@@ -164,6 +165,13 @@ const AppContent = () => {
             <ProtectedRoute>
               <Layout>
                 <Documents />
+              </Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/document-change-requests" element={
+            <ProtectedRoute>
+              <Layout>
+                <DocumentChangeRequests />
               </Layout>
             </ProtectedRoute>
           } />

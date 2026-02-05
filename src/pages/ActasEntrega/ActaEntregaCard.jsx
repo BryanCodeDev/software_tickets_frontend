@@ -90,8 +90,8 @@ const ActaEntregaCard = ({ acta, onEdit, onDelete, onHistory, canEdit, canDelete
 
               {showExportMenu && (
                 <div className={conditionalClasses({
-                  light: 'absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[120px]',
-                  dark: 'absolute right-0 top-full mt-1 bg-gray-800 rounded-lg shadow-lg border border-gray-600 py-1 z-10 min-w-[120px]'
+                  light: 'absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-30',
+                  dark: 'absolute right-0 top-full mt-1 bg-gray-800 rounded-lg shadow-lg border border-gray-600 py-1 z-10 min-w-30'
                 })}>
                   <button
                     onClick={() => handleExport('pdf')}
@@ -200,7 +200,10 @@ const ActaEntregaCard = ({ acta, onEdit, onDelete, onHistory, canEdit, canDelete
                 light: 'text-xs text-gray-500 font-medium mb-1',
                 dark: 'text-xs text-gray-400 font-medium mb-1'
               })}>Fecha Devolución</p>
-              <p className="text-sm font-semibold text-green-600">
+              <p className={conditionalClasses({
+                light: 'text-sm font-semibold text-green-600',
+                dark: 'text-sm font-semibold text-green-400'
+              })}>
                 {new Date(acta.fecha_devolucion).toLocaleDateString('es-ES')}
               </p>
             </div>
