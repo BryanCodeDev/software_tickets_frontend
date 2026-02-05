@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { FaPlus, FaFilter, FaSearch, FaFileAlt } from 'react-icons/fa';
 import documentChangeRequestsAPI from '../../api/documentChangeRequestsAPI';
 import DocumentChangeRequestCard from '../../components/DocumentChangeRequests/DocumentChangeRequestCard';

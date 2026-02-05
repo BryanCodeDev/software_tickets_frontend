@@ -116,7 +116,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, updateUser, loading, checkPermission }}>
+    <AuthContext.Provider value={{ user, login, register, logout, updateUser, loading, checkPermission, isAuthenticated: !!user, hasRole: (role) => user?.role?.name === role, hasAnyRole: (roles) => roles.includes(user?.role?.name), canAccess: (module) => checkPermission(module, 'view') || user?.role?.name === 'Administrador' }}>
       {children}
     </AuthContext.Provider>
   );
