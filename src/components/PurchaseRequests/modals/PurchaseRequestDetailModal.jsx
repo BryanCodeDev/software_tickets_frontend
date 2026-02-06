@@ -11,7 +11,6 @@ const PurchaseRequestDetailModal = ({
   setShowDetailModal,
   selectedRequest,
   user,
-  onResubmit,
   onDuplicate,
   onSuccess
 }) => {
@@ -22,8 +21,6 @@ const PurchaseRequestDetailModal = ({
   const [rejectionReason, setRejectionReason] = useState('');
   const [actionComments, setActionComments] = useState('');
   const [attachments, setAttachments] = useState([]);
-  const [attachmentsLoading, setAttachmentsLoading] = useState(false);
-  const [commentsLoading, setCommentsLoading] = useState(false);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [isInternalComment, setIsInternalComment] = useState(false);
@@ -44,46 +41,36 @@ const PurchaseRequestDetailModal = ({
     if (showDetailModal && selectedRequest?.id) {
       loadAttachments();
       loadComments();
-      initCorrectionData();
+      if (selectedRequest) {
+        setCorrectionData({
+          title: selectedRequest.title || '',
+          description: selectedRequest.description || '',
+          justification: selectedRequest.justification || '',
+          quantity: selectedRequest.quantity || 1,
+          estimatedCost: selectedRequest.estimatedCost || '',
+          correctionComments: ''
+        });
+      }
     }
-  }, [showDetailModal, selectedRequest]);
-
-  const initCorrectionData = () => {
-    if (selectedRequest) {
-      setCorrectionData({
-        title: selectedRequest.title || '',
-        description: selectedRequest.description || '',
-        justification: selectedRequest.justification || '',
-        quantity: selectedRequest.quantity || 1,
-        estimatedCost: selectedRequest.estimatedCost || '',
-        correctionComments: ''
-      });
-    }
-  };
+  }, [showDetailModal, selectedRequest, loadAttachments, loadComments]);
 
   const loadAttachments = useCallback(async () => {
     if (!selectedRequest?.id) return;
-    setAttachmentsLoading(true);
     try {
       const data = await purchaseRequestsAPI.getAttachments(selectedRequest.id);
       setAttachments(data);
     } catch (error) {
       console.error('Error loading attachments:', error);
-    } finally {
-      setAttachmentsLoading(false);
     }
   }, [selectedRequest?.id]);
 
   const loadComments = useCallback(async () => {
     if (!selectedRequest?.id) return;
-    setCommentsLoading(true);
     try {
       const data = await purchaseRequestsAPI.getComments(selectedRequest.id);
       setComments(data);
     } catch (error) {
       console.error('Error loading comments:', error);
-    } finally {
-      setCommentsLoading(false);
     }
   }, [selectedRequest?.id]);
 
@@ -353,7 +340,6 @@ const PurchaseRequestDetailModal = ({
   const getTimeInStep = (stepStatus) => {
     if (!selectedRequest) return null;
     
-    const history = selectedRequest.approvalHistory || [];
     const stepIndex = getWorkflowSteps().findIndex(s => s.status === stepStatus);
     
     if (stepIndex === -1) return null;

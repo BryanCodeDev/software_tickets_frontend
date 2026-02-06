@@ -25,13 +25,12 @@ import {
   PurchaseRequestStats
 } from '../../components/PurchaseRequests';
 import { ConfirmDialog } from '../../components/common';
-import { getTimeAgo } from '../../utils';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const PurchaseRequests = () => {
   const { conditionalClasses } = useThemeClasses();
-  const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
+  const { notifySuccess, notifyError } = useNotifications();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -51,7 +50,6 @@ const PurchaseRequests = () => {
 
   // Dashboard stats
   const [dashboardStats, setDashboardStats] = useState(null);
-  const [dashboardLoading, setDashboardLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -83,14 +81,11 @@ const PurchaseRequests = () => {
   // Fetch dashboard stats for purchases role
   const fetchDashboardStats = useCallback(async () => {
     if (!isPurchasesRole) return;
-    setDashboardLoading(true);
     try {
       const data = await purchaseRequestsAPI.getPurchaseDashboardStats();
       setDashboardStats(data);
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
-    } finally {
-      setDashboardLoading(false);
     }
   }, [isPurchasesRole]);
 
@@ -224,7 +219,7 @@ const PurchaseRequests = () => {
     );
   };
 
-  const handleDuplicate = async (newRequest) => {
+  const handleDuplicate = () => {
     notifySuccess('Solicitud duplicada exitosamente');
     fetchPurchaseRequests();
   };

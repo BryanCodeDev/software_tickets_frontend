@@ -8,13 +8,16 @@ import { useTheme } from './useTheme';
 export const useThemeClasses = (config) => {
   // Obtener darkMode de forma segura
   let darkMode = false;
-  let themeContext = null;
+  let toggleDarkMode = null;
+
   try {
-    themeContext = useTheme();
+    const themeContext = useTheme();
     darkMode = themeContext.darkMode;
-  } catch (e) {
+    toggleDarkMode = themeContext.toggleDarkMode;
+  } catch {
     // Si no hay contexto disponible, usar modo claro por defecto
     darkMode = false;
+    toggleDarkMode = null;
   }
 
   /**
@@ -24,7 +27,7 @@ export const useThemeClasses = (config) => {
    * @returns {string} - Clases adaptadas al tema
    */
   const getClasses = (variant, isScrolled = false) => {
-    const baseConfig = config[variant];
+    const baseConfig = config?.[variant];
     if (!baseConfig) return '';
 
     // Si es un string, retornarlo directamente
@@ -65,20 +68,11 @@ export const useThemeClasses = (config) => {
    * @returns {string} - Clases condicionales
    */
   const conditionalClasses = (themeClasses) => {
-    const light = themeClasses.light || '';
-    const dark = themeClasses.dark || '';
+    const light = themeClasses?.light || '';
+    const dark = themeClasses?.dark || '';
     
     return darkMode ? dark : light;
   };
-
-  // Obtener toggleDarkMode directamente del contexto de forma segura
-  let toggleDarkMode = null;
-  try {
-    toggleDarkMode = themeContext?.toggleDarkMode || useTheme().toggleDarkMode;
-  } catch (e) {
-    // Si no hay contexto disponible, usar null
-    toggleDarkMode = null;
-  }
 
   return {
     getClasses,
@@ -86,39 +80,6 @@ export const useThemeClasses = (config) => {
     conditionalClasses,
     darkMode,
     toggleDarkMode
-  };
-};
-
-/**
- * Hook simplificado para obtener clases básicas de tema
- * @returns {Object} - Métodos para obtener clases de tema
- */
-export const useSimpleThemeClasses = () => {
-  // Obtener darkMode de forma segura
-  let darkMode = false;
-  try {
-    darkMode = useTheme().darkMode;
-  } catch (e) {
-    // Si no hay contexto disponible, usar modo claro por defecto
-    darkMode = false;
-  }
-
-  const getThemeClasses = (lightClasses, darkClasses) => {
-    return darkMode ? darkClasses : lightClasses;
-  };
-
-  const bg = darkMode ? 'bg-gray-900' : 'bg-white';
-  const text = darkMode ? 'text-white' : 'text-gray-900';
-  const border = darkMode ? 'border-gray-700' : 'border-gray-200';
-  const hover = darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-50';
-
-  return {
-    getThemeClasses,
-    bg,
-    text,
-    border,
-    hover,
-    darkMode
   };
 };
 

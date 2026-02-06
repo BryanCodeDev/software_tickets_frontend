@@ -90,15 +90,15 @@ const DocumentChangeRequestsPage = () => {
     setShowModal(true);
   };
 
-  const handleSave = async (savedRequest) => {
+  const handleSave = async () => {
     await loadRequests();
   };
 
-  const handleSubmit = async (submittedRequest) => {
+  const handleSubmit = async () => {
     await loadRequests();
   };
 
-  const handleApprovalAction = async (approvedRequest) => {
+  const handleApprovalAction = async () => {
     await loadRequests();
   };
 
@@ -114,17 +114,6 @@ const DocumentChangeRequestsPage = () => {
   });
 
   // Configuración de estadísticas
-  const statsConfig = {
-    items: [
-      { label: 'Total', color: 'purple' },
-      { label: 'Borrador', color: 'gray' },
-      { label: 'Pendientes', color: 'yellow' },
-      { label: 'En Revisión', color: 'blue' },
-      { label: 'Aprobados', color: 'green' },
-      { label: 'Publicados', color: 'emerald' }
-    ]
-  };
-
   const calculateStats = () => {
     const stats = {
       total: requests.length,

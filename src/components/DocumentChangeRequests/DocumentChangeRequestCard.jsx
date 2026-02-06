@@ -6,9 +6,7 @@ const DocumentChangeRequestCard = ({
   request,
   onViewDetail,
   onEdit,
-  canEdit,
-  canApprove,
-  onApprove
+  canEdit
 }) => {
   const { conditionalClasses } = useThemeClasses();
 
