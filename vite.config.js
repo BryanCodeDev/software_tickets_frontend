@@ -37,6 +37,13 @@ export default defineConfig(({ mode }) => {
     preview: {
       port: env.VITE_PORT || 8080,
       host: '0.0.0.0',
+      strictPort: true,
+      mimeTypes: {
+        '.js': 'application/javascript',
+        '.mjs': 'application/javascript',
+        '.css': 'text/css',
+        '.json': 'application/json'
+      }
     },
   }
 })
