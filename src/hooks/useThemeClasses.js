@@ -1,4 +1,5 @@
-import { useTheme } from './useTheme';
+import { useContext } from 'react';
+import ThemeContext from '../context/ThemeContext';
 
 /**
  * Hook personalizado que proporciona clases automáticamente adaptadas al tema
@@ -6,19 +7,10 @@ import { useTheme } from './useTheme';
  * @returns {Object} - Objeto con métodos para obtener clases adaptadas al tema
  */
 export const useThemeClasses = (config) => {
-  // Obtener darkMode de forma segura
-  let darkMode = false;
-  let toggleDarkMode = null;
-
-  try {
-    const themeContext = useTheme();
-    darkMode = themeContext.darkMode;
-    toggleDarkMode = themeContext.toggleDarkMode;
-  } catch {
-    // Si no hay contexto disponible, usar modo claro por defecto
-    darkMode = false;
-    toggleDarkMode = null;
-  }
+  // Obtener darkMode del contexto de forma segura
+  const themeContext = useContext(ThemeContext);
+  const darkMode = themeContext?.darkMode ?? false;
+  const toggleDarkMode = themeContext?.toggleDarkMode ?? null;
 
   /**
    * Obtiene las clases para el estado actual del tema
