@@ -4,6 +4,9 @@ import { ThemeContext } from './ThemeContext';
 export const ThemeProvider = ({ children }) => {
   const [darkMode, setDarkMode] = useState(() => {
     // Initialize with saved theme or default to light
+    // Check if window is available (for SSR compatibility)
+    if (typeof window === 'undefined') return false;
+    
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     return savedTheme === 'dark' || (!savedTheme && prefersDark);

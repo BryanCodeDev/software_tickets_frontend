@@ -6,7 +6,14 @@ import { useTheme } from './useTheme';
  * @returns {Object} - Objeto con métodos para obtener clases adaptadas al tema
  */
 export const useThemeClasses = (config) => {
-  const { darkMode } = useTheme();
+  // Obtener darkMode de forma segura
+  let darkMode = false;
+  try {
+    darkMode = useTheme().darkMode;
+  } catch (e) {
+    // Si no hay contexto disponible, usar modo claro por defecto
+    darkMode = false;
+  }
 
   /**
    * Obtiene las clases para el estado actual del tema
@@ -62,12 +69,21 @@ export const useThemeClasses = (config) => {
     return darkMode ? dark : light;
   };
 
+  // Obtener toggleDarkMode directamente del contexto de forma segura
+  let toggleDarkMode = null;
+  try {
+    toggleDarkMode = useTheme().toggleDarkMode;
+  } catch (e) {
+    // Si no hay contexto disponible, usar null
+    toggleDarkMode = null;
+  }
+
   return {
     getClasses,
     combineClasses,
     conditionalClasses,
     darkMode,
-    toggleDarkMode: useTheme().toggleDarkMode
+    toggleDarkMode
   };
 };
 
@@ -76,7 +92,14 @@ export const useThemeClasses = (config) => {
  * @returns {Object} - Métodos para obtener clases de tema
  */
 export const useSimpleThemeClasses = () => {
-  const { darkMode } = useTheme();
+  // Obtener darkMode de forma segura
+  let darkMode = false;
+  try {
+    darkMode = useTheme().darkMode;
+  } catch (e) {
+    // Si no hay contexto disponible, usar modo claro por defecto
+    darkMode = false;
+  }
 
   const getThemeClasses = (lightClasses, darkClasses) => {
     return darkMode ? darkClasses : lightClasses;
