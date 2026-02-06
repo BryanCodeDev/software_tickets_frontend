@@ -7,8 +7,9 @@ import ThemeContext from '../context/ThemeContext';
  * @returns {Object} - Objeto con métodos para obtener clases adaptadas al tema
  */
 export const useThemeClasses = (config) => {
-  // Obtener darkMode del contexto de forma segura
+  // Obtener darkMode del contexto de forma segura usando useContext
   const themeContext = useContext(ThemeContext);
+  // Usar el valor del contexto con fallback a false si no existe
   const darkMode = themeContext?.darkMode ?? false;
   const toggleDarkMode = themeContext?.toggleDarkMode ?? null;
 
