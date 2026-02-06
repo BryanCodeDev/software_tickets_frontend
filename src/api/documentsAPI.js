@@ -1,6 +1,18 @@
 import api from './api';
 
 const documentsAPI = {
+  // Métodos alias para compatibilidad
+  getAll: async (params) => {
+    const response = await api.get('/documents', { params });
+    return response.data;
+  },
+  
+  getAllFolders: async () => {
+    const response = await api.get('/documents/folders');
+    return response.data;
+  },
+  
+  // Métodos principales
   fetchDocuments: async () => {
     const response = await api.get('/documents');
     return response.data;
