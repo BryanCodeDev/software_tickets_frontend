@@ -3,6 +3,7 @@ import { FaTimes, FaFileAlt, FaFolder, FaPlus, FaEdit, FaTrash, FaUpload } from 
 import documentsAPI from '../../../api/documentsAPI';
 import foldersAPI from '../../../api/documentsAPI';
 import documentChangeRequestsAPI from '../../../api/documentChangeRequestsAPI';
+import { useThemeClasses } from '../../../hooks/useThemeClasses';
 
 const DocumentChangeRequestModal = ({
   isOpen,
@@ -31,6 +32,9 @@ const DocumentChangeRequestModal = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [approvalComment, setApprovalComment] = useState('');
+
+  // Hook para clases de tema
+  const { conditionalClasses } = useThemeClasses();
 
   // Cargar datos iniciales
   useEffect(() => {
