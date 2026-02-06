@@ -111,7 +111,7 @@ const PurchaseRequestDetailModal = ({
 
   const downloadAttachment = (attachment) => {
     const link = document.createElement('a');
-    link.href = `${SERVER_BASE_URL}/${attachment.path}`;
+    link.href = `${SERVER_BASE_URL}/uploads/${attachment.path}`;
     link.download = attachment.originalName;
     document.body.appendChild(link);
     link.click();
