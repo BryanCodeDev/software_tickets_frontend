@@ -8,8 +8,10 @@ import { useTheme } from './useTheme';
 export const useThemeClasses = (config) => {
   // Obtener darkMode de forma segura
   let darkMode = false;
+  let themeContext = null;
   try {
-    darkMode = useTheme().darkMode;
+    themeContext = useTheme();
+    darkMode = themeContext.darkMode;
   } catch (e) {
     // Si no hay contexto disponible, usar modo claro por defecto
     darkMode = false;
@@ -72,7 +74,7 @@ export const useThemeClasses = (config) => {
   // Obtener toggleDarkMode directamente del contexto de forma segura
   let toggleDarkMode = null;
   try {
-    toggleDarkMode = useTheme().toggleDarkMode;
+    toggleDarkMode = themeContext?.toggleDarkMode || useTheme().toggleDarkMode;
   } catch (e) {
     // Si no hay contexto disponible, usar null
     toggleDarkMode = null;
