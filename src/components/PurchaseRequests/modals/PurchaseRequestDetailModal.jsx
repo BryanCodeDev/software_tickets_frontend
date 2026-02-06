@@ -478,7 +478,7 @@ const PurchaseRequestDetailModal = ({
                     const isCompleted = index < currentIndex;
                     const isCurrent = index === currentIndex;
                     const isRejected = step.status === 'rechazado';
-                    isForCorrection = step.status === 'rechazado_correccion';
+                    const isForCorrection = step.status === 'rechazado_correccion';
                     const timeInStep = isCurrent ? getTimeInStep(step.status) : null;
 
                     return (
