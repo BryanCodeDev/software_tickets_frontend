@@ -50,7 +50,7 @@ const DocumentChangeRequestCard = ({
         label: 'Rechazado'
       },
       'cancelado': {
-        conditionalClasses: conditionalClasses({ light: 'bg-gray-200 text-gray-500 border-gray-300', dark: 'bg-gray-700 text-gray-400 border-gray-600' }),
+        color: conditionalClasses({ light: 'bg-gray-200 text-gray-500 border-gray-300', dark: 'bg-gray-700 text-gray-400 border-gray-600' }),
         icon: FaTimes,
         label: 'Cancelado'
       }
