@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { FaTimes, FaFileAlt, FaFolder, FaPlus, FaEdit, FaTrash, FaUpload } from 'react-icons/fa';
 import documentsAPI from '../../../api/documentsAPI';
-import foldersAPI from '../../../api/documentsAPI';
 import documentChangeRequestsAPI from '../../../api/documentChangeRequestsAPI';
 import { useThemeClasses } from '../../../hooks/useThemeClasses';
 
@@ -63,8 +62,8 @@ const DocumentChangeRequestModal = ({
 
   const loadDocuments = async () => {
     try {
-      const response = await documentsAPI.getAll({ limit: 100 });
-      setDocuments(response.documents || []);
+      const response = await documentsAPI.fetchDocuments();
+      setDocuments(response || []);
     } catch (err) {
       console.error('Error loading documents:', err);
     }
@@ -72,7 +71,7 @@ const DocumentChangeRequestModal = ({
 
   const loadFolders = async () => {
     try {
-      const response = await documentsAPI.getAllFolders();
+      const response = await documentsAPI.fetchFolders();
       setFolders(response || []);
     } catch (err) {
       console.error('Error loading folders:', err);
