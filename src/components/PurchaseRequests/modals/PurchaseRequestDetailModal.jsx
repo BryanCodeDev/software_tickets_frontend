@@ -36,24 +36,7 @@ const PurchaseRequestDetailModal = ({
 
   const userRole = user?.role?.name;
 
-  // Cargar datos iniciales
-  useEffect(() => {
-    if (showDetailModal && selectedRequest?.id) {
-      loadAttachments();
-      loadComments();
-      if (selectedRequest) {
-        setCorrectionData({
-          title: selectedRequest.title || '',
-          description: selectedRequest.description || '',
-          justification: selectedRequest.justification || '',
-          quantity: selectedRequest.quantity || 1,
-          estimatedCost: selectedRequest.estimatedCost || '',
-          correctionComments: ''
-        });
-      }
-    }
-  }, [showDetailModal, selectedRequest, loadAttachments, loadComments]);
-
+  // Definir funciones de carga antes del useEffect
   const loadAttachments = useCallback(async () => {
     if (!selectedRequest?.id) return;
     try {
@@ -73,6 +56,22 @@ const PurchaseRequestDetailModal = ({
       console.error('Error loading comments:', error);
     }
   }, [selectedRequest?.id]);
+
+  // Cargar datos iniciales
+  useEffect(() => {
+    if (showDetailModal && selectedRequest?.id) {
+      loadAttachments();
+      loadComments();
+      setCorrectionData({
+        title: selectedRequest.title || '',
+        description: selectedRequest.description || '',
+        justification: selectedRequest.justification || '',
+        quantity: selectedRequest.quantity || 1,
+        estimatedCost: selectedRequest.estimatedCost || '',
+        correctionComments: ''
+      });
+    }
+  }, [showDetailModal, selectedRequest, loadAttachments, loadComments]);
 
   // Acciones de archivos
   const handleFileUpload = async (event) => {
