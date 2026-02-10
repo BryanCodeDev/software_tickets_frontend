@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef, useContext } from 'react';
+import { useCallback, useEffect, useRef, useContext } from 'react';
 import { documentsAPI } from '../api';
 import AuthContext from '../context/AuthContext';
 
@@ -9,14 +9,14 @@ export const useDocumentPermissions = () => {
   const permissionsCache = useRef(new Map());
   
   // Función para verificar si el usuario tiene rol con permisos totales
-  const hasFullAccess = React.useCallback(() => {
+  const hasFullAccess = useCallback(() => {
     if (!user?.role?.name) return false;
     const fullAccessRoles = ['Administrador', 'Técnico', 'Calidad'];
     return fullAccessRoles.includes(user.role.name);
   }, [user]);
   
   // Función para verificar si el usuario es creador
-  const isOwner = React.useCallback((item) => {
+  const isOwner = useCallback((item) => {
     return item.createdBy === user?.id;
   }, [user]);
   
@@ -97,6 +97,11 @@ export const useDocumentPermissions = () => {
     }
   }, [user?.id, clearPermissionsCache]);
   
+  // Función para obtener el caché actual de forma segura
+  const getPermissionsCache = useCallback(() => {
+    return permissionsCache.current;
+  }, []);
+
   return {
     canEdit,
     canView,
@@ -105,7 +110,7 @@ export const useDocumentPermissions = () => {
     isOwner,
     clearPermissionsCache,
     invalidatePermission,
-    permissionsCache: permissionsCache.current
+    getPermissionsCache
   };
 };
 
