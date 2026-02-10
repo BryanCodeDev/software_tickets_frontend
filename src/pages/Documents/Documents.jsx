@@ -269,10 +269,20 @@ const Documents = () => {
     loadFilteredItems();
   }, [documents, folders, currentFolder, user, filteredDocumentsList, getFilteredItems]);
 
-  // Funciones de permisos
+  // Función para verificar si el usuario puede gestionar permisos
+  const canManagePermissions = useCallback(() => {
+    return FULL_ACCESS_ROLES.includes(user?.role?.name);
+  }, [user]);
+
+  // Función para abrir modal de permisos con verificación
   const handleOpenPermissionsModal = useCallback(async (item, type) => {
+    // Verificar si el usuario tiene permisos para gestionar permisos
+    if (!canManagePermissions()) {
+      notifyWarning('No tienes permisos para gestionar permisos de documentos');
+      return;
+    }
     await handleOpenPermissionsModalHook(item, type, setSelectedItemForPermissions, setShowPermissionsModal, showNotification);
-  }, [handleOpenPermissionsModalHook, setSelectedItemForPermissions, setShowPermissionsModal, showNotification]);
+  }, [canManagePermissions, handleOpenPermissionsModalHook, setSelectedItemForPermissions, setShowPermissionsModal, showNotification]);
 
   // Actualizar permisos de escritura cuando cambia la carpeta actual o el usuario
   useEffect(() => {
@@ -742,6 +752,7 @@ const Documents = () => {
                         handleEditFolder={handleEditFolder}
                         handleDeleteFolder={handleDeleteFolder}
                         handleOpenPermissionsModal={handleOpenPermissionsModal}
+                        canManagePermissions={canManagePermissions()}
                       />
                     ))}
 

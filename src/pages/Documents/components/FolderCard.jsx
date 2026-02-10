@@ -9,7 +9,8 @@ const FolderCard = ({
   canEdit,
   handleEditFolder,
   handleDeleteFolder,
-  handleOpenPermissionsModal
+  handleOpenPermissionsModal,
+  canManagePermissions
 }) => {
   const { conditionalClasses } = useThemeClasses();
 
@@ -97,7 +98,7 @@ const FolderCard = ({
             </button>
           </>
         )}
-        {canEdit(folder) && (
+        {canManagePermissions && (
           <button
             onClick={(e) => {
               e.stopPropagation();
