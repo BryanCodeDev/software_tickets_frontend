@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext, useCallback, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import { documentsAPI } from '../../api';
-import AuthContext from '../../context/AuthContext.jsx';
+import { useAuth } from '../../hooks/useAuth';
 import { useThemeClasses } from '../../hooks/useThemeClasses.js';
 import { useNotifications } from '../../hooks/useNotifications.js';
 import { useDocumentFilters } from '../../hooks/useDocumentFilters.js';
@@ -46,7 +46,7 @@ import {
 const Documents = () => {
   const { conditionalClasses } = useThemeClasses();
   const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   
   // States
   const [documents, setDocuments] = useState([]);

@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef, useContext } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { documentsAPI } from '../api';
-import AuthContext from '../context/AuthContext';
+import { useAuth } from './useAuth';
 
 export const useDocumentPermissions = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   
   // Caché para permisos de documentos/carpetas
   const permissionsCache = useRef(new Map());
