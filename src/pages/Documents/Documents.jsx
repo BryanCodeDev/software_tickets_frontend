@@ -124,7 +124,6 @@ const Documents = () => {
     canEdit,
     canView,
     canManagePermissions,
-    calculateBulkPermissions,
     clearPermissionsCache,
     invalidatePermission
   } = documentPermissions;
