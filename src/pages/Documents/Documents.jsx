@@ -63,6 +63,11 @@ const Documents = () => {
   });
   const [confirmDialog, setConfirmDialog] = useState(null);
   
+  // Show dialog - debe definirse antes de ser usada
+  const showConfirmDialog = useCallback((message, onConfirm) => {
+    setConfirmDialog({ message, onConfirm });
+  }, []);
+  
   // Search, filters and sorting
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
@@ -397,10 +402,7 @@ const Documents = () => {
     return `Hace ${Math.floor(months / 12)}a`;
   };
   
-  // Show dialog
-  const showConfirmDialog = (message, onConfirm) => {
-    setConfirmDialog({ message, onConfirm });
-  };
+
   
   // Notification helper
   const showNotification = useCallback((message, type) => {
