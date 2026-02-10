@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef, useContext } from 'react';
 import { documentsAPI } from '../api';
 import AuthContext from '../context/AuthContext.jsx';
 
