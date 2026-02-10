@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaCheck, FaTimes, FaExclamationTriangle, FaInfo } from 'react-icons/fa';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
-import { useNotifications } from '../../context/NotificationContext';
+import { useNotifications } from '../../hooks/useNotifications';
 
 const notificationTypes = {
   success: {

@@ -1,36 +1,66 @@
-import React, { useState, useCallback } from 'react';
-import { NotificationContext } from './NotificationContext';
+import React, { createContext, useState, useCallback, useContext, useRef, useEffect } from 'react';
+
+export const NotificationContext = createContext(null);
 
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
+  const timeoutsRef = useRef(new Map());
 
-  const removeNotification = useCallback((id) => {
-    setNotifications(prev => prev.filter(notification => notification.id !== id));
+  // Limpiar timeout cuando el componente se desmonta
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+      timeoutsRef.current.clear();
+    };
+  }, []);
+
+  const removeTimeout = useCallback((id) => {
+    if (timeoutsRef.current.has(id)) {
+      clearTimeout(timeoutsRef.current.get(id));
+      timeoutsRef.current.delete(id);
+    }
   }, []);
 
   const addNotification = useCallback((notification) => {
-    const id = Date.now() + Math.random();
+    const id = typeof notification.id !== 'undefined' 
+      ? notification.id 
+      : Date.now() + Math.random();
+    
     const newNotification = {
       id,
-      type: 'info', // default type
-      duration: 5000, // default 5 seconds
+      type: 'info',
+      duration: 5000,
+      title: null,
       ...notification
     };
 
-    setNotifications(prev => [...prev, newNotification]);
+    setNotifications(prev => {
+      // Evitar duplicados
+      if (prev.some(n => n.id === id || (n.message === notification.message && n.type === notification.type))) {
+        return prev;
+      }
+      return [...prev, newNotification];
+    });
 
     // Auto-remove after duration (except for persistent notifications)
     if (newNotification.duration && newNotification.duration > 0) {
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         removeNotification(id);
       }, newNotification.duration);
+      timeoutsRef.current.set(id, timeoutId);
     }
 
     return id;
-  }, [removeNotification]);
+  }, []);
 
+  const removeNotification = useCallback((id) => {
+    removeTimeout(id);
+    setNotifications(prev => prev.filter(notification => notification.id !== id));
+  }, [removeTimeout]);
 
   const clearAllNotifications = useCallback(() => {
+    timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+    timeoutsRef.current.clear();
     setNotifications([]);
   }, []);
 
@@ -39,7 +69,7 @@ export const NotificationProvider = ({ children }) => {
     return addNotification({
       type: 'success',
       message,
-      duration: 4000, // 4 seconds for success
+      duration: 4000,
       ...options
     });
   }, [addNotification]);
@@ -57,7 +87,7 @@ export const NotificationProvider = ({ children }) => {
     return addNotification({
       type: 'warning',
       message,
-      duration: 6000, // 6 seconds for warnings
+      duration: 6000,
       ...options
     });
   }, [addNotification]);
@@ -66,7 +96,7 @@ export const NotificationProvider = ({ children }) => {
     return addNotification({
       type: 'info',
       message,
-      duration: 5000, // 5 seconds for info
+      duration: 5000,
       ...options
     });
   }, [addNotification]);
@@ -89,4 +119,4 @@ export const NotificationProvider = ({ children }) => {
   );
 };
 
-export default NotificationProvider;
+export default NotificationContext;

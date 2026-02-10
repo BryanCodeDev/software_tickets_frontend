@@ -2,7 +2,7 @@ import React, { useContext, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AuthContext, { AuthProvider } from './context/AuthContext.jsx';
 import { ThemeProvider } from './context/ThemeProvider.jsx';
-import { NotificationProvider } from './context/NotificationProvider.jsx';
+import { NotificationProvider } from './context/NotificationContext.jsx';
 import ErrorBoundary from './components/ErrorBoundary';
 import Layout from './components/Layout';
 import { LoadingSpinner } from './components/base';
