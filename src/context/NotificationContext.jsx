@@ -23,6 +23,11 @@ export const NotificationProvider = ({ children }) => {
     }
   }, []);
 
+  const removeNotification = useCallback((id) => {
+    removeTimeout(id);
+    setNotifications(prev => prev.filter(notification => notification.id !== id));
+  }, [removeTimeout]);
+
   const addNotification = useCallback((notification) => {
     const id = typeof notification.id !== 'undefined' 
       ? notification.id 
@@ -54,11 +59,6 @@ export const NotificationProvider = ({ children }) => {
 
     return id;
   }, [removeNotification]);
-
-  const removeNotification = useCallback((id) => {
-    removeTimeout(id);
-    setNotifications(prev => prev.filter(notification => notification.id !== id));
-  }, [removeTimeout]);
 
   const clearAllNotifications = useCallback(() => {
     timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
