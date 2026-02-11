@@ -21,8 +21,8 @@ export default defineConfig(({ mode }) => {
         }
       },
       chunkSizeWarningLimit: 600,
-      minify: 'terser',
-      sourcemap: false, // Deshabilitar en producción para mejor rendimiento
+      minify: 'esbuild', // Usar esbuild en lugar de terser para evitar errores de hoisting
+      sourcemap: true, // Habilitar sourcemaps para mejor depuración
       assetsInlineLimit: 4096
     },
     server: {
