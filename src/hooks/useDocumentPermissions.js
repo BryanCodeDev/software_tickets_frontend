@@ -58,7 +58,7 @@ export const useDocumentPermissions = () => {
       console.error('Error checking permission:', error);
       return { hasAccess: false, permissionType: null };
     }
-  }, [user, hasFullAccess, isOwner]);
+  }, [hasFullAccess, isOwner]);
   
   // Función para verificar si puede editar
   const canEdit = useCallback(async (item) => {

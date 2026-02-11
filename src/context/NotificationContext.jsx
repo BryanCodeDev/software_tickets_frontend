@@ -1,6 +1,5 @@
-import React, { createContext, useState, useCallback, useContext, useRef, useEffect } from 'react';
-
-export const NotificationContext = createContext(null);
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import NotificationContext from './NotificationContext.js';
 
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
@@ -8,9 +7,10 @@ export const NotificationProvider = ({ children }) => {
 
   // Limpiar timeout cuando el componente se desmonta
   useEffect(() => {
+    const timeouts = timeoutsRef.current;
     return () => {
-      timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
-      timeoutsRef.current.clear();
+      timeouts.forEach(timeout => clearTimeout(timeout));
+      timeouts.clear();
     };
   }, []);
 
@@ -51,7 +51,7 @@ export const NotificationProvider = ({ children }) => {
     }
 
     return id;
-  }, []);
+  }, [removeNotification]);
 
   const removeNotification = useCallback((id) => {
     removeTimeout(id);
@@ -118,5 +118,3 @@ export const NotificationProvider = ({ children }) => {
     </NotificationContext.Provider>
   );
 };
-
-export default NotificationContext;

@@ -1,13 +1,6 @@
-import React, { createContext, useContext } from 'react';
+// NotificationContext.js - Solo exporta el contexto
+import { createContext } from 'react';
 
-export const NotificationContext = createContext();
-
-export const useNotifications = () => {
-  const context = useContext(NotificationContext);
-  if (!context) {
-    throw new Error('useNotifications must be used within a NotificationProvider');
-  }
-  return context;
-};
+const NotificationContext = createContext(null);
 
 export default NotificationContext;

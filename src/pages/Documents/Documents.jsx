@@ -127,10 +127,8 @@ const Documents = () => {
   
   const {
     canEdit,
-    canView,
     canManagePermissions,
-    clearPermissionsCache,
-    invalidatePermission
+    clearPermissionsCache
   } = documentPermissions;
   
   // Use filters hook
@@ -243,7 +241,7 @@ const Documents = () => {
     }
     
     return { folders: filteredFolders, documents: filteredDocuments };
-  }, [filteredDocumentsList, folders, currentFolder, user, documentPermissions, canViewDocument, canViewFolder]);
+  }, [filteredDocumentsList, folders, currentFolder, documentPermissions, canViewDocument, canViewFolder]);
   
   // Load filtered items when data changes
   useEffect(() => {
