@@ -321,7 +321,7 @@ const Documents = () => {
     const handleDocumentPermissionsUpdated = () => {
       clearPermissionsCache();
       if (showPermissionsModal && selectedItemForPermissions) {
-        handleOpenPermissionsModal(selectedItemForPermissions, selectedItemForPermissions.type);
+        handleOpenPermissionsModalHook(selectedItemForPermissions, selectedItemForPermissions.type);
       }
       notifySuccess('Permisos actualizados');
     };
@@ -347,7 +347,7 @@ const Documents = () => {
       offFoldersListUpdated(handleFoldersListUpdated);
       offDocumentPermissionsUpdated(handleDocumentPermissionsUpdated);
     };
-  }, [showPermissionsModal, selectedItemForPermissions, fetchFolders, fetchDocuments, notifySuccess, handleOpenPermissionsModal, clearPermissionsCache]);
+  }, [showPermissionsModal, selectedItemForPermissions, fetchFolders, fetchDocuments, notifySuccess, handleOpenPermissionsModalHook, clearPermissionsCache]);
   
   // Calculate total unique documents
   const totalUniqueDocuments = [...new Set(documents.map(doc => doc.parentDocumentId || doc.id))].length;
@@ -399,8 +399,6 @@ const Documents = () => {
     if (months < 12) return `Hace ${months}m`;
     return `Hace ${Math.floor(months / 12)}a`;
   };
-  
-
   
   // Notification helper
   const showNotification = useCallback((message, type) => {
