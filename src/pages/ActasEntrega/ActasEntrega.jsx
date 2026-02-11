@@ -15,7 +15,7 @@ import ActaEntregaCard from './ActaEntregaCard';
 import ActaEntregaTable from './ActaEntregaTable';
 import ActaEntregaModal from './ActaEntregaModal';
 import ActaEntregaHistoryModal from './ActaEntregaHistoryModal';
-import { useNotifications } from '../../context/NotificationContext';
+import { useNotifications } from '../../hooks/useNotifications';
 
 const ActasEntrega = () => {
   const { conditionalClasses } = useThemeClasses();

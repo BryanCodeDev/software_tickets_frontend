@@ -7,7 +7,7 @@ import pdaInventoryAPI from '../../api/pdaInventoryAPI';
 import { ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 import ActaEntregaHistoryModal from '../../components/ActasEntrega/ActaEntregaHistoryModal';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
-import { useNotifications } from '../../context/NotificationContext';
+import { useNotifications } from '../../hooks/useNotifications';
 
 const PDAs = () => {
   const { conditionalClasses } = useThemeClasses();
