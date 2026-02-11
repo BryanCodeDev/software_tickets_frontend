@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import NotificationContext from './NotificationContext.js';
 
+export { NotificationContext };
+
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const timeoutsRef = useRef(new Map());
