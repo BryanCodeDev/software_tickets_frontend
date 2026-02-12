@@ -5,7 +5,6 @@ import { useThemeClasses } from '../../hooks/useThemeClasses.js';
 import { useNotifications } from '../../hooks/useNotifications.js';
 import { useDocumentFilters } from '../../hooks/useDocumentFilters.js';
 import { useDocumentPermissions } from '../../hooks/useDocumentPermissions.js';
-import { useFolders } from '../../hooks/useFolders.js';
 import { usePermissions } from '../../hooks/usePermissions.js';
 import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes, FaFileAlt, FaTag, FaSearch, FaSortAmountDown, FaSortAmountUp, FaFilePdf, FaFileWord, FaFileExcel, FaFileImage, FaFileArchive, FaClock, FaUser, FaFolder, FaFolderOpen, FaPlus, FaArrowLeft } from 'react-icons/fa';
 import { ConfirmDialog, FilterPanel } from '../../components/common';
@@ -31,7 +30,6 @@ import {
   onFolderUpdated,
   onFolderDeleted,
   onFoldersListUpdated,
-  onDocumentPermissionsUpdated,
   offDocumentCreated,
   offDocumentUpdated,
   offDocumentDeleted,
@@ -39,8 +37,7 @@ import {
   offFolderCreated,
   offFolderUpdated,
   offFolderDeleted,
-  offFoldersListUpdated,
-  offDocumentPermissionsUpdated
+  offFoldersListUpdated
 } from '../../api/socket';
 
 const Documents = () => {
@@ -104,7 +101,7 @@ const Documents = () => {
     handleUserToggle
   } = permissionsHook;
   
-  const { canEdit, canManagePermissions } = documentPermissions;
+  const { canManagePermissions } = documentPermissions;
   
   // Use filters hook
   const filteredDocumentsList = useDocumentFilters(documents, searchTerm, filterType, sortBy, sortOrder, currentFolder);

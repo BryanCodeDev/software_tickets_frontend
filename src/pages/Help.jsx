@@ -14,16 +14,8 @@ import { useThemeClasses } from '../hooks/useThemeClasses';
 
 const Help = () => {
   const [activeTab, setActiveTab] = useState('manual');
-  const [expandedSections, setExpandedSections] = useState({});
   const { conditionalClasses } = useThemeClasses();
   const navigate = useNavigate();
-
-  const toggleSection = (section) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
 
   const faqs = [
     {
@@ -724,15 +716,18 @@ const Help = () => {
                   })}>Manual de Usuario Completo</h2>
                 </div>
 
-                <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl shadow-lg p-6 mb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                <div className={conditionalClasses({
+                  light: 'bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl shadow-lg p-6 mb-6',
+                  dark: 'bg-linear-to-r from-[#4a1f6b] to-[#6b3590] rounded-xl shadow-lg p-6 mb-6'
+                })}>
+                  <div className="flex flex-col sm:flex-row items-center gap-4">
+                    <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl shrink-0">
                       <FaBook className="text-white text-2xl" />
                     </div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-white">Manual de Usuario - DuvyClass</h3>
-                      <p className="text-purple-100 mt-1">Sistema IT de Gestión Empresarial Integral</p>
-                      <p className="text-purple-200 text-sm mt-2">Versión 2.0 | Actualizado: Febrero 2026</p>
+                    <div className="text-center sm:text-left">
+                      <h3 className="text-xl sm:text-2xl font-bold text-white">Manual de Usuario - DuvyClass</h3>
+                      <p className="text-purple-100 mt-1 text-sm sm:text-base">Sistema IT de Gestión Empresarial Integral</p>
+                      <p className="text-purple-200 text-xs sm:text-sm mt-2">Versión 2.0 | Actualizado: Febrero 2026</p>
                     </div>
                   </div>
                 </div>
@@ -1039,12 +1034,12 @@ const Help = () => {
                     })}>4.2 Estados de un Ticket</h4>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
                       {[
-                        { state: 'Nuevo', color: 'bg-blue-100 text-blue-800' },
-                        { state: 'Asignado', color: 'bg-yellow-100 text-yellow-800' },
-                        { state: 'En Progreso', color: 'bg-orange-100 text-orange-800' },
-                        { state: 'Esperando', color: 'bg-purple-100 text-purple-800' },
-                        { state: 'Resuelto', color: 'bg-green-100 text-green-800' },
-                        { state: 'Cerrado', color: 'bg-gray-100 text-gray-800' }
+                        { state: 'Nuevo', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200' },
+                        { state: 'Asignado', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200' },
+                        { state: 'En Progreso', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-200' },
+                        { state: 'Esperando', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200' },
+                        { state: 'Resuelto', color: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' },
+                        { state: 'Cerrado', color: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200' }
                       ].map((status, idx) => (
                         <div key={idx} className={`p-2 rounded text-center text-xs ${status.color}`}>
                           {status.state}
@@ -1058,16 +1053,16 @@ const Help = () => {
                     })}>4.3 Prioridades</h4>
                     <div className="space-y-2">
                       {[
-                        { priority: 'Baja', color: 'bg-green-500', desc: 'Problema menor, sin urgencia' },
-                        { priority: 'Media', color: 'bg-yellow-500', desc: 'Problema regular, resolver en 24-48h' },
-                        { priority: 'Alta', color: 'bg-orange-500', desc: 'Problema importante, resolver hoy' },
-                        { priority: 'Crítica', color: 'bg-red-500', desc: 'Urgente, afecta operaciones' }
+                        { priority: 'Baja', color: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200', desc: 'Problema menor, sin urgencia' },
+                        { priority: 'Media', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200', desc: 'Problema regular, resolver en 24-48h' },
+                        { priority: 'Alta', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-200', desc: 'Problema importante, resolver hoy' },
+                        { priority: 'Crítica', color: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200', desc: 'Urgente, afecta operaciones' }
                       ].map((pri, idx) => (
                         <div key={idx} className={conditionalClasses({
                           light: 'flex items-center p-2 bg-gray-50 rounded',
-                          dark: 'flex items-center p-2 bg-gray-700 rounded'
+                          dark: 'flex items-center p-2 bg-gray-700/50 rounded'
                         })}>
-                          <div className={`w-3 h-3 rounded-full ${pri.color} mr-2`}></div>
+                          <div className={`w-3 h-3 rounded-full ${pri.color.split(' ')[0]} mr-2`}></div>
                           <span className={conditionalClasses({
                             light: 'font-medium text-gray-900 mr-2',
                             dark: 'font-medium text-gray-100 mr-2'
@@ -1461,7 +1456,10 @@ const Help = () => {
                         light: 'bg-gray-50 p-4 flex items-start gap-4',
                         dark: 'bg-gray-700 p-4 flex items-start gap-4'
                       })}>
-                        <div className={`p-3 rounded-lg ${role.color}`}>
+                        <div className={`p-3 rounded-lg ${conditionalClasses({
+                          light: role.color,
+                          dark: role.color.replace('bg-', 'bg-opacity-50 ').replace('100', '800')
+                        })}`}>
                           {role.icon}
                         </div>
                         <div className="flex-1">
@@ -1530,7 +1528,10 @@ const Help = () => {
                         light: 'p-4 border-b border-gray-200 flex items-center gap-3',
                         dark: 'p-4 border-b border-gray-600 flex items-center gap-3'
                       })}>
-                        <div className={`p-2 rounded-lg ${module.color}`}>
+                        <div className={`p-2 rounded-lg ${conditionalClasses({
+                          light: module.color,
+                          dark: module.color.replace('bg-', 'bg-opacity-50 ').replace('100', '800')
+                        })}`}>
                           {module.icon}
                         </div>
                         <div>
