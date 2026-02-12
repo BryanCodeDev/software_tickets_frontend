@@ -103,6 +103,7 @@ export const useDocumentPermissions = () => {
   }, []);
 
   return {
+    checkPermission,
     canEdit,
     canView,
     canManagePermissions,
