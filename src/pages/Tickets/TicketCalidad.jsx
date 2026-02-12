@@ -169,8 +169,8 @@ const TicketCalidad = () => {
       if (calidadUsersFiltered.length === 0) {
         setCalidadUsers(allAssignableUsers);
       }
-    } catch (err) {
-      console.error('Error al cargar usuarios:', err);
+    } catch {
+      // Error silencioso - usuarios sin permiso para ver otros usuarios
     }
   }, []);
 

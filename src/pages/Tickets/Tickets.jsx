@@ -150,6 +150,7 @@ const Tickets = () => {
   const fetchUsers = useCallback(async () => {
     try {
       // Cargar usuarios siempre para que todos los roles puedan ver el listado
+      // Los empleados pueden ver técnicos para asignar tickets
       const users = await usersAPI.fetchUsers();
       const techUsers = users.filter(u => u.Role?.name === 'Técnico');
       const adminUsers = users.filter(u => u.Role?.name === 'Administrador');
@@ -179,9 +180,14 @@ const Tickets = () => {
         setAdministrators(allAssignableUsers);
       }
     } catch (err) {
-      console.error('Error al cargar usuarios:', err);
+      // Los empleados pueden no tener permiso para ver usuarios
+      // Esto es esperado, no mostrar error
+      if (userRole !== 'Empleado') {
+        console.error('Error al cargar usuarios:', err);
+      }
+      // Si falla, usar arrays vacíos - los empleados no asignan tickets
     }
-  }, []);
+  }, [userRole]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

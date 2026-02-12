@@ -12,8 +12,8 @@ export const usePermissions = (user) => {
     try {
       const usersData = await documentsAPI.fetchUsers();
       setAllUsers(usersData || []);
-    } catch (err) {
-      console.error('Error fetching users:', err);
+    } catch {
+      // Error silencioso - usuarios sin permiso para ver otros usuarios
       setAllUsers([]);
     }
   }, []);
