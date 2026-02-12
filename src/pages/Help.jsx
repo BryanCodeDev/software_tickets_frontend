@@ -746,18 +746,18 @@ const Help = () => {
                   <div className="p-4 pt-0">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                       <ul className="space-y-2">
-                        <li><span className="text-[#662d91]">1. </span>Introducción al Sistema</li>
-                        <li><span className="text-[#662d91]">2. </span>Primeros Pasos</li>
-                        <li><span className="text-[#662d91]">3. </span>Navegación y Interfaz</li>
-                        <li><span className="text-[#662d91]">4. </span>Roles y Permisos</li>
-                        <li><span className="text-[#662d91]">5. </span>Módulos del Sistema</li>
+                        <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>1. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Introducción al Sistema</span></li>
+                        <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>2. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Primeros Pasos</span></li>
+                        <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>3. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Navegación y Interfaz</span></li>
+                        <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>4. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Roles y Permisos</span></li>
+                        <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>5. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Módulos del Sistema</span></li>
                       </ul>
                       <ul className="space-y-2">
-                        <li><span className="text-[#662d91]">6. </span>Guía de Tickets</li>
-                        <li><span className="text-[#662d91]">7. </span>Gestión de Inventario</li>
-                        <li><span className="text-[#662d91]">8. </span>Documentos y Cambios</li>
-                        <li><span className="text-[#662d91]">9. </span>Solicitudes de Compra</li>
-                        <li><span className="text-[#662d91]">10. </span>Gestión de Calidad</li>
+                        <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>6. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Guía de Tickets</span></li>
+                        <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>7. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Gestión de Inventario</span></li>
+                        <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>8. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Documentos y Cambios</span></li>
+                        <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>9. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Solicitudes de Compra</span></li>
+                        <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>10. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Gestión de Calidad</span></li>
                       </ul>
                     </div>
                   </div>
