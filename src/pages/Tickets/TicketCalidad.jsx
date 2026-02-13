@@ -249,11 +249,11 @@ const TicketCalidad = () => {
     let filtered = [...tickets];
 
     // Role-based filtering
-    if (!['Administrador', 'Técnico', 'Calidad'].includes(userRole)) {
+    if (!['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa', 'Jefe', 'Compras'].includes(userRole)) {
       // Otros roles solo ven sus propios tickets
       filtered = filtered.filter(ticket => ticket.userId === user?.id);
     }
-    // Administrador, Técnico y Calidad ven todos los tickets
+    // Administrador, Técnico, Calidad, Jefe, Compras y Coordinador/a Administrativa ven todos los tickets
 
     if (searchTerm) {
       filtered = filtered.filter(ticket =>

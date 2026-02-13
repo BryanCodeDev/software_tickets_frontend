@@ -60,14 +60,14 @@ const PurchaseRequestCard = ({ request, onViewDetail, onEdit, onDelete, user, us
   const canEdit = () => {
     const editableStatuses = ['solicitado', 'rechazado_correccion'];
     if (!editableStatuses.includes(request.status)) return false;
-    if (userRole === 'Administrador') return true;
+    if (['Administrador', 'Jefe', 'Coordinadora Administrativa', 'Técnico', 'Calidad'].includes(userRole)) return true;
     return request.userId === user?.id;
   };
 
   const canDelete = () => {
     const deletableStatuses = ['solicitado', 'rechazado_correccion'];
     if (!deletableStatuses.includes(request.status)) return false;
-    if (userRole === 'Administrador') return true;
+    if (['Administrador', 'Jefe', 'Coordinadora Administrativa', 'Técnico', 'Calidad'].includes(userRole)) return true;
     return request.userId === user?.id;
   };
 

@@ -268,8 +268,8 @@ const Tickets = () => {
     if (!Array.isArray(tickets)) return [];
     let filtered = [...tickets];
 
-    // Filtro por permisos
-    const privilegedRoles = ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa'];
+    // Filtro por permisos - Solo Administrador, Técnico y Coordinador/a Administrativa ven todos los tickets
+    const privilegedRoles = ['Administrador', 'Técnico', 'Coordinadora Administrativa'];
     if (!privilegedRoles.includes(userRole) && !checkPermission('tickets', 'view_all')) {
       filtered = filtered.filter(ticket => ticket.userId === user?.id);
     }
@@ -320,29 +320,29 @@ const Tickets = () => {
     return filtered;
   }, [tickets, searchTerm, filterStatus, filterPriority, titleFilter, sortBy, sortOrder, userRole, user?.id, checkPermission]);
 
-  // Funciones de permisos (definidas antes de usarlas)
+  // Funciones de permisos - Solo Administrador, Técnico y Coordinador/a Administrativa tienen acceso completo
+  const privilegedRolesForCRUD = ['Administrador', 'Técnico', 'Coordinadora Administrativa'];
   const canCreate = checkPermission('tickets', 'create') ||
-                   ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa'].includes(userRole);
+                   privilegedRolesForCRUD.includes(userRole);
 
   const canEditTicket = useCallback((ticket) => {
-    const privilegedRoles = ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa'];
-    if (privilegedRoles.includes(userRole)) return true;
+    if (privilegedRolesForCRUD.includes(userRole)) return true;
     if (checkPermission('tickets', 'edit')) return true;
     if (ticket.userId === user?.id && checkPermission('tickets', 'edit_own')) return true;
     return false;
   }, [userRole, user?.id, checkPermission]);
 
   const canDeleteTicket = useCallback((ticket) => {
-    const privilegedRoles = ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa'];
-    if (privilegedRoles.includes(userRole)) return true;
+    if (privilegedRolesForCRUD.includes(userRole)) return true;
     if (checkPermission('tickets', 'delete')) return true;
     if (ticket.userId === user?.id && checkPermission('tickets', 'delete_own')) return true;
     return false;
   }, [userRole, user?.id, checkPermission]);
 
   const canSendMessage = useCallback((ticket) => {
-    const privilegedRoles = ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa', 'Empleado'];
-    if (privilegedRoles.includes(userRole)) return true;
+    // Todos los roles pueden enviar mensajes en tickets
+    const messagingRoles = ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa', 'Empleado', 'Jefe', 'Compras'];
+    if (messagingRoles.includes(userRole)) return true;
     if (checkPermission('tickets', 'comment')) return true;
     if (ticket.userId === user?.id && checkPermission('tickets', 'comment_own')) return true;
     return false;

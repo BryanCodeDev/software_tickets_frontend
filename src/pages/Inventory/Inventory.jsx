@@ -47,8 +47,13 @@ const Inventory = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyItem, setHistoryItem] = useState(null);
   const [historyLoading, setHistoryLoading] = useState(false);
-  const { user: _user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
+  const userRole = user?.role?.name;
+
+  // Roles con acceso completo al inventario: Administrador, Técnico y Coordinador/a Administrativa
+  const inventoryPrivilegedRoles = ['Administrador', 'Técnico', 'Coordinadora Administrativa'];
+  const hasInventoryAccess = inventoryPrivilegedRoles.includes(userRole);
 
   const fetchInventory = useCallback(async () => {
     try {
@@ -324,9 +329,10 @@ const Inventory = () => {
     notifySuccess('Inventario exportado exitosamente');
   };
 
-  const canCreate = checkPermission('inventory', 'create');
-  const canEdit = checkPermission('inventory', 'edit');
-  const canDelete = checkPermission('inventory', 'delete');
+  // Permisos de inventario - solo Administrador, Técnico y Coordinador/a Administrativa tienen acceso completo
+  const canCreate = hasInventoryAccess && checkPermission('inventory', 'create');
+  const canEdit = hasInventoryAccess && checkPermission('inventory', 'edit');
+  const canDelete = hasInventoryAccess && checkPermission('inventory', 'delete');
   const _canView = checkPermission('inventory', 'view');
 
   const showConfirmDialog = (message, onConfirm) => {

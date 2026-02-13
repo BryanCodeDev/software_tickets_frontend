@@ -49,8 +49,13 @@ const Tablets = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyItem, setHistoryItem] = useState(null);
   const [historyLoading, setHistoryLoading] = useState(false);
-  const { user: _user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
+  const userRole = user?.role?.name;
+
+  // Roles con acceso completo al inventario: Administrador, Técnico y Coordinador/a Administrativa
+  const inventoryPrivilegedRoles = ['Administrador', 'Técnico', 'Coordinadora Administrativa'];
+  const hasInventoryAccess = inventoryPrivilegedRoles.includes(userRole);
 
   const fetchTablets = useCallback(async () => {
     try {
@@ -319,9 +324,10 @@ const Tablets = () => {
     notifySuccess('Tablets exportadas exitosamente');
   };
 
-  const canCreate = checkPermission('tablets', 'create');
-  const canEdit = checkPermission('tablets', 'edit');
-  const canDelete = checkPermission('tablets', 'delete');
+  // Permisos de inventario - solo Administrador, Técnico y Coordinador/a Administrativa tienen acceso completo
+  const canCreate = hasInventoryAccess && checkPermission('tablets', 'create');
+  const canEdit = hasInventoryAccess && checkPermission('tablets', 'edit');
+  const canDelete = hasInventoryAccess && checkPermission('tablets', 'delete');
   const _canView = checkPermission('tablets', 'view');
 
   const showConfirmDialog = (message, onConfirm) => {

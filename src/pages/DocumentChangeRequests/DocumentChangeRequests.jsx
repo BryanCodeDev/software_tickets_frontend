@@ -47,7 +47,7 @@ const DocumentChangeRequestsPage = () => {
   }, [loadRequests]);
 
   // Verificar permisos
-  const canCreate = ['Administrador', 'Calidad', 'Jefe', 'Técnico'].includes(userRole);
+  const canCreate = ['Administrador', 'Calidad', 'Jefe', 'Técnico', 'Coordinadora Administrativa', 'Compras'].includes(userRole);
   
   const canEdit = useCallback((request) => {
     if (!request) return false;
@@ -56,13 +56,13 @@ const DocumentChangeRequestsPage = () => {
       return true;
     }
     // Roles con permisos totales
-    return ['Administrador', 'Calidad', 'Jefe'].includes(userRole);
+    return ['Administrador', 'Calidad', 'Jefe', 'Coordinadora Administrativa', 'Técnico'].includes(userRole);
   }, [user, userRole]);
 
   const canApprove = useCallback((request) => {
     if (!request) return false;
     // Roles que pueden aprobar
-    return ['Administrador', 'Calidad', 'Jefe'].includes(userRole);
+    return ['Administrador', 'Calidad', 'Jefe', 'Coordinadora Administrativa', 'Compras'].includes(userRole);
   }, [userRole]);
 
   // Handlers

@@ -27,6 +27,10 @@ const Roles = () => {
   const [confirmDialog, setConfirmDialog] = useState(null);
   const { user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
+  const userRole = user?.role?.name;
+
+  // Solo Administrador y Técnico tienen acceso completo a la gestión de roles
+  const hasRolesAccess = userRole === 'Administrador' || userRole === 'Técnico';
   
   // Estados adicionales para mejor gestión
   const [showPermissionPreview, setShowPermissionPreview] = useState(false);
@@ -66,7 +70,8 @@ const Roles = () => {
   }, [notifyError]);
 
   useEffect(() => {
-    if (user && checkPermission('roles', 'view')) {
+    // Solo Administrador y Técnico pueden ver y gestionar roles
+    if (user && hasRolesAccess) {
       fetchRoles();
       fetchPermissions();
     }
@@ -371,7 +376,8 @@ const Roles = () => {
     }
   };
 
-  if (!user || !checkPermission('roles', 'view')) {
+  // Solo Administrador y Técnico tienen acceso a la gestión de roles
+  if (!user || !hasRolesAccess) {
     return (
       <div className={conditionalClasses({
         light: "container mx-auto p-6 bg-white min-h-screen",
@@ -498,7 +504,7 @@ const Roles = () => {
                   </div>
                 )}
                 
-                {checkPermission('roles', 'create') && (
+                {hasRolesAccess && checkPermission('roles', 'create') && (
                   <button
                     onClick={handleCreate}
                     className={conditionalClasses({
@@ -685,7 +691,7 @@ const Roles = () => {
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {checkPermission('roles', 'edit') && (
+                      {hasRolesAccess && checkPermission('roles', 'edit') && (
                         <button
                           onClick={() => handleEdit(role)}
                           className={conditionalClasses({
@@ -712,7 +718,7 @@ const Roles = () => {
                         <span className="hidden sm:inline">Ver</span>
                       </button>
                       
-                      {checkPermission('roles', 'delete') && (
+                      {hasRolesAccess && checkPermission('roles', 'delete') && (
                         <button
                           onClick={() => handleDelete(role.id)}
                           className={conditionalClasses({
@@ -1256,7 +1262,7 @@ const Roles = () => {
                 >
                   Cerrar
                 </button>
-                {checkPermission('roles', 'edit') && selectedRoleForPreview.name !== 'Administrador' && (
+                {hasRolesAccess && checkPermission('roles', 'edit') && selectedRoleForPreview.name !== 'Administrador' && (
                   <button
                     onClick={() => {
                       setShowPermissionPreview(false);

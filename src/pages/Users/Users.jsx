@@ -77,7 +77,8 @@ const Users = () => {
   }, []);
 
   useEffect(() => {
-    if (user && user.role?.name === 'Administrador') {
+    // Solo Administrador y Técnico tienen acceso completo a usuarios
+    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Técnico')) {
       fetchUsers();
       fetchUniqueITs();
       fetchInventoryItems();
@@ -403,7 +404,8 @@ const Users = () => {
     setConfirmDialog(null);
   };
 
-  if (!user || user.role?.name !== 'Administrador') {
+  // Solo Administrador y Técnico tienen acceso completo a la gestión de usuarios
+  if (!user || (user.role?.name !== 'Administrador' && user.role?.name !== 'Técnico')) {
     return <div className="container mx-auto p-6">Acceso Denegado</div>;
   }
 

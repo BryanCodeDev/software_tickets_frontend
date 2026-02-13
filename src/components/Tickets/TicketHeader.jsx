@@ -43,9 +43,9 @@ const TicketHeader = ({
 
         <div className="flex flex-wrap gap-2 lg:gap-3">
           {((checkPermission('tickets', 'view_stats') || checkPermission('tickets', 'export') ||
-            userRole === 'Administrador' || userRole === 'Técnico')) && (
+            userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Coordinadora Administrativa')) && (
             <>
-              {(checkPermission('tickets', 'view_stats') || userRole === 'Administrador' || userRole === 'Técnico') && (
+              {(checkPermission('tickets', 'view_stats') || userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Coordinadora Administrativa') && (
                 <button
                   onClick={() => setShowStats(!showStats)}
                   className={conditionalClasses({
@@ -57,7 +57,7 @@ const TicketHeader = ({
                   <span className="hidden sm:inline">Estadísticas</span>
                 </button>
               )}
-              {(checkPermission('tickets', 'export') || userRole === 'Administrador' || userRole === 'Técnico') && (
+              {(checkPermission('tickets', 'export') || userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Coordinadora Administrativa') && (
                 <button
                   onClick={exportToExcel}
                   className={conditionalClasses({

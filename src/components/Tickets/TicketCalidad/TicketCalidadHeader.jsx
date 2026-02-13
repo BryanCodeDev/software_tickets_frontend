@@ -40,7 +40,7 @@ const TicketCalidadHeader = React.memo(({
         </div>
 
         <div className="flex flex-wrap gap-2 lg:gap-3">
-          {(userRole === 'Administrador' || userRole === 'Técnico') && (
+          {(userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Jefe' || userRole === 'Compras' || userRole === 'Coordinadora Administrativa') && (
             <>
               <button
                 onClick={() => setShowStats(!showStats)}

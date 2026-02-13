@@ -51,8 +51,13 @@ const CorporatePhones = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyItem, setHistoryItem] = useState(null);
   const [historyLoading, setHistoryLoading] = useState(false);
-  const { user: _user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const { checkPermission } = useAuth();
+  const userRole = user?.role?.name;
+
+  // Roles con acceso completo al inventario: Administrador, Técnico y Coordinador/a Administrativa
+  const inventoryPrivilegedRoles = ['Administrador', 'Técnico', 'Coordinadora Administrativa'];
+  const hasInventoryAccess = inventoryPrivilegedRoles.includes(userRole);
 
   const fetchCorporatePhones = useCallback(async () => {
     try {
@@ -310,9 +315,10 @@ const CorporatePhones = () => {
     notifySuccess('Teléfonos corporativos exportados exitosamente');
   };
 
-  const canCreate = checkPermission('corporate_phones', 'create');
-  const canEdit = checkPermission('corporate_phones', 'edit');
-  const canDelete = checkPermission('corporate_phones', 'delete');
+  // Permisos de inventario - solo Administrador, Técnico y Coordinador/a Administrativa tienen acceso completo
+  const canCreate = hasInventoryAccess && checkPermission('corporate_phones', 'create');
+  const canEdit = hasInventoryAccess && checkPermission('corporate_phones', 'edit');
+  const canDelete = hasInventoryAccess && checkPermission('corporate_phones', 'delete');
   const _canView = checkPermission('corporate_phones', 'view');
 
   const showConfirmDialog = (message, onConfirm) => {

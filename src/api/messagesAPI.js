@@ -1,13 +1,13 @@
 import api from './api';
 
 const messagesAPI = {
-  fetchMessages: async (ticketId) => {
-    const response = await api.get(`/messages/ticket/${ticketId}`);
+  fetchMessages: async (ticketId, ticketType = 'soporte') => {
+    const response = await api.get(`/messages/ticket/${ticketId}?ticketType=${ticketType}`);
     return response.data;
   },
 
-  createMessage: async (ticketId, messageData) => {
-    const response = await api.post(`/messages/ticket/${ticketId}`, messageData);
+  createMessage: async (ticketId, messageData, ticketType = 'soporte') => {
+    const response = await api.post(`/messages/ticket/${ticketId}?ticketType=${ticketType}`, messageData);
     return response.data;
   },
 

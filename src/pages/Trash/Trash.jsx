@@ -54,14 +54,16 @@ const Trash = () => {
   }, []);
 
   useEffect(() => {
-    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Tecnico')) {
+    // Solo Administrador y Técnico tienen acceso a la papelera
+    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Técnico')) {
       fetchTrashItems(1);
       fetchStats();
     }
   }, [user, fetchTrashItems, fetchStats]);
 
   useEffect(() => {
-    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Tecnico')) {
+    // Solo Administrador y Técnico tienen acceso a la papelera
+    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Técnico')) {
       setPagination(prev => ({ ...prev, current: 1 }));
       fetchTrashItems(1);
     }
@@ -185,7 +187,8 @@ const Trash = () => {
     setShowDetailModal(true);
   };
 
-  if (!user || (user.role?.name !== 'Administrador' && user.role?.name !== 'Tecnico')) {
+  // Solo Administrador y Técnico tienen acceso a la papelera
+  if (!user || (user.role?.name !== 'Administrador' && user.role?.name !== 'Técnico')) {
     return (
       <div className={conditionalClasses({
         light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-6 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8',
