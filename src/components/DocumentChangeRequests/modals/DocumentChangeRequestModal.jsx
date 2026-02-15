@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaTimes, FaFileAlt, FaFolder, FaPlus, FaEdit, FaTrash, FaUpload } from 'react-icons/fa';
+import { FaTimes, FaFileAlt, FaFolder, FaPlus, FaEdit, FaTrash, FaUpload, FaCheck } from 'react-icons/fa';
 import documentsAPI from '../../../api/documentsAPI';
 import documentChangeRequestsAPI from '../../../api/documentChangeRequestsAPI';
 import { useThemeClasses } from '../../../hooks/useThemeClasses';
@@ -198,7 +198,10 @@ const DocumentChangeRequestModal = ({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className={`
         rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto
-        ${documentChangeRequestsAPI ? 'bg-gray-800' : 'bg-white'}
+        ${conditionalClasses({
+          light: 'bg-white',
+          dark: 'bg-gray-800'
+        })}
       `}>
         {/* Header */}
         <div className={`
@@ -237,15 +240,24 @@ const DocumentChangeRequestModal = ({
         {/* Body */}
         <div className="p-4 lg:p-6">
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-red-100 text-red-700 border border-red-200">
+            <div className={`mb-4 p-3 rounded-lg border ${conditionalClasses({
+              light: 'bg-red-100 text-red-700 border-red-200',
+              dark: 'bg-red-900/30 text-red-300 border-red-700'
+            })}`}>
               {error}
             </div>
           )}
 
           {/* Workflow Status Badge */}
           {request && (
-            <div className="mb-4 p-3 rounded-lg bg-purple-100 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700">
-              <span className="font-semibold text-purple-700 dark:text-purple-300">
+            <div className={`mb-4 p-3 rounded-lg border ${conditionalClasses({
+              light: 'bg-purple-100 border-purple-200',
+              dark: 'bg-purple-900/30 border-purple-700'
+            })}`}>
+              <span className={`font-semibold ${conditionalClasses({
+                light: 'text-purple-700',
+                dark: 'text-purple-300'
+              })}`}>
                 Estado: {request.workflowStatus} | Paso: {request.currentStep} de {request.totalSteps}
               </span>
             </div>
@@ -611,7 +623,10 @@ const DocumentChangeRequestModal = ({
                     {selectedFile ? (
                       <div className="flex items-center justify-center gap-2">
                         <FaFileAlt className="w-8 h-8 text-purple-500" />
-                        <span>{selectedFile.name}</span>
+                        <span className={conditionalClasses({
+                          light: 'text-gray-700',
+                          dark: 'text-gray-200'
+                        })}>{selectedFile.name}</span>
                       </div>
                     ) : (
                       <div className="flex flex-col items-center gap-2">
