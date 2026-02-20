@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { FaTimes, FaHistory, FaUser, FaCalendarAlt, FaEdit, FaPlus, FaTrash, FaEye } from 'react-icons/fa';
-import { useThemeClasses } from '../../hooks/useThemeClasses';
 
+// Componente de historial con manejo robusto de errores
 const ActaEntregaHistoryModal = ({
   show,
   onClose,
@@ -10,7 +10,6 @@ const ActaEntregaHistoryModal = ({
   apiCall,
   moduleName
 }) => {
-  const { conditionalClasses } = useThemeClasses();
   const [historyData, setHistoryData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -19,7 +18,7 @@ const ActaEntregaHistoryModal = ({
     if (show && apiCall) {
       fetchHistory();
     }
-  }, [show, apiCall, fetchHistory]);
+  }, [show, apiCall]);
 
   const fetchHistory = useCallback(async () => {
     setLoading(true);
@@ -121,10 +120,7 @@ const ActaEntregaHistoryModal = ({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-      <div className={conditionalClasses({
-        light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-hidden border-2 border-gray-200 animate-scale-in',
-        dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-hidden border-2 border-gray-700 animate-scale-in'
-      })}>
+      <div className="bg-white dark:bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-hidden border-2 border-gray-200 dark:border-gray-700 animate-scale-in">
         {/* Header */}
         <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6">
           <div className="flex items-center justify-between">
@@ -163,10 +159,7 @@ const ActaEntregaHistoryModal = ({
             <div className="flex items-center justify-center p-8 lg:p-12">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#662d91] mx-auto mb-4"></div>
-                <p className={conditionalClasses({
-                  light: 'text-gray-600',
-                  dark: 'text-gray-300'
-                })}>Cargando historial...</p>
+                <p className="text-gray-600 dark:text-gray-300">Cargando historial...</p>
               </div>
             </div>
           ) : error ? (
@@ -186,78 +179,41 @@ const ActaEntregaHistoryModal = ({
              !historyData.history || historyData.history.length === 0) ? (
             <div className="flex items-center justify-center p-8 lg:p-12">
               <div className="text-center">
-                <FaHistory className={conditionalClasses({
-                  light: 'w-16 h-16 text-gray-300 mx-auto mb-4',
-                  dark: 'w-16 h-16 text-gray-500 mx-auto mb-4'
-                })} />
-                <p className={conditionalClasses({
-                  light: 'text-gray-600 text-lg',
-                  dark: 'text-gray-300 text-lg'
-                })}>No hay cambios registrados</p>
-                <p className={conditionalClasses({
-                  light: 'text-gray-500 text-sm',
-                  dark: 'text-gray-400 text-sm'
-                })}>El historial aparecerá aquí cuando se realicen cambios</p>
+                <FaHistory className="w-16 h-16 text-gray-300 dark:text-gray-500 mx-auto mb-4" />
+                <p className="text-gray-600 dark:text-gray-300 text-lg">No hay cambios registrados</p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">El historial aparecerá aquí cuando se realicen cambios</p>
               </div>
             </div>
           ) : (
             <div className="p-4 lg:p-6 space-y-4">
               {(historyData.history || historyData).map((record, index) => (
-                <div key={record.id || index} className={conditionalClasses({
-                  light: 'bg-gray-50 rounded-xl p-4 lg:p-5 border border-gray-200',
-                  dark: 'bg-gray-700/50 rounded-xl p-4 lg:p-5 border border-gray-600'
-                })}>
+                <div key={record.id || index} className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 lg:p-5 border border-gray-200 dark:border-gray-600">
                   {/* Header del registro */}
-                  <div className={conditionalClasses({
-                    light: 'flex items-start justify-between mb-4 pb-3 border-b border-gray-200',
-                    dark: 'flex items-start justify-between mb-4 pb-3 border-b border-gray-600'
-                  })}>
+                  <div className="flex items-start justify-between mb-4 pb-3 border-b border-gray-200 dark:border-gray-600">
                     <div className="flex items-center gap-3">
-                      <div className={conditionalClasses({
-                        light: 'w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-gray-200',
-                        dark: 'w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center border border-gray-600'
-                      })}>
+                      <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center border border-gray-200 dark:border-gray-600">
                         {getActionIcon(record.action)}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className={conditionalClasses({
-                            light: 'font-bold text-gray-900',
-                            dark: 'font-bold text-white'
-                          })}>
+                          <h3 className="font-bold text-gray-900 dark:text-white">
                             {getActionLabel(record.action)}
                           </h3>
-                          <span className={conditionalClasses({
-                            light: `px-2 py-1 text-xs font-medium rounded-full ${
-                              record.action === 'CREATE' ? 'bg-green-100 text-green-800' :
-                              record.action === 'UPDATE' ? 'bg-blue-100 text-blue-800' :
-                              'bg-red-100 text-red-800'
-                            }`,
-                            dark: `px-2 py-1 text-xs font-medium rounded-full ${
-                              record.action === 'CREATE' ? 'bg-green-900/50 text-green-300' :
-                              record.action === 'UPDATE' ? 'bg-blue-900/50 text-blue-300' :
-                              'bg-red-900/50 text-red-300'
-                            }`
-                          })}>
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            record.action === 'CREATE' ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300' :
+                            record.action === 'UPDATE' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300' :
+                            'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300'
+                          }`}>
                             {record.action}
                           </span>
                         </div>
-                        <div className={conditionalClasses({
-                          light: 'flex items-center gap-4 mt-1 text-sm text-gray-600',
-                          dark: 'flex items-center gap-4 mt-1 text-sm text-gray-400'
-                        })}>
+                        <div className="flex items-center gap-4 mt-1 text-sm text-gray-600 dark:text-gray-400">
                           <div className="flex items-center gap-1">
-                            <FaUser className={conditionalClasses({
-                              light: 'w-3 h-3 text-gray-500',
-                              dark: 'w-3 h-3 text-gray-400'
-                            })} />
+                            <FaUser className="w-3 h-3 text-gray-500 dark:text-gray-400" />
                             {record.user || record.userName || 'Sistema'}
                           </div>
                           <div className="flex items-center gap-1">
-                            <FaCalendarAlt className={conditionalClasses({
-                              light: 'w-3 h-3 text-gray-500',
-                              dark: 'w-3 h-3 text-gray-400'
-                            })} />
+                            <FaCalendarAlt className="w-3 h-3 text-gray-500 dark:text-gray-400" />
                             {formatDate(record.date || record.createdAt)}
                           </div>
                         </div>
@@ -268,45 +224,24 @@ const ActaEntregaHistoryModal = ({
                   {/* Cambios específicos */}
                   {record.changes && record.changes.length > 0 ? (
                     <div className="space-y-3">
-                      <h4 className={conditionalClasses({
-                        light: 'font-semibold text-gray-900 text-sm',
-                        dark: 'font-semibold text-white text-sm'
-                      })}>Campos Modificados:</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Campos Modificados:</h4>
                       {record.changes.map((change, changeIndex) => (
-                        <div key={changeIndex} className={conditionalClasses({
-                          light: 'bg-white rounded-lg p-3 border border-gray-200',
-                          dark: 'bg-gray-800 rounded-lg p-3 border border-gray-600'
-                        })}>
+                        <div key={changeIndex} className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
                           <div className="flex items-center gap-2 mb-2">
-                            <span className={conditionalClasses({
-                              light: 'font-medium text-gray-700 text-sm',
-                              dark: 'font-medium text-gray-300 text-sm'
-                            })}>
+                            <span className="font-medium text-gray-700 dark:text-gray-300 text-sm">
                               {formatFieldName(change.field)}
                             </span>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                              <p className={conditionalClasses({
-                                light: 'text-xs text-gray-500 mb-1',
-                                dark: 'text-xs text-gray-400 mb-1'
-                              })}>Valor Anterior:</p>
-                              <p className={conditionalClasses({
-                                light: 'text-sm text-gray-900 bg-red-50 p-2 rounded border-l-4 border-red-400',
-                                dark: 'text-sm text-white bg-red-900/50 p-2 rounded border-l-4 border-red-500'
-                              })}>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Valor Anterior:</p>
+                              <p className="text-sm text-gray-900 dark:text-white bg-red-50 dark:bg-red-900/50 p-2 rounded border-l-4 border-red-400 dark:border-red-500">
                                 {formatValue(change.oldValue)}
                               </p>
                             </div>
                             <div>
-                              <p className={conditionalClasses({
-                                light: 'text-xs text-gray-500 mb-1',
-                                dark: 'text-xs text-gray-400 mb-1'
-                              })}>Valor Nuevo:</p>
-                              <p className={conditionalClasses({
-                                light: 'text-sm text-gray-900 bg-green-50 p-2 rounded border-l-4 border-green-400',
-                                dark: 'text-sm text-white bg-green-900/50 p-2 rounded border-l-4 border-green-500'
-                              })}>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Valor Nuevo:</p>
+                              <p className="text-sm text-gray-900 dark:text-white bg-green-50 dark:bg-green-900/50 p-2 rounded border-l-4 border-green-400 dark:border-green-500">
                                 {formatValue(change.newValue)}
                               </p>
                             </div>
@@ -315,50 +250,26 @@ const ActaEntregaHistoryModal = ({
                       ))}
                     </div>
                   ) : record.action === 'CREATE' ? (
-                    <div className={conditionalClasses({
-                      light: 'bg-green-50 border border-green-200 rounded-lg p-3',
-                      dark: 'bg-green-900/50 border border-green-700 rounded-lg p-3'
-                    })}>
-                      <p className={conditionalClasses({
-                        light: 'text-sm text-green-800 font-medium',
-                        dark: 'text-sm text-green-300 font-medium'
-                      })}>
+                    <div className="bg-green-50 dark:bg-green-900/50 border border-green-200 dark:border-green-700 rounded-lg p-3">
+                      <p className="text-sm text-green-800 dark:text-green-300 font-medium">
                         ✓ {moduleName === 'acta' ? 'Acta de entrega' : 'Elemento'} creado exitosamente
                       </p>
-                      <p className={conditionalClasses({
-                        light: 'text-xs text-green-600 mt-1',
-                        dark: 'text-xs text-green-400 mt-1'
-                      })}>
+                      <p className="text-xs text-green-600 dark:text-green-400 mt-1">
                         Todos los campos fueron establecidos por primera vez
                       </p>
                     </div>
                   ) : record.action === 'DELETE' ? (
-                    <div className={conditionalClasses({
-                      light: 'bg-red-50 border border-red-200 rounded-lg p-3',
-                      dark: 'bg-red-900/50 border border-red-700 rounded-lg p-3'
-                    })}>
-                      <p className={conditionalClasses({
-                        light: 'text-sm text-red-800 font-medium',
-                        dark: 'text-sm text-red-300 font-medium'
-                      })}>
+                    <div className="bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-700 rounded-lg p-3">
+                      <p className="text-sm text-red-800 dark:text-red-300 font-medium">
                         ⚠ {moduleName === 'acta' ? 'Acta de entrega' : 'Elemento'} eliminado
                       </p>
-                      <p className={conditionalClasses({
-                        light: 'text-xs text-red-600 mt-1',
-                        dark: 'text-xs text-red-400 mt-1'
-                      })}>
+                      <p className="text-xs text-red-600 dark:text-red-400 mt-1">
                         El {moduleName === 'acta' ? 'acta' : 'elemento'} fue eliminado del sistema
                       </p>
                     </div>
                   ) : (
-                    <div className={conditionalClasses({
-                      light: 'bg-gray-50 border border-gray-200 rounded-lg p-3',
-                      dark: 'bg-gray-700/50 border border-gray-600 rounded-lg p-3'
-                    })}>
-                      <p className={conditionalClasses({
-                        light: 'text-sm text-gray-700',
-                        dark: 'text-sm text-gray-300'
-                      })}>
+                    <div className="bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg p-3">
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
                         ℹ Se registraron cambios, pero no se detectaron diferencias en los campos principales
                       </p>
                     </div>
@@ -370,10 +281,7 @@ const ActaEntregaHistoryModal = ({
         </div>
 
         {/* Footer */}
-        <div className={conditionalClasses({
-          light: 'border-t border-gray-200 p-4 lg:p-6 bg-gray-50',
-          dark: 'border-t border-gray-600 p-4 lg:p-6 bg-gray-700/50'
-        })}>
+        <div className="border-t border-gray-200 dark:border-gray-600 p-4 lg:p-6 bg-gray-50 dark:bg-gray-700/50">
           <div className="flex justify-end">
             <button
               onClick={onClose}
