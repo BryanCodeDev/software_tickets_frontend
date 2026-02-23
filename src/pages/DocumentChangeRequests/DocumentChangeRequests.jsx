@@ -8,7 +8,8 @@ import StatsPanel from '../../components/common/StatsPanel';
 import FilterPanel from '../../components/common/FilterPanel';
 
 const DocumentChangeRequestsPage = () => {
-  const { user, userRole } = useAuth();
+  const { user } = useAuth();
+  const userRole = user?.role?.name;
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -47,7 +48,7 @@ const DocumentChangeRequestsPage = () => {
   }, [loadRequests]);
 
   // Verificar permisos
-  const canCreate = ['Administrador', 'Calidad', 'Jefe', 'Técnico', 'Coordinadora Administrativa', 'Compras'].includes(userRole);
+  const canCreate = ['Administrador', 'Calidad', 'Jefe', 'Técnico', 'Coordinadora Administrativa', 'Compras', 'Empleado'].includes(userRole);
   
   const canEdit = useCallback((request) => {
     if (!request) return false;
@@ -148,12 +149,7 @@ const DocumentChangeRequestsPage = () => {
             {canCreate && (
               <button
                 onClick={handleCreate}
-                className={`
-                  px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors w-fit
-                  ${documentChangeRequestsAPI
-                    ? 'bg-[#662d91] hover:bg-[#5a257a] text-white'
-                    : 'bg-purple-600 hover:bg-purple-500 text-white'}
-                `}
+                className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors w-fit bg-[#662d91] hover:bg-[#5a257a] text-white"
               >
                 <FaPlus />
                 Nueva Solicitud
