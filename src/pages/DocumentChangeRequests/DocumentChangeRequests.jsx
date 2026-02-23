@@ -14,6 +14,7 @@ const DocumentChangeRequestsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
   const [modalMode, setModalMode] = useState('create');
   const [selectedRequest, setSelectedRequest] = useState(null);
   
@@ -146,15 +147,27 @@ const DocumentChangeRequestsPage = () => {
               </p>
             </div>
             
-            {canCreate && (
+            <div className="flex items-center gap-3">
+              {/* Botón Filtrar */}
               <button
-                onClick={handleCreate}
-                className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors w-fit bg-[#662d91] hover:bg-[#5a257a] text-white"
+                onClick={() => setShowFilters(!showFilters)}
+                className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
               >
-                <FaPlus />
-                Nueva Solicitud
+                <FaFilter />
+                Filtros
               </button>
-            )}
+              
+              {/* Botón Nueva Solicitud */}
+              {canCreate && (
+                <button
+                  onClick={handleCreate}
+                  className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors bg-[#662d91] hover:bg-[#5a257a] text-white"
+                >
+                  <FaPlus />
+                  Nueva Solicitud
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -165,37 +178,39 @@ const DocumentChangeRequestsPage = () => {
       </div>
 
       {/* Filters */}
-      <div className="px-4 lg:px-6">
-        <FilterPanel
-          filters={filters}
-          setFilters={setFilters}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          filterOptions={{
-            status: [
-              { value: 'borrador', label: 'Borrador' },
-              { value: 'pendiente_revision', label: 'Pendiente Revisión' },
-              { value: 'en_revision', label: 'En Revisión' },
-              { value: 'aprobado', label: 'Aprobado' },
-              { value: 'en_implementacion', label: 'En Implementación' },
-              { value: 'publicado', label: 'Publicado' },
-              { value: 'rechazado', label: 'Rechazado' }
-            ],
-            requestType: [
-              { value: 'create', label: 'Crear' },
-              { value: 'edit', label: 'Editar' },
-              { value: 'version_update', label: 'Nueva Versión' },
-              { value: 'delete', label: 'Eliminar' }
-            ],
-            priority: [
-              { value: 'baja', label: 'Baja' },
-              { value: 'media', label: 'Media' },
-              { value: 'alta', label: 'Alta' },
-              { value: 'urgente', label: 'Urgente' }
-            ]
-          }}
-        />
-      </div>
+      {showFilters && (
+        <div className="px-4 lg:px-6">
+          <FilterPanel
+            filters={filters}
+            setFilters={setFilters}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            filterOptions={{
+              status: [
+                { value: 'borrador', label: 'Borrador' },
+                { value: 'pendiente_revision', label: 'Pendiente Revisión' },
+                { value: 'en_revision', label: 'En Revisión' },
+                { value: 'aprobado', label: 'Aprobado' },
+                { value: 'en_implementacion', label: 'En Implementación' },
+                { value: 'publicado', label: 'Publicado' },
+                { value: 'rechazado', label: 'Rechazado' }
+              ],
+              requestType: [
+                { value: 'create', label: 'Crear' },
+                { value: 'edit', label: 'Editar' },
+                { value: 'version_update', label: 'Nueva Versión' },
+                { value: 'delete', label: 'Eliminar' }
+              ],
+              priority: [
+                { value: 'baja', label: 'Baja' },
+                { value: 'media', label: 'Media' },
+                { value: 'alta', label: 'Alta' },
+                { value: 'urgente', label: 'Urgente' }
+              ]
+            }}
+          />
+        </div>
+      )}
 
       {/* Content */}
       <div className="p-4 lg:p-6">
