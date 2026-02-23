@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaFileAlt, FaExchangeAlt, FaTicketAlt, FaChartLine, FaExclamationTriangle, FaCheckCircle, FaClock, FaAlertCircle } from 'react-icons/fa';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
-import { qualityTicketsAPI } from '../../api/qualityTicketsAPI';
+import qualityTicketsAPI from '../../api/qualityTicketsAPI';
 import documentsAPI from '../../api/documentsAPI';
 import documentChangeRequestsAPI from '../../api/documentChangeRequestsAPI';
 
