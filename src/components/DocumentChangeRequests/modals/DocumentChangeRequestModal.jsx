@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaTimes, FaFileAlt, FaFolder, FaPlus, FaEdit, FaTrash, FaUpload, FaCheck } from 'react-icons/fa';
+import { FaTimes, FaFileAlt, FaFolder, FaPlus, FaEdit, FaTrash, FaUpload, FaCheck, FaClock, FaCheckCircle, FaReject } from 'react-icons/fa';
 import documentsAPI from '../../../api/documentsAPI';
 import documentChangeRequestsAPI from '../../../api/documentChangeRequestsAPI';
 import { useThemeClasses } from '../../../hooks/useThemeClasses';
@@ -34,6 +34,82 @@ const DocumentChangeRequestModal = ({
 
   // Hook para clases de tema
   const { conditionalClasses } = useThemeClasses();
+
+  // Workflow steps definition
+  const getWorkflowSteps = () => {
+    const steps = [
+      { status: 'borrador', label: 'Borrador', description: 'Solicitud creada, pendiente de enviar a revisión' },
+      { status: 'pendiente_revision', label: 'Pendiente Revisión', description: 'Esperando revisión del área de calidad' },
+      { status: 'en_revision', label: 'En Revisión', description: 'Revisando cambio propuesto' },
+      { status: 'aprobado', label: 'Aprobado', description: 'Cambio aprobado, esperando implementación' },
+      { status: 'en_implementacion', label: 'En Implementación', description: 'Implementando el cambio' },
+      { status: 'publicado', label: 'Publicado', description: 'Documento publicado y disponible' }
+    ];
+    
+    // Agregar rechazado si aplica
+    if (request?.workflowStatus === 'rechazado') {
+      steps.push({ status: 'rechazado', label: 'Rechazado', description: 'Solicitud rechazada' });
+    }
+    
+    return steps;
+  };
+
+  const getCurrentStepIndex = () => {
+    const steps = getWorkflowSteps();
+    return steps.findIndex(step => step.status === request?.workflowStatus);
+  };
+
+  const getTimeInStep = (stepStatus) => {
+    if (!request) return null;
+    
+    const stepIndex = getWorkflowSteps().findIndex(s => s.status === stepStatus);
+    if (stepIndex === -1) return null;
+
+    const currentStatusIndex = getCurrentStepIndex();
+    
+    // Si es el estado actual, calcular desde última actualización
+    if (stepIndex === currentStatusIndex) {
+      const updatedAt = new Date(request.updatedAt);
+      const now = new Date();
+      const diffMs = now - updatedAt;
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      if (diffDays > 0) return `${diffDays} días`;
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      if (diffHours > 0) return `${diffHours} horas`;
+      const diffMins = Math.floor(diffMs / (1000 * 60));
+      return `${diffMins} min`;
+    }
+    
+    return null;
+  };
+
+  const getStatusColor = (status) => {
+    const colors = {
+      'borrador': conditionalClasses({ light: 'bg-gray-100 text-gray-700 border-gray-200', dark: 'bg-gray-700 text-gray-300 border-gray-600' }),
+      'pendiente_revision': conditionalClasses({ light: 'bg-yellow-100 text-yellow-700 border-yellow-200', dark: 'bg-yellow-900/30 text-yellow-300 border-yellow-700/30' }),
+      'en_revision': conditionalClasses({ light: 'bg-blue-100 text-blue-700 border-blue-200', dark: 'bg-blue-900/30 text-blue-300 border-blue-700/30' }),
+      'aprobado': conditionalClasses({ light: 'bg-orange-100 text-orange-700 border-orange-200', dark: 'bg-orange-900/30 text-orange-300 border-orange-700/30' }),
+      'en_implementacion': conditionalClasses({ light: 'bg-cyan-100 text-cyan-700 border-cyan-200', dark: 'bg-cyan-900/30 text-cyan-300 border-cyan-700/30' }),
+      'publicado': conditionalClasses({ light: 'bg-green-100 text-green-700 border-green-200', dark: 'bg-green-900/30 text-green-300 border-green-700/30' }),
+      'rechazado': conditionalClasses({ light: 'bg-red-100 text-red-700 border-red-200', dark: 'bg-red-900/30 text-red-300 border-red-700/30' }),
+      'cancelado': conditionalClasses({ light: 'bg-gray-100 text-gray-500 border-gray-200', dark: 'bg-gray-700 text-gray-400 border-gray-600' })
+    };
+    return colors[status?.toLowerCase()] || conditionalClasses({ light: 'bg-gray-100 text-gray-600 border-gray-200', dark: 'bg-gray-700 text-gray-300 border-gray-600' });
+  };
+
+  const getStatusLabel = (status) => {
+    const labels = {
+      'borrador': 'Borrador',
+      'pendiente_revision': 'Pendiente Revisión',
+      'en_revision': 'En Revisión',
+      'aprobado': 'Aprobado',
+      'en_implementacion': 'En Implementación',
+      'publicado': 'Publicado',
+      'rechazado': 'Rechazado',
+      'cancelado': 'Cancelado'
+    };
+    return labels[status?.toLowerCase()] || status;
+  };
 
   // Cargar datos iniciales
   useEffect(() => {
@@ -248,18 +324,51 @@ const DocumentChangeRequestModal = ({
             </div>
           )}
 
-          {/* Workflow Status Badge */}
+          {/* Workflow Timeline Mejorado */}
           {request && (
-            <div className={`mb-4 p-3 rounded-lg border ${conditionalClasses({
-              light: 'bg-purple-100 border-purple-200',
-              dark: 'bg-purple-900/30 border-purple-700'
-            })}`}>
-              <span className={`font-semibold ${conditionalClasses({
-                light: 'text-purple-700',
-                dark: 'text-purple-300'
-              })}`}>
-                Estado: {request.workflowStatus} | Paso: {request.currentStep} de {request.totalSteps}
-              </span>
+            <div className={`mb-6 rounded-xl p-4 lg:p-6 ${conditionalClasses({ light: 'bg-gray-50', dark: 'bg-gray-700' })}`}>
+              <h3 className={conditionalClasses({ light: 'text-lg font-bold text-gray-900 mb-4', dark: 'text-lg font-bold text-gray-100 mb-4' })}>
+                Progreso del Workflow
+              </h3>
+              <div className="space-y-3">
+                {getWorkflowSteps().map((step, index) => {
+                  const currentIndex = getCurrentStepIndex();
+                  const isCompleted = index < currentIndex;
+                  const isCurrent = index === currentIndex;
+                  const isRejected = step.status === 'rechazado';
+                  const timeInStep = isCurrent ? getTimeInStep(step.status) : null;
+
+                  return (
+                    <div key={step.status} className={`flex items-start gap-3 p-3 rounded-lg transition-all ${
+                      isCurrent ? conditionalClasses({ light: 'bg-blue-50 border border-blue-200', dark: 'bg-blue-900/30 border border-blue-700/30' }) :
+                      isRejected ? conditionalClasses({ light: 'bg-red-50 border border-red-200', dark: 'bg-red-900/30 border border-red-700/30' }) :
+                      isCompleted ? conditionalClasses({ light: 'bg-green-50 border border-green-200', dark: 'bg-green-900/30 border border-green-700/30' }) :
+                      conditionalClasses({ light: 'bg-gray-100 border border-gray-200', dark: 'bg-gray-600 border border-gray-600' })
+                    }`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                        isRejected ? 'bg-red-500' :
+                        isCompleted ? 'bg-green-500' :
+                        conditionalClasses({ light: 'bg-gray-300', dark: 'bg-gray-500' })
+                      }`}>
+                        {isRejected ? <FaReject className="w-4 h-4 text-white" /> :
+                         isCompleted ? <FaCheck className="w-4 h-4 text-white" /> :
+                         <span className={conditionalClasses({ light: 'text-xs font-bold text-gray-600', dark: 'text-xs font-bold text-gray-300' })}>{index + 1}</span>}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h4 className={conditionalClasses({ light: 'font-semibold text-gray-900', dark: 'font-semibold text-gray-100' })}>{step.label}</h4>
+                          {isCurrent && timeInStep && (
+                            <span className={conditionalClasses({ light: 'text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full', dark: 'text-xs bg-blue-900/50 text-blue-300 px-2 py-0.5 rounded-full' })}>
+                              ⏱️ {timeInStep}
+                            </span>
+                          )}
+                        </div>
+                        <p className={conditionalClasses({ light: 'text-sm text-gray-600', dark: 'text-sm text-gray-300' })}>{step.description}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 

@@ -33,6 +33,7 @@ const Trash = lazy(() => import('./pages/Trash/Trash'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Help = lazy(() => import('./pages/Help'));
+const QualityDashboard = lazy(() => import('./pages/Quality/QualityDashboard'));
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -221,6 +222,13 @@ const AppContent = () => {
             <ProtectedRoute>
               <Layout>
                 <Help />
+              </Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/quality-dashboard" element={
+            <ProtectedRoute>
+              <Layout>
+                <QualityDashboard />
               </Layout>
             </ProtectedRoute>
           } />

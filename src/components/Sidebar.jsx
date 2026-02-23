@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaCrown, FaWrench, FaUser, FaShieldAlt, FaClipboardList, FaUserShield, FaUserCog, FaDumpster } from 'react-icons/fa';
+import { FaCrown, FaWrench, FaUser, FaShieldAlt, FaClipboardList, FaUserShield, FaUserCog, FaDumpster, FaChartLine } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext.jsx';
 import { useThemeClasses } from '../hooks/useThemeClasses';
 
@@ -118,6 +118,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         icon: <FaShieldAlt className="w-5 h-5" />,
         description: 'Gestión de calidad y documentación',
         subItems: [
+          {
+            path: '/quality-dashboard',
+            icon: <FaChartLine className="w-5 h-5" />,
+            label: 'Dashboard Calidad',
+            description: 'Vista general de calidad'
+          },
           {
             path: '/documents',
             icon: (

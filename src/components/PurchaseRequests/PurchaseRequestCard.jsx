@@ -65,10 +65,8 @@ const PurchaseRequestCard = ({ request, onViewDetail, onEdit, onDelete, user, us
   };
 
   const canDelete = () => {
-    const deletableStatuses = ['solicitado', 'rechazado_correccion'];
-    if (!deletableStatuses.includes(request.status)) return false;
-    if (['Administrador', 'Jefe', 'Coordinadora Administrativa', 'Técnico', 'Calidad'].includes(userRole)) return true;
-    return request.userId === user?.id;
+    // Solo Administrador y Técnico pueden eliminar solicitudes
+    return ['Administrador', 'Técnico'].includes(userRole);
   };
 
   const canResubmit = () => {
