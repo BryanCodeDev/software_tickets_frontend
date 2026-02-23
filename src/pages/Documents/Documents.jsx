@@ -51,7 +51,9 @@ const Documents = () => {
   const [folders, setFolders] = useState([]);
   const [uploadLoading, setUploadLoading] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showCreateFolderModal, setShowCreateFolderModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showEditFolderModal, setShowEditFolderModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [editingDocument, setEditingDocument] = useState(null);
@@ -182,7 +184,7 @@ const Documents = () => {
         description: forms.upload.description
       });
       await fetchFolders();
-      setShowUploadModal(false);
+      setShowCreateFolderModal(false);
       setForms(prev => ({ ...prev, upload: { title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' } }));
       notifySuccess('Carpeta creada exitosamente');
     } catch {
@@ -196,7 +198,7 @@ const Documents = () => {
       edit: { title: folder.name, description: folder.description || '', type: '', category: '' }
     }));
     setEditingDocument(folder);
-    setShowEditModal(true);
+    setShowEditFolderModal(true);
   }, []);
   
   const handleUpdateFolder = useCallback(async (e) => {
@@ -207,7 +209,7 @@ const Documents = () => {
         description: forms.edit.description
       });
       await fetchFolders();
-      setShowEditModal(false);
+      setShowEditFolderModal(false);
       notifySuccess('Carpeta actualizada');
     } catch {
       notifyError('Error al actualizar la carpeta');
@@ -468,7 +470,7 @@ const Documents = () => {
         totalUniqueDocuments={totalUniqueDocuments}
         handleGoBack={handleGoBack}
         user={user}
-        setShowCreateFolderModal={setShowUploadModal}
+        setShowCreateFolderModal={setShowCreateFolderModal}
         canWriteInCurrentFolder={canWriteInCurrentFolder}
         setShowUploadModal={setShowUploadModal}
       />
@@ -570,16 +572,16 @@ const Documents = () => {
         />
         
         <CreateFolderModal
-          showCreateFolderModal={showUploadModal}
-          setShowCreateFolderModal={setShowUploadModal}
+          showCreateFolderModal={showCreateFolderModal}
+          setShowCreateFolderModal={setShowCreateFolderModal}
           folderFormData={forms.upload}
           setFolderFormData={(data) => setForms(prev => ({ ...prev, upload: data }))}
           handleCreateFolder={handleCreateFolder}
         />
         
         <EditFolderModal
-          showEditFolderModal={showEditModal}
-          setShowEditFolderModal={setShowEditModal}
+          showEditFolderModal={showEditFolderModal}
+          setShowEditFolderModal={setShowEditFolderModal}
           editFolderFormData={forms.edit}
           setEditFolderFormData={(data) => setForms(prev => ({ ...prev, edit: data }))}
           handleUpdateFolder={handleUpdateFolder}
