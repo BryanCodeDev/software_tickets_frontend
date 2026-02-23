@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaTimes, FaFileAlt, FaFolder, FaPlus, FaEdit, FaTrash, FaUpload, FaCheck, FaClock, FaCheckCircle, FaReject } from 'react-icons/fa';
+import { FaTimes, FaFileAlt, FaFolder, FaPlus, FaEdit, FaTrash, FaUpload, FaCheck, FaClock, FaCheckCircle, FaBan, FaPlay, FaStepForward, FaFlag, FaHistory, FaUser, FaTag, FaList, FaChartLine } from 'react-icons/fa';
 import documentsAPI from '../../../api/documentsAPI';
 import documentChangeRequestsAPI from '../../../api/documentChangeRequestsAPI';
 import { useThemeClasses } from '../../../hooks/useThemeClasses';
@@ -350,7 +350,7 @@ const DocumentChangeRequestModal = ({
                         isCompleted ? 'bg-green-500' :
                         conditionalClasses({ light: 'bg-gray-300', dark: 'bg-gray-500' })
                       }`}>
-                        {isRejected ? <FaReject className="w-4 h-4 text-white" /> :
+                        {isRejected ? <FaBan className="w-4 h-4 text-white" /> :
                          isCompleted ? <FaCheck className="w-4 h-4 text-white" /> :
                          <span className={conditionalClasses({ light: 'text-xs font-bold text-gray-600', dark: 'text-xs font-bold text-gray-300' })}>{index + 1}</span>}
                       </div>
