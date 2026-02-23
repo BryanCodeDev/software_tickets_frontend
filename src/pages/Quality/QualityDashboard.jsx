@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaFileAlt, FaExchangeAlt, FaTicketAlt, FaChartLine, FaExclamationTriangle, FaCheckCircle, FaClock, FaAlertCircle } from 'react-icons/fa';
+import { FaFileAlt, FaExchangeAlt, FaTicketAlt, FaChartLine, FaExclamationTriangle, FaCheckCircle, FaClock, FaExclamationCircle } from 'react-icons/fa';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
 import qualityTicketsAPI from '../../api/qualityTicketsAPI';
@@ -298,7 +298,7 @@ const QualityDashboard = () => {
               light: 'text-lg font-bold text-gray-900 mb-4 flex items-center',
               dark: 'text-lg font-bold text-white mb-4 flex items-center'
             })}>
-              <FaAlertCircle className="mr-2 text-yellow-500" />
+              <FaExclamationCircle className="mr-2 text-yellow-500" />
               Alertas de Documentos
             </h3>
             <div className="space-y-3">
