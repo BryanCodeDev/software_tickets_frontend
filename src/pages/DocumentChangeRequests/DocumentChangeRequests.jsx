@@ -17,8 +17,8 @@ const DocumentChangeRequestsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [showFilters, setShowFilters] = useState(true);
-  const [showStats, setShowStats] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
+  const [showStats, setShowStats] = useState(false);
   const [modalMode, setModalMode] = useState('create');
   const [selectedRequest, setSelectedRequest] = useState(null);
   
