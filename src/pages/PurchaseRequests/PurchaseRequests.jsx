@@ -1,16 +1,5 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext, useCallback, lazy, Suspense } from 'react';
 import { FaEdit, FaTrash, FaPlus, FaCheck, FaTimes, FaEye, FaSearch, FaFilter, FaDownload, FaChartBar, FaClock, FaExclamationTriangle, FaCheckCircle, FaSpinner, FaUserCircle, FaClipboardList, FaFileExport, FaSortAmountDown, FaSortAmountUp, FaArrowRight, FaCopy, FaUndo, FaShoppingCart } from 'react-icons/fa';
-import * as XLSX from 'xlsx';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
 import AuthContext from '../../context/AuthContext';
 import { purchaseRequestsAPI } from '../../api';
 import { useAuth } from '../../hooks/useAuth';
@@ -18,15 +7,22 @@ import { useThemeClasses } from '../../hooks/useThemeClasses';
 import { useNotifications } from '../../hooks/useNotifications';
 import { joinPurchaseRequestRoom, leavePurchaseRequestRoom, onPurchaseRequestUpdated, onPurchaseRequestCreated, onPurchaseRequestDeleted, onPurchaseRequestsListUpdated, offPurchaseRequestUpdated, offPurchaseRequestCreated, offPurchaseRequestDeleted, offPurchaseRequestsListUpdated } from '../../api/socket';
 import {
-  PurchaseRequestCreateModal,
-  PurchaseRequestDetailModal,
-  PurchaseRequestEditModal,
   PurchaseRequestCard,
   PurchaseRequestStats
 } from '../../components/PurchaseRequests';
 import { ConfirmDialog } from '../../components/common';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+// Lazy load modales pesados - solo se cargan cuando se necesitan
+const PurchaseRequestCreateModal = lazy(() => import('../../components/PurchaseRequests/modals/PurchaseRequestCreateModal'));
+const PurchaseRequestDetailModal = lazy(() => import('../../components/PurchaseRequests/modals/PurchaseRequestDetailModal'));
+const PurchaseRequestEditModal = lazy(() => import('../../components/PurchaseRequests/modals/PurchaseRequestEditModal'));
+
+// Componente de loading para modales
+const ModalLoading = () => (
+  <div className="flex items-center justify-center p-8">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#662d91]"></div>
+  </div>
+);
 
 const PurchaseRequests = () => {
   const { conditionalClasses } = useThemeClasses();
@@ -224,17 +220,26 @@ const PurchaseRequests = () => {
     fetchPurchaseRequests();
   };
 
-  const exportToExcel = () => {
-    const headers = ['ID', 'Título', 'Tipo', 'Estado', 'Costo', 'Solicitante', 'Fecha', 'Rechazos'];
-    const rows = filteredRequests.map(r => [
-      r.id, r.title, r.itemType, r.status, r.estimatedCost, r.requester?.name, new Date(r.createdAt).toLocaleDateString(), r.rejectionCount || 0
-    ]);
-    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-    ws['!cols'] = [{ wch: 8 }, { wch: 30 }, { wch: 15 }, { wch: 20 }, { wch: 12 }, { wch: 20 }, { wch: 12 }, { wch: 10 }];
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Solicitudes');
-    XLSX.writeFile(wb, `solicitudes_compra_${new Date().toISOString().split('T')[0]}.xlsx`);
-    notifySuccess('Exportado exitosamente');
+  // Función para exportar a Excel - importa XLSX solo cuando se necesita
+  const exportToExcel = async () => {
+    try {
+      // Import dinámico de XLSX - solo se carga cuando el usuario hace clic en exportar
+      const XLSX = await import('xlsx');
+      
+      const headers = ['ID', 'Título', 'Tipo', 'Estado', 'Costo', 'Solicitante', 'Fecha', 'Rechazos'];
+      const rows = filteredRequests.map(r => [
+        r.id, r.title, r.itemType, r.status, r.estimatedCost, r.requester?.name, new Date(r.createdAt).toLocaleDateString(), r.rejectionCount || 0
+      ]);
+      const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+      ws['!cols'] = [{ wch: 8 }, { wch: 30 }, { wch: 15 }, { wch: 20 }, { wch: 12 }, { wch: 20 }, { wch: 12 }, { wch: 10 }];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Solicitudes');
+      XLSX.writeFile(wb, `solicitudes_compra_${new Date().toISOString().split('T')[0]}.xlsx`);
+      notifySuccess('Exportado exitosamente');
+    } catch (error) {
+      console.error('Error exporting to Excel:', error);
+      notifyError('Error al exportar a Excel');
+    }
   };
 
   const showConfirmDialog = (message, onConfirm) => {
@@ -584,10 +589,12 @@ const PurchaseRequests = () => {
           </div>
         )}
 
-        {/* Modals */}
-        <PurchaseRequestDetailModal showDetailModal={showDetailModal} setShowDetailModal={setShowDetailModal} selectedRequest={selectedRequest} user={user} onDuplicate={handleDuplicate} onSuccess={notifySuccess} />
-        <PurchaseRequestCreateModal showCreateModal={showCreateModal} setShowCreateModal={setShowCreateModal} formData={formData} setFormData={setFormData} userRole={userRole} onSuccess={(msg) => { notifySuccess(msg); fetchPurchaseRequests(); fetchDashboardStats(); }} />
-        <PurchaseRequestEditModal showEditModal={showEditModal} setShowEditModal={setShowEditModal} editingRequest={editingRequest} onSuccess={(msg) => { notifySuccess(msg); fetchPurchaseRequests(); fetchDashboardStats(); }} />
+        {/* Modals - Lazy loaded */}
+        <Suspense fallback={null}>
+          {showDetailModal && <PurchaseRequestDetailModal showDetailModal={showDetailModal} setShowDetailModal={setShowDetailModal} selectedRequest={selectedRequest} user={user} onDuplicate={handleDuplicate} onSuccess={notifySuccess} />}
+          {showCreateModal && <PurchaseRequestCreateModal showCreateModal={showCreateModal} setShowCreateModal={setShowCreateModal} formData={formData} setFormData={setFormData} userRole={userRole} onSuccess={(msg) => { notifySuccess(msg); fetchPurchaseRequests(); fetchDashboardStats(); }} />}
+          {showEditModal && <PurchaseRequestEditModal showEditModal={showEditModal} setShowEditModal={setShowEditModal} editingRequest={editingRequest} onSuccess={(msg) => { notifySuccess(msg); fetchPurchaseRequests(); fetchDashboardStats(); }} />}
+        </Suspense>
 
         {/* Confirm Dialog */}
         {confirmDialog && (

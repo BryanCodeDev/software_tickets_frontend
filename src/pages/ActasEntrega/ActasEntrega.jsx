@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { FaClipboardCheck, FaPlus, FaBox, FaFileExport, FaFileWord, FaFilePdf, FaPrint } from 'react-icons/fa';
 import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
@@ -13,9 +13,11 @@ import { ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common'
 import { useThemeClasses } from '../../hooks/useThemeClasses';
 import ActaEntregaCard from './ActaEntregaCard';
 import ActaEntregaTable from './ActaEntregaTable';
-import ActaEntregaModal from './ActaEntregaModal';
-import ActaEntregaHistoryModal from './ActaEntregaHistoryModal';
 import { useNotifications } from '../../hooks/useNotifications';
+
+// Lazy load modales pesados - estos contienen mucha lógica y librerías
+const ActaEntregaModal = lazy(() => import('./ActaEntregaModal'));
+const ActaEntregaHistoryModal = lazy(() => import('./ActaEntregaHistoryModal'));
 
 const ActasEntrega = () => {
   const { conditionalClasses } = useThemeClasses();
@@ -707,28 +709,34 @@ const ActasEntrega = () => {
         )}
       </div>
 
-      {/* Modal */}
-      <ActaEntregaModal
-        showModal={showModal}
-        onClose={() => setShowModal(false)}
-        editingItem={editingItem}
-        formData={formData}
-        setFormData={setFormData}
-        formLoading={formLoading}
-        onSubmit={handleSubmit}
-        equiposDisponibles={equiposDisponibles}
-        usuarios={usuarios}
-      />
+      {/* Modales - Lazy loaded */}
+      <Suspense fallback={null}>
+        {showModal && (
+          <ActaEntregaModal
+            showModal={showModal}
+            onClose={() => setShowModal(false)}
+            editingItem={editingItem}
+            formData={formData}
+            setFormData={setFormData}
+            formLoading={formLoading}
+            onSubmit={handleSubmit}
+            equiposDisponibles={equiposDisponibles}
+            usuarios={usuarios}
+          />
+        )}
 
-      {/* Modal de Historial */}
-      <ActaEntregaHistoryModal
-        showModal={showHistoryModal}
-        onClose={() => {
-          setShowHistoryModal(false);
-          setHistoryActaId(null);
-        }}
-        actaId={historyActaId}
-      />
+        {/* Modal de Historial */}
+        {showHistoryModal && (
+          <ActaEntregaHistoryModal
+            showModal={showHistoryModal}
+            onClose={() => {
+              setShowHistoryModal(false);
+              setHistoryActaId(null);
+            }}
+            actaId={historyActaId}
+          />
+        )}
+      </Suspense>
 
       <style>{`
         @keyframes fade-in {
