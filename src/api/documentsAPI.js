@@ -13,8 +13,8 @@ const documentsAPI = {
   },
   
   // Métodos principales
-  fetchDocuments: async () => {
-    const response = await api.get('/documents');
+  fetchDocuments: async (params = {}) => {
+    const response = await api.get('/documents', { params });
     return response.data;
   },
 

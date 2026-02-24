@@ -1,5 +1,8 @@
-// Exportar todos los hooks personalizados
-export { useLocalStorage } from './useLocalStorage';
-export { useDebounce } from './useDebounce';
-export { useAuth } from './useAuth';
-export { useThemeClasses, useSimpleThemeClasses } from './useThemeClasses';
+/**
+ * Hooks reutilizables del proyecto
+ * Exporta todos los hooks personalizados para uso en componentes
+ */
+
+export { usePagination } from './usePagination';
+export { useFetch } from './useFetch';
+export { useFilter } from './useFilter';

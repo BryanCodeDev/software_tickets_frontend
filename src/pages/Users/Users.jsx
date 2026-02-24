@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { usersAPI, authAPI } from '../../api';
 import { inventoryAPI } from '../../api';
 import { corporatePhoneAPI } from '../../api';
 import AuthContext from '../../context/AuthContext.jsx';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
 import { useNotifications } from '../../hooks/useNotifications';
-import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSearch, FaFilter, FaUserShield, FaUserCog, FaUser, FaChartBar, FaDownload, FaSortAmountDown, FaSortAmountUp, FaClock, FaEnvelope, FaKey, FaToggleOn, FaToggleOff, FaBan, FaShieldAlt, FaCrown, FaClipboardList } from 'react-icons/fa';
+import { FaUsers, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSearch, FaFilter, FaUserShield, FaUserCog, FaUser, FaChartBar, FaDownload, FaSortAmountDown, FaSortAmountUp, FaClock, FaEnvelope, FaKey, FaToggleOn, FaToggleOff, FaBan, FaShieldAlt, FaCrown, FaClipboardList, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { NotificationSystem, ConfirmDialog, FilterPanel, StatsPanel } from '../../components/common';
 import { onUserUpdated, onUsersListUpdated, offUserUpdated, offUsersListUpdated } from '../../api/socket';
+import { CONFIG } from '../../constants';
 
 const Users = () => {
   const { conditionalClasses } = useThemeClasses();
@@ -27,8 +28,15 @@ const Users = () => {
   const [showPhoneDropdown, setShowPhoneDropdown] = useState(false);
   const { user } = useContext(AuthContext);
 
+  // Estados para paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [pageSize, setPageSize] = useState(CONFIG.DEFAULT_PAGE_SIZE);
+
   // NUEVAS FUNCIONALIDADES: Estados para búsqueda, filtros y ordenamiento
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [filterRole, setFilterRole] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('username');
@@ -36,16 +44,33 @@ const Users = () => {
   const [showStats, setShowStats] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(null);
 
+  // Efecto para debounce de búsqueda
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setCurrentPage(1); // Reset a página 1 al buscar
+    }, CONFIG.DEBOUNCE_DELAY);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   const fetchUsers = useCallback(async () => {
     try {
-      const data = await usersAPI.fetchUsers();
-      setUsers(data);
+      setLoading(true);
+      const params = {
+        page: currentPage,
+        limit: pageSize,
+        search: debouncedSearch
+      };
+      const data = await usersAPI.fetchUsers(params);
+      setUsers(data.data || []);
+      setTotalUsers(data.pagination?.total || 0);
+      setTotalPages(data.pagination?.totalPages || 1);
     } catch (error) {
       console.error('Error al cargar usuarios:', error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentPage, pageSize, debouncedSearch]);
 
   const fetchUniqueITs = useCallback(async () => {
     try {
@@ -86,6 +111,13 @@ const Users = () => {
     }
   }, [user, fetchUsers, fetchUniqueITs, fetchInventoryItems, fetchAvailablePhones]);
 
+  // Actualizar usuarios cuando cambie la página
+  useEffect(() => {
+    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Técnico')) {
+      fetchUsers();
+    }
+  }, [currentPage, pageSize, debouncedSearch]);
+
   // Socket listeners for real-time updates
   useEffect(() => {
     const handleUserUpdated = (data) => {
@@ -108,22 +140,11 @@ const Users = () => {
     };
   }, [fetchUsers]);
 
-  // NUEVA FUNCIONALIDAD: Filtrado y ordenamiento
+  // NUEVA FUNCIONALIDAD: Filtrado y ordenamiento (solo para visualización local)
   const filterAndSortUsers = useCallback(() => {
     let filtered = [...users];
 
-    // Búsqueda
-    if (searchTerm) {
-      filtered = filtered.filter(usr =>
-        usr.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        usr.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        usr.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        usr.it?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        usr.corporatePhone?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Filtro por rol
+    // Filtro por rol (solo local, no en servidor)
     if (filterRole !== 'all') {
       filtered = filtered.filter(usr => usr.Role?.name === filterRole);
     }
@@ -151,7 +172,7 @@ const Users = () => {
     });
 
     return filtered;
-  }, [users, searchTerm, filterRole, sortBy, sortOrder]);
+  }, [users, filterRole, sortBy, sortOrder]);
 
   const filteredUsers = filterAndSortUsers();
 
@@ -588,8 +609,55 @@ const Users = () => {
             light: 'text-sm text-gray-600 font-medium',
             dark: 'text-sm text-gray-300 font-medium'
           })}>
-            Mostrando <span className="font-bold text-[#662d91]">{filteredUsers.length}</span> de <span className="font-bold">{users.length}</span> usuarios
+            Mostrando <span className="font-bold text-[#662d91]">{filteredUsers.length}</span> de <span className="font-bold">{totalUsers}</span> usuarios
           </p>
+          {/* Paginación */}
+          {totalPages > 1 && (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className={conditionalClasses({
+                  light: 'p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed',
+                  dark: 'p-2 rounded-lg border border-gray-600 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                })}
+              >
+                <FaChevronLeft className="w-4 h-4" />
+              </button>
+              <span className={conditionalClasses({
+                light: 'text-sm text-gray-600',
+                dark: 'text-sm text-gray-300'
+              })}>
+                Página {currentPage} de {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className={conditionalClasses({
+                  light: 'p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed',
+                  dark: 'p-2 rounded-lg border border-gray-600 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                })}
+              >
+                <FaChevronRight className="w-4 h-4" />
+              </button>
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className={conditionalClasses({
+                  light: 'ml-2 px-2 py-1 text-sm border border-gray-300 rounded-lg bg-white',
+                  dark: 'ml-2 px-2 py-1 text-sm border border-gray-600 rounded-lg bg-gray-700'
+                })}
+              >
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+            </div>
+          )}
         </div>
 
         <div className={conditionalClasses({
