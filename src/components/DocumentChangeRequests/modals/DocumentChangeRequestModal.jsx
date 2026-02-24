@@ -126,7 +126,8 @@ const DocumentChangeRequestModal = ({
           folderId: request.folderId || '',
           justification: request.justification || '',
           impactAnalysis: request.impactAnalysis || '',
-          affectedProcesses: request.affectedProcesses ? request.affectedProcesses.join(', ') : '',
+          affectedProcesses: request.affectedProcesses ? 
+            (typeof request.affectedProcesses === 'string' ? request.affectedProcesses : request.affectedProcesses.join(', ')) : '',
           priority: request.priority || 'media',
           observations: request.observations || ''
         });
