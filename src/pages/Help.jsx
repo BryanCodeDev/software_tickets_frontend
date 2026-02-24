@@ -137,6 +137,34 @@ const Help = () => {
     {
       question: '¿Qué módulos son compatibles con la papelera?',
       answer: 'Tickets, Usuarios, Inventario, Solicitudes de Compra, Documentos, Credenciales, Teléfonos Corporativos, Tablets, PDAs, Actas de Entrega y Tickets de Calidad.'
+    },
+    {
+      question: '¿Cómo crear un ticket de calidad?',
+      answer: 'Vaya al módulo Tickets de Calidad, haga clic en "Nuevo Ticket", seleccione el tipo (No Conformidad, Auditoría, CAPA o Mejora), describa el problema, identifique el área afectada y establezca la prioridad.'
+    },
+    {
+      question: '¿Qué es una No Conformidad (NCR)?',
+      answer: 'Es el registro de una desviación detecteda respecto a un estándar, requisito o proceso establecido. Requiere análisis de causa raíz y acción correctiva.'
+    },
+    {
+      question: '¿Cómo solicitar un cambio documental?',
+      answer: 'Vaya a Solicitudes de Cambio, cree una nueva solicitud, seleccione el tipo de cambio, justifique el cambio (mínimo 10 caracteres), analice el impacto y envíe para aprobación.'
+    },
+    {
+      question: '¿Quién puede aprobar solicitudes de cambio?',
+      answer: 'El workflow tiene 3 niveles: Calidad (revisión inicial), Jefe (aprobación) y Administrador (implementación y publicación). Cada rol tiene responsabilidades específicas.'
+    },
+    {
+      question: '¿Qué es CAPA en calidad?',
+      answer: 'CAPA significa Acción Correctiva y Preventiva. Es un proceso para identificar la causa raíz de un problema e implementar acciones para prevenir su recurrencia.'
+    },
+    {
+      question: '¿Cómo usar el Dashboard de Calidad?',
+      answer: 'El Dashboard muestra métricas en tiempo real: total de tickets, abiertos, cerrados y en progreso. También muestra gráficos por categoría, prioridad y estado.'
+    },
+    {
+      question: '¿Qué es el análisis de causa raíz?',
+      answer: 'Es una técnica para identificar la causa fundamental de un problema. Métodos comunes incluyen los 5 Por Qué y el diagrama de Ishikawa (espina de pescado).'
     }
   ];
 
@@ -329,16 +357,18 @@ const Help = () => {
       color: 'bg-teal-100 text-teal-800 border-teal-300',
       description: 'Gestión de no conformidades y procesos de calidad',
       features: [
-        'Registro de no conformidades',
-        'Auditorías de calidad',
-        'Análisis de causas raíz',
-        'Acciones correctivas',
-        'Seguimiento de métricas',
-        'Reportes de cumplimiento',
-        'Integración con documentos',
-        'Workflow de aprobación',
-        'Plantillas de auditoría',
-        'Indicadores de rendimiento'
+        'Registro de no conformidades (NCR)',
+        'Auditorías de calidad programadas',
+        'Análisis de causas raíz (5 Por Qué, Ishikawa)',
+        'Acciones correctivas y preventivas (CAPA)',
+        'Seguimiento de métricas e indicadores',
+        'Reportes de cumplimiento ISO 9001',
+        'Integración con documentos del sistema',
+        'Workflow de aprobación por roles',
+        'Plantillas de auditoría personalizadas',
+        'Indicadores de rendimiento (KPI)',
+        'Dashboard unificado de calidad',
+        'Tickets de calidad por categoría'
       ],
       workflows: ['Detectado → En Análisis → Acción Correctiva → Verificación → Cerrado']
     },
@@ -441,20 +471,22 @@ const Help = () => {
       name: 'Solicitudes de Cambio',
       icon: <FaEdit className="text-red-500" />,
       color: 'bg-red-100 text-red-800 border-red-300',
-      description: 'Gestión de cambios en documentos y procesos',
+      description: 'Gestión de cambios en documentos y procesos ISO 9001',
       features: [
         'Solicitud de cambios documentales',
-        'Análisis de impacto',
-        'Workflow de aprobación',
-        'Historial de versiones',
-        'Justificación de cambios',
+        'Análisis de impacto y justificación',
+        'Workflow de aprobación ISO 9001',
+        'Historial completo de versiones',
+        'Justificación obligatoria del cambio',
         'Notificaciones a interesados',
         'Plazos y vencimientos',
         'Priorización de cambios',
         'Documentos afectados',
-        'Cierre y evaluación'
+        'Cierre y evaluación del cambio',
+        'Subida de archivos propuestos',
+        'Integración con módulo de documentos'
       ],
-      workflows: ['Solicitado → Análisis → Aprobación → Implementación → Cerrado']
+      workflows: ['Borrador → Revisión Inicial → Aprobación → Implementación → Publicación']
     },
     {
       name: 'Solicitudes de Compra',
@@ -758,6 +790,7 @@ const Help = () => {
                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>8. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Documentos y Cambios</span></li>
                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>9. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Solicitudes de Compra</span></li>
                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>10. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Gestión de Calidad</span></li>
+                        <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>11. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Tips y Mejores Prácticas</span></li>
                       </ul>
                     </div>
                   </div>
@@ -1251,28 +1284,64 @@ const Help = () => {
                       dark: 'text-gray-300'
                     })}>
                       El módulo de Calidad permite gestionar no conformidades, auditorías y acciones correctivas 
-                      para mantener los estándares de la organización.
+                      para mantener los estándares de la organización bajo la norma ISO 9001.
                     </p>
 
                     <h4 className={conditionalClasses({
                       light: 'font-semibold text-gray-900 mt-4',
                       dark: 'font-semibold text-gray-100 mt-4'
-                    })}>8.1 Tipos de Registros</h4>
+                    })}>8.1 Módulos de Calidad</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      {[
+                        { name: 'Tickets de Calidad', icon: <FaClipboardCheck />, desc: 'Gestión de NCR, auditorías y CAPA' },
+                        { name: 'Cambios Documentales', icon: <FaEdit />, desc: 'Workflow de cambios ISO 9001' },
+                        { name: 'Dashboard', icon: <FaChartBar />, desc: 'Métricas e indicadores en tiempo real' }
+                      ].map((mod, idx) => (
+                        <div key={idx} className={conditionalClasses({
+                          light: 'bg-teal-50 p-3 rounded-lg border border-teal-200',
+                          dark: 'bg-teal-900/30 p-3 rounded-lg border border-teal-700'
+                        })}>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-teal-600">{mod.icon}</span>
+                            <h5 className={conditionalClasses({
+                              light: 'font-medium text-teal-900',
+                              dark: 'font-medium text-teal-200'
+                            })}>{mod.name}</h5>
+                          </div>
+                          <p className={conditionalClasses({
+                            light: 'text-sm text-teal-700',
+                            dark: 'text-sm text-teal-300'
+                          })}>{mod.desc}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <h4 className={conditionalClasses({
+                      light: 'font-semibold text-gray-900 mt-4',
+                      dark: 'font-semibold text-gray-100 mt-4'
+                    })}>8.2 Tipos de Registros de Calidad</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {[
-                        { type: 'No Conformidad', desc: 'Desviación de un estándar' },
-                        { type: 'Auditoría', desc: 'Revisión programada' },
-                        { type: 'Acción Correctiva', desc: 'Corrección de causa raíz' },
-                        { type: 'Mejora Continua', desc: 'Optimización de procesos' }
+                        { type: 'No Conformidad (NCR)', desc: 'Desviación de un estándar o requisito', severity: 'Alta' },
+                        { type: 'Auditoría', desc: 'Revisión programada o extraordinaria', severity: 'Media' },
+                        { type: 'Acción Correctiva (CAPA)', desc: 'Corrección de causa raíz identificada', severity: 'Alta' },
+                        { type: 'Mejora Continua', desc: 'Optimización de procesos existentes', severity: 'Baja' }
                       ].map((item, idx) => (
                         <div key={idx} className={conditionalClasses({
                           light: 'bg-gray-50 p-3 rounded border',
                           dark: 'bg-gray-700 p-3 rounded border border-gray-600'
                         })}>
-                          <h5 className={conditionalClasses({
-                            light: 'font-medium text-gray-900',
-                            dark: 'font-medium text-gray-100'
-                          })}>{item.type}</h5>
+                          <div className="flex items-center justify-between mb-1">
+                            <h5 className={conditionalClasses({
+                              light: 'font-medium text-gray-900',
+                              dark: 'font-medium text-gray-100'
+                            })}>{item.type}</h5>
+                            <span className={`px-2 py-0.5 rounded text-xs ${
+                              item.severity === 'Alta' ? 'bg-red-100 text-red-800' :
+                              item.severity === 'Media' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-green-100 text-green-800'
+                            }`}>{item.severity}</span>
+                          </div>
                           <p className={conditionalClasses({
                             light: 'text-sm text-gray-600',
                             dark: 'text-sm text-gray-300'
@@ -1284,13 +1353,128 @@ const Help = () => {
                     <h4 className={conditionalClasses({
                       light: 'font-semibold text-gray-900 mt-4',
                       dark: 'font-semibold text-gray-100 mt-4'
-                    })}>8.2 Indicadores de Calidad</h4>
+                    })}>8.3 Crear un Ticket de Calidad</h4>
+                    <ol className={conditionalClasses({
+                      light: 'list-decimal list-inside space-y-2 text-gray-700',
+                      dark: 'list-decimal list-inside space-y-2 text-gray-300'
+                    })}>
+                      <li>Vaya al módulo "Tickets de Calidad" desde el menú lateral</li>
+                      <li>Haga clic en "Nuevo Ticket de Calidad"</li>
+                      <li>Seleccione el tipo: No Conformidad, Auditoría, CAPA o Mejora</li>
+                      <li>Ingrese un título descriptivo del problema</li>
+                      <li>Describa detalladamente la no conformidd o hallazgo</li>
+                      <li>Identifique el proceso o área afectada</li>
+                      <li>Establezca la prioridad (Baja, Media, Alta, Crítica)</li>
+                      <li>Adjunte evidencias si es necesario</li>
+                      <li>Guarde el ticket para iniciar el workflow</li>
+                    </ol>
+
+                    <h4 className={conditionalClasses({
+                      light: 'font-semibold text-gray-900 mt-4',
+                      dark: 'font-semibold text-gray-100 mt-4'
+                    })}>8.4 Workflow de Tickets de Calidad</h4>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {['Detectado', 'En Análisis', 'Acción Correctiva', 'Verificación', 'Cerrado'].map((step, idx) => (
+                        <React.Fragment key={idx}>
+                          <div className={conditionalClasses({
+                            light: 'bg-teal-100 text-teal-800 px-3 py-1.5 rounded-lg text-sm font-medium',
+                            dark: 'bg-teal-900/50 text-teal-300 px-3 py-1.5 rounded-lg text-sm font-medium'
+                          })}>{step}</div>
+                          {idx < 4 && <span className="text-gray-400">→</span>}
+                        </React.Fragment>
+                      ))}
+                    </div>
+
+                    <h4 className={conditionalClasses({
+                      light: 'font-semibold text-gray-900 mt-4',
+                      dark: 'font-semibold text-gray-100 mt-4'
+                    })}>8.5 Solicitudes de Cambio Documental</h4>
+                    <p className={conditionalClasses({
+                      light: 'text-gray-700 text-sm',
+                      dark: 'text-gray-300 text-sm'
+                    })}>
+                      Las solicitudes de cambio permiten modificar documentos del sistema bajo el proceso 
+                      ISO 9001 de control de documentos y registros.
+                    </p>
+                    <ol className={conditionalClasses({
+                      light: 'list-decimal list-inside space-y-2 text-gray-700 mt-2',
+                      dark: 'list-decimal list-inside space-y-2 text-gray-300 mt-2'
+                    })}>
+                      <li>Vaya a "Solicitudes de Cambio" en el menú de Calidad</li>
+                      <li>Cliquez en "Nueva Solicitud de Cambio"</li>
+                      <li>Seleccione el tipo de cambio (Crear, Modificar, Eliminar, Actualizar versión)</li>
+                      <li>Elija el documento afectado o cree uno nuevo</li>
+                      <li>Proporcione una justificación detallada (mínimo 10 caracteres)</li>
+                      <li>Realice el análisis de impacto del cambio</li>
+                      <li>Suba el archivo propuesto si aplica</li>
+                      <li>Envíe para revisión por el área de Calidad</li>
+                    </ol>
+
+                    <h4 className={conditionalClasses({
+                      light: 'font-semibold text-gray-900 mt-4',
+                      dark: 'font-semibold text-gray-100 mt-4'
+                    })}>8.6 Workflow de Cambios Documentales</h4>
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
+                      {['Borrador', 'Revisión Inicial', 'Aprobación', 'Implementación', 'Publicado'].map((step, idx) => (
+                        <React.Fragment key={idx}>
+                          <div className={conditionalClasses({
+                            light: 'bg-red-100 text-red-800 px-3 py-1.5 rounded-lg text-sm font-medium',
+                            dark: 'bg-red-900/50 text-red-300 px-3 py-1.5 rounded-lg text-sm font-medium'
+                          })}>{step}</div>
+                          {idx < 4 && <span className="text-gray-400">→</span>}
+                        </React.Fragment>
+                      ))}
+                    </div>
+
+                    <div className={conditionalClasses({
+                      light: 'bg-blue-50 p-3 rounded-lg',
+                      dark: 'bg-blue-900/30 p-3 rounded-lg'
+                    })}>
+                      <h5 className={conditionalClasses({
+                        light: 'font-medium text-blue-900 mb-2',
+                        dark: 'font-medium text-blue-300 mb-2'
+                      })}>Roles en el Workflow de Cambios</h5>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                        <div className={conditionalClasses({
+                          light: 'bg-white p-2 rounded',
+                          dark: 'bg-gray-800 p-2 rounded'
+                        })}>
+                          <span className={conditionalClasses({
+                            light: 'font-medium text-blue-800',
+                            dark: 'font-medium text-blue-400'
+                          })}>Calidad:</span> Revisión inicial y análisis
+                        </div>
+                        <div className={conditionalClasses({
+                          light: 'bg-white p-2 rounded',
+                          dark: 'bg-gray-800 p-2 rounded'
+                        })}>
+                          <span className={conditionalClasses({
+                            light: 'font-medium text-purple-800',
+                            dark: 'font-medium text-purple-400'
+                          })}>Jefe:</span> Aprobación del cambio
+                        </div>
+                        <div className={conditionalClasses({
+                          light: 'bg-white p-2 rounded',
+                          dark: 'bg-gray-800 p-2 rounded'
+                        })}>
+                          <span className={conditionalClasses({
+                            light: 'font-medium text-yellow-800',
+                            dark: 'font-medium text-yellow-400'
+                          })}>Administrador:</span> Implementación y publicación
+                        </div>
+                      </div>
+                    </div>
+
+                    <h4 className={conditionalClasses({
+                      light: 'font-semibold text-gray-900 mt-4',
+                      dark: 'font-semibold text-gray-100 mt-4'
+                    })}>8.7 Indicadores de Calidad (KPI)</h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                       {[
-                        { kpi: 'NCR', desc: 'No Conformidades' },
+                        { kpi: 'NCR', desc: 'No Conformidades Registradas' },
                         { kpi: 'CAPA', desc: 'Acciones Correctivas' },
-                        { kpi: 'AUD', desc: 'Auditorías' },
-                        { kpi: 'MEJ', desc: 'Mejoras' }
+                        { kpi: 'AUD', desc: 'Auditorías Realizadas' },
+                        { kpi: 'MEJ', desc: 'Mejoras Implementadas' }
                       ].map((kpi, idx) => (
                         <div key={idx} className={conditionalClasses({
                           light: 'bg-teal-50 p-2 rounded text-center',
@@ -1304,6 +1488,36 @@ const Help = () => {
                             light: 'text-xs text-teal-600',
                             dark: 'text-xs text-teal-400'
                           })}>{kpi.desc}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <h4 className={conditionalClasses({
+                      light: 'font-semibold text-gray-900 mt-4',
+                      dark: 'font-semibold text-gray-100 mt-4'
+                    })}>8.8 Dashboard de Calidad</h4>
+                    <p className={conditionalClasses({
+                      light: 'text-gray-700 text-sm',
+                      dark: 'text-gray-300 text-sm'
+                    })}>
+                      El dashboard muestra métricas en tiempo real de todos los procesos de calidad.
+                    </p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+                      {[
+                        { metric: 'Total Tickets', icon: <FaClipboardList /> },
+                        { metric: 'Abiertos', icon: <FaExclamationTriangle /> },
+                        { metric: 'Cerrados', icon: <FaCheck /> },
+                        { metric: 'En Progreso', icon: <FaChartLine /> }
+                      ].map((m, idx) => (
+                        <div key={idx} className={conditionalClasses({
+                          light: 'bg-white p-2 rounded border text-center',
+                          dark: 'bg-gray-700 p-2 rounded border border-gray-600 text-center'
+                        })}>
+                          <div className="text-teal-600 mb-1">{m.icon}</div>
+                          <div className={conditionalClasses({
+                            light: 'text-xs text-gray-600',
+                            dark: 'text-xs text-gray-400'
+                          })}>{m.metric}</div>
                         </div>
                       ))}
                     </div>
