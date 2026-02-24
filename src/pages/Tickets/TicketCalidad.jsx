@@ -561,12 +561,22 @@ const TicketCalidad = () => {
     setFormLoading(true);
     try {
       const formData = new FormData(e.target);
+      const justification = formData.get('reason') || '';
+      
+      // Validar que la justificación tenga al menos 10 caracteres
+      if (justification.trim().length < 10) {
+        showNotification('La justificación debe tener al menos 10 caracteres', 'error');
+        setFormLoading(false);
+        return;
+      }
+      
       const changeRequestData = {
         title: `SC-T${changeRequestTicket.id}: ${formData.get('title')}`,
         description: formData.get('description'),
-        documentType: formData.get('documentType'),
-        reason: formData.get('reason'),
-        proposedChanges: formData.get('proposedChanges'),
+        requestType: formData.get('documentType') === 'Política' || formData.get('documentType') === 'Manual' ? 'create' : 'edit',
+        justification: justification,
+        impactAnalysis: formData.get('proposedChanges'),
+        affectedProcesses: formData.get('documentType'),
         priority: changeRequestTicket.priority || 'media'
       };
 
@@ -576,7 +586,8 @@ const TicketCalidad = () => {
       showNotification('Solicitud de Cambio creada exitosamente desde el Ticket de Calidad', 'success');
       fetchTickets();
     } catch (err) {
-      showNotification(err.response?.data?.message || 'Error al crear la Solicitud de Cambio', 'error');
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Error al crear la Solicitud de Cambio';
+      showNotification(errorMessage, 'error');
     } finally {
       setFormLoading(false);
     }
