@@ -176,38 +176,35 @@ const TicketCalidad = () => {
     }
   }, []);
 
+  // Roles con acceso total a todos los tickets
+  const ROLES_CON_ACCESO_TOTAL = ['Administrador', 'Técnico', 'Calidad'];
+  
   // Funciones helper para verificar permisos por ticket específico
   const canEditTicket = useCallback((ticket) => {
-    if (userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad') {
+    // Roles con acceso total pueden editar cualquier ticket
+    if (ROLES_CON_ACCESO_TOTAL.includes(userRole)) {
       return true;
     }
-    if (userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' || userRole === 'Coordinadora Administrativa') {
-      return ticket.userId === user?.id;
-    }
-    return false;
+    // Otros roles solo pueden editar SUS PROPIOS tickets
+    return ticket.userId === user?.id;
   }, [userRole, user?.id]);
 
   const canDeleteTicket = useCallback((ticket) => {
-    if (userRole === 'Administrador' || userRole === 'Calidad') {
+    // Roles con acceso total pueden eliminar cualquier ticket
+    if (ROLES_CON_ACCESO_TOTAL.includes(userRole)) {
       return true;
     }
-    if (userRole === 'Técnico') {
-      return (ticket.userId === user?.id || ticket.assignedTo === user?.id) && ticket.status?.toLowerCase() === 'cerrado';
-    }
-    if (userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' || userRole === 'Coordinadora Administrativa') {
-      return ticket.userId === user?.id;
-    }
-    return false;
+    // Otros roles solo pueden eliminar SUS PROPIOS tickets
+    return ticket.userId === user?.id;
   }, [userRole, user?.id]);
 
   const canSendMessage = useCallback((ticket) => {
-    if (userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad') {
+    // Roles con acceso total pueden comentar en cualquier ticket
+    if (ROLES_CON_ACCESO_TOTAL.includes(userRole)) {
       return true;
     }
-    if (userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' || userRole === 'Coordinadora Administrativa') {
-      return ticket.userId === user?.id;
-    }
-    return false;
+    // Otros roles solo pueden comentar en SUS PROPIOS tickets o los asignados
+    return ticket.userId === user?.id || ticket.assignedTo === user?.id;
   }, [userRole, user?.id]);
 
 
@@ -250,12 +247,11 @@ const TicketCalidad = () => {
     if (!Array.isArray(tickets)) return [];
     let filtered = [...tickets];
 
-    // Role-based filtering
-    if (!['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa', 'Jefe', 'Compras'].includes(userRole)) {
-      // Otros roles solo ven sus propios tickets
+    // FILTRO PRINCIPAL: Solo Administrador, Técnico y Calidad ven TODOS los tickets
+    // Otros roles (Compras, Jefe, Empleado, Coordinador/a) solo ven SUS PROPIOS tickets
+    if (!ROLES_CON_ACCESO_TOTAL.includes(userRole)) {
       filtered = filtered.filter(ticket => ticket.userId === user?.id);
     }
-    // Administrador, Técnico, Calidad, Jefe, Compras y Coordinador/a Administrativa ven todos los tickets
 
     if (searchTerm) {
       filtered = filtered.filter(ticket =>
@@ -593,7 +589,8 @@ const TicketCalidad = () => {
     }
   };
 
-  const canCreate = userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' || userRole === 'Coordinadora Administrativa';
+  // Todos los roles pueden crear tickets de calidad
+  const canCreate = true;
 
 
   if (loading) {
