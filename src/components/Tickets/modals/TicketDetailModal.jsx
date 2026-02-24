@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { FaTimes, FaEdit, FaTrash, FaClipboardList, FaImage, FaComment, FaUserCircle, FaClock, FaPaperPlane } from 'react-icons/fa';
+import { FaTimes, FaEdit, FaTrash, FaClipboardList, FaImage, FaComment, FaUserCircle, FaClock, FaPaperPlane, FaFileAlt } from 'react-icons/fa';
 import { SERVER_BASE_URL } from '../../../utils/constants';
 import { useThemeClasses } from '../../../hooks/useThemeClasses';
 
@@ -16,7 +16,9 @@ const TicketDetailModal = ({
   canEditTicket,
   canDeleteTicket,
   canSendMessage,
-  user
+  user,
+  isCalidad = false,
+  handleCreateChangeRequest = null
 }) => {
   const { conditionalClasses } = useThemeClasses();
   const messagesEndRef = useRef(null);
@@ -439,6 +441,22 @@ const TicketDetailModal = ({
                     >
                       <FaTrash className="w-3 h-3 lg:w-4 lg:h-4" />
                       Eliminar Ticket
+                    </button>
+                  )}
+
+                  {/* Botón para crear Solicitud de Cambio - Solo para Tickets de Calidad */}
+                  {isCalidad && canEditTicket(selectedTicket) && handleCreateChangeRequest && (
+                    <button
+                      onClick={() => {
+                        handleCreateChangeRequest(selectedTicket);
+                      }}
+                      className={conditionalClasses({
+                        light: 'w-full px-3 lg:px-4 py-2 lg:py-3 bg-green-50 hover:bg-green-100 text-green-700 font-semibold rounded-xl transition-all flex items-center gap-2 text-sm lg:text-base',
+                        dark: 'w-full px-3 lg:px-4 py-2 lg:py-3 bg-green-900 hover:bg-green-800 text-green-200 font-semibold rounded-xl transition-all flex items-center gap-2 text-sm lg:text-base'
+                      })}
+                    >
+                      <FaFileAlt className="w-3 h-3 lg:w-4 lg:h-4" />
+                      Crear Solicitud de Cambio
                     </button>
                   )}
 

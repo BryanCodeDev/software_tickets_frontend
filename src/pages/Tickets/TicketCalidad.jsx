@@ -72,6 +72,8 @@ const TicketCalidad = () => {
   const [formLoading, setFormLoading] = useState(false);
   const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
+  const [showChangeRequestModal, setShowChangeRequestModal] = useState(false);
+  const [changeRequestTicket, setChangeRequestTicket] = useState(null);
   const { user } = useContext(AuthContext);
 
   const userRole = user?.role?.name;
@@ -545,6 +547,41 @@ const TicketCalidad = () => {
     showNotification('Tickets de calidad exportados exitosamente', 'success');
   }, [filteredTickets, showNotification]);
 
+  // Función para crear Solicitud de Cambio desde un Ticket de Calidad
+  const handleCreateChangeRequest = useCallback(async (ticket) => {
+    setChangeRequestTicket(ticket);
+    setShowDetailModal(false);
+    setShowChangeRequestModal(true);
+  }, []);
+
+  const handleChangeRequestSubmit = async (e) => {
+    e.preventDefault();
+    if (!changeRequestTicket) return;
+    
+    setFormLoading(true);
+    try {
+      const formData = new FormData(e.target);
+      const changeRequestData = {
+        title: `SC-T${changeRequestTicket.id}: ${formData.get('title')}`,
+        description: formData.get('description'),
+        documentType: formData.get('documentType'),
+        reason: formData.get('reason'),
+        proposedChanges: formData.get('proposedChanges'),
+        priority: changeRequestTicket.priority || 'media'
+      };
+
+      await qualityTicketsAPI.createChangeRequestFromQualityTicket(changeRequestTicket.id, changeRequestData);
+      setShowChangeRequestModal(false);
+      setChangeRequestTicket(null);
+      showNotification('Solicitud de Cambio creada exitosamente desde el Ticket de Calidad', 'success');
+      fetchTickets();
+    } catch (err) {
+      showNotification(err.response?.data?.message || 'Error al crear la Solicitud de Cambio', 'error');
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
   const canCreate = userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' || userRole === 'Coordinadora Administrativa';
 
 
@@ -720,6 +757,8 @@ const TicketCalidad = () => {
           canDeleteTicket={canDeleteTicket}
           canSendMessage={canSendMessage}
           user={user}
+          isCalidad={true}
+          handleCreateChangeRequest={handleCreateChangeRequest}
         />
 
         {/* Create Modal */}
@@ -757,6 +796,195 @@ const TicketCalidad = () => {
           standardizedTitles={standardizedTitles}
           isCalidad={true}
         />
+
+        {/* Create Change Request Modal */}
+        {showChangeRequestModal && changeRequestTicket && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+            <div className={conditionalClasses({
+              light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-2xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in',
+              dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-2xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-600 animate-scale-in'
+            })}>
+              <div className="sticky top-0 bg-linear-to-r from-green-600 to-green-700 p-4 lg:p-6 z-10">
+                <div className="flex items-center justify-between">
+                  <div className="min-w-0 flex-1">
+                    <h2 className="text-xl lg:text-2xl font-bold text-white mb-2">Crear Solicitud de Cambio</h2>
+                    <p className="text-green-100 text-sm">Desde Ticket de Calidad #{changeRequestTicket.id}</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setShowChangeRequestModal(false);
+                      setChangeRequestTicket(null);
+                    }}
+                    className="p-2 hover:bg-white/20 rounded-lg transition-all text-white shrink-0"
+                  >
+                    <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
+                  </button>
+                </div>
+              </div>
+
+              <form onSubmit={handleChangeRequestSubmit} className="p-4 lg:p-6">
+                <div className="space-y-4">
+                  {/* Información del Ticket de Calidad */}
+                  <div className={conditionalClasses({
+                    light: 'bg-blue-50 rounded-xl p-4 border-2 border-blue-200',
+                    dark: 'bg-blue-900/30 rounded-xl p-4 border-2 border-blue-700'
+                  })}>
+                    <h4 className={conditionalClasses({
+                      light: 'font-bold text-blue-900 mb-2',
+                      dark: 'font-bold text-blue-200 mb-2'
+                    })}>📋 Información del Ticket de Calidad</h4>
+                    <p className={conditionalClasses({
+                      light: 'text-sm text-blue-800',
+                      dark: 'text-sm text-blue-300'
+                    })}><strong>Título:</strong> {changeRequestTicket.title}</p>
+                    <p className={conditionalClasses({
+                      light: 'text-sm text-blue-800 mt-1',
+                      dark: 'text-sm text-blue-300 mt-1'
+                    })}><strong>Descripción:</strong> {changeRequestTicket.description?.substring(0, 150)}...</p>
+                  </div>
+
+                  {/* Título de la Solicitud de Cambio */}
+                  <div>
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-200 mb-2'
+                    })}>
+                      Título de la Solicitud de Cambio *
+                    </label>
+                    <input
+                      type="text"
+                      name="title"
+                      required
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all'
+                      })}
+                      placeholder="Ej: Actualización del procedimiento de control documental"
+                    />
+                  </div>
+
+                  {/* Tipo de Documento */}
+                  <div>
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-200 mb-2'
+                    })}>
+                      Tipo de Documento *
+                    </label>
+                    <select
+                      name="documentType"
+                      required
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all'
+                      })}
+                    >
+                      <option value="">Seleccionar tipo...</option>
+                      <option value="Política">Política</option>
+                      <option value="Procedimiento">Procedimiento</option>
+                      <option value="Instrucción de Trabajo">Instrucción de Trabajo</option>
+                      <option value="Formato">Formato</option>
+                      <option value="Registro">Registro</option>
+                      <option value="Manual">Manual</option>
+                      <option value="Otro">Otro</option>
+                    </select>
+                  </div>
+
+                  {/* Descripción */}
+                  <div>
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-200 mb-2'
+                    })}>
+                      Descripción del Cambio *
+                    </label>
+                    <textarea
+                      name="description"
+                      required
+                      rows={3}
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all resize-none',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all resize-none'
+                      })}
+                      placeholder="Describe brevemente el cambio solicitado..."
+                    />
+                  </div>
+
+                  {/* Justificación */}
+                  <div>
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-200 mb-2'
+                    })}>
+                      Justificación / Razón del Cambio *
+                    </label>
+                    <textarea
+                      name="reason"
+                      required
+                      rows={3}
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all resize-none',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all resize-none'
+                      })}
+                      placeholder="¿Por qué es necesario realizar este cambio?"
+                    />
+                  </div>
+
+                  {/* Cambios Propuestos */}
+                  <div>
+                    <label className={conditionalClasses({
+                      light: 'block text-sm font-semibold text-gray-700 mb-2',
+                      dark: 'block text-sm font-semibold text-gray-200 mb-2'
+                    })}>
+                      Cambios Propuestos *
+                    </label>
+                    <textarea
+                      name="proposedChanges"
+                      required
+                      rows={4}
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all resize-none',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all resize-none'
+                      })}
+                      placeholder="Detalla los cambios específicos que se proponen..."
+                    />
+                  </div>
+                </div>
+
+                {/* Botones */}
+                <div className="flex gap-3 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowChangeRequestModal(false);
+                      setChangeRequestTicket(null);
+                    }}
+                    className={conditionalClasses({
+                      light: 'flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all',
+                      dark: 'flex-1 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-gray-200 font-semibold rounded-xl transition-all'
+                    })}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={formLoading}
+                    className="flex-1 px-4 py-3 bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {formLoading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        Creando...
+                      </>
+                    ) : (
+                      '✅ Crear Solicitud de Cambio'
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

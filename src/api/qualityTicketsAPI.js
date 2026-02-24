@@ -57,6 +57,11 @@ const qualityTicketsAPI = {
     });
     return response.data;
   },
+
+  createChangeRequestFromQualityTicket: async (ticketId, changeRequestData) => {
+    const response = await api.post(`/quality-tickets/${ticketId}/create-change-request`, changeRequestData);
+    return response.data;
+  },
 };
 
 export default qualityTicketsAPI;
