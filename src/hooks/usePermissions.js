@@ -73,7 +73,12 @@ export const usePermissions = (user) => {
   }, []);
 
   const handleOpenPermissionsModal = useCallback(async (item, type, setSelectedItemForPermissionsFn, setShowPermissionsModal, showNotification) => {
-    const selectedItem = { type, id: item.id };
+    // Guardar el item completo incluyendo el nombre
+    const selectedItem = { 
+      type, 
+      id: item.id,
+      name: item.name || item.title || null
+    };
     setSelectedItemForPermissions(selectedItem);
     
     if (setSelectedItemForPermissionsFn) {

@@ -28,6 +28,12 @@ const PermissionsModal = ({
   const getSelectedItemName = () => {
     if (!selectedItemForPermissions) return 'Sin selección';
     
+    // Si ya tenemos el nombre guardado, usarlo
+    if (selectedItemForPermissions.name) {
+      return selectedItemForPermissions.name;
+    }
+    
+    // Si no, buscar en las listas
     if (selectedItemForPermissions.type === 'folder') {
       const folder = folders.find(f => f.id === selectedItemForPermissions.id);
       return folder?.name || 'Carpeta';
