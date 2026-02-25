@@ -75,7 +75,7 @@ const Roles = () => {
       fetchRoles();
       fetchPermissions();
     }
-  }, [user, checkPermission, fetchRoles, fetchPermissions]);
+  }, [user, hasRolesAccess, fetchRoles, fetchPermissions]);
 
   // Filter and sort roles
   const filterAndSortRoles = () => {

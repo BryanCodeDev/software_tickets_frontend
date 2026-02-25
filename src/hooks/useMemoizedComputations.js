@@ -11,6 +11,7 @@ import { useMemo } from 'react';
  * @returns {any} Resultado del cálculo memoizado
  */
 export const useMemoizedValue = (compute, deps) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => compute(), deps);
 };
 
@@ -22,6 +23,7 @@ export const useMemoizedValue = (compute, deps) => {
  * @returns {Array} Lista filtrada memoizada
  */
 export const useFilteredList = (items, filterFn, deps = []) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => {
     if (!items || !Array.isArray(items)) return [];
     return filterFn ? items.filter(filterFn) : items;
@@ -36,6 +38,7 @@ export const useFilteredList = (items, filterFn, deps = []) => {
  * @returns {Array} Lista ordenada memoizada
  */
 export const useSortedList = (items, sortFn, deps = []) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => {
     if (!items || !Array.isArray(items)) return [];
     return sortFn ? [...items].sort(sortFn) : items;
@@ -50,6 +53,7 @@ export const useSortedList = (items, sortFn, deps = []) => {
  * @returns {Array} Lista transformada memoizada
  */
 export const useTransformedList = (items, transformFn, deps = []) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => {
     if (!items || !Array.isArray(items)) return [];
     return transformFn ? items.map(transformFn) : items;

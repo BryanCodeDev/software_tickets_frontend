@@ -176,7 +176,7 @@ const TicketCalidad = () => {
   }, []);
 
   // Roles con acceso total a todos los tickets
-  const ROLES_CON_ACCESO_TOTAL = ['Administrador', 'Técnico', 'Calidad'];
+  const ROLES_CON_ACCESO_TOTAL = useMemo(() => ['Administrador', 'Técnico', 'Calidad'], []);
   
   // Funciones helper para verificar permisos por ticket específico
   const canEditTicket = useCallback((ticket) => {
@@ -186,7 +186,7 @@ const TicketCalidad = () => {
     }
     // Otros roles solo pueden editar SUS PROPIOS tickets
     return ticket.userId === user?.id;
-  }, [userRole, user?.id]);
+  }, [userRole, user?.id, ROLES_CON_ACCESO_TOTAL]);
 
   const canDeleteTicket = useCallback((ticket) => {
     // Roles con acceso total pueden eliminar cualquier ticket
@@ -195,7 +195,7 @@ const TicketCalidad = () => {
     }
     // Otros roles solo pueden eliminar SUS PROPIOS tickets
     return ticket.userId === user?.id;
-  }, [userRole, user?.id]);
+  }, [userRole, user?.id, ROLES_CON_ACCESO_TOTAL]);
 
   const canSendMessage = useCallback((ticket) => {
     // Roles con acceso total pueden comentar en cualquier ticket
@@ -204,7 +204,7 @@ const TicketCalidad = () => {
     }
     // Otros roles solo pueden comentar en SUS PROPIOS tickets o los asignados
     return ticket.userId === user?.id || ticket.assignedTo === user?.id;
-  }, [userRole, user?.id]);
+  }, [userRole, user?.id, ROLES_CON_ACCESO_TOTAL]);
 
 
   useEffect(() => {
@@ -294,7 +294,7 @@ const TicketCalidad = () => {
     });
 
     return filtered;
-  }, [tickets, userRole, user?.id, searchTerm, filterStatus, filterPriority, titleFilter, sortBy, sortOrder]);
+  }, [tickets, userRole, user?.id, searchTerm, filterStatus, filterPriority, titleFilter, sortBy, sortOrder, ROLES_CON_ACCESO_TOTAL]);
 
   const stats = useMemo(() => {
     if (!Array.isArray(tickets)) return { total: 0, abiertos: 0, enProgreso: 0, resueltos: 0, alta: 0, resolutionRate: 0 };

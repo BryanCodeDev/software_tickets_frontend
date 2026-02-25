@@ -5,7 +5,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { CONFIG } from '../constants';
 
-export const useFetch = (fetchFn, dependencies = [], immediate = true) => {
+export const useFetch = (fetchFn, immediate = true) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(immediate);
   const [error, setError] = useState(null);
@@ -36,7 +36,7 @@ export const useFetch = (fetchFn, dependencies = [], immediate = true) => {
     if (immediate) {
       execute();
     }
-  }, dependencies);
+  }, [immediate, execute]);
 
   return {
     data,
