@@ -6,7 +6,9 @@ const DocumentChangeRequestCard = ({
   request,
   onViewDetail,
   onEdit,
-  canEdit
+  canEdit,
+  canApprove,
+  onApprove
 }) => {
   const { conditionalClasses } = useThemeClasses();
 
@@ -147,7 +149,19 @@ const DocumentChangeRequestCard = ({
           
           {/* Actions */}
           <div className="flex gap-1 lg:gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" onClick={(e) => e.stopPropagation()}>
-            {canEdit(request) && (
+            {canApprove && canApprove(request) && request.workflowStatus !== 'borrador' && request.workflowStatus !== 'publicado' && request.workflowStatus !== 'rechazado' && (
+              <button
+                onClick={() => onApprove(request)}
+                className={`p-1.5 lg:p-2 rounded-lg transition-all ${conditionalClasses({
+                  light: 'bg-green-100 hover:bg-green-200 text-green-600',
+                  dark: 'bg-green-900/30 hover:bg-green-800/40 text-green-400'
+                })}`}
+                title="Aprobar"
+              >
+                <FaCheck className="w-3 h-3 lg:w-4 lg:h-4" />
+              </button>
+            )}
+            {canEdit && canEdit(request) && (
               <button
                 onClick={() => onEdit(request)}
                 className={`p-1.5 lg:p-2 rounded-lg transition-all ${conditionalClasses({

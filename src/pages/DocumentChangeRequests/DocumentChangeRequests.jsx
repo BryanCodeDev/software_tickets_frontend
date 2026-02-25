@@ -67,9 +67,44 @@ const DocumentChangeRequestsPage = () => {
 
   const canApprove = useCallback((request) => {
     if (!request) return false;
-    // Roles que pueden aprobar
-    return ['Administrador', 'Calidad', 'Jefe', 'Coordinadora Administrativa', 'Compras'].includes(userRole);
-  }, [userRole]);
+    
+    // Ya no puede aprobar si está en estos estados
+    if (['borrador', 'publicado', 'rechazado'].includes(request.workflowStatus)) {
+      return false;
+    }
+    
+    // Roles que pueden aprobar cualquier paso
+    const fullAccessRoles = ['Administrador', 'Técnico'];
+    if (fullAccessRoles.includes(userRole)) {
+      return true;
+    }
+    
+    // Según el paso actual del workflow:
+    // Paso 1 (currentStep=1): Cualquier usuario puede aprobar (enviar a revisión)
+    // Paso 2 (currentStep=2): Requiere rol Calidad
+    // Paso 3 (currentStep=3): Requiere rol Jefe
+    // Paso 4 (currentStep=4): Requiere rol Coordinador/a Administrativa
+    // Paso 5 (currentStep=5): Requiere rol Calidad o Administrador
+    const currentStep = request.currentStep || 1;
+    
+    // Calidad puede aprobar pasos 2 y 5
+    if (userRole === 'Calidad' && [2, 5].includes(currentStep)) {
+      return true;
+    }
+    
+    // Jefe puede aprobar paso 3
+    if (userRole === 'Jefe' && currentStep === 3) {
+      return true;
+    }
+    
+    // Coordinador/a Administrativa puede aprobar paso 4
+    if (userRole === 'Coordinadora Administrativa' && currentStep === 4) {
+      return true;
+    }
+    
+    // Compras no tiene permisos de aprobación en el workflow de documentos
+    return false;
+  }, [user, userRole]);
 
   // Handlers
   const handleViewDetail = (request) => {
