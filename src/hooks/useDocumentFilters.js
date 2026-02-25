@@ -38,8 +38,13 @@ export const useDocumentFilters = (documents, searchTerm, filterType, sortBy, so
       return activeVersions.sort((a, b) => parseFloat(b.version) - parseFloat(a.version))[0];
     });
 
+    // Asegurar que filtered siempre sea un array
+    if (!Array.isArray(filtered)) {
+      filtered = [];
+    }
+
     // Búsqueda por título, descripción, tipo o categoría
-    if (searchTerm) {
+    if (searchTerm && filtered.length > 0) {
       filtered = filtered.filter(doc =>
         doc.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         doc.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -49,12 +54,13 @@ export const useDocumentFilters = (documents, searchTerm, filterType, sortBy, so
     }
 
     // Filtro por tipo
-    if (filterType !== 'all') {
+    if (filterType !== 'all' && filtered.length > 0) {
       filtered = filtered.filter(doc => doc.type?.toLowerCase() === filterType.toLowerCase());
     }
 
     // Ordenamiento
-    filtered.sort((a, b) => {
+    if (filtered.length > 0) {
+      filtered.sort((a, b) => {
       let aVal = a[sortBy];
       let bVal = b[sortBy];
 
@@ -75,6 +81,7 @@ export const useDocumentFilters = (documents, searchTerm, filterType, sortBy, so
         return aVal < bVal ? 1 : -1;
       }
     });
+    }
 
     return filtered;
   }, [documents, searchTerm, filterType, sortBy, sortOrder, currentFolder]);
