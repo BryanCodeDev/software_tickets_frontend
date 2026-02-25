@@ -74,7 +74,8 @@ const UploadModal = ({
                 <select
                   value={formData.parentDocumentId || ''}
                   onChange={(e) => {
-                    const selectedDoc = documents.find(doc => doc.id === parseInt(e.target.value));
+                    const docsArray = Array.isArray(documents) ? documents : [];
+                    const selectedDoc = docsArray.find(doc => doc.id === parseInt(e.target.value));
                     setFormData({
                       ...formData,
                       parentDocumentId: e.target.value,
@@ -91,17 +92,17 @@ const UploadModal = ({
                   required={formData.isNewVersion}
                 >
                   <option value="">Seleccionar documento...</option>
-                  {documents
+                  {(Array.isArray(documents) ? documents : [])
                     .filter(doc => doc.isActive)
                     .sort((a, b) => {
                       // Ordenar por carpeta primero, luego por título
-                      const aFolder = folders.find(f => f.id === a.folderId)?.name || 'Raíz';
-                      const bFolder = folders.find(f => f.id === b.folderId)?.name || 'Raíz';
+                      const aFolder = (Array.isArray(folders) ? folders : []).find(f => f.id === a.folderId)?.name || 'Raíz';
+                      const bFolder = (Array.isArray(folders) ? folders : []).find(f => f.id === b.folderId)?.name || 'Raíz';
                       if (aFolder !== bFolder) return aFolder.localeCompare(bFolder);
                       return a.title.localeCompare(b.title);
                     })
                     .map((doc) => {
-                      const folderName = folders.find(f => f.id === doc.folderId)?.name || 'Raíz';
+                      const folderName = (Array.isArray(folders) ? folders : []).find(f => f.id === doc.folderId)?.name || 'Raíz';
                       return (
                         <option key={doc.id} value={doc.id}>
                           [{folderName}] {doc.title} (v{doc.version})
@@ -239,7 +240,7 @@ const UploadModal = ({
                     })}`}
                   >
                     <option value="">Seleccionar carpeta (opcional)</option>
-                    {folders.map((folder) => (
+                    {(Array.isArray(folders) ? folders : []).map((folder) => (
                       <option key={folder.id} value={folder.id}>{folder.name}</option>
                     ))}
                   </select>
