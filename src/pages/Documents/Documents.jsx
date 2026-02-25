@@ -3,7 +3,6 @@ import { documentsAPI } from '../../api';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeClasses } from '../../hooks/useThemeClasses.js';
 import { useNotifications } from '../../hooks/useNotifications.js';
-import { useDocumentFilters } from '../../hooks/useDocumentFilters.js';
 import { useDocumentPermissions } from '../../hooks/useDocumentPermissions.js';
 import { usePermissions } from '../../hooks/usePermissions.js';
 import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes, FaFileAlt, FaTag, FaSearch, FaSortAmountDown, FaSortAmountUp, FaFilePdf, FaFileWord, FaFileExcel, FaFileImage, FaFileArchive, FaClock, FaUser, FaFolder, FaFolderOpen, FaPlus, FaArrowLeft } from 'react-icons/fa';
@@ -105,8 +104,57 @@ const Documents = () => {
   
   const { canManagePermissions } = documentPermissions;
   
-  // Use filters hook
-  const filteredDocumentsList = useDocumentFilters(documents, searchTerm, filterType, sortBy, sortOrder, currentFolder);
+  // Filtrar documentos directamente (sin hook)
+  const filteredDocumentsList = useMemo(() => {
+    let docs = Array.isArray(documents) ? documents : [];
+    
+    // Filtrar por carpeta
+    if (currentFolder) {
+      docs = docs.filter(doc => doc.folderId === currentFolder.id);
+    } else {
+      docs = docs.filter(doc => !doc.folderId);
+    }
+    
+    // Filtrar por búsqueda
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      docs = docs.filter(doc => 
+        doc.title?.toLowerCase().includes(term) ||
+        doc.description?.toLowerCase().includes(term) ||
+        doc.type?.toLowerCase().includes(term) ||
+        doc.category?.toLowerCase().includes(term)
+      );
+    }
+    
+    // Filtrar por tipo
+    if (filterType !== 'all') {
+      docs = docs.filter(doc => doc.type?.toLowerCase() === filterType.toLowerCase());
+    }
+    
+    // Ordenar
+    docs.sort((a, b) => {
+      let aVal = a[sortBy];
+      let bVal = b[sortBy];
+      
+      if (sortBy === 'createdAt') {
+        aVal = aVal ? new Date(aVal).getTime() : 0;
+        bVal = bVal ? new Date(bVal).getTime() : 0;
+      } else if (sortBy === 'version') {
+        aVal = parseFloat(aVal || 0);
+        bVal = parseFloat(bVal || 0);
+      } else if (typeof aVal === 'string') {
+        aVal = aVal.toLowerCase();
+        bVal = (bVal || '').toLowerCase();
+      }
+      
+      if (sortOrder === 'asc') {
+        return aVal > bVal ? 1 : -1;
+      }
+      return aVal < bVal ? 1 : -1;
+    });
+    
+    return docs;
+  }, [documents, searchTerm, filterType, sortBy, sortOrder, currentFolder]);
   
   // Calculate filtered folders
   const currentFolders = useMemo(() => {
