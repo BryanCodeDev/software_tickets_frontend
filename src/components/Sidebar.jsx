@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { FaCrown, FaWrench, FaUser, FaShieldAlt, FaClipboardList, FaUserShield, FaUserCog, FaDumpster, FaChartLine } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext.jsx';
 import { useThemeClasses } from '../hooks/useThemeClasses';
+import NotificationsPanel from './common/NotificationsPanel.jsx';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { user } = useContext(AuthContext);
@@ -1122,6 +1123,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 </p>
               </div>
               <div className="flex space-x-1">
+                <NotificationsPanel />
                 <Link
                   to="/settings"
                   onClick={() => { if (window.innerWidth < 1024) toggleSidebar(); }}
