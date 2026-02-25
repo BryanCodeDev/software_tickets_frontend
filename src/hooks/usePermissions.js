@@ -1,5 +1,6 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { documentsAPI } from '../api';
+import { onDocumentPermissionsUpdated, offDocumentPermissionsUpdated } from '../api/socket';
 
 export const usePermissions = (user) => {
   const [permissions, setPermissions] = useState([]);
@@ -7,6 +8,47 @@ export const usePermissions = (user) => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [permissionType, setPermissionType] = useState('read');
   const [userSearchTerm, setUserSearchTerm] = useState('');
+  const [selectedItemForPermissions, setSelectedItemForPermissions] = useState(null);
+
+  // Función para recargar permisos
+  const reloadPermissions = useCallback(async (showNotification = null) => {
+    if (!selectedItemForPermissions) return;
+    
+    try {
+      const permissionsData = await documentsAPI.getDocumentPermissions(
+        selectedItemForPermissions.type === 'document' ? selectedItemForPermissions.id : null,
+        selectedItemForPermissions.type === 'folder' ? selectedItemForPermissions.id : null
+      );
+      setPermissions(permissionsData || []);
+    } catch (err) {
+      console.error('Error reloading permissions:', err);
+      if (showNotification) {
+        showNotification('Error al actualizar permisos', 'error');
+      }
+    }
+  }, [selectedItemForPermissions]);
+
+  // Escuchar eventos WebSocket de actualización de permisos
+  useEffect(() => {
+    const handlePermissionsUpdated = ({ documentId, folderId }) => {
+      // Verificar si los permisos actualizados son relevantes para el elemento seleccionado
+      if (selectedItemForPermissions) {
+        const isRelevant = (selectedItemForPermissions.type === 'document' && documentId === selectedItemForPermissions.id) ||
+                          (selectedItemForPermissions.type === 'folder' && folderId === selectedItemForPermissions.id);
+        
+        if (isRelevant) {
+          console.log('Permissions updated via WebSocket, reloading...');
+          reloadPermissions();
+        }
+      }
+    };
+
+    onDocumentPermissionsUpdated(handlePermissionsUpdated);
+
+    return () => {
+      offDocumentPermissionsUpdated(handlePermissionsUpdated);
+    };
+  }, [selectedItemForPermissions, reloadPermissions]);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -30,8 +72,14 @@ export const usePermissions = (user) => {
     }
   }, []);
 
-  const handleOpenPermissionsModal = useCallback(async (item, type, setSelectedItemForPermissions, setShowPermissionsModal, showNotification) => {
-    setSelectedItemForPermissions({ type, id: item.id });
+  const handleOpenPermissionsModal = useCallback(async (item, type, setSelectedItemForPermissionsFn, setShowPermissionsModal, showNotification) => {
+    const selectedItem = { type, id: item.id };
+    setSelectedItemForPermissions(selectedItem);
+    
+    if (setSelectedItemForPermissionsFn) {
+      setSelectedItemForPermissionsFn(selectedItem);
+    }
+    
     setShowPermissionsModal(true);
     setUserSearchTerm(''); // Limpiar búsqueda
     setSelectedUsers([]); // Limpiar selección
@@ -42,7 +90,7 @@ export const usePermissions = (user) => {
         type === 'document' ? item.id : null,
         type === 'folder' ? item.id : null
       );
-      setPermissions(permissionsData);
+      setPermissions(permissionsData || []);
 
       // Cargar lista de usuarios
       try {
@@ -60,7 +108,14 @@ export const usePermissions = (user) => {
     }
   }, []);
 
-  const handleGrantPermissions = useCallback(async (selectedItemForPermissions, notifyError) => {
+  const handleGrantPermissions = useCallback(async (selectedItemForPermissionsParam, notifyError, showNotification = null) => {
+    const item = selectedItemForPermissionsParam || selectedItemForPermissions;
+    
+    if (!item) {
+      notifyError('No hay elemento seleccionado');
+      return;
+    }
+
     if (selectedUsers.length === 0) {
       notifyError('Selecciona al menos un usuario');
       return;
@@ -68,33 +123,62 @@ export const usePermissions = (user) => {
 
     try {
       await documentsAPI.grantDocumentPermissions(
-        selectedItemForPermissions.type === 'document' ? selectedItemForPermissions.id : null,
-        selectedItemForPermissions.type === 'folder' ? selectedItemForPermissions.id : null,
+        item.type === 'document' ? item.id : null,
+        item.type === 'folder' ? item.id : null,
         selectedUsers,
         permissionType
       );
 
+      // Recargar permisos después de otorgar
+      await reloadPermissions(showNotification);
+      
+      // Recargar lista de usuarios para actualizar la lista de filtrados
+      await fetchUsers();
+
       // Limpiar selección
       setSelectedUsers([]);
-    } catch {
-      notifyError('Error al otorgar permisos');
+    } catch (err) {
+      console.error('Error granting permissions:', err);
+      notifyError('Error al otorgar permisos: ' + (err.response?.data?.error || err.message));
     }
-  }, [selectedUsers, permissionType]);
+  }, [selectedUsers, permissionType, selectedItemForPermissions, reloadPermissions, fetchUsers]);
 
-  const handleRevokePermission = useCallback(async (permissionId, notifyError) => {
+  const handleRevokePermission = useCallback(async (permissionId, notifyError, showNotification = null) => {
     try {
-      const id = parseInt(permissionId, 10);
-      if (isNaN(id)) {
-        notifyError('ID de permiso inválido');
-        return;
+      // Verificar si es un formato de ID compuesto (documentId:userId)
+      if (typeof permissionId === 'string' && permissionId.includes(':')) {
+        const [documentId, userId] = permissionId.split(':');
+        const parsedDocId = parseInt(documentId, 10);
+        const parsedUserId = parseInt(userId, 10);
+        
+        if (isNaN(parsedDocId) || isNaN(parsedUserId)) {
+          notifyError('ID de permiso inválido');
+          return;
+        }
+
+        // Usar la nueva ruta que acepta documentId y userId
+        await documentsAPI.revokeDocumentPermissionByIds(parsedDocId, parsedUserId);
+      } else {
+        // Es un ID numérico normal
+        const id = parseInt(permissionId, 10);
+        if (isNaN(id)) {
+          notifyError('ID de permiso inválido');
+          return;
+        }
+
+        await documentsAPI.revokeDocumentPermission(id);
       }
 
-      await documentsAPI.revokeDocumentPermission(id);
+      // Recargar permisos después de revocar
+      await reloadPermissions(showNotification);
+      
+      // Recargar lista de usuarios para actualizar la lista de filtrados
+      await fetchUsers();
     } catch (err) {
       console.error('Error revoking permission:', err);
-      notifyError('Error al revocar permiso');
+      notifyError('Error al revocar permiso: ' + (err.response?.data?.error || err.message));
     }
-  }, []);
+  }, [reloadPermissions, fetchUsers]);
 
   const filteredUsers = useMemo(() => {
     return allUsers.filter(u =>
@@ -142,6 +226,8 @@ export const usePermissions = (user) => {
     handleRevokePermission,
     handleSelectAllUsers,
     handleDeselectAllUsers,
-    handleUserToggle
+    handleUserToggle,
+    setSelectedItemForPermissions,
+    reloadPermissions
   };
 };

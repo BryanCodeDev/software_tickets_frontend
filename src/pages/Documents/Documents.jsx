@@ -344,8 +344,8 @@ const Documents = () => {
   }, [canManagePermissions, handleOpenPermissionsModalHook, showNotification, notifyWarning]);
   
   const handleGrantPermissions = useCallback(async () => {
-    await handleGrantPermissionsHook(selectedItemForPermissions, notifyError);
-  }, [handleGrantPermissionsHook, selectedItemForPermissions, notifyError]);
+    await handleGrantPermissionsHook(selectedItemForPermissions, notifyError, showNotification);
+  }, [handleGrantPermissionsHook, selectedItemForPermissions, notifyError, showNotification]);
   
   const handleRevokePermission = useCallback(async (permissionId) => {
     await handleRevokePermissionHook(permissionId, showNotification, notifyError);
@@ -605,6 +605,7 @@ const Documents = () => {
           handleDeselectAllUsers={handleDeselectAllUsers}
           handleUserToggle={handleUserToggle}
           filteredUsers={filteredUsers}
+          folders={folders}
         />
       </Suspense>
     </div>

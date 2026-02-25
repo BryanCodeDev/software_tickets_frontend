@@ -1,11 +1,11 @@
 import React from 'react';
-import { FaTimes, FaUser, FaTrash } from 'react-icons/fa';
+import { FaTimes, FaUser, FaTrash, FaFolder, FaFolderOpen } from 'react-icons/fa';
 import { useThemeClasses } from '../../../hooks/useThemeClasses.js';
 
 const PermissionsModal = ({
   showPermissionsModal,
   setShowPermissionsModal,
-  // selectedItemForPermissions: _selectedItemForPermissions,
+  selectedItemForPermissions,
   permissions,
   allUsers,
   userSearchTerm,
@@ -19,9 +19,22 @@ const PermissionsModal = ({
   handleSelectAllUsers,
   handleDeselectAllUsers,
   handleUserToggle,
-  filteredUsers
+  filteredUsers,
+  folders = []
 }) => {
-  const { conditionalClasses } = useThemeClasses();
+  const { conditionalClasses, isDark } = useThemeClasses();
+
+  // Obtener el nombre del elemento seleccionado
+  const getSelectedItemName = () => {
+    if (!selectedItemForPermissions) return '';
+    
+    if (selectedItemForPermissions.type === 'folder') {
+      const folder = folders.find(f => f.id === selectedItemForPermissions.id);
+      return folder?.name || 'Carpeta';
+    } else {
+      return 'Documento';
+    }
+  };
 
   return (
     showPermissionsModal && (
@@ -32,7 +45,13 @@ const PermissionsModal = ({
         })}`}>
           <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl lg:text-2xl font-bold text-white">Gestionar Permisos</h2>
+              <div>
+                <h2 className="text-xl lg:text-2xl font-bold text-white">Gestionar Permisos</h2>
+                <p className="text-white/80 text-sm mt-1">
+                  {selectedItemForPermissions?.type === 'folder' ? 'Carpeta: ' : 'Documento: '} 
+                  {getSelectedItemName()}
+                </p>
+              </div>
               <button
                 onClick={() => setShowPermissionsModal(false)}
                 className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
@@ -62,26 +81,43 @@ const PermissionsModal = ({
                       dark: 'bg-gray-700'
                     })}`}>
                       <div className="flex items-center space-x-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${conditionalClasses({
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${conditionalClasses({
                           light: 'bg-[#f3ebf9]',
                           dark: 'bg-purple-900/50'
                         })}`}>
-                          <FaUser className={`w-4 h-4 ${conditionalClasses({
-                            light: 'text-[#662d91]',
-                            dark: 'text-purple-300'
-                          })}`} />
+                          {permission.folderId ? (
+                            <FaFolder className={`w-5 h-5 ${conditionalClasses({
+                              light: 'text-[#662d91]',
+                              dark: 'text-yellow-400'
+                            })}`} />
+                          ) : (
+                            <FaUser className={`w-4 h-4 ${conditionalClasses({
+                              light: 'text-[#662d91]',
+                              dark: 'text-purple-300'
+                            })}`} />
+                          )}
                         </div>
                         <div>
                           <p className={`font-medium ${conditionalClasses({
                             light: 'text-gray-900',
                             dark: 'text-white'
                           })}`}>
-                            {permission.user?.name || permission.user?.username}
+                            {permission.user?.name || permission.user?.username || 'Usuario desconocido'}
                           </p>
                           <p className={`text-sm ${conditionalClasses({
                             light: 'text-gray-500',
                             dark: 'text-gray-400'
-                          })}`}>{permission.user?.email}</p>
+                          })}`}>
+                            {permission.user?.email || (permission.folderId ? 'Permiso de carpeta' : 'Sin email')}
+                          </p>
+                          {permission.folderId && (
+                            <p className={`text-xs ${conditionalClasses({
+                              light: 'text-[#662d91]',
+                              dark: 'text-yellow-400'
+                            })}`}>
+                              Permiso de carpeta
+                            </p>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center space-x-3">
@@ -131,7 +167,7 @@ const PermissionsModal = ({
                   light: 'text-gray-700',
                   dark: 'text-gray-300'
                 })}`}>Tipo de Permiso</label>
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <label className={`flex items-center ${conditionalClasses({
                     light: 'text-gray-700',
                     dark: 'text-gray-300'
@@ -142,7 +178,10 @@ const PermissionsModal = ({
                       value="read"
                       checked={permissionType === 'read'}
                       onChange={(e) => setPermissionType(e.target.value)}
-                      className="mr-2"
+                      className={`mr-2 ${conditionalClasses({
+                        light: 'accent-[#662d91]',
+                        dark: 'accent-purple-400'
+                      })}`}
                     />
                     <span className={`text-sm ${conditionalClasses({
                       light: 'text-gray-700',
@@ -159,7 +198,10 @@ const PermissionsModal = ({
                       value="write"
                       checked={permissionType === 'write'}
                       onChange={(e) => setPermissionType(e.target.value)}
-                      className="mr-2"
+                      className={`mr-2 ${conditionalClasses({
+                        light: 'accent-[#662d91]',
+                        dark: 'accent-purple-400'
+                      })}`}
                     />
                     <span className={`text-sm ${conditionalClasses({
                       light: 'text-gray-700',
@@ -192,14 +234,14 @@ const PermissionsModal = ({
                     value={userSearchTerm}
                     onChange={(e) => setUserSearchTerm(e.target.value)}
                     className={`block w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-[#662d91] focus:border-[#662d91] text-sm ${conditionalClasses({
-                      light: 'border-gray-300 bg-white',
-                      dark: 'border-gray-600 bg-gray-700 text-white'
+                      light: 'border-gray-300 bg-white text-gray-900',
+                      dark: 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
                     })}`}
                   />
                 </div>
 
                 {/* Selection Controls */}
-                <div className="flex gap-2 mb-3">
+                <div className="flex flex-wrap gap-2 mb-3">
                   <button
                     type="button"
                     onClick={handleSelectAllUsers}
@@ -242,10 +284,10 @@ const PermissionsModal = ({
                         `No se encontraron usuarios para "${userSearchTerm}"`
                       ) : allUsers.length === 0 ? (
                         <div>
-                          <p className={`${conditionalClasses({
+                          <p className={conditionalClasses({
                             light: 'text-gray-600',
                             dark: 'text-gray-300'
-                          })}`}>No hay usuarios disponibles</p>
+                          })}>No hay usuarios disponibles</p>
                           <p className={`text-xs mt-1 ${conditionalClasses({
                             light: 'text-gray-500',
                             dark: 'text-gray-400'
@@ -269,7 +311,10 @@ const PermissionsModal = ({
                             type="checkbox"
                             checked={selectedUsers.includes(u.id)}
                             onChange={() => handleUserToggle(u.id)}
-                            className="mr-3 h-4 w-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
+                            className={`mr-3 h-4 w-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded ${conditionalClasses({
+                              light: 'accent-[#662d91]',
+                              dark: 'accent-purple-400'
+                            })}`}
                           />
                           <div className="flex items-center space-x-3 flex-1">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${conditionalClasses({

@@ -86,6 +86,10 @@ const documentsAPI = {
     await api.delete(`/documents/permissions/${permissionId}`);
   },
 
+  revokeDocumentPermissionByIds: async (documentId, userId) => {
+    await api.delete(`/documents/permissions/${documentId}/${userId}`);
+  },
+
   checkUserDocumentPermission: async (documentId, folderId) => {
     const params = new URLSearchParams();
     if (documentId) params.append('documentId', documentId);
