@@ -106,52 +106,59 @@ const Documents = () => {
   
   // Filtrar documentos directamente (sin hook)
   const filteredDocumentsList = useMemo(() => {
-    let docs = Array.isArray(documents) ? documents : [];
+    if (!Array.isArray(documents)) {
+      return [];
+    }
+    
+    let docs = [...documents];
     
     // Filtrar por carpeta
     if (currentFolder) {
-      docs = docs.filter(doc => doc.folderId === currentFolder.id);
+      docs = docs.filter(doc => doc && doc.folderId === currentFolder.id);
     } else {
-      docs = docs.filter(doc => !doc.folderId);
+      docs = docs.filter(doc => doc && !doc.folderId);
     }
     
     // Filtrar por búsqueda
-    if (searchTerm) {
+    if (searchTerm && searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
-      docs = docs.filter(doc => 
-        doc.title?.toLowerCase().includes(term) ||
-        doc.description?.toLowerCase().includes(term) ||
-        doc.type?.toLowerCase().includes(term) ||
-        doc.category?.toLowerCase().includes(term)
-      );
+      docs = docs.filter(doc => doc && (
+        (doc.title && doc.title.toLowerCase().includes(term)) ||
+        (doc.description && doc.description.toLowerCase().includes(term)) ||
+        (doc.type && doc.type.toLowerCase().includes(term)) ||
+        (doc.category && doc.category.toLowerCase().includes(term))
+      ));
     }
     
     // Filtrar por tipo
-    if (filterType !== 'all') {
-      docs = docs.filter(doc => doc.type?.toLowerCase() === filterType.toLowerCase());
+    if (filterType && filterType !== 'all') {
+      docs = docs.filter(doc => doc && doc.type && doc.type.toLowerCase() === filterType.toLowerCase());
     }
     
     // Ordenar
-    docs.sort((a, b) => {
-      let aVal = a[sortBy];
-      let bVal = b[sortBy];
-      
-      if (sortBy === 'createdAt') {
-        aVal = aVal ? new Date(aVal).getTime() : 0;
-        bVal = bVal ? new Date(bVal).getTime() : 0;
-      } else if (sortBy === 'version') {
-        aVal = parseFloat(aVal || 0);
-        bVal = parseFloat(bVal || 0);
-      } else if (typeof aVal === 'string') {
-        aVal = aVal.toLowerCase();
-        bVal = (bVal || '').toLowerCase();
-      }
-      
-      if (sortOrder === 'asc') {
-        return aVal > bVal ? 1 : -1;
-      }
-      return aVal < bVal ? 1 : -1;
-    });
+    if (docs.length > 0) {
+      docs.sort((a, b) => {
+        if (!a || !b) return 0;
+        let aVal = a[sortBy];
+        let bVal = b[sortBy];
+        
+        if (sortBy === 'createdAt') {
+          aVal = aVal ? new Date(aVal).getTime() : 0;
+          bVal = bVal ? new Date(bVal).getTime() : 0;
+        } else if (sortBy === 'version') {
+          aVal = parseFloat(aVal || 0);
+          bVal = parseFloat(bVal || 0);
+        } else if (typeof aVal === 'string') {
+          aVal = aVal.toLowerCase();
+          bVal = (bVal || '').toLowerCase();
+        }
+        
+        if (sortOrder === 'asc') {
+          return aVal > bVal ? 1 : -1;
+        }
+        return aVal < bVal ? 1 : -1;
+      });
+    }
     
     return docs;
   }, [documents, searchTerm, filterType, sortBy, sortOrder, currentFolder]);
