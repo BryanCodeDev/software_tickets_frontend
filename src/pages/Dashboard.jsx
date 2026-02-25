@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import AuthContext from '../context/AuthContext.jsx';
 import { dashboardAPI } from '../api';
-import { FaTicketAlt, FaBox, FaLock, FaChartLine, FaClock, FaExclamationTriangle, FaCheckCircle, FaUserClock, FaServer, FaShieldAlt, FaShoppingCart, FaClipboardCheck, FaUsers, FaTachometerAlt, FaChartBar } from 'react-icons/fa';
+import { FaTicketAlt, FaBox, FaLock, FaChartLine, FaClock, FaExclamationTriangle, FaCheckCircle, FaUserClock, FaServer, FaShieldAlt, FaShoppingCart, FaClipboardCheck, FaUsers, FaTachometerAlt, FaChartBar, FaFileAlt, FaKey, FaMobile, FaIdCard, FaClipboardList, FaBell, FaPlus, FaArrowRight, FaExclamationCircle } from 'react-icons/fa';
 import { useThemeClasses } from '../hooks/useThemeClasses';
 
 const Dashboard = () => {
@@ -135,58 +135,108 @@ const Dashboard = () => {
     })}>
       <div className="max-w-400 mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8">
         
-        {/* Header Section - Profesional y limpio */}
-        <div className="bg-linear-to-r from-[#662d91] to-[#7a3da8] rounded-xl shadow-lg mb-6 lg:mb-8">
-          <div className="p-4 sm:p-6 lg:p-8">
+        {/* Header - Diseño Enterprise Premium */}
+        <div className="relative overflow-hidden bg-linear-to-r from-[#662d91] via-[#7b2cbf] to-[#662d91] rounded-2xl shadow-2xl mb-6 lg:mb-8">
+          {/* Patrón de fondo decorativo */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -mr-32 -mt-32"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full -ml-24 -mb-24"></div>
+            <div className="absolute top-1/2 left-1/2 w-32 h-32 bg-white rounded-full opacity-50"></div>
+          </div>
+          
+          <div className="relative p-5 sm:p-7 lg:p-8">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3 mb-2">
-                  <FaTachometerAlt className="text-white text-2xl sm:text-3xl" />
-                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">Panel de Control</h1>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="p-2.5 bg-white/20 backdrop-blur-sm rounded-xl border border-white/30">
+                    <FaTachometerAlt className="text-white text-xl sm:text-2xl" />
+                  </div>
+                  <div>
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">Panel de Control</h1>
+                    <p className="text-xs sm:text-sm text-purple-200 font-medium">DuvyClass - Sistema de Gestión Empresarial</p>
+                  </div>
                 </div>
-                <p className="text-sm sm:text-base text-purple-100 mb-1">
-                  Bienvenido, <span className="font-semibold text-white">{user?.name || 'Usuario'}</span>
+                <p className="text-sm sm:text-base text-purple-100 mb-2">
+                  Bienvenido de nuevo, <span className="font-bold text-white">{user?.name || 'Usuario'}</span>
                 </p>
-                <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-purple-200">
-                  <span className="flex items-center gap-1">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-purple-200">
+                  <span className="flex items-center gap-1.5 bg-white/10 px-2.5 py-1 rounded-full backdrop-blur-sm">
                     <FaUsers className="text-xs" />
                     {user?.role?.name || 'Empleado'}
                   </span>
                   <span className="hidden sm:inline">•</span>
-                  <span>Sistema DuvyClass</span>
+                  <span className="hidden sm:flex items-center gap-1.5">
+                    <FaServer className="text-xs" />
+                    Sistema Operativo
+                  </span>
                 </div>
               </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2.5 rounded-lg border border-white/20 w-fit">
-                <FaClock className="text-purple-200 text-sm" />
-                <span className="text-xs sm:text-sm text-white font-medium">
-                  {new Date().toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
-                </span>
+              
+              {/* Panel de fecha y stats rápidos */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                <div className="bg-white/10 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-white/20 w-full sm:w-auto">
+                  <div className="flex items-center gap-2 mb-1">
+                    <FaClock className="text-purple-200 text-xs" />
+                    <span className="text-xs text-purple-200 font-medium">Fecha Actual</span>
+                  </div>
+                  <span className="text-sm font-bold text-white">
+                    {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                  </span>
+                </div>
+                
+                {/* Badge de conectividad */}
+                <div className="flex items-center gap-2 bg-emerald-500/20 backdrop-blur-sm px-3 py-2 rounded-xl border border-emerald-400/30">
+                  <div className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></div>
+                  <span className="text-xs font-medium text-emerald-100">En línea</span>
+                </div>
               </div>
             </div>
           </div>
+          
+          {/* Barra inferior decorativa */}
+          <div className="h-1.5 bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400"></div>
         </div>
 
-        {/* Grid principal de estadísticas - 2 columnas en móvil, 3 en tablet, 4 en desktop */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 lg:mb-8">
+        {/* Grid principal de estadísticas - Módulos Principales */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6 lg:mb-8">
           <StatCard
             title="Tickets IT"
             value={stats.tickets}
-            description="Solicitudes de soporte"
+            description="Solicitudes de soporte técnico"
             colorClass="text-purple-600"
+            bgClass="bg-gradient-to-br from-purple-50 to-white"
             icon={<FaTicketAlt className="text-purple-600 text-lg" />}
           />
           <StatCard
             title="Calidad"
             value={stats.qualityTickets}
-            description="Reportes y documentación"
+            description="Tickets ISO 9001"
             colorClass="text-emerald-600"
+            bgClass="bg-gradient-to-br from-emerald-50 to-white"
             icon={<FaShieldAlt className="text-emerald-600 text-lg" />}
+          />
+          <StatCard
+            title="Inventario"
+            value={stats.inventory.total}
+            description="Equipos registrados"
+            colorClass="text-blue-600"
+            bgClass="bg-gradient-to-br from-blue-50 to-white"
+            icon={<FaBox className="text-blue-600 text-lg" />}
+          />
+          <StatCard
+            title="Documentos"
+            value={stats.documents}
+            description="Archivos del sistema"
+            colorClass="text-amber-600"
+            bgClass="bg-gradient-to-br from-amber-50 to-white"
+            icon={<FaFileAlt className="text-amber-600 text-lg" />}
           />
           <StatCard
             title="Compras"
             value={stats.purchaseRequests}
             description="Solicitudes pendientes"
             colorClass="text-orange-600"
+            bgClass="bg-gradient-to-br from-orange-50 to-white"
             icon={<FaShoppingCart className="text-orange-600 text-lg" />}
           />
           <StatCard
@@ -194,39 +244,60 @@ const Dashboard = () => {
             value={stats.deliveryRecords}
             description="Entregas registradas"
             colorClass="text-indigo-600"
+            bgClass="bg-gradient-to-br from-indigo-50 to-white"
             icon={<FaClipboardCheck className="text-indigo-600 text-lg" />}
           />
         </div>
 
-        {/* Grid de Inventario Detallado */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 lg:mb-8">
+        {/* Grid de Inventario Detallado - Todos los dispositivos */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6 lg:mb-8">
           <StatCard
             title="Computadores"
             value={stats.inventory.computers}
             description="Equipos de escritorio"
             colorClass="text-blue-600"
-            icon={<FaBox className="text-blue-600 text-lg" />}
+            bgClass="bg-gradient-to-br from-blue-50 to-white"
+            icon={<FaServer className="text-blue-600 text-lg" />}
           />
           <StatCard
             title="Celulares"
             value={stats.inventory.phones}
             description="Teléfonos corporativos"
             colorClass="text-cyan-600"
-            icon={<FaBox className="text-cyan-600 text-lg" />}
+            bgClass="bg-gradient-to-br from-cyan-50 to-white"
+            icon={<FaMobile className="text-cyan-600 text-lg" />}
           />
           <StatCard
             title="Tablets"
             value={stats.inventory.tablets}
-            description="Dispositivos móviles"
+            description="Dispositivos tablets"
             colorClass="text-indigo-600"
-            icon={<FaBox className="text-indigo-600 text-lg" />}
+            bgClass="bg-gradient-to-br from-indigo-50 to-white"
+            icon={<FaMobile className="text-indigo-600 text-lg" />}
           />
           <StatCard
             title="PDAs"
             value={stats.inventory.pdas}
             description="Asistentes digitales"
             colorClass="text-green-600"
-            icon={<FaBox className="text-green-600 text-lg" />}
+            bgClass="bg-gradient-to-br from-green-50 to-white"
+            icon={<FaClipboardList className="text-green-600 text-lg" />}
+          />
+          <StatCard
+            title="Credenciales"
+            value={stats.credentials}
+            description="Accesos registrados"
+            colorClass="text-yellow-600"
+            bgClass="bg-gradient-to-br from-yellow-50 to-white"
+            icon={<FaKey className="text-yellow-600 text-lg" />}
+          />
+          <StatCard
+            title="Usuarios"
+            value={stats.users}
+            description="Usuarios del sistema"
+            colorClass="text-pink-600"
+            bgClass="bg-gradient-to-br from-pink-50 to-white"
+            icon={<FaUsers className="text-pink-600 text-lg" />}
           />
         </div>
 
@@ -388,19 +459,19 @@ const Dashboard = () => {
         {/* Grid inferior - 3 columnas */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           
-          {/* Resumen del Sistema */}
+          {/* Resumen del Sistema - Todos los módulos */}
           <div className={conditionalClasses({
             light: 'bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6',
             dark: 'bg-gray-800 rounded-xl shadow-sm border border-gray-600 p-4 sm:p-6'
           })}>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-5">
               <div className={conditionalClasses({
-                light: 'p-2.5 bg-blue-100 rounded-lg',
-                dark: 'p-2.5 bg-blue-900/30 rounded-lg'
+                light: 'p-2.5 bg-gradient-to-br from-purple-100 to-purple-50 rounded-lg',
+                dark: 'p-2.5 bg-gradient-to-br from-purple-900/50 to-purple-800/30 rounded-lg'
               })}>
                 <FaServer className={conditionalClasses({
-                  light: 'text-blue-600 text-lg',
-                  dark: 'text-blue-400 text-lg'
+                  light: 'text-purple-600 text-lg',
+                  dark: 'text-purple-400 text-lg'
                 })} />
               </div>
               <div>
@@ -411,7 +482,7 @@ const Dashboard = () => {
                 <p className={conditionalClasses({
                   light: 'text-xs text-gray-500',
                   dark: 'text-xs text-gray-400'
-                })}>Recursos totales</p>
+                })}>Todos los módulos activos</p>
               </div>
             </div>
             
