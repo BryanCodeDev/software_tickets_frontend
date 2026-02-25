@@ -59,8 +59,8 @@ const Documents = () => {
   const [editingDocument, setEditingDocument] = useState(null);
   const [currentFolder, setCurrentFolder] = useState(null);
   const [forms, setForms] = useState({
-    upload: { title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' },
-    edit: { title: '', description: '', type: '', category: '', expiryDate: '' }
+    upload: { name: '', title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' },
+    edit: { name: '', title: '', description: '', type: '', category: '', expiryDate: '' }
   });
   const [confirmDialog, setConfirmDialog] = useState(null);
   
@@ -179,18 +179,18 @@ const Documents = () => {
     e.preventDefault();
     try {
       await documentsAPI.createFolder({
-        name: forms.upload.title,
+        name: forms.upload.name,
         parentFolderId: currentFolder?.id || null,
         description: forms.upload.description
       });
       await fetchFolders();
       setShowCreateFolderModal(false);
-      setForms(prev => ({ ...prev, upload: { title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' } }));
+      setForms(prev => ({ ...prev, upload: { name: '', title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' } }));
       notifySuccess('Carpeta creada exitosamente');
     } catch {
       notifyError('Error al crear la carpeta');
     }
-  }, [forms.upload.title, forms.upload.description, currentFolder, fetchFolders, notifySuccess, notifyError]);
+  }, [forms.upload.name, forms.upload.description, currentFolder, fetchFolders, notifySuccess, notifyError]);
   
   const handleEditFolder = useCallback((folder) => {
     setForms(prev => ({
