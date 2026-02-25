@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useContext, useCallback, lazy, Suspense } from 'react';
 import { FaEdit, FaTrash, FaPlus, FaCheck, FaTimes, FaEye, FaSearch, FaFilter, FaDownload, FaChartBar, FaClock, FaExclamationTriangle, FaCheckCircle, FaSpinner, FaUserCircle, FaClipboardList, FaFileExport, FaSortAmountDown, FaSortAmountUp, FaArrowRight, FaCopy, FaUndo, FaShoppingCart } from 'react-icons/fa';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+
+// Registrar componentes de Chart.js
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title);
+
 import AuthContext from '../../context/AuthContext';
 import { purchaseRequestsAPI } from '../../api';
 import { useAuth } from '../../hooks/useAuth';
