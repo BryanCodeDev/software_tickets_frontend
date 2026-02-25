@@ -1,6 +1,7 @@
 import React from 'react';
-import { FaExclamationTriangle, FaRedo } from 'react-icons/fa';
+import { FaExclamationTriangle, FaRedo, FaPaperPlane } from 'react-icons/fa';
 import { useThemeClasses } from '../hooks/useThemeClasses';
+import api from '../api/api';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -15,16 +16,43 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     // Registrar el error en la consola
-
-    // También podemos enviar el error a un servicio de reporte de errores
     this.setState({
       error: error,
       errorInfo: errorInfo
     });
 
-    // Aquí podrías enviar el error a un servicio como Sentry, LogRocket, etc.
-    // logErrorToService(error, errorInfo);
+    // Enviar reporte de error al backend
+    this.reportErrorToBackend(error, errorInfo);
   }
+
+  // Función para enviar el error al backend
+  reportErrorToBackend = async (error, errorInfo) => {
+    try {
+      const errorData = {
+        error: {
+          message: error?.message || error?.toString() || 'Error desconocido',
+          name: error?.name || 'Error',
+          stack: error?.stack || ''
+        },
+        errorInfo: {
+          componentStack: errorInfo?.componentStack || ''
+        },
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: new Date().toISOString()
+      };
+
+      // Enviar al backend (no bloquea la UI si falla)
+      await api.post('/notifications/report-error', errorData, {
+        timeout: 5000 // 5 segundos de timeout
+      });
+      
+      console.log('✅ Reporte de error enviado al backend');
+    } catch (err) {
+      // No mostrar error al usuario, solo registrar en consola
+      console.error('❌ Error enviando reporte al backend:', err.message);
+    }
+  };
 
   handleReload = () => {
     window.location.reload();
