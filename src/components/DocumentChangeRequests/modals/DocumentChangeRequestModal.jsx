@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FaTimes, FaFileAlt, FaFolder, FaEdit, FaTrash, FaUpload, FaCheck, FaBan, FaUserCircle, FaArrowRight, FaCheckCircle, FaClock, FaExclamationTriangle, FaLayerGroup, FaCheck, FaXmark } from 'react-icons/fa';
+import { FaTimes, FaFileAlt, FaFolder, FaEdit, FaTrash, FaUpload, FaBan, FaUserCircle, FaArrowRight, FaCheckCircle, FaClock, FaExclamationTriangle, FaLayerGroup, FaXmark } from 'react-icons/fa';
 import documentsAPI from '../../../api/documentsAPI';
 import documentChangeRequestsAPI from '../../../api/documentChangeRequestsAPI';
 import { useThemeClasses } from '../../../hooks/useThemeClasses';
