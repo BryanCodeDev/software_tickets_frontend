@@ -2,13 +2,16 @@ import { useMemo } from 'react';
 
 export const useDocumentFilters = (documents, searchTerm, filterType, sortBy, sortOrder, currentFolder) => {
   const filteredAndSortedDocuments = useMemo(() => {
-    // Verificar que documents sea un array
-    if (!Array.isArray(documents)) {
+    // Verificar que documents sea un array - usar Array.isArray para mayor seguridad
+    const docsArray = Array.isArray(documents) ? documents : 
+                     (documents?.data ? documents.data : []);
+    
+    if (!Array.isArray(docsArray)) {
       return [];
     }
 
     // Filtrar documentos por carpeta actual
-    let docsInFolder = documents.filter(doc => {
+    let docsInFolder = docsArray.filter(doc => {
       if (currentFolder) {
         return doc.folderId === currentFolder.id;
       } else {
