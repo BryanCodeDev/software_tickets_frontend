@@ -204,7 +204,10 @@ const Dashboard = () => {
             value={stats.tickets}
             description="Solicitudes de soporte técnico"
             colorClass="text-purple-600"
-            bgClass="bg-gradient-to-br from-purple-50 to-white"
+            bgClass={conditionalClasses({
+              light: 'bg-gradient-to-br from-purple-50 to-white',
+              dark: 'bg-gradient-to-br from-purple-900/40 to-gray-800'
+            })}
             icon={<FaTicketAlt className="text-purple-600 text-lg" />}
           />
           <StatCard
@@ -212,7 +215,10 @@ const Dashboard = () => {
             value={stats.qualityTickets}
             description="Tickets ISO 9001"
             colorClass="text-emerald-600"
-            bgClass="bg-gradient-to-br from-emerald-50 to-white"
+            bgClass={conditionalClasses({
+              light: 'bg-gradient-to-br from-emerald-50 to-white',
+              dark: 'bg-gradient-to-br from-emerald-900/40 to-gray-800'
+            })}
             icon={<FaShieldAlt className="text-emerald-600 text-lg" />}
           />
           <StatCard
@@ -220,7 +226,10 @@ const Dashboard = () => {
             value={stats.inventory.total}
             description="Equipos registrados"
             colorClass="text-blue-600"
-            bgClass="bg-gradient-to-br from-blue-50 to-white"
+            bgClass={conditionalClasses({
+              light: 'bg-gradient-to-br from-blue-50 to-white',
+              dark: 'bg-gradient-to-br from-blue-900/40 to-gray-800'
+            })}
             icon={<FaBox className="text-blue-600 text-lg" />}
           />
           <StatCard
@@ -228,7 +237,10 @@ const Dashboard = () => {
             value={stats.documents}
             description="Archivos del sistema"
             colorClass="text-amber-600"
-            bgClass="bg-gradient-to-br from-amber-50 to-white"
+            bgClass={conditionalClasses({
+              light: 'bg-gradient-to-br from-amber-50 to-white',
+              dark: 'bg-gradient-to-br from-amber-900/40 to-gray-800'
+            })}
             icon={<FaFileAlt className="text-amber-600 text-lg" />}
           />
           <StatCard
@@ -236,7 +248,10 @@ const Dashboard = () => {
             value={stats.purchaseRequests}
             description="Solicitudes pendientes"
             colorClass="text-orange-600"
-            bgClass="bg-gradient-to-br from-orange-50 to-white"
+            bgClass={conditionalClasses({
+              light: 'bg-gradient-to-br from-orange-50 to-white',
+              dark: 'bg-gradient-to-br from-orange-900/40 to-gray-800'
+            })}
             icon={<FaShoppingCart className="text-orange-600 text-lg" />}
           />
           <StatCard
@@ -244,7 +259,10 @@ const Dashboard = () => {
             value={stats.deliveryRecords}
             description="Entregas registradas"
             colorClass="text-indigo-600"
-            bgClass="bg-gradient-to-br from-indigo-50 to-white"
+            bgClass={conditionalClasses({
+              light: 'bg-gradient-to-br from-indigo-50 to-white',
+              dark: 'bg-gradient-to-br from-indigo-900/40 to-gray-800'
+            })}
             icon={<FaClipboardCheck className="text-indigo-600 text-lg" />}
           />
         </div>
@@ -256,7 +274,10 @@ const Dashboard = () => {
             value={stats.inventory.computers}
             description="Equipos de escritorio"
             colorClass="text-blue-600"
-            bgClass="bg-gradient-to-br from-blue-50 to-white"
+            bgClass={conditionalClasses({
+              light: 'bg-gradient-to-br from-blue-50 to-white',
+              dark: 'bg-gradient-to-br from-blue-900/40 to-gray-800'
+            })}
             icon={<FaServer className="text-blue-600 text-lg" />}
           />
           <StatCard
@@ -264,7 +285,10 @@ const Dashboard = () => {
             value={stats.inventory.phones}
             description="Teléfonos corporativos"
             colorClass="text-cyan-600"
-            bgClass="bg-gradient-to-br from-cyan-50 to-white"
+            bgClass={conditionalClasses({
+              light: 'bg-gradient-to-br from-cyan-50 to-white',
+              dark: 'bg-gradient-to-br from-cyan-900/40 to-gray-800'
+            })}
             icon={<FaMobile className="text-cyan-600 text-lg" />}
           />
           <StatCard
@@ -272,7 +296,10 @@ const Dashboard = () => {
             value={stats.inventory.tablets}
             description="Dispositivos tablets"
             colorClass="text-indigo-600"
-            bgClass="bg-gradient-to-br from-indigo-50 to-white"
+            bgClass={conditionalClasses({
+              light: 'bg-gradient-to-br from-indigo-50 to-white',
+              dark: 'bg-gradient-to-br from-indigo-900/40 to-gray-800'
+            })}
             icon={<FaMobile className="text-indigo-600 text-lg" />}
           />
           <StatCard
@@ -280,7 +307,10 @@ const Dashboard = () => {
             value={stats.inventory.pdas}
             description="Asistentes digitales"
             colorClass="text-green-600"
-            bgClass="bg-gradient-to-br from-green-50 to-white"
+            bgClass={conditionalClasses({
+              light: 'bg-gradient-to-br from-green-50 to-white',
+              dark: 'bg-gradient-to-br from-green-900/40 to-gray-800'
+            })}
             icon={<FaClipboardList className="text-green-600 text-lg" />}
           />
           <StatCard
@@ -288,7 +318,10 @@ const Dashboard = () => {
             value={stats.credentials}
             description="Accesos registrados"
             colorClass="text-yellow-600"
-            bgClass="bg-gradient-to-br from-yellow-50 to-white"
+            bgClass={conditionalClasses({
+              light: 'bg-gradient-to-br from-yellow-50 to-white',
+              dark: 'bg-gradient-to-br from-yellow-900/40 to-gray-800'
+            })}
             icon={<FaKey className="text-yellow-600 text-lg" />}
           />
           <StatCard
@@ -296,7 +329,10 @@ const Dashboard = () => {
             value={stats.users}
             description="Usuarios del sistema"
             colorClass="text-pink-600"
-            bgClass="bg-gradient-to-br from-pink-50 to-white"
+            bgClass={conditionalClasses({
+              light: 'bg-gradient-to-br from-pink-50 to-white',
+              dark: 'bg-gradient-to-br from-pink-900/40 to-gray-800'
+            })}
             icon={<FaUsers className="text-pink-600 text-lg" />}
           />
         </div>
