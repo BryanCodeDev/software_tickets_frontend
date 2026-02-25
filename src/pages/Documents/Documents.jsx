@@ -110,7 +110,8 @@ const Documents = () => {
   
   // Calculate filtered folders
   const currentFolders = useMemo(() => {
-    return folders.filter(folder =>
+    const foldersArray = Array.isArray(folders) ? folders : [];
+    return foldersArray.filter(folder =>
       currentFolder ? folder.parentFolderId === currentFolder.id : !folder.parentFolderId
     );
   }, [folders, currentFolder]);
@@ -282,7 +283,8 @@ const Documents = () => {
   
   const handleViewHistory = (doc) => {
     const key = doc.parentDocumentId || doc.id;
-    const versions = documents.filter(d => (d.parentDocumentId || d.id) === key).sort((a, b) => parseFloat(b.version) - parseFloat(a.version));
+    const documentsArray = Array.isArray(documents) ? documents : [];
+    const versions = documentsArray.filter(d => (d.parentDocumentId || d.id) === key).sort((a, b) => parseFloat(b.version) - parseFloat(a.version));
     setSelectedDocument({ ...doc, versions });
     setShowHistoryModal(true);
   };
@@ -369,10 +371,10 @@ const Documents = () => {
   };
   
   // Calculate total unique documents
-  const totalUniqueDocuments = [...new Set(documents.map(doc => doc.parentDocumentId || doc.id))].length;
+  const totalUniqueDocuments = [...new Set((Array.isArray(documents) ? documents : []).map(doc => doc.parentDocumentId || doc.id))].length;
   
   // Get unique types for filters
-  const uniqueTypes = [...new Set(documents.map(doc => doc.type).filter(Boolean))];
+  const uniqueTypes = [...new Set((Array.isArray(documents) ? documents : []).map(doc => doc.type).filter(Boolean))];
   
   // Get file icon
   const getFileIcon = (filePath) => {
