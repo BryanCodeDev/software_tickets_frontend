@@ -3,6 +3,7 @@ import { documentsAPI } from '../../api';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeClasses } from '../../hooks/useThemeClasses.js';
 import { useNotifications } from '../../hooks/useNotifications.js';
+import { useDocumentFilters } from '../../hooks/useDocumentFilters.js';
 import { useDocumentPermissions } from '../../hooks/useDocumentPermissions.js';
 import { usePermissions } from '../../hooks/usePermissions.js';
 import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes, FaFileAlt, FaTag, FaSearch, FaSortAmountDown, FaSortAmountUp, FaFilePdf, FaFileWord, FaFileExcel, FaFileImage, FaFileArchive, FaClock, FaUser, FaFolder, FaFolderOpen, FaPlus, FaArrowLeft } from 'react-icons/fa';
@@ -104,69 +105,12 @@ const Documents = () => {
   
   const { canManagePermissions } = documentPermissions;
   
-  // Filtrar documentos directamente (sin hook)
-  const filteredDocumentsList = useMemo(() => {
-    if (!Array.isArray(documents)) {
-      return [];
-    }
-    
-    let docs = [...documents];
-    
-    // Filtrar por carpeta
-    if (currentFolder) {
-      docs = docs.filter(doc => doc && doc.folderId === currentFolder.id);
-    } else {
-      docs = docs.filter(doc => doc && !doc.folderId);
-    }
-    
-    // Filtrar por búsqueda
-    if (searchTerm && searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
-      docs = docs.filter(doc => doc && (
-        (doc.title && doc.title.toLowerCase().includes(term)) ||
-        (doc.description && doc.description.toLowerCase().includes(term)) ||
-        (doc.type && doc.type.toLowerCase().includes(term)) ||
-        (doc.category && doc.category.toLowerCase().includes(term))
-      ));
-    }
-    
-    // Filtrar por tipo
-    if (filterType && filterType !== 'all') {
-      docs = docs.filter(doc => doc && doc.type && doc.type.toLowerCase() === filterType.toLowerCase());
-    }
-    
-    // Ordenar
-    if (docs.length > 0) {
-      docs.sort((a, b) => {
-        if (!a || !b) return 0;
-        let aVal = a[sortBy];
-        let bVal = b[sortBy];
-        
-        if (sortBy === 'createdAt') {
-          aVal = aVal ? new Date(aVal).getTime() : 0;
-          bVal = bVal ? new Date(bVal).getTime() : 0;
-        } else if (sortBy === 'version') {
-          aVal = parseFloat(aVal || 0);
-          bVal = parseFloat(bVal || 0);
-        } else if (typeof aVal === 'string') {
-          aVal = aVal.toLowerCase();
-          bVal = (bVal || '').toLowerCase();
-        }
-        
-        if (sortOrder === 'asc') {
-          return aVal > bVal ? 1 : -1;
-        }
-        return aVal < bVal ? 1 : -1;
-      });
-    }
-    
-    return docs;
-  }, [documents, searchTerm, filterType, sortBy, sortOrder, currentFolder]);
+  // Use filters hook
+  const filteredDocumentsList = useDocumentFilters(documents, searchTerm, filterType, sortBy, sortOrder, currentFolder);
   
   // Calculate filtered folders
   const currentFolders = useMemo(() => {
-    const foldersArray = Array.isArray(folders) ? folders : [];
-    return foldersArray.filter(folder =>
+    return folders.filter(folder =>
       currentFolder ? folder.parentFolderId === currentFolder.id : !folder.parentFolderId
     );
   }, [folders, currentFolder]);
@@ -174,11 +118,8 @@ const Documents = () => {
   // Fetch data
   const fetchDocuments = useCallback(async () => {
     try {
-      const response = await documentsAPI.fetchDocuments();
-      // Verificar si la respuesta es un array o tiene estructura paginada
-      const documentsArray = Array.isArray(response) ? response :
-                             (response?.data ? response.data : []);
-      setDocuments(documentsArray);
+      const data = await documentsAPI.fetchDocuments();
+      setDocuments(data);
     } catch {
       // Error handled silently
     } finally {
@@ -188,11 +129,8 @@ const Documents = () => {
   
   const fetchFolders = useCallback(async () => {
     try {
-      const response = await documentsAPI.fetchFolders();
-      // Verificar si la respuesta es un array o tiene estructura paginada
-      const foldersArray = Array.isArray(response) ? response :
-                           (response?.data ? response.data : []);
-      setFolders(foldersArray);
+      const data = await documentsAPI.fetchFolders();
+      setFolders(data);
     } catch {
       // Error handled silently
     }
@@ -338,8 +276,7 @@ const Documents = () => {
   
   const handleViewHistory = (doc) => {
     const key = doc.parentDocumentId || doc.id;
-    const documentsArray = Array.isArray(documents) ? documents : [];
-    const versions = documentsArray.filter(d => (d.parentDocumentId || d.id) === key).sort((a, b) => parseFloat(b.version) - parseFloat(a.version));
+    const versions = documents.filter(d => (d.parentDocumentId || d.id) === key).sort((a, b) => parseFloat(b.version) - parseFloat(a.version));
     setSelectedDocument({ ...doc, versions });
     setShowHistoryModal(true);
   };
@@ -426,10 +363,10 @@ const Documents = () => {
   };
   
   // Calculate total unique documents
-  const totalUniqueDocuments = [...new Set((Array.isArray(documents) ? documents : []).map(doc => doc.parentDocumentId || doc.id))].length;
+  const totalUniqueDocuments = [...new Set(documents.map(doc => doc.parentDocumentId || doc.id))].length;
   
   // Get unique types for filters
-  const uniqueTypes = [...new Set((Array.isArray(documents) ? documents : []).map(doc => doc.type).filter(Boolean))];
+  const uniqueTypes = [...new Set(documents.map(doc => doc.type).filter(Boolean))];
   
   // Get file icon
   const getFileIcon = (filePath) => {

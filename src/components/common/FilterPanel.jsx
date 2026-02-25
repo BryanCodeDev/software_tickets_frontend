@@ -52,7 +52,7 @@ const FilterPanel = React.memo(({
           <button
             onClick={onToggleFilters}
             className={`
-              flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 lg:px-6 py-2.5 sm:py-3 rounded-xl font-semibold transition-all duration-200 min-w-25 sm:min-w-30
+              flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 lg:px-6 py-2.5 sm:py-3 rounded-xl font-semibold transition-all duration-200 min-w-[100px] sm:min-w-[120px]
               ${showFilters
                 ? conditionalClasses({
                     light: 'bg-[#662d91] text-white shadow-lg',

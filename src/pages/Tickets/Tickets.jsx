@@ -151,15 +151,14 @@ const Tickets = () => {
     try {
       // Cargar usuarios siempre para que todos los roles puedan ver el listado
       // Los empleados pueden ver técnicos para asignar tickets
-      const usersData = await usersAPI.fetchUsers({ limit: 1000 });
-      const allUsers = usersData.data || [];
-      const techUsers = allUsers.filter(u => u.Role?.name === 'Técnico');
-      const adminUsers = allUsers.filter(u => u.Role?.name === 'Administrador');
-      const calidadUsers = allUsers.filter(u => u.Role?.name === 'Calidad');
-      const comprasUsers = allUsers.filter(u => u.Role?.name === 'Compras');
-      const empleadoUsers = allUsers.filter(u => u.Role?.name === 'Empleado');
-      const jefeUsers = allUsers.filter(u => u.Role?.name === 'Jefe');
-      const coordinadoraUsers = allUsers.filter(u => u.Role?.name === 'Coordinadora Administrativa');
+      const users = await usersAPI.fetchUsers();
+      const techUsers = users.filter(u => u.Role?.name === 'Técnico');
+      const adminUsers = users.filter(u => u.Role?.name === 'Administrador');
+      const calidadUsers = users.filter(u => u.Role?.name === 'Calidad');
+      const comprasUsers = users.filter(u => u.Role?.name === 'Compras');
+      const empleadoUsers = users.filter(u => u.Role?.name === 'Empleado');
+      const jefeUsers = users.filter(u => u.Role?.name === 'Jefe');
+      const coordinadoraUsers = users.filter(u => u.Role?.name === 'Coordinadora Administrativa');
       
       setTechnicians(techUsers);
       setAdministrators(adminUsers);

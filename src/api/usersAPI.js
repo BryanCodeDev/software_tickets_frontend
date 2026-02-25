@@ -1,9 +1,9 @@
 import api from './api';
 
 const usersAPI = {
-  fetchUsers: async (params = {}) => {
+  fetchUsers: async () => {
     try {
-      const response = await api.get('/users', { params });
+      const response = await api.get('/users');
       return response.data;
     } catch (error) {
       throw error.response?.data?.error || 'Error al obtener usuarios';

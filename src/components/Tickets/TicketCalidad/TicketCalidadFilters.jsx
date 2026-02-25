@@ -45,10 +45,10 @@ const TicketCalidadFilters = React.memo(({
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={conditionalClasses({
-              light: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-30 ${
+              light: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${
                 showFilters ? 'bg-[#662d91] text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`,
-              dark: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-30 ${
+              dark: `flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[120px] ${
                 showFilters ? 'bg-[#662d91] text-white shadow-lg' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
               }`
             })}

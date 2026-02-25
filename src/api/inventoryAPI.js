@@ -1,8 +1,8 @@
 import api from './api';
 
 const inventoryAPI = {
-  fetchInventory: async (params = {}) => {
-    const response = await api.get('/inventory', { params });
+  fetchInventory: async () => {
+    const response = await api.get('/inventory');
     return response.data;
   },
 
