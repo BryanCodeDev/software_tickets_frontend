@@ -151,7 +151,7 @@ const DocumentChangeRequestCard = ({
           <div className="flex gap-1 lg:gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" onClick={(e) => e.stopPropagation()}>
             {canApprove && canApprove(request) && request.workflowStatus !== 'borrador' && request.workflowStatus !== 'publicado' && request.workflowStatus !== 'rechazado' && (
               <button
-                onClick={() => onApprove(request)}
+                onClick={() => onViewDetail(request)}
                 className={`p-1.5 lg:p-2 rounded-lg transition-all ${conditionalClasses({
                   light: 'bg-green-100 hover:bg-green-200 text-green-600',
                   dark: 'bg-green-900/30 hover:bg-green-800/40 text-green-400'

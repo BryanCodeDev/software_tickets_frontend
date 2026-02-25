@@ -121,7 +121,7 @@ const DocumentChangeRequestsPage = () => {
 
   const handleApprove = (request) => {
     setSelectedRequest(request);
-    setModalMode('approve');
+    setModalMode('view'); // Los botones de aprobar aparecen en el sidebar según permisos
     setShowModal(true);
   };
 
@@ -661,6 +661,7 @@ const DocumentChangeRequestsPage = () => {
           onSave={handleSave}
           onSubmit={handleSubmit}
           onApprove={handleApprovalAction}
+          user={user}
         />
       )}
     </div>
