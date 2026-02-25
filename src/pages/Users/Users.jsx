@@ -83,8 +83,8 @@ const Users = () => {
 
   const fetchInventoryItems = useCallback(async () => {
     try {
-      const data = await inventoryAPI.fetchInventory();
-      setInventoryItems(data);
+      const data = await inventoryAPI.fetchInventory({ limit: 1000 });
+      setInventoryItems(data.data || []);
     } catch (error) {
       console.error('Error al cargar items de inventario:', error);
     }
