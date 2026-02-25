@@ -2,6 +2,11 @@ import { useMemo } from 'react';
 
 export const useDocumentFilters = (documents, searchTerm, filterType, sortBy, sortOrder, currentFolder) => {
   const filteredAndSortedDocuments = useMemo(() => {
+    // Verificar que documents sea un array
+    if (!Array.isArray(documents)) {
+      return [];
+    }
+
     // Filtrar documentos por carpeta actual
     let docsInFolder = documents.filter(doc => {
       if (currentFolder) {
