@@ -78,7 +78,7 @@ const Login = () => {
               light: 'text-xl text-[#e8d5f5] leading-relaxed',
               dark: 'text-xl text-gray-300 leading-relaxed'
             })}>
-              Centraliza tu soporte técnico, inventario IT, documentación y gestión de credenciales en una sola solución profesional.
+              Centraliza tu soporte técnico, inventario IT, documentación, calidad ISO 9001, compras y credenciales en una sola solución profesional con automatización de procesos.
             </p>
           </div>
         </div>
@@ -134,11 +134,49 @@ const Login = () => {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-white font-semibold">Repositorio</p>
+                  <p className="text-white font-semibold">Gestión de Calidad</p>
                   <p className={conditionalClasses({
                     light: 'text-[#e8d5f5] text-sm',
                     dark: 'text-gray-300 text-sm'
-                  })}>Documentación técnica</p>
+                  })}>ISO 9001 y CAPAs</p>
+                </div>
+              </div>
+            </div>
+            <div className={conditionalClasses({
+              light: 'bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20',
+              dark: 'bg-black/20 backdrop-blur-sm rounded-xl p-4 border border-white/20'
+            })}>
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-white font-semibold">Compras</p>
+                  <p className={conditionalClasses({
+                    light: 'text-[#e8d5f5] text-sm',
+                    dark: 'text-gray-300 text-sm'
+                  })}>Workflow automatizado</p>
+                </div>
+              </div>
+            </div>
+            <div className={conditionalClasses({
+              light: 'bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20',
+              dark: 'bg-black/20 backdrop-blur-sm rounded-xl p-4 border border-white/20'
+            })}>
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-white font-semibold">Documentos</p>
+                  <p className={conditionalClasses({
+                    light: 'text-[#e8d5f5] text-sm',
+                    dark: 'text-gray-300 text-sm'
+                  })}>Control de versiones</p>
                 </div>
               </div>
             </div>
@@ -400,7 +438,7 @@ const Login = () => {
             light: 'mt-8 text-center text-xs text-gray-500',
             dark: 'mt-8 text-center text-xs text-gray-400'
           })}>
-            © 2025 DuvyClass. Desarrollado por Bryan Muñoz.<br />
+            © 2026 DuvyClass. Desarrollado por Bryan Muñoz.<br />
             Todos los derechos reservados.
           </p>
         </div>

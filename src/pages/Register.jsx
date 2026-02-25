@@ -120,13 +120,13 @@ const Register = () => {
           
           <div className="space-y-6">
             <h1 className="text-5xl font-bold text-white leading-tight">
-              Únete a la Plataforma<br />de Gestión IT Líder
+              Únete a DuvyClass<br />La Plataforma Líder en Gestión IT
             </h1>
             <p className={conditionalClasses({
               light: 'text-xl text-[#e8d5f5] leading-relaxed',
               dark: 'text-xl text-gray-300 leading-relaxed'
             })}>
-              Crea tu cuenta y accede a herramientas profesionales para gestionar soporte técnico, inventarios y documentación empresarial.
+              Crea tu cuenta y accede a herramientas profesionales para gestionar soporte técnico, inventarios, documentación, calidad ISO 9001 y compras empresariales.
             </p>
           </div>
         </div>
@@ -136,7 +136,7 @@ const Register = () => {
             light: 'bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20',
             dark: 'bg-black/20 backdrop-blur-sm rounded-xl p-6 border border-white/20'
           })}>
-            <h3 className="text-white font-semibold text-lg mb-4">Beneficios de registrarte:</h3>
+            <h3 className="text-white font-semibold text-lg mb-4">¿Por qué elegir DuvyClass?</h3>
             <ul className="space-y-3">
               <li className="flex items-center space-x-3">
                 <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
@@ -169,7 +169,29 @@ const Register = () => {
                 <span className={conditionalClasses({
                   light: 'text-[#e8d5f5]',
                   dark: 'text-gray-300'
-                })}>Repositorio de documentación técnica</span>
+                })}>Gestión de calidad ISO 9001</span>
+              </li>
+              <li className="flex items-center space-x-3">
+                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <span className={conditionalClasses({
+                  light: 'text-[#e8d5f5]',
+                  dark: 'text-gray-300'
+                })}>Workflow de compras automatizado</span>
+              </li>
+              <li className="flex items-center space-x-3">
+                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <span className={conditionalClasses({
+                  light: 'text-[#e8d5f5]',
+                  dark: 'text-gray-300'
+                })}>Control de versiones documentales</span>
               </li>
               <li className="flex items-center space-x-3">
                 <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
@@ -214,7 +236,7 @@ const Register = () => {
             <p className={conditionalClasses({
               light: 'text-gray-600',
               dark: 'text-gray-400'
-            })}>Completa el formulario para comenzar</p>
+            })}>Completa el formulario para crear tu cuenta y comenzar a gestionar tu empresa</p>
           </div>
 
           <div className={conditionalClasses({
@@ -569,7 +591,7 @@ const Register = () => {
             light: 'mt-8 text-center text-xs text-gray-500',
             dark: 'mt-8 text-center text-xs text-gray-400'
           })}>
-            © 2025 DuvyClass. Desarrollado por Bryan Muñoz.<br />
+            © 2026 DuvyClass. Desarrollado por Bryan Muñoz.<br />
             Todos los derechos reservados.
           </p>
         </div>

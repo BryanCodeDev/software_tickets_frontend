@@ -5,11 +5,12 @@
 [![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)](https://mysql.com/)
 [![License](https://img.shields.io/badge/License-ISC-blue.svg)](LICENSE)
 
-Una plataforma web interna completa para la gestión tecnológica de empresas, que centraliza soporte técnico, inventario IT, documentación y gestión de credenciales en una interfaz moderna y segura.
+Una plataforma web interna completa para la gestión tecnológica de empresas, que centraliza soporte técnico, inventario IT, documentación, gestión de calidad, compras y credenciales en una interfaz moderna y segura.
 
 ## 📋 Tabla de Contenidos
 
 - [Características](#-características)
+- [Nuevas Funcionalidades Recientes](#-nuevas-funcionalidades-recientes)
 - [Arquitectura del Sistema](#-arquitectura-del-sistema)
 - [Tecnologías Utilizadas](#-tecnologías-utilizadas)
 - [Instalación y Configuración](#-instalación-y-configuración)
@@ -18,6 +19,7 @@ Una plataforma web interna completa para la gestión tecnológica de empresas, q
 - [Base de Datos](#-base-de-datos)
 - [Roles y Permisos](#-roles-y-permisos)
 - [Funcionalidades](#-funcionalidades)
+- [Sistema de Notificaciones](#-sistema-de-notificaciones)
 - [Reportes y Búsqueda](#-reportes-y-búsqueda)
 - [Desarrollo](#-desarrollo)
 - [Contribución](#-contribución)
@@ -90,6 +92,20 @@ Una plataforma web interna completa para la gestión tecnológica de empresas, q
 - Control de IMEI, planes tarifarios y asignaciones por responsable
 - Seguimiento de garantías, fechas de entrega y estados de equipos
 - Acceso restringido por roles (Administradores, Técnicos, Coordinadores)
+
+### 📱 **Tablets y PDAs**
+- Gestión específica de dispositivos tablets corporativos
+- Control de IMEI, números de serie y asignaciones
+- Gestión de planes de datos y apps instaladas
+- Dispositivos de captura de datos (PDAs)
+- Historial de asignaciones y mantenimiento
+
+### 🏢 **Actas de Entrega**
+- Creación y firma digital de actas de entrega
+- Inventario detallado de equipos entregados
+- Registro de condiciones y responsables
+- Historial completo de entregas
+- Integración con módulo de inventario
 
 ### 🔍 **Búsqueda Global**
 - Buscador unificado en toda la plataforma
@@ -504,15 +520,20 @@ Roles (1) ──── (N) Users
 - [x] Encriptación bcrypt para contraseñas
 - [x] Gestión de Calidad con tickets especializados
 - [x] Teléfonos Corporativos con 4 categorías organizadas
+- [x] Tablets y PDAs - Gestión de dispositivos
+- [x] Actas de Entrega - Documentación de entregas
 - [x] Roles de Calidad, Coordinador y Director de Compras
 - [x] Permisos específicos por carpeta en documentos
+- [x] **Sistema de Notificaciones por Rol** (Febrero 2026)
+- [x] **Diseño 100% Responsive** (Febrero 2026)
+- [x] Workflows de email automatizados
 
 ### 🚀 Características Avanzadas
 - **WebSocket**: Comunicación en tiempo real para tickets
 - **File Upload**: Soporte para múltiples tipos de archivo
 - **Search Engine**: Búsqueda global con filtros por permisos
 - **CSV Export**: Reportes descargables compatibles con Excel
-- **Responsive Design**: Optimizado para desktop y móvil
+- **Responsive Design 100%**: Optimizado para desktop, tablet y móvil
 - **Audit Trail**: Registro completo de todas las acciones
 - **Security**: Encriptación, validación y sanitización
 - **Refresh Tokens**: Sistema de tokens renovables automáticamente
@@ -522,6 +543,22 @@ Roles (1) ──── (N) Users
 - **Gzip Compression**: Compresión automática de respuestas
 - **Production Logging**: Sistema de logging completo para producción
 - **Code Splitting**: Optimización de carga de JavaScript
+
+## ✨ Nuevas Funcionalidades Recientes
+
+### 🔔 Sistema de Notificaciones en Tiempo Real
+- **Notificaciones por rol**: Cada rol recibe notificaciones específicas de su área
+- **Notificaciones en Navbar**: Panel de notificaciones integrado en la barra superior
+- **Notificaciones por email**: Envío automático de emails al crear/asignar tickets
+- **Alertas de inventario**: Notificaciones cuando items llegan al mínimo
+- **Recordatorios de calidad**: Alertas de vencimiento de CAPAs
+- **Resumen semanal**: Email con estadísticas del sistema
+
+### 📱 Diseño 100% Responsive
+- **Help.jsx**: Página de ayuda completamente responsive
+- **Todas las resoluciones**: Desde 320px hasta 1920px+
+- **Mejor experiencia móvil**: Navegación adaptativa
+- **Tabs optimizadas**: Etiquetas cortas para móviles
 
 ### ⚡ **Optimizaciones de Rendimiento Implementadas**
 
@@ -569,6 +606,50 @@ Roles (1) ──── (N) Users
 - **Documentos**: Metadatos y información de archivos
 - **Repositorio**: Archivos con categorías y etiquetas
 - **Credenciales**: Información administrativa (sin contraseñas)
+
+## 🔔 Sistema de Notificaciones
+
+### Descripción General
+El sistema de notificaciones de DuvyClass proporciona alertas en tiempo real para mantener a los usuarios informados sobre eventos importantes en el sistema.
+
+### Características Principales
+
+#### 📬 Notificaciones por Rol
+Cada rol recibe notificaciones específicas de su área:
+- **Administrador**: Todas las notificaciones del sistema
+- **Técnico**: Tickets asignados y actualizaciones
+- **Jefe**: Aprobaciones pendientes y estadísticas
+- **Empleado**: Estado de sus tickets y solicitudes
+- **Calidad**: Tickets de calidad y cambios documentales
+- **Compras**: Solicitudes de compra y approvals
+- **Coordinadora Administrativa**: Inventario y compras
+
+#### 📧 Notificaciones por Email
+El sistema envía emails automáticos para:
+- **Creación de tickets**: Notificación al técnico asignado
+- **Asignación de tickets**: Email al responsable
+- **Cambios de estado**: Actualizaciones al solicitante
+- **Recordatorios**: Tickets sin asignar por 24 horas
+- **Alertas de inventario**: Items en mínimo
+- **Vencimiento de CAPAs**: Alerts de calidad
+- **Resumen semanal**: Estadísticas del sistema
+
+#### 🔔 Panel de Notificaciones
+- Located en el Navbar (parte superior derecha)
+- **Contador de notificaciones** no leídas
+- **Dropdown con lista** de notificaciones recientes
+- **Marcar como leído** individualmente
+- **Eliminar notificaciones**
+- **Persistencia** en base de datos
+
+### Módulos de Notificación
+| Módulo | Tipo de Notificación |
+|--------|---------------------|
+| Tickets | Asignación, estado, comentarios |
+| Inventario | Alertas de stock mínimo |
+| Calidad | CAPAs, vencimientos, auditorías |
+| Compras | Aprobaciones, estados |
+| Documentos | Cambios, aprobaciones |
 
 ## 🔒 Seguridad y Producción
 
@@ -868,6 +949,6 @@ Si tienes problemas o preguntas:
 
 ---
 
-**Última actualización**: Enero 2026  
+**Última actualización**: Febrero 2026  
 **Versión**: 2.0  
 **Compatible con**: Software Tickets Management System v2.0+
