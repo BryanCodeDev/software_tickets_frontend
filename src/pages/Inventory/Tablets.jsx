@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { FaTablet, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory, FaIndustry, FaFlask, FaCalculator, FaShoppingCart, FaUsers, FaBuilding, FaTools, FaLaptop, FaClipboardCheck } from 'react-icons/fa';
-import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
 import tabletInventoryAPI from '../../api/tabletInventoryAPI';
@@ -246,7 +245,9 @@ const Tablets = () => {
     }
   };
 
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
+    // Import dinámico de XLSX - solo se carga cuando el usuario hace clic en exportar
+    const XLSX = await import('xlsx');
     const headers = ['IT', 'Propiedad', 'Responsable', 'Área', 'Marca', 'Modelo', 'Serial', 'Almacenamiento', 'RAM', 'Pantalla', 'Sistema Operativo', 'Estado', 'Garantía', 'Compra', 'Mantenimiento', 'Costo'];
     const rows = filteredTablets.map(item => [
       item.it,

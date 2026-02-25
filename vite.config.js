@@ -13,13 +13,12 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           // Optimización de chunks - separar librerías grandes
+          // Evitar dependencias circulares organizando por orden de carga
           manualChunks: (id) => {
-            // React core - siempre cargar primero
-            if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/')) {
-              return 'react-core'
-            }
+            // NO incluir react en chunks separados para evitar circular con i18n
+            // i18n debe ir al final para evitar dependencias cruzadas
             
-            // Router
+            // Router - debe cargarse temprano
             if (id.includes('node_modules/react-router') || id.includes('node_modules/react-router-dom')) {
               return 'router'
             }
@@ -34,33 +33,12 @@ export default defineConfig(({ mode }) => {
               return 'socket'
             }
             
-            // Excel - librería muy pesada, separarla
-            if (id.includes('node_modules/xlsx') || id.includes('xlsx')) {
-              return 'excel'
-            }
-            
-            // PDF generation - html2canvas y librerías relacionadas
-            if (id.includes('node_modules/html2canvas') || 
-                id.includes('node_modules/jspdf') ||
-                id.includes('html2canvas') ||
-                id.includes('jspdf')) {
-              return 'pdf-generation'
-            }
-            
-            // i18n y traducciones
-            if (id.includes('node_modules/i18next') || 
-                id.includes('node_modules/react-i18next') ||
-                id.includes('i18next') ||
-                id.includes('react-i18next')) {
-              return 'i18n'
-            }
-            
             // Zustand - gestión de estado
             if (id.includes('node_modules/zustand') || id.includes('zustand')) {
               return 'state'
             }
             
-            // UI components - shadcn/ui
+            // UI components - shadcn/ui y librerías de UI
             if (id.includes('node_modules/@radix-ui') || 
                 id.includes('node_modules/lucide-react') ||
                 id.includes('node_modules/class-variance-authority') ||
@@ -75,17 +53,60 @@ export default defineConfig(({ mode }) => {
             }
             
             // Purify - sanitización HTML
-            if (id.includes('node_modules/dompurify') || id.includes('node_modules/dompurify')) {
+            if (id.includes('node_modules/dompurify') || id.includes('dompurify')) {
               return 'security'
+            }
+            
+            // Excel - librería muy pesada, separarla en partes más pequeñas
+            if (id.includes('node_modules/xlsx') || id.includes('xlsx')) {
+              // Dividir xlsx en partes más pequeñas
+              if (id.includes('/dist/esm/') || id.includes('/lib/')) {
+                // Separar el core de xlsx
+                if (id.includes('xlsx.js') || id.includes('xlsx.mjs')) {
+                  return 'excel-core'
+                }
+                // Partes específicas de xlsx
+                if (id.includes('cfb')) {
+                  return 'excel-cfb'
+                }
+                if (id.includes('xlsx')) {
+                  return 'excel-utils'
+                }
+              }
+              return 'excel'
+            }
+            
+            // PDF generation - jspdf y librerías relacionadas
+            if (id.includes('node_modules/jspdf')) {
+              return 'pdf-generation'
+            }
+            
+            // docx - generación de documentos Word
+            if (id.includes('node_modules/docx')) {
+              return 'docx-generation'
+            }
+            
+            // i18n y traducciones - AL FINAL para evitar chunk circular
+            // Esta debe ser la última en evaluarse
+            if (id.includes('node_modules/i18next') || 
+                id.includes('node_modules/react-i18next') ||
+                (id.includes('i18next') && !id.includes('node_modules')) ||
+                (id.includes('react-i18next') && !id.includes('node_modules'))) {
+              return 'i18n'
+            }
+            
+            // React DOM - chunk principal al final para evitar circular
+            if (id.includes('node_modules/react-dom') || id.includes('node_modules/scheduler')) {
+              return 'react-core'
             }
           }
         }
       },
-      chunkSizeWarningLimit: 500, // Reducido para forzar mejor separación
+      chunkSizeWarningLimit: 450, // Ajustado para librerías grandes como xlsx
       minify: 'esbuild',
       sourcemap: false, // Desactivar sourcemap en producción para reducir tamaño
       assetsInlineLimit: 4096,
-      // Configuración deCode-splitting
+      // Configuración de code-splitting
       cssCodeSplit: true,
       modulePreload: {
         polyfill: true
@@ -114,7 +135,7 @@ export default defineConfig(({ mode }) => {
     // Optimizaciones adicionales
     optimizeDeps: {
       include: ['react', 'react-dom', 'react-router-dom', 'axios'],
-      exclude: ['xlsx', 'html2canvas', 'jspdf']
+      exclude: ['xlsx', 'jspdf', 'docx']
     }
   }
 })

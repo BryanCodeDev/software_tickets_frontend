@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, useRef, useCallback, useMemo } from 'react';
 import { FaPlus, FaCheck, FaTimes } from 'react-icons/fa';
-import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
 import { qualityTicketsAPI, qualityMessagesAPI, usersAPI } from '../../api';
 import { joinTicketRoom, leaveTicketRoom, onNewMessage, onMessageUpdated, onMessageDeleted, onTicketUpdated, onTicketCreated, onTicketDeleted, onTicketsListUpdated, offNewMessage, offMessageUpdated, offMessageDeleted, offTicketUpdated, offTicketCreated, offTicketDeleted, offTicketsListUpdated } from '../../api/socket';
@@ -481,7 +480,9 @@ const TicketCalidad = () => {
     }
   };
 
-  const exportToExcel = useCallback(() => {
+  const exportToExcel = useCallback(async () => {
+    // Import dinámico de XLSX - solo se carga cuando el usuario hace clic en exportar
+    const XLSX = await import('xlsx');
     const headers = ['ID', 'Título', 'Descripción', 'Prioridad', 'Estado', 'Creado por', 'Asignado a', 'Fecha Creación'];
     const rows = filteredTickets.map(ticket => [
       ticket.id,

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { FaBox, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaFileExport, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory, FaIndustry, FaFlask, FaCalculator, FaShoppingCart, FaUsers, FaBuilding, FaTools, FaLaptop, FaClipboardCheck } from 'react-icons/fa';
-import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeClasses } from '../../hooks/useThemeClasses.js';
@@ -257,7 +256,8 @@ const Inventory = () => {
     }
   };
 
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
+    const XLSX = await import('xlsx');
     const headers = ['IT', 'Propiedad', 'Responsable', 'Área', 'Marca', 'Serial', 'Capacidad', 'RAM', 'Estado', 'Garantía', 'Compra', 'Mantenimiento', 'Costo'];
     const rows = filteredInventory.map(item => [
       item.it,

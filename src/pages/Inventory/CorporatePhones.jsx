@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { FaMobile, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory, FaIndustry, FaFlask, FaCalculator, FaShoppingCart, FaUsers, FaBuilding, FaTools, FaLaptop, FaClipboardCheck, FaEye } from 'react-icons/fa';
-import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
 import { corporatePhoneAPI } from '../../api';
@@ -241,7 +240,8 @@ const CorporatePhones = () => {
     }
   };
 
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
+    const XLSX = await import('xlsx');
     const headers = ['Categoría', 'Número Celular', 'Plan', 'Plan Minutos', 'Tarifa', 'Gigas Internet', 'Nombre', 'Cargo', 'Correos', 'Ciudad', 'Equipo Celular', 'Fecha Entrega', 'IMEI', 'Estado'];
     const rows = filteredPhones.map(item => [
       item.category,

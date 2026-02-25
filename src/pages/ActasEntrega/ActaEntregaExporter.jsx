@@ -1,7 +1,7 @@
-import jsPDF from 'jspdf';
-import { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableCell, TableRow, WidthType, AlignmentType, BorderStyle } from 'docx';
 
 export const exportToPDF = async (acta, equipo) => {
+  const jsPDFModule = await import('jspdf');
+  const jsPDF = jsPDFModule.default;
   const pdf = new jsPDF();
   const pageWidth = 210;
   const margin = 15;
@@ -323,6 +323,9 @@ export const exportToPDF = async (acta, equipo) => {
 };
 
 export const exportToWord = async (acta, equipo) => {
+  const docxModule = await import('docx');
+  const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableCell, TableRow, WidthType, AlignmentType, BorderStyle } = docxModule;
+
   const doc = new Document({
     sections: [{
       properties: {

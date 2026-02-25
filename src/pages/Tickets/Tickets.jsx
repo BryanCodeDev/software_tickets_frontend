@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, useRef, useCallback, useMemo } from 'react';
 import { FaCheck, FaTimes, FaExclamationTriangle } from 'react-icons/fa';
-import * as XLSX from 'xlsx';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -565,8 +564,10 @@ const Tickets = () => {
     }
   };
 
-  // Funciones de exportación
-  const exportToExcel = () => {
+  // Funciones de exportación - Import dinámico de XLSX para mejor rendimiento
+  const exportToExcel = async () => {
+    // Import dinámico de XLSX - solo se carga cuando el usuario hace clic en exportar
+    const XLSX = await import('xlsx');
     const headers = ['ID', 'Título', 'Descripción', 'Prioridad', 'Estado', 'Creado por', 'Asignado a', 'Fecha Creación'];
     const rows = filteredTickets.map(ticket => [
       ticket.id,

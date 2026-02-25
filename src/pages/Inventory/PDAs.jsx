@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { FaMobile, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory, FaIndustry, FaFlask, FaCalculator, FaShoppingCart, FaUsers, FaBuilding, FaTools, FaLaptop, FaClipboardCheck } from 'react-icons/fa';
-import * as XLSX from 'xlsx';
 import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
 import pdaInventoryAPI from '../../api/pdaInventoryAPI';
@@ -243,7 +242,8 @@ const PDAs = () => {
     }
   };
 
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
+    const XLSX = await import('xlsx');
     const headers = ['IT', 'Propiedad', 'Responsable', 'Área', 'Marca', 'Modelo', 'Serial', 'Conectividad', 'Aplicaciones', 'Sistema Operativo', 'Estado', 'Garantía', 'Compra', 'Mantenimiento', 'Costo'];
     const rows = filteredPdas.map(item => [
       item.it,
