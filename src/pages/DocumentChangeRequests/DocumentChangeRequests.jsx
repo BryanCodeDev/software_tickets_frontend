@@ -246,61 +246,12 @@ const DocumentChangeRequestsPage = () => {
       document.body.removeChild(link);
       
       notifySuccess('Exportación completada exitosamente');
-    } catch (err) {
+    } catch {
       notifyError('Error al exportar datos');
     }
   };
 
-  // Opciones de filtro para el panel
-  const filterOptions = [
-    {
-      label: 'Estado',
-      type: 'select',
-      value: filters.status,
-      onChange: (value) => setFilters(prev => ({ ...prev, status: value })),
-      options: [
-        { value: 'borrador', label: 'Borrador' },
-        { value: 'pendiente_revision', label: 'Pendiente Revisión' },
-        { value: 'en_revision', label: 'En Revisión' },
-        { value: 'aprobado', label: 'Aprobado' },
-        { value: 'en_implementacion', label: 'En Implementación' },
-        { value: 'publicado', label: 'Publicado' },
-        { value: 'rechazado', label: 'Rechazado' }
-      ]
-    },
-    {
-      label: 'Tipo',
-      type: 'select',
-      value: filters.requestType,
-      onChange: (value) => setFilters(prev => ({ ...prev, requestType: value })),
-      options: [
-        { value: 'create', label: 'Crear' },
-        { value: 'edit', label: 'Editar' },
-        { value: 'version_update', label: 'Nueva Versión' },
-        { value: 'delete', label: 'Eliminar' }
-      ]
-    },
-    {
-      label: 'Prioridad',
-      type: 'select',
-      value: filters.priority,
-      onChange: (value) => setFilters(prev => ({ ...prev, priority: value })),
-      options: [
-        { value: 'baja', label: 'Baja' },
-        { value: 'media', label: 'Media' },
-        { value: 'alta', label: 'Alta' },
-        { value: 'urgente', label: 'Urgente' }
-      ]
-    }
-  ];
 
-  const sortOptions = [
-    { value: 'createdAt', label: 'Fecha Creación' },
-    { value: 'updatedAt', label: 'Última Actualización' },
-    { value: 'title', label: 'Título' },
-    { value: 'priority', label: 'Prioridad' },
-    { value: 'workflowStatus', label: 'Estado' }
-  ];
 
   return (
     <div className={conditionalClasses({

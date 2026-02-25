@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { FaFileAlt, FaExchangeAlt, FaTicketAlt, FaChartLine, FaExclamationTriangle, FaCheckCircle, FaClock, FaExclamationCircle } from 'react-icons/fa';
-import { useAuth } from '../../hooks/useAuth';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
 import qualityTicketsAPI from '../../api/qualityTicketsAPI';
 import documentsAPI from '../../api/documentsAPI';
 import documentChangeRequestsAPI from '../../api/documentChangeRequestsAPI';
 
 const QualityDashboard = () => {
-  const { user } = useAuth();
   const { conditionalClasses } = useThemeClasses();
-  const userRole = user?.role?.name;
   
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({

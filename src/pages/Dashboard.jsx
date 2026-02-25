@@ -194,7 +194,7 @@ const Dashboard = () => {
           </div>
           
           {/* Barra inferior decorativa */}
-          <div className="h-1.5 bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400"></div>
+          <div className="h-1.5 bg-linear-to-r from-purple-400 via-pink-400 to-indigo-400"></div>
         </div>
 
         {/* Grid principal de estadísticas - Módulos Principales */}
@@ -502,8 +502,8 @@ const Dashboard = () => {
           })}>
             <div className="flex items-center gap-3 mb-5">
               <div className={conditionalClasses({
-                light: 'p-2.5 bg-gradient-to-br from-purple-100 to-purple-50 rounded-lg',
-                dark: 'p-2.5 bg-gradient-to-br from-purple-900/50 to-purple-800/30 rounded-lg'
+                light: 'p-2.5 bg-linear-to-br from-purple-100 to-purple-50 rounded-lg',
+                dark: 'p-2.5 bg-linear-to-br from-purple-900/50 to-purple-800/30 rounded-lg'
               })}>
                 <FaServer className={conditionalClasses({
                   light: 'text-purple-600 text-lg',

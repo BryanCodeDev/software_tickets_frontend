@@ -83,33 +83,6 @@ const DocumentChangeRequestModal = ({
     return null;
   };
 
-  const getStatusColor = (status) => {
-    const colors = {
-      'borrador': conditionalClasses({ light: 'bg-gray-100 text-gray-700 border-gray-200', dark: 'bg-gray-700 text-gray-300 border-gray-600' }),
-      'pendiente_revision': conditionalClasses({ light: 'bg-yellow-100 text-yellow-700 border-yellow-200', dark: 'bg-yellow-900/30 text-yellow-300 border-yellow-700/30' }),
-      'en_revision': conditionalClasses({ light: 'bg-blue-100 text-blue-700 border-blue-200', dark: 'bg-blue-900/30 text-blue-300 border-blue-700/30' }),
-      'aprobado': conditionalClasses({ light: 'bg-orange-100 text-orange-700 border-orange-200', dark: 'bg-orange-900/30 text-orange-300 border-orange-700/30' }),
-      'en_implementacion': conditionalClasses({ light: 'bg-cyan-100 text-cyan-700 border-cyan-200', dark: 'bg-cyan-900/30 text-cyan-300 border-cyan-700/30' }),
-      'publicado': conditionalClasses({ light: 'bg-green-100 text-green-700 border-green-200', dark: 'bg-green-900/30 text-green-300 border-green-700/30' }),
-      'rechazado': conditionalClasses({ light: 'bg-red-100 text-red-700 border-red-200', dark: 'bg-red-900/30 text-red-300 border-red-700/30' }),
-      'cancelado': conditionalClasses({ light: 'bg-gray-100 text-gray-500 border-gray-200', dark: 'bg-gray-700 text-gray-400 border-gray-600' })
-    };
-    return colors[status?.toLowerCase()] || conditionalClasses({ light: 'bg-gray-100 text-gray-600 border-gray-200', dark: 'bg-gray-700 text-gray-300 border-gray-600' });
-  };
-
-  const getStatusLabel = (status) => {
-    const labels = {
-      'borrador': 'Borrador',
-      'pendiente_revision': 'Pendiente Revisión',
-      'en_revision': 'En Revisión',
-      'aprobado': 'Aprobado',
-      'en_implementacion': 'En Implementación',
-      'publicado': 'Publicado',
-      'rechazado': 'Rechazado',
-      'cancelado': 'Cancelado'
-    };
-    return labels[status?.toLowerCase()] || status;
-  };
 
   // Cargar datos iniciales
   useEffect(() => {
