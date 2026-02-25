@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { FaEdit, FaEye, FaFileAlt, FaCheck, FaClock, FaTimes, FaSpinner, FaArrowRight } from 'react-icons/fa';
+import { FaEdit, FaEye, FaFileAlt, FaCheck, FaClock, FaTimes, FaSpinner, FaArrowRight, FaExclamationTriangle, FaCheckCircle, FaLayerGroup } from 'react-icons/fa';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
 
 const DocumentChangeRequestCard = ({
@@ -15,44 +15,53 @@ const DocumentChangeRequestCard = ({
   const getStatusConfig = (status) => {
     const configs = {
       'borrador': {
-        color: conditionalClasses({ light: 'bg-gray-100 text-gray-700 border-gray-300', dark: 'bg-gray-700 text-gray-300 border-gray-600' }),
-        icon: FaEdit,
-        label: 'Borrador'
+        color: conditionalClasses({ light: 'bg-slate-100 text-slate-700 border-slate-300', dark: 'bg-slate-700/50 text-slate-300 border-slate-600' }),
+        bg: conditionalClasses({ light: 'from-slate-50 to-slate-100', dark: 'from-slate-800 to-slate-700' }),
+        icon: FaLayerGroup,
+        label: 'Borrador',
+        desc: 'Pendiente por enviar'
       },
       'pendiente_revision': {
-        color: conditionalClasses({ light: 'bg-yellow-100 text-yellow-700 border-yellow-300', dark: 'bg-yellow-900/30 text-yellow-300 border-yellow-700' }),
+        color: conditionalClasses({ light: 'bg-amber-100 text-amber-700 border-amber-300', dark: 'bg-amber-900/30 text-amber-300 border-amber-700' }),
+        bg: conditionalClasses({ light: 'from-amber-50 to-amber-100', dark: 'from-amber-900/20 to-amber-800/20' }),
         icon: FaClock,
-        label: 'Pendiente Revisión'
+        label: 'Pendiente Revisión',
+        desc: 'Esperando revisión de Calidad'
       },
       'en_revision': {
         color: conditionalClasses({ light: 'bg-blue-100 text-blue-700 border-blue-300', dark: 'bg-blue-900/30 text-blue-300 border-blue-700' }),
+        bg: conditionalClasses({ light: 'from-blue-50 to-blue-100', dark: 'from-blue-900/20 to-blue-800/20' }),
         icon: FaSpinner,
-        label: 'En Revisión'
+        label: 'En Revisión',
+        desc: 'En proceso de evaluación'
       },
       'aprobado': {
-        color: conditionalClasses({ light: 'bg-green-100 text-green-700 border-green-300', dark: 'bg-green-900/30 text-green-300 border-green-700' }),
+        color: conditionalClasses({ light: 'bg-emerald-100 text-emerald-700 border-emerald-300', dark: 'bg-emerald-900/30 text-emerald-300 border-emerald-700' }),
+        bg: conditionalClasses({ light: 'from-emerald-50 to-emerald-100', dark: 'from-emerald-900/20 to-emerald-800/20' }),
         icon: FaCheck,
-        label: 'Aprobado'
+        label: 'Aprobado',
+        desc: 'Esperando implementación'
       },
       'en_implementacion': {
         color: conditionalClasses({ light: 'bg-purple-100 text-purple-700 border-purple-300', dark: 'bg-purple-900/30 text-purple-300 border-purple-700' }),
+        bg: conditionalClasses({ light: 'from-purple-50 to-purple-100', dark: 'from-purple-900/20 to-purple-800/20' }),
         icon: FaSpinner,
-        label: 'En Implementación'
+        label: 'En Implementación',
+        desc: 'Ejecutando cambios'
       },
       'publicado': {
-        color: conditionalClasses({ light: 'bg-emerald-100 text-emerald-700 border-emerald-300', dark: 'bg-emerald-900/30 text-emerald-300 border-emerald-700' }),
-        icon: FaCheck,
-        label: 'Publicado'
+        color: conditionalClasses({ light: 'bg-green-100 text-green-700 border-green-300', dark: 'bg-green-900/30 text-green-300 border-green-700' }),
+        bg: conditionalClasses({ light: 'from-green-50 to-green-100', dark: 'from-green-900/20 to-green-800/20' }),
+        icon: FaCheckCircle,
+        label: 'Publicado',
+        desc: 'Cambio implementado'
       },
       'rechazado': {
         color: conditionalClasses({ light: 'bg-red-100 text-red-700 border-red-300', dark: 'bg-red-900/30 text-red-300 border-red-700' }),
+        bg: conditionalClasses({ light: 'from-red-50 to-red-100', dark: 'from-red-900/20 to-red-800/20' }),
         icon: FaTimes,
-        label: 'Rechazado'
-      },
-      'cancelado': {
-        color: conditionalClasses({ light: 'bg-gray-200 text-gray-500 border-gray-300', dark: 'bg-gray-700 text-gray-400 border-gray-600' }),
-        icon: FaTimes,
-        label: 'Cancelado'
+        label: 'Rechazado',
+        desc: 'No procede'
       }
     };
     return configs[status] || configs['borrador'];
@@ -60,218 +69,187 @@ const DocumentChangeRequestCard = ({
 
   const getTypeConfig = (type) => {
     const configs = {
-      'create': { label: 'Crear', icon: '➕' },
-      'edit': { label: 'Editar', icon: '✏️' },
-      'delete': { label: 'Eliminar', icon: '🗑️' },
-      'version_update': { label: 'Nueva Versión', icon: '📄' }
+      'create': { label: 'Crear', icon: '➕', color: 'text-green-600' },
+      'edit': { label: 'Editar', icon: '✏️', color: 'text-blue-600' },
+      'delete': { label: 'Eliminar', icon: '🗑️', color: 'text-red-600' },
+      'version_update': { label: 'Nueva Versión', icon: '📄', color: 'text-purple-600' }
     };
-    return configs[type] || { label: type, icon: '📋' };
+    return configs[type] || { label: type, icon: '📋', color: 'text-gray-600' };
   };
 
-  const getPriorityColor = (priority) => {
-    const colors = {
-      'urgente': conditionalClasses({ light: 'bg-red-100 text-red-700', dark: 'bg-red-900/30 text-red-300' }),
-      'alta': conditionalClasses({ light: 'bg-orange-100 text-orange-700', dark: 'bg-orange-900/30 text-orange-300' }),
-      'media': conditionalClasses({ light: 'bg-yellow-100 text-yellow-700', dark: 'bg-yellow-900/30 text-yellow-300' }),
-      'baja': conditionalClasses({ light: 'bg-green-100 text-green-700', dark: 'bg-green-900/30 text-green-300' })
+  const getPriorityConfig = (priority) => {
+    const configs = {
+      'urgente': { color: 'bg-red-500', text: 'text-red-600', darkText: 'text-red-400', label: 'Urgente' },
+      'alta': { color: 'bg-orange-500', text: 'text-orange-600', darkText: 'text-orange-400', label: 'Alta' },
+      'media': { color: 'bg-yellow-500', text: 'text-yellow-600', darkText: 'text-yellow-400', label: 'Media' },
+      'baja': { color: 'bg-green-500', text: 'text-green-600', darkText: 'text-green-400', label: 'Baja' }
     };
-    return colors[priority] || colors['media'];
+    return configs[priority] || configs['media'];
   };
 
   const getTimeAgo = (date) => {
     const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-    if (seconds < 60) return 'Hace un momento';
+    if (seconds < 60) return 'Ahora';
     const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `Hace ${minutes}min`;
+    if (minutes < 60) return `${minutes}m`;
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `Hace ${hours}h`;
+    if (hours < 24) return `${hours}h`;
     const days = Math.floor(hours / 24);
-    return `Hace ${days}d`;
+    return `${days}d`;
   };
 
   const statusConfig = getStatusConfig(request.workflowStatus);
   const typeConfig = getTypeConfig(request.requestType);
+  const priorityConfig = getPriorityConfig(request.priority);
   const StatusIcon = statusConfig.icon;
+
+  const progressPercent = ((request.currentStep || 1) / (request.totalSteps || 5)) * 100;
 
   return (
     <div
       className={`
-        rounded-xl lg:rounded-2xl border-2 hover:border-purple-500 hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer
+        rounded-2xl border-2 hover:border-purple-400 hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer
         ${conditionalClasses({
-          light: 'bg-gray-50 border-gray-200',
-          dark: 'bg-gray-800 border-gray-700'
+          light: 'bg-white border-gray-100 hover:border-purple-300',
+          dark: 'bg-gray-800 border-gray-700 hover:border-purple-500'
         })}
       `}
       onClick={() => onViewDetail(request)}
     >
-      {/* Card Header */}
+      {/* Card Header - Status Bar */}
       <div className={`
-        p-3 lg:p-4 border-b-2
-        ${request.priority === 'urgente' ? conditionalClasses({
-          light: 'bg-linear-to-r from-red-50 to-red-100 border-red-200',
-          dark: 'bg-linear-to-r from-red-900/20 to-red-800/20 border-red-700'
-        }) :
-        request.priority === 'alta' ? conditionalClasses({
-          light: 'bg-linear-to-r from-orange-50 to-orange-100 border-orange-200',
-          dark: 'bg-linear-to-r from-orange-900/20 to-orange-800/20 border-orange-700'
-        }) :
-        conditionalClasses({
-          light: 'bg-linear-to-r from-green-50 to-green-100 border-green-200',
-          dark: 'bg-linear-to-r from-green-900/20 to-green-800/20 border-green-700'
-        })
-      }`}>
-        <div className="flex items-start justify-between mb-2">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2">
-              <span className={`px-2 lg:px-3 py-1 rounded-full text-xs font-bold ${statusConfig.color}`}>
-                <StatusIcon className="inline w-3 h-3 mr-1" />
-                {statusConfig.label}
-              </span>
-              <span className={`px-2 lg:px-3 py-1 rounded-full text-xs font-bold ${getPriorityColor(request.priority)}`}>
-                {request.priority}
-              </span>
-              <span className={`px-2 py-1 rounded-full text-xs font-bold ${conditionalClasses({
-                light: 'bg-gray-200 text-gray-700',
-                dark: 'bg-gray-600 text-gray-200'
-              })}`}>
-                {typeConfig.icon} {typeConfig.label}
-              </span>
-            </div>
-            <h3 className={`
-              text-base lg:text-lg font-bold mb-1 truncate
-              ${conditionalClasses({
-                light: 'text-gray-900',
-                dark: 'text-gray-100'
-              })}
-            `}>{request.title}</h3>
-            <p className="text-xs text-gray-500">#{request.id}</p>
+        p-4 border-b-0
+        ${statusConfig.bg}
+        ${conditionalClasses({ light: 'border-gray-100', dark: 'border-gray-700' })}
+      `}>
+        <div className="flex items-center justify-between">
+          {/* Status Badge */}
+          <div className="flex items-center gap-2">
+            <span className={`px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 ${statusConfig.color}`}>
+              <StatusIcon className="w-3 h-3" />
+              {statusConfig.label}
+            </span>
+            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${priorityConfig.text} ${conditionalClasses({ dark: priorityConfig.darkText })}`}>
+              {priorityConfig.label}
+            </span>
           </div>
           
-          {/* Actions */}
-          <div className="flex gap-1 lg:gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" onClick={(e) => e.stopPropagation()}>
-            {canApprove && canApprove(request) && request.workflowStatus !== 'borrador' && request.workflowStatus !== 'publicado' && request.workflowStatus !== 'rechazado' && (
-              <button
-                onClick={() => onViewDetail(request)}
-                className={`p-1.5 lg:p-2 rounded-lg transition-all ${conditionalClasses({
-                  light: 'bg-green-100 hover:bg-green-200 text-green-600',
-                  dark: 'bg-green-900/30 hover:bg-green-800/40 text-green-400'
-                })}`}
-                title="Aprobar"
-              >
-                <FaCheck className="w-3 h-3 lg:w-4 lg:h-4" />
-              </button>
-            )}
-            {canEdit && canEdit(request) && (
-              <button
-                onClick={() => onEdit(request)}
-                className={`p-1.5 lg:p-2 rounded-lg transition-all ${conditionalClasses({
-                  light: 'bg-blue-100 hover:bg-blue-200 text-blue-600',
-                  dark: 'bg-blue-900/30 hover:bg-blue-800/40 text-blue-400'
-                })}`}
-                title="Editar"
-              >
-                <FaEdit className="w-3 h-3 lg:w-4 lg:h-4" />
-              </button>
-            )}
+          {/* Request ID */}
+          <span className={conditionalClasses({ light: 'text-sm font-bold text-gray-400', dark: 'text-sm font-bold text-gray-500' })}>
+            #{request.id}
+          </span>
+        </div>
+
+        {/* Title */}
+        <h3 className={`
+          text-base font-bold mt-3 line-clamp-2
+          ${conditionalClasses({
+            light: 'text-gray-900',
+            dark: 'text-white'
+          })}
+        `}>{request.title}</h3>
+        
+        {/* Description Preview */}
+        <p className={`
+          text-sm mt-2 line-clamp-2
+          ${conditionalClasses({
+            light: 'text-gray-500',
+            dark: 'text-gray-400'
+          })}
+        `}>{request.description}</p>
+
+        {/* Progress Bar */}
+        <div className="mt-4">
+          <div className="flex items-center justify-between text-xs mb-1.5">
+            <span className={conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}>Progreso</span>
+            <span className={`font-semibold ${priorityConfig.text} ${conditionalClasses({ dark: priorityConfig.darkText })}`}>
+              Paso {request.currentStep} / {request.totalSteps}
+            </span>
+          </div>
+          <div className={`
+            h-2 rounded-full overflow-hidden
+            ${conditionalClasses({
+              light: 'bg-gray-200',
+              dark: 'bg-gray-600'
+            })}
+          `}>
+            <div
+              className="h-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-500"
+              style={{ width: `${progressPercent}%` }}
+            />
           </div>
         </div>
       </div>
 
-      {/* Card Body */}
-      <div className="p-4 lg:p-5">
-        <p className={`
-          text-sm mb-4 line-clamp-3
-          ${conditionalClasses({
-            light: 'text-gray-700',
-            dark: 'text-gray-300'
-          })}
-        `}>{request.description}</p>
-
-        {/* Workflow Progress */}
-        <div className="mb-4">
+      {/* Card Footer */}
+      <div className={`
+        p-4 flex items-center justify-between
+        ${conditionalClasses({
+          light: 'bg-gray-50 border-t border-gray-100',
+          dark: 'bg-gray-800 border-t border-gray-700'
+        })}
+      `}>
+        {/* Requester & Time */}
+        <div className="flex items-center gap-3">
           <div className={`
-            flex items-center justify-between text-xs mb-1
+            w-9 h-9 rounded-full flex items-center justify-center shrink-0
             ${conditionalClasses({
-              light: 'text-gray-500',
-              dark: 'text-gray-400'
+              light: 'bg-purple-100',
+              dark: 'bg-purple-900/50'
             })}
           `}>
-            <span>Progreso del Workflow</span>
-            <span>Paso {request.currentStep} de {request.totalSteps}</span>
+            <span className={conditionalClasses({
+              light: 'text-purple-600 font-semibold text-sm',
+              dark: 'text-purple-400 font-semibold text-sm'
+            })}>
+              {(request.requester?.name || 'U').charAt(0).toUpperCase()}
+            </span>
           </div>
-          <div className={`
-            w-full h-2 rounded-full overflow-hidden
-            ${conditionalClasses({
-              light: 'bg-gray-200',
-              dark: 'bg-gray-700'
-            })}
-          `}>
-            <div
-              className="h-full bg-purple-500 transition-all duration-300"
-              style={{ width: `${(request.currentStep / request.totalSteps) * 100}%` }}
-            />
+          <div className="min-w-0">
+            <p className={`text-xs font-medium ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>
+              {request.requester?.name || 'Usuario'}
+            </p>
+            <p className={`text-xs ${conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-500' })}`}>
+              {getTimeAgo(request.updatedAt)}
+            </p>
           </div>
         </div>
 
-        <div className="space-y-3">
-          {/* Requester */}
-          <div className={`
-            flex items-center gap-3 pb-3 border-b
-            ${conditionalClasses({
-              light: 'border-gray-100',
-              dark: 'border-gray-700'
-            })}
-          `}>
-            <div className={`
-              w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center shrink-0
-              ${conditionalClasses({
-                light: 'bg-[#f3ebf9]',
-                dark: 'bg-purple-900/30'
+        {/* Actions */}
+        <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+          {canApprove && canApprove(request) && !['borrador', 'publicado', 'rechazado'].includes(request.workflowStatus) && (
+            <button
+              onClick={() => onViewDetail(request)}
+              className={conditionalClasses({
+                light: 'p-2.5 rounded-xl bg-green-100 hover:bg-green-200 text-green-600 transition-all',
+                dark: 'p-2.5 rounded-xl bg-green-900/50 hover:bg-green-800/60 text-green-400 transition-all'
               })}
-            `}>
-              <span className={conditionalClasses({
-                light: 'text-[#662d91]',
-                dark: 'text-purple-400'
-              })}>👤</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-gray-500">Solicitado por</p>
-              <p className={`text-sm font-bold truncate ${conditionalClasses({
-                light: 'text-gray-900',
-                dark: 'text-gray-100'
-              })}`}>
-                {request.requester?.name || 'Usuario'}
-              </p>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className={`
-            pt-3 border-t flex items-center justify-between
-            ${conditionalClasses({
-              light: 'border-gray-100',
-              dark: 'border-gray-700'
-            })}
-          `}>
-            <span className={`flex items-center gap-1 text-xs ${conditionalClasses({
-              light: 'text-gray-500',
-              dark: 'text-gray-400'
-            })}`}>
-              <FaClock className="w-3 h-3" />
-              {getTimeAgo(request.updatedAt)}
-            </span>
-            
-            <button className={`
-              flex items-center gap-1 text-xs font-semibold hover:underline
-              ${conditionalClasses({
-                light: 'text-[#662d91] hover:text-[#662d91]',
-                dark: 'text-purple-400 hover:text-purple-300'
-              })}
-            `}>
-              <FaEye className="w-3 h-3" />
-              Ver detalles
+              title="Aprobar"
+            >
+              <FaCheck className="w-4 h-4" />
             </button>
-          </div>
+          )}
+          {canEdit && canEdit(request) && request.workflowStatus === 'borrador' && (
+            <button
+              onClick={() => onEdit(request)}
+              className={conditionalClasses({
+                light: 'p-2.5 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-600 transition-all',
+                dark: 'p-2.5 rounded-xl bg-blue-900/50 hover:bg-blue-800/60 text-blue-400 transition-all'
+              })}
+              title="Editar"
+            >
+              <FaEdit className="w-4 h-4" />
+            </button>
+          )}
+          <button
+            className={conditionalClasses({
+              light: 'p-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-all',
+              dark: 'p-2.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-gray-400 transition-all'
+            })}
+            title="Ver detalles"
+          >
+            <FaEye className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>

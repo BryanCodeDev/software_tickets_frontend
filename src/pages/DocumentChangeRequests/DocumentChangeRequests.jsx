@@ -143,6 +143,10 @@ const DocumentChangeRequestsPage = () => {
     await loadRequests();
   };
 
+  const handleDeleteRequest = async () => {
+    await loadRequests();
+  };
+
   // Filtrar y ordenar solicitudes
   const filteredRequests = requests.filter(request => {
     // Filtro por búsqueda
@@ -661,6 +665,7 @@ const DocumentChangeRequestsPage = () => {
           onSave={handleSave}
           onSubmit={handleSubmit}
           onApprove={handleApprovalAction}
+          onDelete={handleDeleteRequest}
           user={user}
         />
       )}
