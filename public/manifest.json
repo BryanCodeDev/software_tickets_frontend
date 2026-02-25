@@ -1,73 +1,21 @@
 {
   "name": "DuvyClass - Sistema IT de Gestión Empresarial",
   "short_name": "DuvyClass",
-  "description": "Plataforma web integral para gestión tecnológica empresarial. Centraliza soporte técnico, inventario IT, documentación, calidad, compras y credenciales.",
+  "description": "Sistema interno de gestión de tickets para la empresa",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "any",
-  "background_color": "#662d91",
   "theme_color": "#662d91",
-  "categories": ["business", "productivity", "utilities"],
-  "lang": "es-CO",
-  "scope": "/",
-  "prefer_related_applications": false,
+  "background_color": "#ffffff",
   "icons": [
-    {
-      "src": "/assets/logo.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
     {
       "src": "/assets/logo.webp",
       "sizes": "192x192",
-      "type": "image/webp",
-      "purpose": "any"
+      "type": "image/webp"
     },
     {
       "src": "/assets/logo.webp",
       "sizes": "512x512",
-      "type": "image/webp",
-      "purpose": "any"
-    },
-    {
-      "src": "/assets/logo.webp",
-      "sizes": "512x512",
-      "type": "image/webp",
-      "purpose": "maskable"
+      "type": "image/webp"
     }
-  ],
-  "screenshots": [],
-  "shortcuts": [
-    {
-      "name": "Dashboard",
-      "short_name": "Dashboard",
-      "description": "Ver panel de control y estadísticas",
-      "url": "/dashboard",
-      "icons": [{ "src": "/assets/logo.svg", "sizes": "96x96" }]
-    },
-    {
-      "name": "Tickets",
-      "short_name": "Tickets",
-      "description": "Ver y crear tickets de soporte",
-      "url": "/tickets",
-      "icons": [{ "src": "/assets/logo.svg", "sizes": "96x96" }]
-    },
-    {
-      "name": "Inventario",
-      "short_name": "Inventario",
-      "description": "Gestionar inventario de equipos",
-      "url": "/inventory",
-      "icons": [{ "src": "/assets/logo.svg", "sizes": "96x96" }]
-    },
-    {
-      "name": "Documentos",
-      "short_name": "Documentos",
-      "description": "Acceder a documentos del sistema",
-      "url": "/documents",
-      "icons": [{ "src": "/assets/logo.svg", "sizes": "96x96" }]
-    }
-  ],
-  "related_applications": [],
-  "categories": ["business", "productivity"]
+  ]
 }
