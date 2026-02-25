@@ -606,6 +606,7 @@ const Documents = () => {
           handleUserToggle={handleUserToggle}
           filteredUsers={filteredUsers}
           folders={folders}
+          documents={documents}
         />
       </Suspense>
     </div>

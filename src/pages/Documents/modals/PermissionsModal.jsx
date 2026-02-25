@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaTimes, FaUser, FaTrash, FaFolder, FaFolderOpen } from 'react-icons/fa';
+import { FaTimes, FaUser, FaTrash, FaFolder, FaFile } from 'react-icons/fa';
 import { useThemeClasses } from '../../../hooks/useThemeClasses.js';
 
 const PermissionsModal = ({
@@ -11,7 +11,6 @@ const PermissionsModal = ({
   userSearchTerm,
   setUserSearchTerm,
   selectedUsers,
-  // setSelectedUsers: _setSelectedUsers,
   permissionType,
   setPermissionType,
   handleGrantPermissions,
@@ -20,20 +19,33 @@ const PermissionsModal = ({
   handleDeselectAllUsers,
   handleUserToggle,
   filteredUsers,
-  folders = []
+  folders = [],
+  documents = []
 }) => {
   const { conditionalClasses, isDark } = useThemeClasses();
 
   // Obtener el nombre del elemento seleccionado
   const getSelectedItemName = () => {
-    if (!selectedItemForPermissions) return '';
+    if (!selectedItemForPermissions) return 'Sin selección';
     
     if (selectedItemForPermissions.type === 'folder') {
       const folder = folders.find(f => f.id === selectedItemForPermissions.id);
       return folder?.name || 'Carpeta';
-    } else {
-      return 'Documento';
+    } else if (selectedItemForPermissions.type === 'document') {
+      const doc = documents.find(d => d.id === selectedItemForPermissions.id);
+      return doc?.title || 'Documento';
     }
+    return 'Elemento desconocido';
+  };
+
+  // Obtener icono según el tipo
+  const getItemIcon = () => {
+    if (!selectedItemForPermissions) return <FaFile />;
+    
+    if (selectedItemForPermissions.type === 'folder') {
+      return <FaFolder className={isDark ? 'text-yellow-400' : 'text-yellow-500'} />;
+    }
+    return <FaFile className={isDark ? 'text-purple-400' : 'text-purple-500'} />;
   };
 
   return (
@@ -45,12 +57,17 @@ const PermissionsModal = ({
         })}`}>
           <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
             <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl lg:text-2xl font-bold text-white">Gestionar Permisos</h2>
-                <p className="text-white/80 text-sm mt-1">
-                  {selectedItemForPermissions?.type === 'folder' ? 'Carpeta: ' : 'Documento: '} 
-                  {getSelectedItemName()}
-                </p>
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                  {getItemIcon()}
+                </div>
+                <div>
+                  <h2 className="text-xl lg:text-2xl font-bold text-white">Gestionar Permisos</h2>
+                  <p className="text-white/80 text-sm mt-1 flex items-center gap-2">
+                    <span className="uppercase text-xs font-medium">{selectedItemForPermissions?.type}:</span>
+                    <span className="font-semibold">{getSelectedItemName()}</span>
+                  </p>
+                </div>
               </div>
               <button
                 onClick={() => setShowPermissionsModal(false)}
@@ -87,7 +104,7 @@ const PermissionsModal = ({
                         })}`}>
                           {permission.folderId ? (
                             <FaFolder className={`w-5 h-5 ${conditionalClasses({
-                              light: 'text-[#662d91]',
+                              light: 'text-yellow-500',
                               dark: 'text-yellow-400'
                             })}`} />
                           ) : (
@@ -168,7 +185,7 @@ const PermissionsModal = ({
                   dark: 'text-gray-300'
                 })}`}>Tipo de Permiso</label>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <label className={`flex items-center ${conditionalClasses({
+                  <label className={`flex items-center cursor-pointer ${conditionalClasses({
                     light: 'text-gray-700',
                     dark: 'text-gray-300'
                   })}`}>
@@ -178,17 +195,14 @@ const PermissionsModal = ({
                       value="read"
                       checked={permissionType === 'read'}
                       onChange={(e) => setPermissionType(e.target.value)}
-                      className={`mr-2 ${conditionalClasses({
-                        light: 'accent-[#662d91]',
-                        dark: 'accent-purple-400'
-                      })}`}
+                      className={`mr-2 w-4 h-4 ${isDark ? 'accent-purple-400' : 'accent-[#662d91]'}`}
                     />
                     <span className={`text-sm ${conditionalClasses({
                       light: 'text-gray-700',
                       dark: 'text-gray-300'
                     })}`}>Solo Lectura (ver y descargar)</span>
                   </label>
-                  <label className={`flex items-center ${conditionalClasses({
+                  <label className={`flex items-center cursor-pointer ${conditionalClasses({
                     light: 'text-gray-700',
                     dark: 'text-gray-300'
                   })}`}>
@@ -198,10 +212,7 @@ const PermissionsModal = ({
                       value="write"
                       checked={permissionType === 'write'}
                       onChange={(e) => setPermissionType(e.target.value)}
-                      className={`mr-2 ${conditionalClasses({
-                        light: 'accent-[#662d91]',
-                        dark: 'accent-purple-400'
-                      })}`}
+                      className={`mr-2 w-4 h-4 ${isDark ? 'accent-purple-400' : 'accent-[#662d91]'}`}
                     />
                     <span className={`text-sm ${conditionalClasses({
                       light: 'text-gray-700',
@@ -234,7 +245,7 @@ const PermissionsModal = ({
                     value={userSearchTerm}
                     onChange={(e) => setUserSearchTerm(e.target.value)}
                     className={`block w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-[#662d91] focus:border-[#662d91] text-sm ${conditionalClasses({
-                      light: 'border-gray-300 bg-white text-gray-900',
+                      light: 'border-gray-300 bg-white text-gray-900 placeholder-gray-500',
                       dark: 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
                     })}`}
                   />
@@ -311,10 +322,7 @@ const PermissionsModal = ({
                             type="checkbox"
                             checked={selectedUsers.includes(u.id)}
                             onChange={() => handleUserToggle(u.id)}
-                            className={`mr-3 h-4 w-4 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded ${conditionalClasses({
-                              light: 'accent-[#662d91]',
-                              dark: 'accent-purple-400'
-                            })}`}
+                            className={`mr-3 h-4 w-4 border-gray-300 rounded ${isDark ? 'accent-purple-400' : 'accent-[#662d91]'}`}
                           />
                           <div className="flex items-center space-x-3 flex-1">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${conditionalClasses({
