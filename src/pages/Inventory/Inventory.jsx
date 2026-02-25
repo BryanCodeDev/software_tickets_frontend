@@ -13,7 +13,6 @@ const Inventory = () => {
   const { conditionalClasses } = useThemeClasses();
   const { notifySuccess, notifyError, notifyWarning: _notifyWarning, notifyInfo: _notifyInfo } = useNotifications();
   const [inventory, setInventory] = useState([]);
-  const [filteredInventory, setFilteredInventory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
@@ -55,69 +54,52 @@ const Inventory = () => {
   const inventoryPrivilegedRoles = ['Administrador', 'Técnico', 'Coordinadora Administrativa'];
   const hasInventoryAccess = inventoryPrivilegedRoles.includes(userRole);
 
+  // Estados para paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [pageSize, setPageSize] = useState(20);
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  // Efecto para debounce de búsqueda
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setCurrentPage(1); // Reset a página 1 al buscar
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   const fetchInventory = useCallback(async () => {
     try {
-      const data = await inventoryAPI.fetchInventory();
-      setInventory(data);
+      setLoading(true);
+      const params = {
+        page: currentPage,
+        limit: pageSize,
+        search: debouncedSearch,
+        status: filterStatus !== 'all' ? filterStatus : '',
+        area: filterArea !== 'all' ? filterArea : ''
+      };
+      const data = await inventoryAPI.fetchInventory(params);
+      setInventory(data.data || []);
+      setTotalItems(data.pagination?.total || 0);
+      setTotalPages(data.pagination?.totalPages || 1);
     } catch {
       notifyError('Error al cargar el inventario. Por favor, recarga la página.');
     } finally {
       setLoading(false);
     }
-  }, [notifyError]);
+  }, [notifyError, currentPage, pageSize, debouncedSearch, filterStatus, filterArea]);
 
-  const filterAndSortInventory = useCallback(() => {
-    let filtered = [...inventory];
-
-    // Búsqueda
-    if (searchTerm) {
-      filtered = filtered.filter(item =>
-        Object.values(item).some(val =>
-          val?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
-    }
-
-    // Filtro por estado
-    if (filterStatus !== 'all') {
-      filtered = filtered.filter(item => item.status === filterStatus);
-    }
-
-    // Filtro por área
-    if (filterArea !== 'all') {
-      filtered = filtered.filter(item => item.area === filterArea);
-    }
-
-    // Filtro por propiedad
-    if (filterPropiedad !== 'all') {
-      filtered = filtered.filter(item => item.propiedad === filterPropiedad);
-    }
-
-    // Ordenamiento
-    filtered.sort((a, b) => {
-      let aVal = a[sortBy];
-      let bVal = b[sortBy];
-      
-      if (typeof aVal === 'string') aVal = aVal.toLowerCase();
-      if (typeof bVal === 'string') bVal = bVal.toLowerCase();
-      
-      if (sortOrder === 'asc') {
-        return aVal > bVal ? 1 : -1;
-      } else {
-        return aVal < bVal ? 1 : -1;
-      }
-    });
-
-    setFilteredInventory(filtered);
-  }, [inventory, searchTerm, filterStatus, filterArea, filterPropiedad, sortBy, sortOrder]);
-
+  // Actualizar cuando cambie la página
   useEffect(() => {
     fetchInventory();
-  }, [fetchInventory]);
+  }, [currentPage, pageSize, debouncedSearch, filterStatus, filterArea]);
 
-  useEffect(() => {
-    filterAndSortInventory();
-  }, [filterAndSortInventory]);
+  // Los filtros ahora se hacen en el servidor via paginación
+  // Ya no necesitamos filterAndSortInventory localmente
+  // El inventario ya viene filtrado del servidor
+  const filteredInventory = inventory;
 
   const calculateStats = () => {
     const total = inventory.length;
