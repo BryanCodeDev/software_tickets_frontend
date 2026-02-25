@@ -98,12 +98,22 @@ const ActasEntrega = () => {
 
   const fetchEquiposDisponibles = useCallback(async () => {
     try {
-      const [inventoryData, phonesData, tabletData, pdaData] = await Promise.all([
+      const [inventoryResponse, phonesResponse, tabletResponse, pdaResponse] = await Promise.all([
         inventoryAPI.fetchInventory(),
         corporatePhoneAPI.fetchCorporatePhones(),
-        tabletInventoryAPI.fetchTabletInventory(), // API correcta para tablets
-        pdaInventoryAPI.fetchPDAInventory()        // API correcta para PDAs
+        tabletInventoryAPI.fetchTabletInventory(),
+        pdaInventoryAPI.fetchPDAInventory()
       ]);
+
+      // Extraer arrays de las respuestas (algunos endpoints devuelven { data, pagination })
+      const inventoryData = Array.isArray(inventoryResponse) ? inventoryResponse :
+                           (inventoryResponse?.data ? inventoryResponse.data : []);
+      const phonesData = Array.isArray(phonesResponse) ? phonesResponse :
+                         (phonesResponse?.data ? phonesResponse.data : []);
+      const tabletData = Array.isArray(tabletResponse) ? tabletResponse :
+                         (tabletResponse?.data ? tabletResponse.data : []);
+      const pdaData = Array.isArray(pdaResponse) ? pdaResponse :
+                      (pdaResponse?.data ? pdaResponse.data : []);
 
       // Procesar equipos del inventario - mostrar todos los equipos
       const equiposInventario = (inventoryData || [])

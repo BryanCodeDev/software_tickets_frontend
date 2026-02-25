@@ -118,8 +118,11 @@ const Documents = () => {
   // Fetch data
   const fetchDocuments = useCallback(async () => {
     try {
-      const data = await documentsAPI.fetchDocuments();
-      setDocuments(data);
+      const response = await documentsAPI.fetchDocuments();
+      // Verificar si la respuesta es un array o tiene estructura paginada
+      const documentsArray = Array.isArray(response) ? response :
+                             (response?.data ? response.data : []);
+      setDocuments(documentsArray);
     } catch {
       // Error handled silently
     } finally {
@@ -129,8 +132,11 @@ const Documents = () => {
   
   const fetchFolders = useCallback(async () => {
     try {
-      const data = await documentsAPI.fetchFolders();
-      setFolders(data);
+      const response = await documentsAPI.fetchFolders();
+      // Verificar si la respuesta es un array o tiene estructura paginada
+      const foldersArray = Array.isArray(response) ? response :
+                           (response?.data ? response.data : []);
+      setFolders(foldersArray);
     } catch {
       // Error handled silently
     }
