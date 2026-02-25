@@ -29,6 +29,10 @@ export const useDocumentFilters = (documents, searchTerm, filterType, sortBy, so
 
     // Para cada grupo, tomar la versión activa más reciente
     let filtered = Object.values(grouped).map(group => {
+      // Verificar que group sea un array antes de usar filter
+      if (!Array.isArray(group)) {
+        return group; // Devolver el grupo tal cual si no es array
+      }
       const activeVersions = group.filter(doc => doc.isActive !== false); // Asumir true si no definido
       if (activeVersions.length === 0) return group[0]; // Si ninguno activo, tomar el primero
       return activeVersions.sort((a, b) => parseFloat(b.version) - parseFloat(a.version))[0];
