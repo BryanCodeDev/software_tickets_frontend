@@ -655,10 +655,10 @@ const Help = () => {
             light: 'border-b border-gray-200',
             dark: 'border-b border-gray-600'
           })}>
-            <nav className="flex overflow-x-auto">
+            <nav className="flex overflow-x-auto -mx-2 px-2 sm:mx-0 sm:px-0">
               <button
                 onClick={() => setActiveTab('manual')}
-                className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                className={`px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                   activeTab === 'manual'
                     ? 'border-[#662d91] text-[#662d91]'
                     : conditionalClasses({
@@ -667,11 +667,11 @@ const Help = () => {
                       })
                 }`}
               >
-                Manual de Usuario
+                Manual
               </button>
               <button
                 onClick={() => setActiveTab('faq')}
-                className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                className={`px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                   activeTab === 'faq'
                     ? 'border-[#662d91] text-[#662d91]'
                     : conditionalClasses({
@@ -680,11 +680,11 @@ const Help = () => {
                       })
                 }`}
               >
-                Preguntas Frecuentes
+                Preguntas
               </button>
               <button
                 onClick={() => setActiveTab('roles')}
-                className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                className={`px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                   activeTab === 'roles'
                     ? 'border-[#662d91] text-[#662d91]'
                     : conditionalClasses({
@@ -693,11 +693,11 @@ const Help = () => {
                       })
                 }`}
               >
-                Roles y Permisos
+                Roles
               </button>
               <button
                 onClick={() => setActiveTab('modules')}
-                className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                className={`px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                   activeTab === 'modules'
                     ? 'border-[#662d91] text-[#662d91]'
                     : conditionalClasses({
@@ -710,7 +710,7 @@ const Help = () => {
               </button>
               <button
                 onClick={() => setActiveTab('trash')}
-                className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                className={`px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                   activeTab === 'trash'
                     ? 'border-[#662d91] text-[#662d91]'
                     : conditionalClasses({
@@ -723,7 +723,7 @@ const Help = () => {
               </button>
               <button
                 onClick={() => setActiveTab('contact')}
-                className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                className={`px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                   activeTab === 'contact'
                     ? 'border-[#662d91] text-[#662d91]'
                     : conditionalClasses({
@@ -737,29 +737,29 @@ const Help = () => {
             </nav>
           </div>
 
-          <div className="p-6">
+          <div className="p-3 sm:p-4 md:p-6">
             {activeTab === 'manual' && (
-              <div className="space-y-6">
-                <div className="flex items-center mb-6">
-                  <FaBook className="text-[#662d91] text-2xl mr-3" />
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <FaBook className="text-[#662d91] text-lg sm:text-2xl mr-2 sm:mr-3" />
                   <h2 className={conditionalClasses({
-                    light: 'text-xl font-semibold text-gray-900',
-                    dark: 'text-xl font-semibold text-gray-100'
+                    light: 'text-lg sm:text-xl font-semibold text-gray-900',
+                    dark: 'text-lg sm:text-xl font-semibold text-gray-100'
                   })}>Manual de Usuario Completo</h2>
                 </div>
 
                 <div className={conditionalClasses({
-                  light: 'bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl shadow-lg p-6 mb-6',
-                  dark: 'bg-linear-to-r from-[#4a1f6b] to-[#6b3590] rounded-xl shadow-lg p-6 mb-6'
+                  light: 'bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl shadow-lg p-4 sm:p-6 mb-4 sm:mb-6',
+                  dark: 'bg-linear-to-r from-[#4a1f6b] to-[#6b3590] rounded-xl shadow-lg p-4 sm:p-6 mb-4 sm:mb-6'
                 })}>
-                  <div className="flex flex-col sm:flex-row items-center gap-4">
-                    <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl shrink-0">
-                      <FaBook className="text-white text-2xl" />
+                  <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+                    <div className="p-2 sm:p-3 bg-white/20 backdrop-blur-sm rounded-xl shrink-0">
+                      <FaBook className="text-white text-xl sm:text-2xl" />
                     </div>
                     <div className="text-center sm:text-left">
-                      <h3 className="text-xl sm:text-2xl font-bold text-white">Manual de Usuario - DuvyClass</h3>
-                      <p className="text-purple-100 mt-1 text-sm sm:text-base">Sistema IT de Gestión Empresarial Integral</p>
-                      <p className="text-purple-200 text-xs sm:text-sm mt-2">Versión 2.0 | Actualizado: Febrero 2026</p>
+                      <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Manual de Usuario - DuvyClass</h3>
+                      <p className="text-purple-100 mt-1 text-xs sm:text-sm">Sistema IT de Gestión Empresarial Integral</p>
+                      <p className="text-purple-200 text-xs mt-1 sm:mt-2">Versión 2.0 | Actualizado: Febrero 2026</p>
                     </div>
                   </div>
                 </div>
@@ -769,14 +769,14 @@ const Help = () => {
                   dark: 'bg-gray-800 border border-gray-600 rounded-lg shadow-sm'
                 })}>
                   <summary className={conditionalClasses({
-                    light: 'cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center',
-                    dark: 'cursor-pointer p-4 font-medium text-gray-100 hover:bg-gray-700 flex items-center'
+                    light: 'cursor-pointer p-3 sm:p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center text-sm sm:text-base',
+                    dark: 'cursor-pointer p-3 sm:p-4 font-medium text-gray-100 hover:bg-gray-700 flex items-center text-sm sm:text-base'
                   })}>
                     <FaList className="text-[#662d91] mr-2" />
                     Tabla de Contenidos
                   </summary>
-                  <div className="p-4 pt-0">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div className="p-3 sm:p-4 pt-0">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                       <ul className="space-y-2">
                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>1. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Introducción al Sistema</span></li>
                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>2. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Primeros Pasos</span></li>
@@ -818,19 +818,19 @@ const Help = () => {
                     </p>
                     
                     <div className={conditionalClasses({
-                      light: 'bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500',
-                      dark: 'bg-blue-900/30 p-4 rounded-lg border-l-4 border-blue-500'
+                      light: 'bg-blue-50 p-3 sm:p-4 rounded-lg border-l-4 border-blue-500',
+                      dark: 'bg-blue-900/30 p-3 sm:p-4 rounded-lg border-l-4 border-blue-500'
                     })}>
                       <h4 className={conditionalClasses({
-                        light: 'font-semibold text-blue-900 mb-2 flex items-center',
-                        dark: 'font-semibold text-blue-300 mb-2 flex items-center'
+                        light: 'font-semibold text-blue-900 mb-1 sm:mb-2 flex items-center text-sm sm:text-base',
+                        dark: 'font-semibold text-blue-300 mb-1 sm:mb-2 flex items-center text-sm sm:text-base'
                       })}>
                         <FaLightbulb className="mr-2" />
                         ¿Qué es DuvyClass?
                       </h4>
                       <p className={conditionalClasses({
-                        light: 'text-blue-800 text-sm',
-                        dark: 'text-blue-200 text-sm'
+                        light: 'text-blue-800 text-xs sm:text-sm',
+                        dark: 'text-blue-200 text-xs sm:text-sm'
                       })}>
                         Es un sistema todo-en-uno que permite gestionar recursos tecnológicos, soporte técnico, 
                         documentación empresarial, credenciales de acceso, inventario de equipos y procesos de calidad 
@@ -839,10 +839,10 @@ const Help = () => {
                     </div>
 
                     <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-4',
-                      dark: 'font-semibold text-gray-100 mt-4'
+                      light: 'font-semibold text-gray-900 mt-3 sm:mt-4 text-sm sm:text-base',
+                      dark: 'font-semibold text-gray-100 mt-3 sm:mt-4 text-sm sm:text-base'
                     })}>Beneficios Principales</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
                       {[
                         { icon: '🗂️', text: 'Centralización completa' },
                         { icon: '⚡', text: 'Eficiencia operativa' },
@@ -855,13 +855,13 @@ const Help = () => {
                         { icon: '🔄', text: 'Workflows automatizados' }
                       ].map((item, idx) => (
                         <div key={idx} className={conditionalClasses({
-                          light: 'bg-gray-50 p-3 rounded-lg flex items-center',
-                          dark: 'bg-gray-700 p-3 rounded-lg flex items-center'
+                          light: 'bg-gray-50 p-2 sm:p-3 rounded-lg flex items-center',
+                          dark: 'bg-gray-700 p-2 sm:p-3 rounded-lg flex items-center'
                         })}>
-                          <span className="text-xl mr-2">{item.icon}</span>
+                          <span className="text-lg sm:text-xl mr-2">{item.icon}</span>
                           <span className={conditionalClasses({
-                            light: 'text-sm text-gray-700',
-                            dark: 'text-sm text-gray-300'
+                            light: 'text-xs sm:text-sm text-gray-700',
+                            dark: 'text-xs sm:text-sm text-gray-300'
                           })}>{item.text}</span>
                         </div>
                       ))}
@@ -1620,29 +1620,29 @@ const Help = () => {
             )}
 
             {activeTab === 'faq' && (
-              <div className="space-y-4">
-                <div className="flex items-center mb-6">
-                  <FaQuestionCircle className="text-[#662d91] text-2xl mr-3" />
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <FaQuestionCircle className="text-[#662d91] text-lg sm:text-2xl mr-2 sm:mr-3" />
                   <h2 className={conditionalClasses({
-                    light: 'text-xl font-semibold text-gray-900',
-                    dark: 'text-xl font-semibold text-gray-100'
+                    light: 'text-lg sm:text-xl font-semibold text-gray-900',
+                    dark: 'text-lg sm:text-xl font-semibold text-gray-100'
                   })}>Preguntas Frecuentes</h2>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {faqs.map((faq, index) => (
                     <details key={index} className={conditionalClasses({
-                      light: 'bg-gray-50 rounded-lg p-4',
-                      dark: 'bg-gray-700 rounded-lg p-4'
+                      light: 'bg-gray-50 rounded-lg p-3 sm:p-4',
+                      dark: 'bg-gray-700 rounded-lg p-3 sm:p-4'
                     })}>
                       <summary className={conditionalClasses({
-                        light: 'font-medium text-gray-900 cursor-pointer hover:text-[#662d91]',
-                        dark: 'font-medium text-gray-100 cursor-pointer hover:text-[#8e4dbf]'
+                        light: 'font-medium text-gray-900 cursor-pointer hover:text-[#662d91] text-sm sm:text-base',
+                        dark: 'font-medium text-gray-100 cursor-pointer hover:text-[#8e4dbf] text-sm sm:text-base'
                       })}>
                         {faq.question}
                       </summary>
                       <p className={conditionalClasses({
-                        light: 'mt-2 text-gray-600',
-                        dark: 'mt-2 text-gray-300'
+                        light: 'mt-2 text-gray-600 text-xs sm:text-sm',
+                        dark: 'mt-2 text-gray-300 text-xs sm:text-sm'
                       })}>{faq.answer}</p>
                     </details>
                   ))}
@@ -1651,26 +1651,26 @@ const Help = () => {
             )}
 
             {activeTab === 'roles' && (
-              <div className="space-y-6">
-                <div className="flex items-center mb-6">
-                  <FaShieldAlt className="text-[#662d91] text-2xl mr-3" />
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <FaShieldAlt className="text-[#662d91] text-lg sm:text-2xl mr-2 sm:mr-3" />
                   <h2 className={conditionalClasses({
-                    light: 'text-xl font-semibold text-gray-900',
-                    dark: 'text-xl font-semibold text-gray-100'
+                    light: 'text-lg sm:text-xl font-semibold text-gray-900',
+                    dark: 'text-lg sm:text-xl font-semibold text-gray-100'
                   })}>Roles y Permisos</h2>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6">
+                <div className="grid grid-cols-1 gap-4 sm:gap-6">
                   {roles.map((role, idx) => (
                     <div key={idx} className={conditionalClasses({
                       light: 'bg-white border border-gray-200 rounded-lg shadow-sm',
                       dark: 'bg-gray-800 border border-gray-600 rounded-lg shadow-sm'
                     })}>
                       <div className={conditionalClasses({
-                        light: 'bg-gray-50 p-4 flex items-start gap-4',
-                        dark: 'bg-gray-700 p-4 flex items-start gap-4'
+                        light: 'bg-gray-50 p-3 sm:p-4 flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4',
+                        dark: 'bg-gray-700 p-3 sm:p-4 flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4'
                       })}>
-                        <div className={`p-3 rounded-lg ${conditionalClasses({
+                        <div className={`p-2 sm:p-3 rounded-lg ${conditionalClasses({
                           light: role.color,
                           dark: role.color.replace('bg-', 'bg-opacity-50 ').replace('100', '800')
                         })}`}>
@@ -1678,27 +1678,27 @@ const Help = () => {
                         </div>
                         <div className="flex-1">
                           <h3 className={conditionalClasses({
-                            light: 'text-lg font-semibold text-gray-900',
-                            dark: 'text-lg font-semibold text-gray-100'
+                            light: 'text-base sm:text-lg font-semibold text-gray-900',
+                            dark: 'text-base sm:text-lg font-semibold text-gray-100'
                           })}>{role.name}</h3>
                           <p className={conditionalClasses({
-                            light: 'text-sm text-gray-600 mt-1',
-                            dark: 'text-sm text-gray-300 mt-1'
+                            light: 'text-xs sm:text-sm text-gray-600 mt-1',
+                            dark: 'text-xs sm:text-sm text-gray-300 mt-1'
                           })}>{role.description}</p>
                         </div>
                       </div>
-                      <div className="p-4">
+                      <div className="p-3 sm:p-4">
                         <h4 className={conditionalClasses({
-                          light: 'font-medium text-gray-900 mb-2 text-sm',
-                          dark: 'font-medium text-gray-100 mb-2 text-sm'
+                          light: 'font-medium text-gray-900 mb-2 text-xs sm:text-sm',
+                          dark: 'font-medium text-gray-100 mb-2 text-xs sm:text-sm'
                         })}>Permisos:</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3 sm:mb-4">
                           {role.permissions.map((perm, pidx) => (
                             <div key={pidx} className={conditionalClasses({
-                              light: 'flex items-center text-sm text-gray-700',
-                              dark: 'flex items-center text-sm text-gray-300'
+                              light: 'flex items-start text-xs sm:text-sm text-gray-700',
+                              dark: 'flex items-start text-xs sm:text-sm text-gray-300'
                             })}>
-                              <FaCheck className="text-green-500 mr-2 text-xs" />
+                              <FaCheck className="text-green-500 mr-1.5 sm:mr-2 text-xs mt-0.5" />
                               {perm}
                             </div>
                           ))}
@@ -1723,16 +1723,16 @@ const Help = () => {
             )}
 
             {activeTab === 'modules' && (
-              <div className="space-y-6">
-                <div className="flex items-center mb-6">
-                  <FaList className="text-[#662d91] text-2xl mr-3" />
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <FaList className="text-[#662d91] text-lg sm:text-2xl mr-2 sm:mr-3" />
                   <h2 className={conditionalClasses({
-                    light: 'text-xl font-semibold text-gray-900',
-                    dark: 'text-xl font-semibold text-gray-100'
+                    light: 'text-lg sm:text-xl font-semibold text-gray-900',
+                    dark: 'text-lg sm:text-xl font-semibold text-gray-100'
                   })}>Módulos del Sistema</h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   {modules.map((module, idx) => (
                     <div key={idx} className={conditionalClasses({
                       light: 'bg-white border border-gray-200 rounded-lg shadow-sm',
@@ -1796,19 +1796,19 @@ const Help = () => {
             )}
 
             {activeTab === 'trash' && (
-              <div className="space-y-6">
-                <div className="flex items-center mb-6">
-                  <FaDumpster className="text-red-500 text-2xl mr-3" />
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <FaDumpster className="text-red-500 text-lg sm:text-2xl mr-2 sm:mr-3" />
                   <h2 className={conditionalClasses({
-                    light: 'text-xl font-semibold text-gray-900',
-                    dark: 'text-xl font-semibold text-gray-100'
+                    light: 'text-lg sm:text-xl font-semibold text-gray-900',
+                    dark: 'text-lg sm:text-xl font-semibold text-gray-100'
                   })}>Sistema de Papelera</h2>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   <div className={conditionalClasses({
-                    light: 'bg-red-50 p-4 rounded-lg border-l-4 border-red-500',
-                    dark: 'bg-red-900/30 p-4 rounded-lg border-l-4 border-red-500'
+                    light: 'bg-red-50 p-3 sm:p-4 rounded-lg border-l-4 border-red-500',
+                    dark: 'bg-red-900/30 p-3 sm:p-4 rounded-lg border-l-4 border-red-500'
                   })}>
                     <h3 className={conditionalClasses({
                       light: 'font-semibold text-red-900 mb-2',
@@ -1967,15 +1967,15 @@ const Help = () => {
             )}
 
             {activeTab === 'contact' && (
-              <div className="space-y-4">
-                <div className="flex items-center mb-6">
-                  <FaPhone className="text-[#662d91] text-2xl mr-3" />
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <FaPhone className="text-[#662d91] text-lg sm:text-2xl mr-2 sm:mr-3" />
                   <h2 className={conditionalClasses({
-                    light: 'text-xl font-semibold text-gray-900',
-                    dark: 'text-xl font-semibold text-gray-100'
+                    light: 'text-lg sm:text-xl font-semibold text-gray-900',
+                    dark: 'text-lg sm:text-xl font-semibold text-gray-100'
                   })}>Contacto y Soporte</h2>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
                   {contactInfo.map((contact, index) => (
                     <div key={index} className={conditionalClasses({
                       light: 'bg-gray-50 rounded-lg p-4',
@@ -2001,25 +2001,25 @@ const Help = () => {
                 </div>
 
                 <div className={conditionalClasses({
-                  light: 'mt-8 p-4 rounded-lg border-l-4 bg-purple-50 border-[#662d91]',
-                  dark: 'mt-8 p-4 rounded-lg border-l-4 bg-purple-900/30 border-[#662d91]'
+                  light: 'mt-6 sm:mt-8 p-3 sm:p-4 rounded-lg border-l-4 bg-purple-50 border-[#662d91]',
+                  dark: 'mt-6 sm:mt-8 p-3 sm:p-4 rounded-lg border-l-4 bg-purple-900/30 border-[#662d91]'
                 })}>
-                  <div className="flex items-start gap-3">
-                    <FaHeadset className="mt-0.5 shrink-0 text-[#662d91]" />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-[#662d91] mb-1">¿No encuentras lo que buscas?</h3>
+                  <div className="flex flex-col sm:flex-row items-start gap-3">
+                    <FaHeadset className="mt-0.5 shrink-0 text-[#662d91] text-xl sm:text-2xl" />
+                    <div className="flex-1 min-w-0 w-full">
+                      <h3 className="font-semibold text-[#662d91] mb-1 text-sm sm:text-base">¿No encuentras lo que buscas?</h3>
                       <p className={conditionalClasses({
-                        light: 'text-sm text-gray-700 mb-3',
-                        dark: 'text-sm text-gray-300 mb-3'
+                        light: 'text-xs sm:text-sm text-gray-700 mb-3',
+                        dark: 'text-xs sm:text-sm text-gray-300 mb-3'
                       })}>
                         Si tienes alguna pregunta específica o necesitas ayuda con algo en particular,
                         no dudes en contactarnos. Nuestro equipo de soporte está aquí para ayudarte.
                       </p>
                       <button
                         onClick={() => navigate('/tickets')}
-                        className="flex items-center justify-center gap-2 px-4 py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5] transition-all shadow-lg hover:shadow-xl text-sm"
+                        className="flex items-center justify-center gap-2 w-full sm:w-auto px-3 sm:px-4 py-2 sm:py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5] transition-all shadow-lg hover:shadow-xl text-xs sm:text-sm"
                       >
-                        <FaTicketAlt className="text-sm" />
+                        <FaTicketAlt className="text-xs sm:text-sm" />
                         <span>Crear Ticket de Soporte</span>
                       </button>
                     </div>

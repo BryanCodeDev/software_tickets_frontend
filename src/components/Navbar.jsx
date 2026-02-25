@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext.jsx';
 import { useThemeClasses } from '../hooks/useThemeClasses';
 import ThemeToggle from './ThemeToggle';
+import NotificationsPanel from './common/NotificationsPanel.jsx';
 import { FaCrown, FaWrench, FaUser, FaShieldAlt, FaUserShield, FaUserCog } from 'react-icons/fa';
 
 const Navbar = ({ toggleSidebar }) => {
@@ -128,6 +129,9 @@ const Navbar = ({ toggleSidebar }) => {
 
           {/* Right side - Theme Toggle and User menu */}
           <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* Notifications */}
+            <NotificationsPanel />
+            
             {/* Theme Toggle */}
             <ThemeToggle size="sm" variant="button" className="hidden sm:block" />
             
