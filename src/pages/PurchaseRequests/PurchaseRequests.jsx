@@ -252,7 +252,7 @@ const PurchaseRequests = () => {
     setConfirmDialog({ message, onConfirm });
   };
 
-  // Panel de Compras
+  // Panel de Compras - Diseño Mejorado
   const PurchasesPanel = () => {
     if (!dashboardStats) return null;
 
