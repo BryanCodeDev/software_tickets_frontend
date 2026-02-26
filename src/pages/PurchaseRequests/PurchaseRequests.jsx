@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext, useCallback, lazy, Suspense } from 'react';
-import { FaEdit, FaTrash, FaPlus, FaCheck, FaTimes, FaEye, FaSearch, FaFilter, FaDownload, FaChartBar, FaClock, FaExclamationTriangle, FaCheckCircle, FaSpinner, FaUserCircle, FaClipboardList, FaFileExport, FaSortAmountDown, FaSortAmountUp, FaArrowRight, FaCopy, FaUndo, FaShoppingCart } from 'react-icons/fa';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { FaEdit, FaTrash, FaPlus, FaCheck, FaTimes, FaEye, FaSearch, FaFilter, FaDownload, FaChartBar, FaClock, FaExclamationTriangle, FaCheckCircle, FaSpinner, FaUserCircle, FaClipboardList, FaFileExport, FaSortAmountDown, FaSortAmountUp, FaArrowRight, FaCopy, FaUndo, FaShoppingCart, FaDollarSign, FaChartLine, FaBox, FaTruck, FaUser, FaExclamationCircle, FaTasks, FaBalanceScale, FaMoneyBillWave, FaWarehouse, FaShippingFast, FaChartPie, FaProjectDiagram } from 'react-icons/fa';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Bar, Doughnut } from 'react-chartjs-2';
 
 // Registrar componentes de Chart.js
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend);
 
 import AuthContext from '../../context/AuthContext';
 import { purchaseRequestsAPI } from '../../api';
@@ -252,95 +252,356 @@ const PurchaseRequests = () => {
     setConfirmDialog({ message, onConfirm });
   };
 
-  // Panel de Compras - Diseño Mejorado
+  // Panel de Compras - Diseño Mejorado y Moderno
   const PurchasesPanel = () => {
     if (!dashboardStats) return null;
 
-    const statCards = [
-      { label: 'Pendiente Coordinadora', value: dashboardStats.summary?.pendingCoordinator || 0, color: 'yellow', icon: FaClock },
-      { label: 'Pendiente Jefe', value: dashboardStats.summary?.pendingManager || 0, color: 'purple', icon: FaClock },
-      { label: 'En Compras', value: dashboardStats.summary?.inPurchases || 0, color: 'cyan', icon: FaShoppingCart },
-      { label: 'Comprados', value: dashboardStats.summary?.purchased || 0, color: 'teal', icon: FaCheck },
-      { label: 'Entregados', value: dashboardStats.summary?.delivered || 0, color: 'green', icon: FaCheckCircle },
-      { label: 'Para Corrección', value: dashboardStats.summary?.rejectedCorrection || 0, color: 'amber', icon: FaUndo }
-    ];
+    const formatCurrency = (amount) => {
+      return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(amount || 0);
+    };
+
+    // Calcular costo total estimado
+    const totalEstimatedCost = dashboardStats.recentRequests?.reduce((sum, req) => sum + (parseFloat(req.estimatedCost) || 0), 0) || 0;
+
+    // Datos para el gráfico doughnut de estados
+    const statusData = {
+      labels: ['Pendiente Coord.', 'Pendiente Jefe', 'En Compras', 'Comprados', 'Entregados'],
+      datasets: [{
+        data: [
+          dashboardStats.summary?.pendingCoordinator || 0,
+          dashboardStats.summary?.pendingManager || 0,
+          dashboardStats.summary?.inPurchases || 0,
+          dashboardStats.summary?.purchased || 0,
+          dashboardStats.summary?.delivered || 0
+        ],
+        backgroundColor: ['#f59e0b', '#8b5cf6', '#06b6d4', '#14b8a6', '#22c55e'],
+        borderColor: ['#fff', '#fff', '#fff', '#fff', '#fff'],
+        borderWidth: 2
+      }]
+    };
+
+    // Flujo de solicitudes - datos para visualización
+    const flowData = {
+      labels: ['Solicitados', 'En Aprobación', 'En Compras', 'Completados'],
+      datasets: [{
+        label: 'Cantidad',
+        data: [
+          dashboardStats.summary?.total || 0,
+          (dashboardStats.summary?.pendingCoordinator || 0) + (dashboardStats.summary?.pendingManager || 0),
+          dashboardStats.summary?.inPurchases || 0,
+          (dashboardStats.summary?.purchased || 0) + (dashboardStats.summary?.delivered || 0)
+        ],
+        backgroundColor: ['#3b82f6', '#f59e0b', '#8b5cf6', '#22c55e'],
+        borderRadius: 8
+      }]
+    };
 
     return (
-      <div className={conditionalClasses({ light: 'bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6 mb-6', dark: 'bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-6 mb-6' })}>
+      <div className={conditionalClasses({
+        light: 'bg-white rounded-2xl shadow-xl border-2 border-gray-200 p-6 mb-6',
+        dark: 'bg-gray-800 rounded-2xl shadow-xl border-2 border-gray-700 p-6 mb-6'
+      })}>
+        {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className={conditionalClasses({ light: 'text-xl font-bold text-gray-900', dark: 'text-xl font-bold text-gray-100' })}>
-            Panel de Compras
-          </h2>
-          <button onClick={fetchDashboardStats} className={conditionalClasses({ light: 'p-2 text-gray-500 hover:bg-gray-100 rounded-lg', dark: 'p-2 text-gray-400 hover:bg-gray-700 rounded-lg' })}>
-            <FaSpinner className="w-4 h-4" />
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center shadow-lg">
+              <FaShoppingCart className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className={conditionalClasses({ light: 'text-xl font-bold text-gray-900', dark: 'text-xl font-bold text-gray-100' })}>
+                Panel de Compras
+              </h2>
+              <p className={conditionalClasses({ light: 'text-sm text-gray-500', dark: 'text-sm text-gray-400' })}>
+                Resumen y métricas de solicitudes
+              </p>
+            </div>
+          </div>
+          <button onClick={fetchDashboardStats} className={conditionalClasses({ 
+            light: 'p-3 text-gray-500 hover:bg-gray-100 rounded-xl transition-all hover:rotate-180', 
+            dark: 'p-3 text-gray-400 hover:bg-gray-700 rounded-xl transition-all hover:rotate-180'
+          })}>
+            <FaSpinner className="w-5 h-5" />
           </button>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
-          {statCards.map((stat, idx) => (
-            <div key={idx} className={conditionalClasses({
-              light: `p-4 rounded-xl bg-gray-50 border border-gray-200`,
-              dark: `p-4 rounded-xl bg-gray-700 border border-gray-600`
-            })}>
-              <div className={conditionalClasses({
-                light: `w-8 h-8 rounded-full flex items-center justify-center mb-2 bg-${stat.color}-100`,
-                dark: `w-8 h-8 rounded-full flex items-center justify-center mb-2 bg-${stat.color}-900/50`
-              })}>
-                <stat.icon className={conditionalClasses({
-                  light: `w-4 h-4 text-${stat.color}-600`,
-                  dark: `w-4 h-4 text-${stat.color}-400`
-                })} />
+        {/* Stats Cards - Modern Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+          {/* Pendiente Coordinador */}
+          <div className={conditionalClasses({
+            light: 'bg-linear-to-br from-yellow-50 to-yellow-100 rounded-2xl p-4 border border-yellow-200',
+            dark: 'bg-linear-to-br from-yellow-900/30 to-yellow-800/20 rounded-2xl p-4 border border-yellow-700/50'
+          })}>
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 bg-linear-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
+                <FaBalanceScale className="w-5 h-5 text-white" />
               </div>
-              <p className={conditionalClasses({
-                light: 'text-2xl font-bold text-gray-900',
-                dark: 'text-2xl font-bold text-gray-100'
-              })}>{stat.value}</p>
-              <p className={conditionalClasses({
-                light: 'text-xs text-gray-500',
-                dark: 'text-xs text-gray-400'
-              })}>{stat.label}</p>
+              <span className="text-2xl font-bold text-yellow-600">{dashboardStats.summary?.pendingCoordinator || 0}</span>
             </div>
-          ))}
+            <p className={conditionalClasses({ light: 'text-xs text-yellow-700 font-medium', dark: 'text-xs text-yellow-400 font-medium' })}>Pendiente Coord.</p>
+          </div>
+
+          {/* Pendiente Jefe */}
+          <div className={conditionalClasses({
+            light: 'bg-linear-to-br from-purple-50 to-purple-100 rounded-2xl p-4 border border-purple-200',
+            dark: 'bg-linear-to-br from-purple-900/30 to-purple-800/20 rounded-2xl p-4 border border-purple-700/50'
+          })}>
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 bg-linear-to-br from-purple-400 to-purple-500 rounded-xl flex items-center justify-center shadow-md">
+                <FaUser className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-2xl font-bold text-purple-600">{dashboardStats.summary?.pendingManager || 0}</span>
+            </div>
+            <p className={conditionalClasses({ light: 'text-xs text-purple-700 font-medium', dark: 'text-xs text-purple-400 font-medium' })}>Pendiente Jefe</p>
+          </div>
+
+          {/* En Compras */}
+          <div className={conditionalClasses({
+            light: 'bg-linear-to-br from-cyan-50 to-cyan-100 rounded-2xl p-4 border border-cyan-200',
+            dark: 'bg-linear-to-br from-cyan-900/30 to-cyan-800/20 rounded-2xl p-4 border border-cyan-700/50'
+          })}>
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 bg-linear-to-br from-cyan-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-md">
+                <FaShoppingCart className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-2xl font-bold text-cyan-600">{dashboardStats.summary?.inPurchases || 0}</span>
+            </div>
+            <p className={conditionalClasses({ light: 'text-xs text-cyan-700 font-medium', dark: 'text-xs text-cyan-400 font-medium' })}>En Compras</p>
+          </div>
+
+          {/* Comprados */}
+          <div className={conditionalClasses({
+            light: 'bg-linear-to-br from-teal-50 to-teal-100 rounded-2xl p-4 border border-teal-200',
+            dark: 'bg-linear-to-br from-teal-900/30 to-teal-800/20 rounded-2xl p-4 border border-teal-700/50'
+          })}>
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 bg-linear-to-br from-teal-400 to-teal-500 rounded-xl flex items-center justify-center shadow-md">
+                <FaCheck className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-2xl font-bold text-teal-600">{dashboardStats.summary?.purchased || 0}</span>
+            </div>
+            <p className={conditionalClasses({ light: 'text-xs text-teal-700 font-medium', dark: 'text-xs text-teal-400 font-medium' })}>Comprados</p>
+          </div>
+
+          {/* Entregados */}
+          <div className={conditionalClasses({
+            light: 'bg-linear-to-br from-green-50 to-green-100 rounded-2xl p-4 border border-green-200',
+            dark: 'bg-linear-to-br from-green-900/30 to-green-800/20 rounded-2xl p-4 border border-green-700/50'
+          })}>
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 bg-linear-to-br from-green-400 to-green-500 rounded-xl flex items-center justify-center shadow-md">
+                <FaTruck className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-2xl font-bold text-green-600">{dashboardStats.summary?.delivered || 0}</span>
+            </div>
+            <p className={conditionalClasses({ light: 'text-xs text-green-700 font-medium', dark: 'text-xs text-green-400 font-medium' })}>Entregados</p>
+          </div>
+
+          {/* Para Corrección */}
+          <div className={conditionalClasses({
+            light: 'bg-linear-to-br from-amber-50 to-amber-100 rounded-2xl p-4 border border-amber-200',
+            dark: 'bg-linear-to-br from-amber-900/30 to-amber-800/20 rounded-2xl p-4 border border-amber-700/50'
+          })}>
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 bg-linear-to-br from-amber-400 to-amber-500 rounded-xl flex items-center justify-center shadow-md">
+                <FaUndo className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-2xl font-bold text-amber-600">{dashboardStats.summary?.rejectedCorrection || 0}</span>
+            </div>
+            <p className={conditionalClasses({ light: 'text-xs text-amber-700 font-medium', dark: 'text-xs text-amber-400 font-medium' })}>Para Corrección</p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recent Requests */}
-          <div>
-            <h3 className={conditionalClasses({ light: 'text-lg font-bold text-gray-900 mb-4', dark: 'text-lg font-bold text-gray-100 mb-4' })}>Solicitudes Recientes</h3>
-            <div className="space-y-3">
-              {dashboardStats.recentRequests?.slice(0, 5).map((req) => (
-                <div key={req.id} className={conditionalClasses({
-                  light: 'p-3 bg-gray-50 rounded-lg border border-gray-200',
-                  dark: 'p-3 bg-gray-700 rounded-lg border border-gray-600'
-                })}>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className={conditionalClasses({ light: 'font-bold text-[#662d91]', dark: 'font-bold text-purple-400' })}>#{req.id}</span>
-                      <p className={conditionalClasses({ light: 'text-sm font-medium text-gray-900 truncate max-w-xs', dark: 'text-sm font-medium text-gray-100 truncate max-w-xs' })}>{req.title}</p>
-                    </div>
-                    <button onClick={() => handleViewDetail(req)} className={conditionalClasses({ light: 'p-2 text-blue-600 hover:bg-blue-50 rounded-lg', dark: 'p-2 text-blue-400 hover:bg-blue-900/30 rounded-lg' })}>
-                      <FaEye className="w-4 h-4" />
-                    </button>
-                  </div>
+        {/* Charts and Lists Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Flow Chart */}
+          <div className={conditionalClasses({
+            light: 'bg-gray-50 rounded-2xl p-5 border border-gray-200',
+            dark: 'bg-gray-700/50 rounded-2xl p-5 border border-gray-600'
+          })}>
+            <h3 className={conditionalClasses({ light: 'text-lg font-bold text-gray-900 mb-4', dark: 'text-lg font-bold text-gray-100 mb-4' })}>
+              <FaProjectDiagram className="inline-block mr-2 text-[#662d91]" />
+              Flujo de Solicitudes
+            </h3>
+            <Bar
+              data={flowData}
+              options={{
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                  y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                }
+              }}
+            />
+          </div>
+
+          {/* Status Distribution */}
+          <div className={conditionalClasses({
+            light: 'bg-gray-50 rounded-2xl p-5 border border-gray-200',
+            dark: 'bg-gray-700/50 rounded-2xl p-5 border border-gray-600'
+          })}>
+            <h3 className={conditionalClasses({ light: 'text-lg font-bold text-gray-900 mb-4', dark: 'text-lg font-bold text-gray-100 mb-4' })}>
+              <FaChartPie className="inline-block mr-2 text-[#662d91]" />
+              Distribución por Estado
+            </h3>
+            <div className="flex justify-center">
+              <div className="w-48 h-48">
+                <Doughnut
+                  data={statusData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    cutout: '60%'
+                  }}
+                />
+              </div>
+            </div>
+            {/* Legend */}
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              {[
+                { label: 'Pendiente Coord.', color: 'bg-yellow-500' },
+                { label: 'Pendiente Jefe', color: 'bg-purple-500' },
+                { label: 'En Compras', color: 'bg-cyan-500' },
+                { label: 'Comprados', color: 'bg-teal-500' },
+                { label: 'Entregados', color: 'bg-green-500' }
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <div className={`w-3 h-3 rounded-full ${item.color}`}></div>
+                  <span className={conditionalClasses({ light: 'text-xs text-gray-600', dark: 'text-xs text-gray-400' })}>{item.label}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Chart by Type */}
-          <div>
-            <h3 className={conditionalClasses({ light: 'text-lg font-bold text-gray-900 mb-4', dark: 'text-lg font-bold text-gray-100 mb-4' })}>Por Tipo de Ítem</h3>
+          {/* Recent Requests */}
+          <div className={conditionalClasses({
+            light: 'bg-gray-50 rounded-2xl p-5 border border-gray-200',
+            dark: 'bg-gray-700/50 rounded-2xl p-5 border border-gray-600'
+          })}>
+            <h3 className={conditionalClasses({ light: 'text-lg font-bold text-gray-900 mb-4', dark: 'text-lg font-bold text-gray-100 mb-4' })}>
+              <FaClock className="inline-block mr-2 text-[#662d91]" />
+              Solicitudes Recientes
+            </h3>
+            <div className="space-y-3 max-h-64 overflow-y-auto">
+              {dashboardStats.recentRequests?.slice(0, 5).map((req) => (
+                <div key={req.id} className={conditionalClasses({
+                  light: 'p-3 bg-white rounded-xl border border-gray-200 hover:border-[#662d91] transition-all cursor-pointer',
+                  dark: 'p-3 bg-gray-800 rounded-xl border border-gray-600 hover:border-purple-500 transition-all cursor-pointer'
+                })} onClick={() => handleViewDetail(req)}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className={conditionalClasses({ light: 'font-bold text-[#662d91]', dark: 'font-bold text-purple-400' })}>#{req.id}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        req.status === 'solicitado' ? 'bg-blue-100 text-blue-700' :
+                        req.status === 'pendiente_coordinadora' ? 'bg-yellow-100 text-yellow-700' :
+                        req.status === 'pendiente_jefe' ? 'bg-purple-100 text-purple-700' :
+                        req.status === 'en_compras' ? 'bg-cyan-100 text-cyan-700' :
+                        req.status === 'comprado' ? 'bg-teal-100 text-teal-700' :
+                        req.status === 'entregado' ? 'bg-green-100 text-green-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {req.status?.replace(/_/g, ' ')}
+                      </span>
+                    </div>
+                    <span className={conditionalClasses({ light: 'text-xs text-gray-500', dark: 'text-xs text-gray-400' })}>
+                      {formatCurrency(req.estimatedCost)}
+                    </span>
+                  </div>
+                  <p className={conditionalClasses({ light: 'text-sm font-medium text-gray-900 mt-1 truncate', dark: 'text-sm font-medium text-gray-100 mt-1 truncate' })}>{req.title}</p>
+                  <p className={conditionalClasses({ light: 'text-xs text-gray-500 mt-1', dark: 'text-xs text-gray-400 mt-1' })}>
+                    {req.requester?.name || 'Sin solicitante'}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Stats Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+          {/* By Type Chart */}
+          <div className={conditionalClasses({
+            light: 'bg-linear-to-r from-[#f3ebf9] to-[#e8d5f5] rounded-2xl p-5 border border-[#e8d5f5]',
+            dark: 'bg-linear-to-r from-purple-900/30 to-purple-800/20 rounded-2xl p-5 border border-purple-700/50'
+          })}>
+            <h3 className={conditionalClasses({ light: 'text-lg font-bold text-gray-900 mb-4', dark: 'text-lg font-bold text-gray-100 mb-4' })}>
+              <FaBox className="inline-block mr-2 text-[#662d91]" />
+              Por Tipo de Ítem
+            </h3>
             <Bar
               data={{
                 labels: Object.keys(dashboardStats.byType || {}).map(k => k.charAt(0).toUpperCase() + k.slice(1)),
                 datasets: [{
                   label: 'Solicitudes',
                   data: Object.values(dashboardStats.byType || {}),
-                  backgroundColor: ['#6366f1', '#8b5cf6', '#a855f7', '#d946ef']
+                  backgroundColor: ['#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#f472b6'],
+                  borderRadius: 8
                 }]
               }}
-              options={{ responsive: true, plugins: { legend: { display: false } } }}
+              options={{ 
+                responsive: true, 
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+              }}
             />
+          </div>
+
+          {/* Quick Stats */}
+          <div className={conditionalClasses({
+            light: 'bg-linear-to-r from-gray-50 to-gray-100 rounded-2xl p-5 border border-gray-200',
+            dark: 'bg-linear-to-r from-gray-700/50 to-gray-600/50 rounded-2xl p-5 border border-gray-600'
+          })}>
+            <h3 className={conditionalClasses({ light: 'text-lg font-bold text-gray-900 mb-4', dark: 'text-lg font-bold text-gray-100 mb-4' })}>
+              <FaChartLine className="inline-block mr-2 text-[#662d91]" />
+              Resumen Rápido
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className={conditionalClasses({
+                light: 'bg-white rounded-xl p-4 border border-gray-200',
+                dark: 'bg-gray-800 rounded-xl p-4 border border-gray-600'
+              })}>
+                <div className="flex items-center gap-2 mb-2">
+                  <FaClipboardList className="text-[#662d91]" />
+                  <span className={conditionalClasses({ light: 'text-xs text-gray-500', dark: 'text-xs text-gray-400' })}>Total Solicitudes</span>
+                </div>
+                <p className={conditionalClasses({ light: 'text-2xl font-bold text-gray-900', dark: 'text-2xl font-bold text-gray-100' })}>{dashboardStats.summary?.total || 0}</p>
+              </div>
+              <div className={conditionalClasses({
+                light: 'bg-white rounded-xl p-4 border border-gray-200',
+                dark: 'bg-gray-800 rounded-xl p-4 border border-gray-600'
+              })}>
+                <div className="flex items-center gap-2 mb-2">
+                  <FaMoneyBillWave className="text-green-600" />
+                  <span className={conditionalClasses({ light: 'text-xs text-gray-500', dark: 'text-xs text-gray-400' })}>Costo Estimado</span>
+                </div>
+                <p className={conditionalClasses({ light: 'text-xl font-bold text-green-600', dark: 'text-xl font-bold text-green-400' })}>{formatCurrency(totalEstimatedCost)}</p>
+              </div>
+              <div className={conditionalClasses({
+                light: 'bg-white rounded-xl p-4 border border-gray-200',
+                dark: 'bg-gray-800 rounded-xl p-4 border border-gray-600'
+              })}>
+                <div className="flex items-center gap-2 mb-2">
+                  <FaWarehouse className="text-teal-600" />
+                  <span className={conditionalClasses({ light: 'text-xs text-gray-500', dark: 'text-xs text-gray-400' })}>En Stock</span>
+                </div>
+                <p className={conditionalClasses({ light: 'text-2xl font-bold text-gray-900', dark: 'text-2xl font-bold text-gray-100' })}>{(dashboardStats.summary?.purchased || 0) + (dashboardStats.summary?.delivered || 0)}</p>
+              </div>
+              <div className={conditionalClasses({
+                light: 'bg-white rounded-xl p-4 border border-gray-200',
+                dark: 'bg-gray-800 rounded-xl p-4 border border-gray-600'
+              })}>
+                <div className="flex items-center gap-2 mb-2">
+                  <FaShippingFast className="text-cyan-600" />
+                  <span className={conditionalClasses({ light: 'text-xs text-gray-500', dark: 'text-xs text-gray-400' })}>En Proceso</span>
+                </div>
+                <p className={conditionalClasses({ light: 'text-2xl font-bold text-gray-900', dark: 'text-2xl font-bold text-gray-100' })}>{(dashboardStats.summary?.pendingCoordinator || 0) + (dashboardStats.summary?.pendingManager || 0) + (dashboardStats.summary?.inPurchases || 0)}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -455,7 +716,7 @@ const PurchaseRequests = () => {
                   })}>
                     <option value="all">Todos</option>
                     <option value="solicitado">Solicitado</option>
-                    <option value="pendiente_coordinadora">Pendiente Coordinadora</option>
+                    <option value="pendiente_coordinadora">Pendiente Coordinador</option>
                     <option value="aprobado_coordinadora">Aprobado Coord.</option>
                     <option value="pendiente_jefe">Pendiente Jefe</option>
                     <option value="aprobado_jefe">Aprobado Jefe</option>
@@ -474,7 +735,7 @@ const PurchaseRequests = () => {
                   })}>
                     <option value="all">Todos</option>
                     <option value="periferico">Periférico</option>
-                    <option value="electrodomestico">Electrodoméstico</option>
+                    <option value="electrodomestico">Electrodomestico</option>
                     <option value="software">Software</option>
                     <option value="otro">Otro</option>
                   </select>
