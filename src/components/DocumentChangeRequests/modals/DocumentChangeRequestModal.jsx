@@ -13,7 +13,8 @@ const DocumentChangeRequestModal = ({
   onApprove,
   onDelete,
   user,
-  mode
+  mode,
+  canDelete: canDeleteProp
 }) => {
   const { conditionalClasses } = useThemeClasses();
   const [formData, setFormData] = useState({
@@ -66,18 +67,38 @@ const DocumentChangeRequestModal = ({
     return request.workflowStatus === 'borrador' && request.requester?.id === user?.id;
   }, [request, user?.id]);
 
+  // Permisos para editar
+  // Administrador, Técnico, Calidad pueden editar cualquier solicitud
+  // Jefe, CoordinadorAdministrativo, Compras, Empleado solo pueden editar sus PROPIAS solicitudes
   const canEdit = useCallback(() => {
     if (!request) return false;
-    if (request.requester?.id === user?.id && request.workflowStatus === 'borrador') return true;
-    return ['Administrador', 'Calidad', 'Técnico'].includes(userRole);
+    // Solo se puede editar si está en borrador o rechazado
+    if (!['borrador', 'rechazado'].includes(request.workflowStatus)) return false;
+    // Roles que pueden editar cualquier solicitud
+    const canEditAll = ['Administrador', 'Técnico', 'Calidad'].includes(userRole);
+    // Si tiene rol de editar todo, permitir
+    if (canEditAll) return true;
+    // Si no, solo puede editar si es su propia solicitud
+    return request.requester?.id === user?.id;
   }, [request, user?.id, userRole]);
 
+  // Permisos para eliminar - cualquiera de los estados
+  // Administrador, Técnico, Calidad pueden eliminar CUALQUIER solicitud
+  // Jefe, CoordinadorAdministrativo, Compras, Empleado solo pueden eliminar sus PROPIAS solicitudes
   const canDelete = useCallback(() => {
+    // Si se pasa la función desde la página, usarla
+    if (canDeleteProp) {
+      return canDeleteProp(request);
+    }
+    // Función interna por defecto
     if (!request) return false;
-    if (request.workflowStatus !== 'borrador') return false;
-    if (request.requester?.id === user?.id) return true;
-    return ['Administrador', 'Técnico', 'Calidad'].includes(userRole);
-  }, [request, user?.id, userRole]);
+    // Roles que pueden eliminar cualquier solicitud
+    const canDeleteAll = ['Administrador', 'Técnico', 'Calidad'].includes(userRole);
+    // Si tiene rol de eliminar todo, permitir
+    if (canDeleteAll) return true;
+    // Si no, solo puede eliminar si es su propia solicitud
+    return request.requester?.id === user?.id;
+  }, [request, user?.id, userRole, canDeleteProp]);
 
   // Workflow steps
   const getWorkflowSteps = () => {
@@ -206,7 +227,7 @@ const DocumentChangeRequestModal = ({
 
   const handleDelete = async () => {
     if (!request?.id) return;
-    if (!confirm('¿Eliminar esta solicitud? Esta acción no se puede deshacer.')) return;
+    if (!confirm('¿Eliminar esta solicitud? Se moverá a la papelera y podrá ser restaurada posteriormente.')) return;
     setActionLoading(true);
     try {
       await documentChangeRequestsAPI.delete(request.id);
@@ -224,22 +245,22 @@ const DocumentChangeRequestModal = ({
   const workflowSteps = getWorkflowSteps();
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className={`rounded-2xl w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col ${conditionalClasses({ light: 'bg-white', dark: 'bg-gray-900' })}`}>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className={`rounded-2xl w-full max-w-[95vw] sm:max-w-6xl max-h-[95vh] overflow-hidden flex flex-col ${conditionalClasses({ light: 'bg-white', dark: 'bg-gray-900' })}`}>
         
         {/* Header */}
-        <div className={`p-6 border-b flex items-center justify-between shrink-0 ${conditionalClasses({ light: 'border-gray-200', dark: 'border-gray-700' })}`}>
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-500 flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-xl">#{request?.id || 'N'}</span>
+        <div className={`p-4 sm:p-6 border-b flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shrink-0 ${conditionalClasses({ light: 'border-gray-200', dark: 'border-gray-700' })}`}>
+          <div className="flex items-center gap-3 sm:gap-4 w-full">
+            <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-linear-to-br from-purple-600 to-purple-500 flex items-center justify-center shadow-lg shrink-0">
+              <span className="text-white font-bold text-base sm:text-xl">#{request?.id || 'N'}</span>
             </div>
-            <div>
-              <h2 className={`text-2xl font-bold ${conditionalClasses({ light: 'text-gray-900', dark: 'text-white' })}`}>
-                {mode === 'create' ? 'Nueva Solicitud de Cambio' : request?.title || 'Detalles de Solicitud'}
+            <div className="min-w-0 flex-1">
+              <h2 className={`text-lg sm:text-2xl font-bold ${conditionalClasses({ light: 'text-gray-900', dark: 'text-white' })} truncate`}>
+                {mode === 'create' ? 'Nueva Solicitud' : request?.title || 'Detalles'}
               </h2>
               {request && (
-                <div className="flex items-center gap-3 mt-2">
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1 sm:mt-2">
+                  <span className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-bold ${
                     request.workflowStatus === 'borrador' ? 'bg-slate-100 text-slate-700' :
                     request.workflowStatus === 'pendiente_revision' ? 'bg-amber-100 text-amber-700' :
                     request.workflowStatus === 'en_revision' ? 'bg-blue-100 text-blue-700' :
@@ -249,22 +270,22 @@ const DocumentChangeRequestModal = ({
                     'bg-red-100 text-red-700'
                   }`}>
                     {request.workflowStatus === 'borrador' && 'Borrador'}
-                    {request.workflowStatus === 'pendiente_revision' && 'Pendiente Revisión'}
+                    {request.workflowStatus === 'pendiente_revision' && 'Pendiente'}
                     {request.workflowStatus === 'en_revision' && 'En Revisión'}
                     {request.workflowStatus === 'aprobado' && 'Aprobado'}
-                    {request.workflowStatus === 'en_implementacion' && 'En Implementación'}
+                    {request.workflowStatus === 'en_implementacion' && 'Implementación'}
                     {request.workflowStatus === 'publicado' && 'Publicado'}
                     {request.workflowStatus === 'rechazado' && 'Rechazado'}
                   </span>
-                  <span className={`text-sm ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>
-                    Paso {request.currentStep} de {request.totalSteps}
+                  <span className={`text-xs sm:text-sm ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>
+                    Paso {request.currentStep}/{request.totalSteps}
                   </span>
                 </div>
               )}
             </div>
           </div>
-          <button onClick={onClose} className={`p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 ${conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-500' })}`}>
-            <FaTimes className="w-6 h-6" />
+          <button onClick={onClose} className={`p-2 sm:p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 ${conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-500' })} self-end sm:self-center`}>
+            <FaTimes className="w-5 h-5" />
           </button>
         </div>
 
@@ -272,7 +293,7 @@ const DocumentChangeRequestModal = ({
         <div className="flex-1 overflow-y-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 min-h-full">
             {/* Main Content */}
-            <div className="lg:col-span-2 p-6 space-y-6">
+            <div className="lg:col-span-2 p-4 sm:p-6 space-y-4 sm:space-y-6">
               {error && (
                 <div className={`p-4 rounded-xl border ${conditionalClasses({ light: 'bg-red-50 border-red-200 text-red-700', dark: 'bg-red-900/20 border-red-800 text-red-400' })}`}>
                   {error}
@@ -280,27 +301,27 @@ const DocumentChangeRequestModal = ({
               )}
 
               {/* Workflow Timeline */}
-              <div className={`rounded-2xl p-6 ${conditionalClasses({ light: 'bg-gray-50', dark: 'bg-gray-800' })}`}>
-                <h3 className={`text-lg font-bold mb-5 ${conditionalClasses({ light: 'text-gray-900', dark: 'text-white' })}`}>
-                  Progreso del Workflow
+              <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 ${conditionalClasses({ light: 'bg-gray-50', dark: 'bg-gray-800' })}`}>
+                <h3 className={`text-sm sm:text-lg font-bold mb-3 sm:mb-5 ${conditionalClasses({ light: 'text-gray-900', dark: 'text-white' })}`}>
+                  Progreso
                 </h3>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between overflow-x-auto pb-2">
                   {workflowSteps.map((step, index) => {
                     const isCompleted = index < currentStepIndex;
                     const isCurrent = index === currentStepIndex;
                     const StepIcon = step.icon;
                     return (
-                      <div key={step.status} className="flex flex-col items-center">
+                      <div key={step.status} className="flex flex-col items-center min-w-15">
                         <div className={`
-                          w-12 h-12 rounded-full flex items-center justify-center transition-all
+                          w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center transition-all shrink-0
                           ${isCompleted ? 'bg-green-500 text-white' : 
                             isCurrent ? 'bg-purple-500 text-white animate-pulse' : 
                             conditionalClasses({ light: 'bg-gray-200 text-gray-400', dark: 'bg-gray-700 text-gray-500' })}
                         `}>
-                          {isCompleted ? <FaCheck className="w-5 h-5" /> : <StepIcon className="w-5 h-5" />}
+                          {isCompleted ? <FaCheck className="w-3 h-3 sm:w-4 sm:h-4" /> : <StepIcon className="w-3 h-3 sm:w-4 sm:h-4" />}
                         </div>
-                        <span className={`text-xs mt-2 font-medium ${isCurrent ? 'text-purple-600 dark:text-purple-400' : conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>
-                          {step.label}
+                        <span className={`text-[10px] sm:text-xs mt-1 sm:mt-2 font-medium text-center ${isCurrent ? 'text-purple-600 dark:text-purple-400' : conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>
+                          {step.label.split(' ')[0]}
                         </span>
                       </div>
                     );
@@ -309,38 +330,38 @@ const DocumentChangeRequestModal = ({
               </div>
 
               {/* Form */}
-              <div className={`rounded-2xl p-6 ${conditionalClasses({ light: 'bg-gray-50', dark: 'bg-gray-800' })}`}>
-                <h3 className={`text-lg font-bold mb-5 ${conditionalClasses({ light: 'text-gray-900', dark: 'text-white' })}`}>
-                  Detalles de la Solicitud
+              <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 ${conditionalClasses({ light: 'bg-gray-50', dark: 'bg-gray-800' })}`}>
+                <h3 className={`text-sm sm:text-lg font-bold mb-3 sm:mb-5 ${conditionalClasses({ light: 'text-gray-900', dark: 'text-white' })}`}>
+                  Detalles
                 </h3>
                 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                  <div className="lg:col-span-2">
-                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Título *</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
+                  <div className="sm:col-span-2">
+                    <label className={`block text-xs sm:text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Título *</label>
                     <input type="text" name="title" value={formData.title} onChange={handleChange} disabled={isReadOnly}
-                      className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
+                      className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all text-sm sm:text-base ${
                         conditionalClasses({ light: 'border-gray-200 bg-white text-gray-900 disabled:bg-gray-100', dark: 'border-gray-600 bg-gray-700 text-white disabled:bg-gray-600' })
                       }`}
-                      placeholder="Título de la solicitud" />
+                      placeholder="Título" />
                   </div>
 
                   <div>
-                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Tipo de Cambio *</label>
+                    <label className={`block text-xs sm:text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Tipo *</label>
                     <select name="requestType" value={formData.requestType} onChange={handleChange} disabled={isReadOnly}
-                      className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
+                      className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all text-sm sm:text-base ${
                         conditionalClasses({ light: 'border-gray-200 bg-white text-gray-900', dark: 'border-gray-600 bg-gray-700 text-white' })
                       }`}>
-                      <option value="create">Crear Nuevo Documento</option>
-                      <option value="edit">Editar Documento Existente</option>
+                      <option value="create">Crear</option>
+                      <option value="edit">Editar</option>
                       <option value="version_update">Nueva Versión</option>
-                      <option value="delete">Eliminar Documento</option>
+                      <option value="delete">Eliminar</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Prioridad *</label>
+                    <label className={`block text-xs sm:text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Prioridad *</label>
                     <select name="priority" value={formData.priority} onChange={handleChange} disabled={isReadOnly}
-                      className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
+                      className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all text-sm sm:text-base ${
                         conditionalClasses({ light: 'border-gray-200 bg-white text-gray-900', dark: 'border-gray-600 bg-gray-700 text-white' })
                       }`}>
                       <option value="baja">Baja</option>
@@ -352,9 +373,9 @@ const DocumentChangeRequestModal = ({
 
                   {formData.requestType === 'create' && (
                     <div>
-                      <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Carpeta *</label>
+                      <label className={`block text-xs sm:text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Carpeta *</label>
                       <select name="folderId" value={formData.folderId} onChange={handleChange} disabled={isReadOnly}
-                        className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
+                        className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all text-sm sm:text-base ${
                           conditionalClasses({ light: 'border-gray-200 bg-white text-gray-900', dark: 'border-gray-600 bg-gray-700 text-white' })
                         }`}>
                         <option value="">Seleccionar...</option>
@@ -365,9 +386,9 @@ const DocumentChangeRequestModal = ({
 
                   {['edit', 'version_update', 'delete'].includes(formData.requestType) && (
                     <div>
-                      <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Documento *</label>
+                      <label className={`block text-xs sm:text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Documento *</label>
                       <select name="documentId" value={formData.documentId} onChange={handleChange} disabled={isReadOnly}
-                        className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
+                        className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all text-sm sm:text-base ${
                           conditionalClasses({ light: 'border-gray-200 bg-white text-gray-900', dark: 'border-gray-600 bg-gray-700 text-white' })
                         }`}>
                         <option value="">Seleccionar...</option>
@@ -376,88 +397,88 @@ const DocumentChangeRequestModal = ({
                     </div>
                   )}
 
-                  <div className="lg:col-span-2">
-                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Justificación * (mín 10 caracteres)</label>
-                    <textarea name="justification" value={formData.justification} onChange={handleChange} disabled={isReadOnly} rows={3}
-                      className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
+                  <div className="sm:col-span-2">
+                    <label className={`block text-xs sm:text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Justificación *</label>
+                    <textarea name="justification" value={formData.justification} onChange={handleChange} disabled={isReadOnly} rows={2}
+                      className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all text-sm sm:text-base ${
                         conditionalClasses({ light: 'border-gray-200 bg-white text-gray-900', dark: 'border-gray-600 bg-gray-700 text-white' })
                       }`}
                       placeholder="¿Por qué es necesario este cambio?" />
                   </div>
 
-                  <div className="lg:col-span-2">
-                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Descripción *</label>
-                    <textarea name="description" value={formData.description} onChange={handleChange} disabled={isReadOnly} rows={4}
-                      className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
+                  <div className="sm:col-span-2">
+                    <label className={`block text-xs sm:text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Descripción *</label>
+                    <textarea name="description" value={formData.description} onChange={handleChange} disabled={isReadOnly} rows={3}
+                      className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all text-sm sm:text-base ${
                         conditionalClasses({ light: 'border-gray-200 bg-white text-gray-900', dark: 'border-gray-600 bg-gray-700 text-white' })
                       }`}
-                      placeholder="Descripción detallada del cambio" />
+                      placeholder="Descripción detallada" />
                   </div>
 
-                  <div className="lg:col-span-2">
-                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Análisis de Impacto</label>
-                    <textarea name="impactAnalysis" value={formData.impactAnalysis} onChange={handleChange} disabled={isReadOnly} rows={3}
-                      className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
+                  <div className="sm:col-span-2">
+                    <label className={`block text-xs sm:text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Análisis de Impacto</label>
+                    <textarea name="impactAnalysis" value={formData.impactAnalysis} onChange={handleChange} disabled={isReadOnly} rows={2}
+                      className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all text-sm sm:text-base ${
                         conditionalClasses({ light: 'border-gray-200 bg-white text-gray-900', dark: 'border-gray-600 bg-gray-700 text-white' })
                       }`}
                       placeholder="Impacto en otros procesos" />
                   </div>
 
-                  <div className="lg:col-span-2">
-                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Procesos Afectados</label>
+                  <div className="sm:col-span-2">
+                    <label className={`block text-xs sm:text-sm font-semibold mb-2 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>Procesos Afectados</label>
                     <input type="text" name="affectedProcesses" value={formData.affectedProcesses} onChange={handleChange} disabled={isReadOnly}
-                      className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
+                      className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl border-2 focus:ring-2 focus:ring-purple-500 outline-none transition-all text-sm sm:text-base ${
                         conditionalClasses({ light: 'border-gray-200 bg-white text-gray-900', dark: 'border-gray-600 bg-gray-700 text-white' })
                       }`}
-                      placeholder="Ej: Compras, Ventas, Almacén" />
+                      placeholder="Ej: Compras, Ventas" />
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Sidebar */}
-            <div className={`p-6 border-l space-y-6 ${conditionalClasses({ light: 'border-gray-200 bg-gray-50', dark: 'border-gray-700 bg-gray-800' })}`}>
+            <div className={`p-4 sm:p-6 border-l space-y-4 sm:space-y-6 ${conditionalClasses({ light: 'border-gray-200 bg-gray-50', dark: 'border-gray-700 bg-gray-800' })}`}>
               {/* Solicitante */}
-              <div className={`rounded-2xl p-5 ${conditionalClasses({ light: 'bg-white', dark: 'bg-gray-900' })}`}>
-                <h4 className={`text-sm font-bold uppercase tracking-wide mb-4 ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>Solicitante</h4>
+              <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-5 ${conditionalClasses({ light: 'bg-white', dark: 'bg-gray-900' })}`}>
+                <h4 className={`text-xs sm:text-sm font-bold uppercase tracking-wide mb-3 sm:mb-4 ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>Solicitante</h4>
                 <div className="flex items-center gap-3">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${conditionalClasses({ light: 'bg-purple-100', dark: 'bg-purple-900/50' })}`}>
-                    <span className={`text-lg font-bold ${conditionalClasses({ light: 'text-purple-600', dark: 'text-purple-400' })}`}>
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0 ${conditionalClasses({ light: 'bg-purple-100', dark: 'bg-purple-900/50' })}`}>
+                    <span className={`text-base sm:text-lg font-bold ${conditionalClasses({ light: 'text-purple-600', dark: 'text-purple-400' })}`}>
                       {(request?.requester?.name || 'U').charAt(0).toUpperCase()}
                     </span>
                   </div>
-                  <div>
-                    <p className={`font-bold ${conditionalClasses({ light: 'text-gray-900', dark: 'text-white' })}`}>{request?.requester?.name || 'Usuario'}</p>
-                    <p className={`text-sm ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>{request?.requester?.email || ''}</p>
+                  <div className="min-w-0">
+                    <p className={`font-bold text-sm sm:text-base truncate ${conditionalClasses({ light: 'text-gray-900', dark: 'text-white' })}`}>{request?.requester?.name || 'Usuario'}</p>
+                    <p className={`text-xs sm:text-sm truncate ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>{request?.requester?.email || ''}</p>
                   </div>
                 </div>
               </div>
 
               {/* Acciones */}
               {(canApproveStep() || canReject() || canSubmitForReview() || canDelete()) && (
-                <div className={`rounded-2xl p-5 ${conditionalClasses({ light: 'bg-white', dark: 'bg-gray-900' })}`}>
-                  <h4 className={`text-sm font-bold uppercase tracking-wide mb-4 ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>Acciones</h4>
-                  <div className="space-y-3">
+                <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-5 ${conditionalClasses({ light: 'bg-white', dark: 'bg-gray-900' })}`}>
+                  <h4 className={`text-xs sm:text-sm font-bold uppercase tracking-wide mb-3 sm:mb-4 ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>Acciones</h4>
+                  <div className="space-y-2 sm:space-y-3">
                     {canDelete() && (
                       <button onClick={handleDelete} disabled={actionLoading}
-                        className="w-full py-3 px-4 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
+                        className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
                         <FaTrash className="w-4 h-4" /> Eliminar
                       </button>
                     )}
 
                     {canSubmitForReview() && (
                       <button onClick={handleSubmitForReview} disabled={loading}
-                        className="w-full py-3 px-4 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
-                        <FaArrowRight className="w-4 h-4" /> Enviar a Revisión
+                        className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
+                        <FaArrowRight className="w-4 h-4" /> Enviar
                       </button>
                     )}
 
                     {canApproveStep() && !showRejectForm && (
                       <div className="space-y-2">
                         <textarea value={actionComment} onChange={(e) => setActionComment(e.target.value)} placeholder="Comentarios (opcional)"
-                          className={`w-full px-3 py-2 rounded-lg border-2 ${conditionalClasses({ light: 'border-gray-200 bg-white', dark: 'border-gray-600 bg-gray-800' })}`} rows={2} />
+                          className={`w-full px-3 py-2 rounded-lg border-2 text-sm ${conditionalClasses({ light: 'border-gray-200 bg-white', dark: 'border-gray-600 bg-gray-800' })}`} rows={2} />
                         <button onClick={handleApprove} disabled={actionLoading}
-                          className="w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
+                          className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
                           <FaCheckCircle className="w-4 h-4" /> Aprobar
                         </button>
                       </div>
@@ -465,31 +486,31 @@ const DocumentChangeRequestModal = ({
 
                     {canReject() && !showRejectForm && (
                       <button onClick={() => setShowRejectForm(true)}
-                        className="w-full py-3 px-4 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
+                        className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
                         <FaBan className="w-4 h-4" /> Rechazar
                       </button>
                     )}
 
                     {canReject() && showRejectForm && (
                       <div className="space-y-2">
-                        <textarea value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} placeholder="Motivo del rechazo (requerido)"
-                          className={`w-full px-3 py-2 rounded-lg border-2 border-red-300 bg-red-50 dark:border-red-700 dark:bg-red-900/30`} rows={3} required />
+                        <textarea value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} placeholder="Motivo (requerido)"
+                          className={`w-full px-3 py-2 rounded-lg border-2 border-red-300 bg-red-50 dark:border-red-700 dark:bg-red-900/30 text-sm`} rows={3} required />
                         <div className="flex gap-2">
                           <button onClick={() => { setShowRejectForm(false); setRejectionReason(''); }} 
-                            className={`flex-1 py-2 px-3 rounded-lg font-medium ${conditionalClasses({ light: 'bg-gray-100 hover:bg-gray-200', dark: 'bg-gray-700 hover:bg-gray-600' })}`}>
+                            className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm ${conditionalClasses({ light: 'bg-gray-100 hover:bg-gray-200', dark: 'bg-gray-700 hover:bg-gray-600' })}`}>
                             Cancelar
                           </button>
                           <button onClick={handleReject} disabled={actionLoading || !rejectionReason.trim()}
-                            className="flex-1 py-2 px-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg disabled:opacity-50">
+                            className="flex-1 py-2 px-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg disabled:opacity-50 text-sm">
                             Confirmar
                           </button>
                         </div>
                       </div>
                     )}
 
-                    {canEdit() && request?.workflowStatus === 'borrador' && mode !== 'create' && (
+                    {canEdit() && ['borrador', 'rechazado'].includes(request?.workflowStatus) && mode !== 'create' && (
                       <button onClick={handleSave} disabled={loading}
-                        className="w-full py-3 px-4 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
+                        className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
                         <FaEdit className="w-4 h-4" /> Guardar
                       </button>
                     )}

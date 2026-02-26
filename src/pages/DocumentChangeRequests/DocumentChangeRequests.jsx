@@ -57,12 +57,27 @@ const DocumentChangeRequestsPage = () => {
   
   const canEdit = useCallback((request) => {
     if (!request) return false;
-    // El creador puede editar si está en borrador
-    if (request.requester?.id === user?.id && request.workflowStatus === 'borrador') {
-      return true;
-    }
-    // Roles con permisos totales
-    return ['Administrador', 'Calidad', 'Jefe', 'Coordinadora Administrativa', 'Técnico'].includes(userRole);
+    // Solo se puede editar si está en borrador o rechazado
+    if (!['borrador', 'rechazado'].includes(request.workflowStatus)) return false;
+    // Roles que pueden editar cualquier solicitud
+    const canEditAll = ['Administrador', 'Calidad', 'Técnico'].includes(userRole);
+    // Si tiene rol de editar todo, permitir
+    if (canEditAll) return true;
+    // Si no, solo puede editar si es su propia solicitud
+    return request.requester?.id === user?.id;
+  }, [user, userRole]);
+
+  // Permisos para eliminar
+  // Administrador, Técnico, Calidad pueden eliminar cualquier solicitud
+  // Jefe, CoordinadorAdministrativa, Compras, Empleado solo pueden eliminar sus propias solicitudes
+  const canDelete = useCallback((request) => {
+    if (!request) return false;
+    // Roles que pueden eliminar cualquier solicitud
+    const canDeleteAll = ['Administrador', 'Técnico', 'Calidad'].includes(userRole);
+    // Si tiene rol de eliminar todo, permitir
+    if (canDeleteAll) return true;
+    // Si no, solo puede eliminar si es su propia solicitud
+    return request.requester?.id === user?.id;
   }, [user, userRole]);
 
   const canApprove = useCallback((request) => {
@@ -144,6 +159,7 @@ const DocumentChangeRequestsPage = () => {
   };
 
   const handleDeleteRequest = async () => {
+    notifySuccess('Solicitud movida a la papelera correctamente');
     await loadRequests();
   };
 
@@ -667,6 +683,7 @@ const DocumentChangeRequestsPage = () => {
           onApprove={handleApprovalAction}
           onDelete={handleDeleteRequest}
           user={user}
+          canDelete={canDelete}
         />
       )}
     </div>

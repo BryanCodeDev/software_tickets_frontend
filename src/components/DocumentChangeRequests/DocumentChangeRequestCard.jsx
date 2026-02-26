@@ -122,12 +122,13 @@ const DocumentChangeRequestCard = ({
         ${statusConfig.bg}
         ${conditionalClasses({ light: 'border-gray-100', dark: 'border-gray-700' })}
       `}>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           {/* Status Badge */}
-          <div className="flex items-center gap-2">
-            <span className={`px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 ${statusConfig.color}`}>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${statusConfig.color}`}>
               <StatusIcon className="w-3 h-3" />
-              {statusConfig.label}
+              <span className="hidden sm:inline">{statusConfig.label}</span>
+              <span className="sm:hidden">{statusConfig.label.split(' ')[0]}</span>
             </span>
             <span className={`px-2 py-1 rounded-full text-xs font-semibold ${priorityConfig.text} ${conditionalClasses({ dark: priorityConfig.darkText })}`}>
               {priorityConfig.label}
@@ -135,7 +136,7 @@ const DocumentChangeRequestCard = ({
           </div>
           
           {/* Request ID */}
-          <span className={conditionalClasses({ light: 'text-sm font-bold text-gray-400', dark: 'text-sm font-bold text-gray-500' })}>
+          <span className={conditionalClasses({ light: 'text-xs sm:text-sm font-bold text-gray-400', dark: 'text-xs sm:text-sm font-bold text-gray-500' })}>
             #{request.id}
           </span>
         </div>
@@ -174,7 +175,7 @@ const DocumentChangeRequestCard = ({
             })}
           `}>
             <div
-              className="h-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-500"
+              className="h-full bg-linear-to-r from-purple-500 to-purple-600 transition-all duration-500"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -183,30 +184,30 @@ const DocumentChangeRequestCard = ({
 
       {/* Card Footer */}
       <div className={`
-        p-4 flex items-center justify-between
+        p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0
         ${conditionalClasses({
           light: 'bg-gray-50 border-t border-gray-100',
           dark: 'bg-gray-800 border-t border-gray-700'
         })}
       `}>
         {/* Requester & Time */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 order-2 sm:order-1">
           <div className={`
-            w-9 h-9 rounded-full flex items-center justify-center shrink-0
+            w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shrink-0
             ${conditionalClasses({
               light: 'bg-purple-100',
               dark: 'bg-purple-900/50'
             })}
           `}>
             <span className={conditionalClasses({
-              light: 'text-purple-600 font-semibold text-sm',
-              dark: 'text-purple-400 font-semibold text-sm'
+              light: 'text-purple-600 font-semibold text-xs sm:text-sm',
+              dark: 'text-purple-400 font-semibold text-xs sm:text-sm'
             })}>
               {(request.requester?.name || 'U').charAt(0).toUpperCase()}
             </span>
           </div>
           <div className="min-w-0">
-            <p className={`text-xs font-medium ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>
+            <p className={`text-xs font-medium truncate max-w-25 sm:max-w-none ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>
               {request.requester?.name || 'Usuario'}
             </p>
             <p className={`text-xs ${conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-500' })}`}>
@@ -216,39 +217,39 @@ const DocumentChangeRequestCard = ({
         </div>
 
         {/* Actions */}
-        <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+        <div className="flex gap-1 order-1 sm:order-2" onClick={(e) => e.stopPropagation()}>
           {canApprove && canApprove(request) && !['borrador', 'publicado', 'rechazado'].includes(request.workflowStatus) && (
             <button
               onClick={() => onViewDetail(request)}
               className={conditionalClasses({
-                light: 'p-2.5 rounded-xl bg-green-100 hover:bg-green-200 text-green-600 transition-all',
-                dark: 'p-2.5 rounded-xl bg-green-900/50 hover:bg-green-800/60 text-green-400 transition-all'
+                light: 'p-2 sm:p-2.5 rounded-xl bg-green-100 hover:bg-green-200 text-green-600 transition-all',
+                dark: 'p-2 sm:p-2.5 rounded-xl bg-green-900/50 hover:bg-green-800/60 text-green-400 transition-all'
               })}
               title="Aprobar"
             >
-              <FaCheck className="w-4 h-4" />
+              <FaCheck className="w-3 h-3 sm:w-4 sm:h-4" />
             </button>
           )}
-          {canEdit && canEdit(request) && request.workflowStatus === 'borrador' && (
+          {canEdit && canEdit(request) && ['borrador', 'rechazado'].includes(request.workflowStatus) && (
             <button
               onClick={() => onEdit(request)}
               className={conditionalClasses({
-                light: 'p-2.5 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-600 transition-all',
-                dark: 'p-2.5 rounded-xl bg-blue-900/50 hover:bg-blue-800/60 text-blue-400 transition-all'
+                light: 'p-2 sm:p-2.5 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-600 transition-all',
+                dark: 'p-2 sm:p-2.5 rounded-xl bg-blue-900/50 hover:bg-blue-800/60 text-blue-400 transition-all'
               })}
               title="Editar"
             >
-              <FaEdit className="w-4 h-4" />
+              <FaEdit className="w-3 h-3 sm:w-4 sm:h-4" />
             </button>
           )}
           <button
             className={conditionalClasses({
-              light: 'p-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-all',
-              dark: 'p-2.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-gray-400 transition-all'
+              light: 'p-2 sm:p-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-all',
+              dark: 'p-2 sm:p-2.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-gray-400 transition-all'
             })}
             title="Ver detalles"
           >
-            <FaEye className="w-4 h-4" />
+            <FaEye className="w-3 h-3 sm:w-4 sm:h-4" />
           </button>
         </div>
       </div>
