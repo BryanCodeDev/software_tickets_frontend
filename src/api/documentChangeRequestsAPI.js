@@ -72,6 +72,11 @@ const documentChangeRequestsAPI = {
     return response.data;
   },
 
+  editComment: async (id, commentId, content) => {
+    const response = await api.put(`${BASE_URL}/${id}/comments/${commentId}`, { content });
+    return response.data;
+  },
+
   deleteComment: async (id, commentId) => {
     const response = await api.delete(`${BASE_URL}/${id}/comments/${commentId}`);
     return response.data;

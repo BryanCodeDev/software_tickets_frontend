@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FaTimes, FaFileAlt, FaFolder, FaEdit, FaTrash, FaUpload, FaCheck, FaBan, FaUserCircle, FaArrowRight, FaCheckCircle, FaClock, FaExclamationTriangle, FaLayerGroup, FaPlus, FaComment, FaPaperPlane } from 'react-icons/fa';
+import { FaTimes, FaFileAlt, FaFolder, FaEdit, FaTrash, FaTrashAlt, FaUpload, FaCheck, FaBan, FaUserCircle, FaArrowRight, FaCheckCircle, FaClock, FaExclamationTriangle, FaLayerGroup, FaPlus, FaComment, FaPaperPlane } from 'react-icons/fa';
 import documentsAPI from '../../../api/documentsAPI';
 import documentChangeRequestsAPI from '../../../api/documentChangeRequestsAPI';
 import { useThemeClasses } from '../../../hooks/useThemeClasses';
@@ -44,6 +44,9 @@ const DocumentChangeRequestModal = ({
   const [comments, setComments] = useState([]);
   const [loadingComments, setLoadingComments] = useState(false);
   const [newComment, setNewComment] = useState('');
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editingCommentContent, setEditingCommentContent] = useState('');
+  const [deletingCommentId, setDeletingCommentId] = useState(null);
 
   const userRole = user?.role?.name;
 
@@ -186,6 +189,42 @@ const DocumentChangeRequestModal = ({
     } catch (err) { 
       notifyError(err.response?.data?.error || 'Error al agregar comentario'); 
     }
+  };
+
+  const handleEditComment = async (commentId) => {
+    if (!request?.id || !editingCommentContent.trim()) return;
+    try {
+      await documentChangeRequestsAPI.editComment(request.id, commentId, editingCommentContent);
+      setEditingCommentId(null);
+      setEditingCommentContent('');
+      loadComments();
+      notifySuccess('Comentario actualizado correctamente');
+    } catch (err) { 
+      notifyError(err.response?.data?.error || 'Error al editar comentario'); 
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!request?.id) return;
+    showConfirmDialog('¿Estás seguro de que deseas eliminar este comentario?', async () => {
+      try {
+        await documentChangeRequestsAPI.deleteComment(request.id, commentId);
+        loadComments();
+        notifySuccess('Comentario eliminado correctamente');
+      } catch (err) { 
+        notifyError(err.response?.data?.error || 'Error al eliminar comentario'); 
+      }
+    });
+  };
+
+  const startEditComment = (comment) => {
+    setEditingCommentId(comment.id);
+    setEditingCommentContent(comment.content);
+  };
+
+  const cancelEditComment = () => {
+    setEditingCommentId(null);
+    setEditingCommentContent('');
   };
 
   const resetForm = () => {
@@ -626,7 +665,7 @@ const DocumentChangeRequestModal = ({
                   </div>
                   
                   {/* Lista de comentarios */}
-                  <div className="space-y-2 mb-3 sm:mb-4 max-h-40 overflow-y-auto">
+                  <div className="space-y-2 mb-3 sm:mb-4 max-h-60 overflow-y-auto">
                     {loadingComments ? (
                       <div className="text-center py-2">
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-500 mx-auto"></div>
@@ -636,22 +675,71 @@ const DocumentChangeRequestModal = ({
                     ) : (
                       comments.map(comment => (
                         <div key={comment.id} className={conditionalClasses({ light: 'bg-gray-50 p-2 rounded-lg', dark: 'bg-gray-800 p-2 rounded-lg' })}>
-                          <div className="flex items-center gap-2 mb-1">
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center ${conditionalClasses({ light: 'bg-purple-100', dark: 'bg-purple-900/50' })}`}>
-                              <span className={`text-xs font-bold ${conditionalClasses({ light: 'text-purple-600', dark: 'text-purple-400' })}`}>
-                                {(comment.user?.name || 'U').charAt(0).toUpperCase()}
+                          <div className="flex items-center justify-between mb-1">
+                            <div className="flex items-center gap-2">
+                              <div className={`w-6 h-6 rounded-full flex items-center justify-center ${conditionalClasses({ light: 'bg-purple-100', dark: 'bg-purple-900/50' })}`}>
+                                <span className={`text-xs font-bold ${conditionalClasses({ light: 'text-purple-600', dark: 'text-purple-400' })}`}>
+                                  {(comment.user?.name || 'U').charAt(0).toUpperCase()}
+                                </span>
+                              </div>
+                              <span className={`text-xs font-semibold ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>
+                                {comment.user?.name || 'Usuario'}
+                              </span>
+                              <span className={`text-xs ${conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-500' })}`}>
+                                {new Date(comment.createdAt).toLocaleDateString('es-ES')}
                               </span>
                             </div>
-                            <span className={`text-xs font-semibold ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>
-                              {comment.user?.name || 'Usuario'}
-                            </span>
-                            <span className={`text-xs ${conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-500' })}`}>
-                              {new Date(comment.createdAt).toLocaleDateString('es-ES')}
-                            </span>
+                            {/* Botones de editar/eliminar - solo para el autor o admin */}
+                            {(comment.userId === user?.id || ['Administrador', 'Técnico', 'Calidad'].includes(userRole)) && (
+                              <div className="flex gap-1">
+                                <button 
+                                  onClick={() => startEditComment(comment)}
+                                  className={`p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}
+                                  title="Editar"
+                                >
+                                  <FaEdit className="w-3 h-3" />
+                                </button>
+                                <button 
+                                  onClick={() => handleDeleteComment(comment.id)}
+                                  className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500"
+                                  title="Eliminar"
+                                >
+                                  <FaTrashAlt className="w-3 h-3" />
+                                </button>
+                              </div>
+                            )}
                           </div>
-                          <p className={`text-xs ${conditionalClasses({ light: 'text-gray-600', dark: 'text-gray-400' })}`}>
-                            {comment.content}
-                          </p>
+                          {editingCommentId === comment.id ? (
+                            <div className="mt-1">
+                              <textarea
+                                value={editingCommentContent}
+                                onChange={(e) => setEditingCommentContent(e.target.value)}
+                                className={`w-full px-2 py-1 rounded border text-xs ${conditionalClasses({ 
+                                  light: 'border-gray-300 bg-white', 
+                                  dark: 'border-gray-600 bg-gray-700' 
+                                })}`}
+                                rows={2}
+                              />
+                              <div className="flex gap-1 mt-1">
+                                <button 
+                                  onClick={() => handleEditComment(comment.id)}
+                                  className="px-2 py-1 bg-purple-500 text-white text-xs rounded hover:bg-purple-600"
+                                >
+                                  Guardar
+                                </button>
+                                <button 
+                                  onClick={cancelEditComment}
+                                  className={`px-2 py-1 text-xs rounded ${conditionalClasses({ light: 'bg-gray-200', dark: 'bg-gray-600' })}`}
+                                >
+                                  Cancelar
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <p className={`text-xs ${conditionalClasses({ light: 'text-gray-600', dark: 'text-gray-400' })}`}>
+                              {comment.content}
+                            </p>
+                          )}
                         </div>
                       ))
                     )}
