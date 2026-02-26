@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FaTimes, FaFileAlt, FaFolder, FaEdit, FaTrash, FaUpload, FaCheck, FaBan, FaUserCircle, FaArrowRight, FaCheckCircle, FaClock, FaExclamationTriangle, FaLayerGroup, FaPlus } from 'react-icons/fa';
+import { FaTimes, FaFileAlt, FaFolder, FaEdit, FaTrash, FaUpload, FaCheck, FaBan, FaUserCircle, FaArrowRight, FaCheckCircle, FaClock, FaExclamationTriangle, FaLayerGroup, FaPlus, FaComment, FaPaperPlane } from 'react-icons/fa';
 import documentsAPI from '../../../api/documentsAPI';
 import documentChangeRequestsAPI from '../../../api/documentChangeRequestsAPI';
 import { useThemeClasses } from '../../../hooks/useThemeClasses';
@@ -41,6 +41,9 @@ const DocumentChangeRequestModal = ({
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [actionComment, setActionComment] = useState('');
+  const [comments, setComments] = useState([]);
+  const [loadingComments, setLoadingComments] = useState(false);
+  const [newComment, setNewComment] = useState('');
 
   const userRole = user?.role?.name;
 
@@ -126,6 +129,7 @@ const DocumentChangeRequestModal = ({
       loadDocuments();
       loadFolders();
       if (request) {
+        loadComments();
         setFormData({
           title: request.title || '',
           description: request.description || '',
@@ -157,6 +161,31 @@ const DocumentChangeRequestModal = ({
       const response = await documentsAPI.fetchFolders();
       setFolders(response || []);
     } catch (err) { console.error('Error loading folders:', err); }
+  };
+
+  const loadComments = async () => {
+    if (!request?.id) return;
+    setLoadingComments(true);
+    try {
+      const response = await documentChangeRequestsAPI.getComments(request.id);
+      setComments(response || []);
+    } catch (err) { 
+      console.error('Error loading comments:', err); 
+    } finally {
+      setLoadingComments(false);
+    }
+  };
+
+  const handleAddComment = async () => {
+    if (!request?.id || !newComment.trim()) return;
+    try {
+      await documentChangeRequestsAPI.addComment(request.id, newComment);
+      setNewComment('');
+      loadComments();
+      notifySuccess('Comentario agregado correctamente');
+    } catch (err) { 
+      notifyError(err.response?.data?.error || 'Error al agregar comentario'); 
+    }
   };
 
   const resetForm = () => {
@@ -586,6 +615,71 @@ const DocumentChangeRequestModal = ({
                   )}
                 </div>
               </div>
+
+              {/* Comentarios */}
+              {request && mode === 'view' && (
+                <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-5 ${conditionalClasses({ light: 'bg-white', dark: 'bg-gray-900' })}`}>
+                  <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                    <FaComment className="text-purple-500" />
+                    <h4 className={`text-xs sm:text-sm font-bold uppercase tracking-wide ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>Comentarios</h4>
+                    <span className={`text-xs ${conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-500' })}`}>({comments.length})</span>
+                  </div>
+                  
+                  {/* Lista de comentarios */}
+                  <div className="space-y-2 mb-3 sm:mb-4 max-h-40 overflow-y-auto">
+                    {loadingComments ? (
+                      <div className="text-center py-2">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-500 mx-auto"></div>
+                      </div>
+                    ) : comments.length === 0 ? (
+                      <p className={`text-xs text-center ${conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-500' })}`}>No hay comentarios aún</p>
+                    ) : (
+                      comments.map(comment => (
+                        <div key={comment.id} className={conditionalClasses({ light: 'bg-gray-50 p-2 rounded-lg', dark: 'bg-gray-800 p-2 rounded-lg' })}>
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center ${conditionalClasses({ light: 'bg-purple-100', dark: 'bg-purple-900/50' })}`}>
+                              <span className={`text-xs font-bold ${conditionalClasses({ light: 'text-purple-600', dark: 'text-purple-400' })}`}>
+                                {(comment.user?.name || 'U').charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                            <span className={`text-xs font-semibold ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>
+                              {comment.user?.name || 'Usuario'}
+                            </span>
+                            <span className={`text-xs ${conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-500' })}`}>
+                              {new Date(comment.createdAt).toLocaleDateString('es-ES')}
+                            </span>
+                          </div>
+                          <p className={`text-xs ${conditionalClasses({ light: 'text-gray-600', dark: 'text-gray-400' })}`}>
+                            {comment.content}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  
+                  {/* Input para nuevo comentario */}
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
+                      placeholder="Agregar comentario..."
+                      className={`flex-1 px-3 py-2 rounded-lg border-2 text-sm ${conditionalClasses({ 
+                        light: 'border-gray-200 bg-white text-gray-900 focus:border-purple-500', 
+                        dark: 'border-gray-600 bg-gray-800 text-white focus:border-purple-500' 
+                      })}`}
+                    />
+                    <button 
+                      onClick={handleAddComment}
+                      disabled={!newComment.trim()}
+                      className={`p-2 rounded-lg ${newComment.trim() ? 'bg-purple-500 hover:bg-purple-600 text-white' : 'bg-gray-200 text-gray-400'} transition-colors`}
+                    >
+                      <FaPaperPlane className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

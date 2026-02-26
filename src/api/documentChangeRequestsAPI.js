@@ -59,6 +59,22 @@ const documentChangeRequestsAPI = {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
+  },
+
+  // Comentarios
+  getComments: async (id) => {
+    const response = await api.get(`${BASE_URL}/${id}/comments`);
+    return response.data;
+  },
+
+  addComment: async (id, content) => {
+    const response = await api.post(`${BASE_URL}/${id}/comments`, { content });
+    return response.data;
+  },
+
+  deleteComment: async (id, commentId) => {
+    const response = await api.delete(`${BASE_URL}/${id}/comments/${commentId}`);
+    return response.data;
   }
 };
 
