@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { FaFileAlt, FaExchangeAlt, FaTicketAlt, FaChartLine, FaExclamationTriangle, FaCheckCircle, FaClock, FaExclamationCircle, FaShieldAlt, FaTachometerAlt, FaUser, FaRedo } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { FaFileAlt, FaExchangeAlt, FaTicketAlt, FaChartLine, FaExclamationTriangle, FaCheckCircle, FaClock, FaExclamationCircle, FaShieldAlt, FaTachometerAlt, FaUser, FaRedo, FaPlus, FaArrowRight, FaExternalLinkAlt } from 'react-icons/fa';
 import { useThemeClasses } from '../../hooks/useThemeClasses';
 import qualityTicketsAPI from '../../api/qualityTicketsAPI';
 import documentsAPI from '../../api/documentsAPI';
@@ -9,6 +10,7 @@ import AuthContext from '../../context/AuthContext';
 const QualityDashboard = () => {
   const { conditionalClasses } = useThemeClasses();
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -251,6 +253,34 @@ const QualityDashboard = () => {
           
           {/* Barra inferior decorativa */}
           <div className="h-1.5 bg-linear-to-r from-emerald-300 via-teal-300 to-emerald-300"></div>
+        </div>
+
+        {/* Botones de acción rápida */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+          <button
+            onClick={() => navigate('/documents')}
+            className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-xl font-medium transition-colors shadow-sm hover:shadow-md"
+          >
+            <FaFileAlt />
+            <span>Ver Documentos</span>
+            <FaArrowRight className="text-xs" />
+          </button>
+          <button
+            onClick={() => navigate('/quality/tickets')}
+            className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 rounded-xl font-medium transition-colors shadow-sm hover:shadow-md"
+          >
+            <FaTicketAlt />
+            <span>Nuevo Ticket</span>
+            <FaPlus className="text-xs" />
+          </button>
+          <button
+            onClick={() => navigate('/document-changes')}
+            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-medium transition-colors shadow-sm hover:shadow-md"
+          >
+            <FaExchangeAlt />
+            <span>Solicitudes de Cambio</span>
+            <FaExternalLinkAlt className="text-xs" />
+          </button>
         </div>
 
         {/* Grid principal de estadísticas - Diseño Professional */}
