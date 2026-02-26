@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FaTimes, FaFileAlt, FaFolder, FaEdit, FaTrash, FaUpload, FaCheck, FaBan, FaUserCircle, FaArrowRight, FaCheckCircle, FaClock, FaExclamationTriangle, FaLayerGroup } from 'react-icons/fa';
+import { FaTimes, FaFileAlt, FaFolder, FaEdit, FaTrash, FaUpload, FaCheck, FaBan, FaUserCircle, FaArrowRight, FaCheckCircle, FaClock, FaExclamationTriangle, FaLayerGroup, FaPlus } from 'react-icons/fa';
 import documentsAPI from '../../../api/documentsAPI';
 import documentChangeRequestsAPI from '../../../api/documentChangeRequestsAPI';
 import { useThemeClasses } from '../../../hooks/useThemeClasses';
@@ -253,7 +253,7 @@ const DocumentChangeRequestModal = ({
 
   if (!isOpen) return null;
 
-  const isReadOnly = mode === 'view' || (request && !['borrador', 'rechazado'].includes(request.workflowStatus));
+  const isReadOnly = mode === 'view' && request && !['borrador', 'rechazado'].includes(request.workflowStatus);
 
   const currentStepIndex = getCurrentStepIndex();
   const workflowSteps = getWorkflowSteps();
@@ -516,69 +516,76 @@ const DocumentChangeRequestModal = ({
                 </div>
               </div>
 
-              {/* Acciones */}
-              {(canApproveStep() || canReject() || canSubmitForReview() || canDelete()) && (
-                <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-5 ${conditionalClasses({ light: 'bg-white', dark: 'bg-gray-900' })}`}>
-                  <h4 className={`text-xs sm:text-sm font-bold uppercase tracking-wide mb-3 sm:mb-4 ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>Acciones</h4>
-                  <div className="space-y-2 sm:space-y-3">
-                    {canDelete() && (
-                      <button onClick={handleDelete} disabled={actionLoading}
-                        className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
-                        <FaTrash className="w-4 h-4" /> Eliminar
-                      </button>
-                    )}
+              {/* Acciones - Mostrar siempre para permitir crear/editar */}
+              <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-5 ${conditionalClasses({ light: 'bg-white', dark: 'bg-gray-900' })}`}>
+                <h4 className={`text-xs sm:text-sm font-bold uppercase tracking-wide mb-3 sm:mb-4 ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>Acciones</h4>
+                <div className="space-y-2 sm:space-y-3">
+                  {/* Botón Crear para nueva solicitud */}
+                  {mode === 'create' && (
+                    <button onClick={handleSave} disabled={loading}
+                      className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
+                      <FaPlus className="w-4 h-4" /> Crear Solicitud
+                    </button>
+                  )}
 
-                    {canSubmitForReview() && (
-                      <button onClick={handleSubmitForReview} disabled={loading}
-                        className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
-                        <FaArrowRight className="w-4 h-4" /> Enviar
-                      </button>
-                    )}
+                  {/* Botón Eliminar */}
+                  {canDelete() && (
+                    <button onClick={handleDelete} disabled={actionLoading}
+                      className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
+                      <FaTrash className="w-4 h-4" /> Eliminar
+                    </button>
+                  )}
 
-                    {canApproveStep() && !showRejectForm && (
-                      <div className="space-y-2">
-                        <textarea value={actionComment} onChange={(e) => setActionComment(e.target.value)} placeholder="Comentarios (opcional)"
-                          className={`w-full px-3 py-2 rounded-lg border-2 text-sm ${conditionalClasses({ light: 'border-gray-200 bg-white', dark: 'border-gray-600 bg-gray-800' })}`} rows={2} />
-                        <button onClick={handleApprove} disabled={actionLoading}
-                          className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
-                          <FaCheckCircle className="w-4 h-4" /> Aprobar
+                  {canSubmitForReview() && (
+                    <button onClick={handleSubmitForReview} disabled={loading}
+                      className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
+                      <FaArrowRight className="w-4 h-4" /> Enviar
+                    </button>
+                  )}
+
+                  {canApproveStep() && !showRejectForm && (
+                    <div className="space-y-2">
+                      <textarea value={actionComment} onChange={(e) => setActionComment(e.target.value)} placeholder="Comentarios (opcional)"
+                        className={`w-full px-3 py-2 rounded-lg border-2 text-sm ${conditionalClasses({ light: 'border-gray-200 bg-white', dark: 'border-gray-600 bg-gray-800' })}`} rows={2} />
+                      <button onClick={handleApprove} disabled={actionLoading}
+                        className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
+                        <FaCheckCircle className="w-4 h-4" /> Aprobar
+                      </button>
+                    </div>
+                  )}
+
+                  {canReject() && !showRejectForm && (
+                    <button onClick={() => setShowRejectForm(true)}
+                      className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
+                      <FaBan className="w-4 h-4" /> Rechazar
+                    </button>
+                  )}
+
+                  {canReject() && showRejectForm && (
+                    <div className="space-y-2">
+                      <textarea value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} placeholder="Motivo (requerido)"
+                        className={`w-full px-3 py-2 rounded-lg border-2 border-red-300 bg-red-50 dark:border-red-700 dark:bg-red-900/30 text-sm`} rows={3} required />
+                      <div className="flex gap-2">
+                        <button onClick={() => { setShowRejectForm(false); setRejectionReason(''); }} 
+                          className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm ${conditionalClasses({ light: 'bg-gray-100 hover:bg-gray-200', dark: 'bg-gray-700 hover:bg-gray-600' })}`}>
+                          Cancelar
+                        </button>
+                        <button onClick={handleReject} disabled={actionLoading || !rejectionReason.trim()}
+                          className="flex-1 py-2 px-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg disabled:opacity-50 text-sm">
+                          Confirmar
                         </button>
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    {canReject() && !showRejectForm && (
-                      <button onClick={() => setShowRejectForm(true)}
-                        className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
-                        <FaBan className="w-4 h-4" /> Rechazar
-                      </button>
-                    )}
-
-                    {canReject() && showRejectForm && (
-                      <div className="space-y-2">
-                        <textarea value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} placeholder="Motivo (requerido)"
-                          className={`w-full px-3 py-2 rounded-lg border-2 border-red-300 bg-red-50 dark:border-red-700 dark:bg-red-900/30 text-sm`} rows={3} required />
-                        <div className="flex gap-2">
-                          <button onClick={() => { setShowRejectForm(false); setRejectionReason(''); }} 
-                            className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm ${conditionalClasses({ light: 'bg-gray-100 hover:bg-gray-200', dark: 'bg-gray-700 hover:bg-gray-600' })}`}>
-                            Cancelar
-                          </button>
-                          <button onClick={handleReject} disabled={actionLoading || !rejectionReason.trim()}
-                            className="flex-1 py-2 px-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg disabled:opacity-50 text-sm">
-                            Confirmar
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {canEdit() && ['borrador', 'rechazado'].includes(request?.workflowStatus) && mode !== 'create' && (
-                      <button onClick={handleSave} disabled={loading}
-                        className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
-                        <FaEdit className="w-4 h-4" /> Guardar
-                      </button>
-                    )}
-                  </div>
+                  {canEdit() && ['borrador', 'rechazado'].includes(request?.workflowStatus) && mode !== 'create' && (
+                    <button onClick={handleSave} disabled={loading}
+                      className="w-full py-2 sm:py-3 px-3 sm:px-4 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
+                      <FaEdit className="w-4 h-4" /> Guardar
+                    </button>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
