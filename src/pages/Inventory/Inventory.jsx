@@ -69,11 +69,31 @@ const Inventory = () => {
   const filterAndSortInventory = useCallback(() => {
     let filtered = [...inventory];
 
-    // Búsqueda
+    // Búsqueda mejorada - busca en campos específicos y relevantes
     if (searchTerm) {
+      const term = searchTerm.toLowerCase().trim();
       filtered = filtered.filter(item =>
+        // Buscar en campos principales
+        item.it?.toLowerCase().includes(term) ||
+        item.serial?.toLowerCase().includes(term) ||
+        item.marca?.toLowerCase().includes(term) ||
+        item.propiedad?.toLowerCase().includes(term) ||
+        item.responsable?.toLowerCase().includes(term) ||
+        item.area?.toLowerCase().includes(term) ||
+        item.capacidad?.toLowerCase().includes(term) ||
+        item.ram?.toLowerCase().includes(term) ||
+        item.status?.toLowerCase().includes(term) ||
+        // Buscar en tipo de equipo (incluye versiones traducidas)
+        item.tipo_equipo?.toLowerCase().includes(term) ||
+        (term.includes('portat') && item.tipo_equipo === 'portatil') ||
+        (term.includes('laptop') && item.tipo_equipo === 'portatil') ||
+        (term.includes('escritorio') && item.tipo_equipo === 'pc') ||
+        (term.includes('mesa') && item.tipo_equipo === 'mesa') ||
+        // Buscar en IMEI (si existe)
+        (item.imei && item.imei.toLowerCase().includes(term)) ||
+        // Búsqueda general en cualquier campo
         Object.values(item).some(val =>
-          val?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+          val?.toString().toLowerCase().includes(term)
         )
       );
     }
