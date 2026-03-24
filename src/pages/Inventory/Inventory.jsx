@@ -516,7 +516,7 @@ const Inventory = () => {
               options: [
                 { value: 'PROPIO', label: 'Propio' },
                 { value: 'MILENIO ARQUILER', label: 'Milenio Arq.' },
-                { value: 'ARQUILER MOVISTAR', label: 'Arq. Movistar' }
+                { value: 'MOVISTAR', label: 'Movistar' }
               ]
             },
             {
@@ -1032,6 +1032,7 @@ const Inventory = () => {
                               <span className={`px-2 py-1 text-xs font-bold rounded-full ${
                                 item.propiedad === 'PROPIO' ? 'bg-green-100 text-green-700' :
                                 item.propiedad === 'MILENIO ARQUILER' ? 'bg-blue-100 text-blue-700' :
+                                item.propiedad === 'MOVISTAR' ? 'bg-purple-100 text-purple-700' :
                                 'bg-[#f3ebf9] text-[#662d91]'
                               }`}>
                                 {item.propiedad}
@@ -1240,7 +1241,7 @@ const Inventory = () => {
                       <option value="">Seleccionar</option>
                       <option value="PROPIO">PROPIO</option>
                       <option value="MILENIO ARQUILER">MILENIO ARQUILER</option>
-                      <option value="ARQUILER MOVISTAR">ARQUILER MOVISTAR</option>
+                      <option value="MOVISTAR">MOVISTAR</option>
                     </select>
                   </div>
 
@@ -1311,92 +1312,17 @@ const Inventory = () => {
                     })}`}>
                       Área *
                     </label>
-                    <select
+                    <input
+                      type="text"
+                      placeholder="Ej: Contabilidad, Sistemas, Ventas..."
                       value={formData.area}
                       onChange={(e) => setFormData({ ...formData, area: e.target.value })}
                       className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
-                        light: 'border-gray-200 bg-white',
+                        light: 'border-gray-200',
                         dark: 'border-gray-600 bg-gray-700 text-white'
                       })}`}
                       required
-                    >
-                      <option value="">Seleccionar área</option>
-
-                      {/* Producción y Operaciones */}
-                      <optgroup label="Producción y Operaciones">
-                        <option value="MATERIA PRIMA">Materia Prima</option>
-                        <option value="PRODUCCION">Producción</option>
-                        <option value="PRODUCTO TERMINADO">Producto Terminado</option>
-                        <option value="DESPACHOS">Despachos</option>
-                        <option value="DEVOLUCIONES">Devoluciones</option>
-                        <option value="BODEGA">Bodega</option>
-                        <option value="RECEPCION">Recepción</option>
-                        <option value="ALMACENISTA">Almacenista</option>
-                      </optgroup>
- 
-                      {/* Calidad y Laboratorio */}
-                      <optgroup label="Calidad y Laboratorio">
-                        <option value="CALIDAD">Calidad</option>
-                        <option value="CALIDAD OROCCO">Calidad Orocco</option>
-                        <option value="LABORATORIO">Laboratorio</option>
-                        <option value="INVESTIGACION">Investigación</option>
-                      </optgroup>
- 
-                      {/* Administración y Finanzas */}
-                      <optgroup label="Administración y Finanzas">
-                        <option value="CONTABILIDAD">Contabilidad</option>
-                        <option value="COSTOS">Costos</option>
-                        <option value="TESORERIA">Tesorería</option>
-                        <option value="CARTERA">Cartera</option>
-                        <option value="FACTURACION">Facturación</option>
-                        <option value="COMPRAS">Compras</option>
-                        <option value="JEFE COMPRAS">Jefe Compras</option>
-                      </optgroup>
- 
-                      {/* Ventas y Mercadeo */}
-                      <optgroup label="Ventas y Mercadeo">
-                        <option value="VENTAS">Ventas</option>
-                        <option value="MERCADEO">Mercadeo</option>
-                        <option value="DIRECCION VENTAS">Dirección Ventas</option>
-                        <option value="CALL CENTER">Call Center</option>
-                        <option value="SAC">SAC</option>
-                      </optgroup>
- 
-                      {/* Recursos Humanos */}
-                      <optgroup label="Recursos Humanos">
-                        <option value="RH">Recursos Humanos</option>
-                        <option value="ADMINISTRATIVO">Administrativo</option>
-                      </optgroup>
- 
-                      {/* Gerencia y Dirección */}
-                      <optgroup label="Gerencia y Dirección">
-                        <option value="GERENCIA">Gerencia</option>
-                        <option value="SUB GERENCIA">Sub Gerencia</option>
-                        <option value="EJECUTIVA">Ejecutiva</option>
-                        <option value="COORDINADOR">Coordinador</option>
-                        <option value="PLANEACION">Planeación</option>
-                      </optgroup>
- 
-                      {/* Servicios Generales */}
-                      <optgroup label="Servicios Generales">
-                        <option value="MANTENIMIENTO">Mantenimiento</option>
-                        <option value="REPARACION">Reparación</option>
-                        <option value="SERVICIO GENERAL">Servicio General</option>
-                        <option value="AMBIENTAL Y SST">Ambiental y SST</option>
-                      </optgroup>
- 
-                      {/* Sistemas y Tecnología */}
-                      <optgroup label="Sistemas y Tecnología">
-                        <option value="SISTEMAS">Sistemas</option>
-                        <option value="DESARROLLO">Desarrollo</option>
-                      </optgroup>
- 
-                      {/* Control y Auditoría */}
-                      <optgroup label="Control y Auditoría">
-                        <option value="AUDITORIA">Auditoría</option>
-                        <option value="ARCHIVO">Archivo</option>
-                      </optgroup>
-                    </select>
+                    />
                   </div>
 
                 </div>
