@@ -19,6 +19,7 @@ const Inventory = () => {
   const [formData, setFormData] = useState({
     propiedad: '',
     it: '',
+    tipo_equipo: 'pc',
     area: '',
     responsable: '',
     serial: '',
@@ -154,6 +155,7 @@ const Inventory = () => {
     setFormData({
       propiedad: '',
       it: '',
+      tipo_equipo: 'pc',
       area: '',
       responsable: '',
       serial: '',
@@ -174,6 +176,7 @@ const Inventory = () => {
     setFormData({
       propiedad: item.propiedad,
       it: item.it,
+      tipo_equipo: item.tipo_equipo || 'pc',
       area: item.area,
       responsable: item.responsable,
       serial: item.serial,
@@ -258,10 +261,17 @@ const Inventory = () => {
 
   const exportToExcel = async () => {
     const XLSX = await import('xlsx');
-    const headers = ['IT', 'Propiedad', 'Responsable', 'Área', 'Marca', 'Serial', 'Capacidad', 'RAM', 'Estado', 'Garantía', 'Compra', 'Mantenimiento', 'Costo'];
+    const headers = ['IT', 'Propiedad', 'Tipo', 'Responsable', 'Área', 'Marca', 'Serial', 'Capacidad', 'RAM', 'Estado', 'Garantía', 'Compra', 'Mantenimiento', 'Costo'];
+    const getTipoEquipoLabel = (tipo) => {
+      if (tipo === 'portatil') return 'Portátil';
+      if (tipo === 'pc') return 'PC';
+      if (tipo === 'mesa') return 'Mesa';
+      return 'PC';
+    };
     const rows = filteredInventory.map(item => [
       item.it,
       item.propiedad,
+      getTipoEquipoLabel(item.tipo_equipo),
       item.responsable,
       item.area,
       item.marca,
@@ -272,7 +282,7 @@ const Inventory = () => {
       item.warrantyExpiry ? new Date(item.warrantyExpiry).toLocaleDateString('es-ES') : '-',
       item.purchaseDate ? new Date(item.purchaseDate).toLocaleDateString('es-ES') : '-',
       item.lastMaintenance ? new Date(item.lastMaintenance).toLocaleDateString('es-ES') : '-',
-      item.cost ? `$${item.cost.toLocaleString('es-CO')}` : '-'
+      item.cost ? `${item.cost.toLocaleString('es-CO')}` : '-'
     ]);
 
     const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
@@ -312,6 +322,7 @@ const Inventory = () => {
     ws['!cols'] = [
       { wch: 10 }, // IT
       { wch: 12 }, // Propiedad
+      { wch: 10 }, // Tipo
       { wch: 15 }, // Responsable
       { wch: 15 }, // Área
       { wch: 12 }, // Marca
@@ -724,8 +735,15 @@ const Inventory = () => {
                       <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-3 lg:p-4 text-white">
                         <div className="flex items-start justify-between">
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
+                            <div className="flex items-center gap-2 mb-1 flex-wrap">
                               <h3 className="text-base lg:text-lg font-bold truncate">{item.it}</h3>
+                              <span className={`px-2 py-1 text-xs font-bold rounded-full ${
+                                item.tipo_equipo === 'portatil' ? 'bg-orange-400 text-orange-900' :
+                                item.tipo_equipo === 'mesa' ? 'bg-cyan-400 text-cyan-900' :
+                                'bg-blue-400 text-blue-900'
+                              }`}>
+                                {item.tipo_equipo === 'portatil' ? 'Portátil' : item.tipo_equipo === 'mesa' ? 'Mesa' : 'PC'}
+                              </span>
                               <span className={`px-2 py-1 text-xs font-bold rounded-full ${
                                 item.status === 'disponible' ? 'bg-green-400 text-green-900' :
                                 item.status === 'en uso' ? 'bg-blue-400 text-blue-900' :
@@ -985,6 +1003,7 @@ const Inventory = () => {
                       <tr>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">IT</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Propiedad</th>
+                        <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Tipo</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Responsable</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Área</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Marca</th>
@@ -1016,6 +1035,15 @@ const Inventory = () => {
                                 'bg-[#f3ebf9] text-[#662d91]'
                               }`}>
                                 {item.propiedad}
+                              </span>
+                            </td>
+                            <td className="px-4 py-4">
+                              <span className={`px-2 py-1 text-xs font-bold rounded-full ${
+                                item.tipo_equipo === 'portatil' ? 'bg-orange-100 text-orange-700' :
+                                item.tipo_equipo === 'mesa' ? 'bg-cyan-100 text-cyan-700' :
+                                'bg-blue-100 text-blue-700'
+                              }`}>
+                                {item.tipo_equipo === 'portatil' ? 'Portátil' : item.tipo_equipo === 'mesa' ? 'Mesa' : 'PC'}
                               </span>
                             </td>
                             <td className={`px-4 py-4 text-sm ${conditionalClasses({
@@ -1169,6 +1197,28 @@ const Inventory = () => {
                       })}`}
                       required
                     />
+                  </div>
+
+                  <div>
+                    <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
+                      light: 'text-gray-700',
+                      dark: 'text-gray-300'
+                    })}`}>
+                      Tipo de Equipo *
+                    </label>
+                    <select
+                      value={formData.tipo_equipo}
+                      onChange={(e) => setFormData({ ...formData, tipo_equipo: e.target.value })}
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
+                        light: 'border-gray-200',
+                        dark: 'border-gray-600 bg-gray-700 text-white'
+                      })}`}
+                      required
+                    >
+                      <option value="pc">PC (Escritorio)</option>
+                      <option value="portatil">Portátil</option>
+                      <option value="mesa">Computadora de Mesa</option>
+                    </select>
                   </div>
 
                   <div>
