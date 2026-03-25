@@ -1169,13 +1169,13 @@ const Inventory = () => {
       {/* Modal for Create/Edit */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
-          <div className={`rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({
+          <div className={`rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-hidden border-2 animate-scale-in ${conditionalClasses({
             light: 'bg-white border-gray-200',
             dark: 'bg-gray-800 border-gray-600'
           })}`}>
             <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl lg:text-2xl font-bold text-white">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white truncate">
                   {editingItem ? 'Editar Equipo' : 'Nuevo Equipo de Cómputo'}
                 </h2>
                 <button
@@ -1187,7 +1187,7 @@ const Inventory = () => {
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6">
+            <form onSubmit={handleSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6 overflow-y-auto max-h-[calc(95vh-120px)] lg:max-h-[calc(90vh-140px)]">
               {/* Información Básica */}
               <div>
                 <h3 className={`text-base lg:text-lg font-bold mb-4 flex items-center gap-2 ${conditionalClasses({
@@ -1199,7 +1199,7 @@ const Inventory = () => {
                   </div>
                   Información Básica
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
                     <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
                       light: 'text-gray-700',
@@ -1220,72 +1220,102 @@ const Inventory = () => {
                     />
                   </div>
 
-                  <div>
+                  <div className="relative">
                     <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
                       light: 'text-gray-700',
                       dark: 'text-gray-300'
                     })}`}>
                       Tipo de Equipo *
                     </label>
-                    <select
-                      value={formData.tipo_equipo}
-                      onChange={(e) => setFormData({ ...formData, tipo_equipo: e.target.value })}
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
-                        light: 'border-gray-200',
-                        dark: 'border-gray-600 bg-gray-700 text-white'
-                      })}`}
-                      required
-                    >
-                      <option value="pc">PC (Escritorio)</option>
-                      <option value="portatil">Portátil</option>
-                      <option value="mesa">Computadora de Mesa</option>
-                    </select>
+                    <div className="relative">
+                      <select
+                        value={formData.tipo_equipo}
+                        onChange={(e) => setFormData({ ...formData, tipo_equipo: e.target.value })}
+                        className={`w-full px-4 py-3 pr-10 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base appearance-none cursor-pointer ${conditionalClasses({
+                          light: 'border-gray-200 bg-white',
+                          dark: 'border-gray-600 bg-gray-700 text-white'
+                        })}`}
+                        required
+                      >
+                        <option value="pc">PC (Escritorio)</option>
+                        <option value="portatil">Portátil</option>
+                        <option value="mesa">Computadora de Mesa</option>
+                      </select>
+                      <div className={`absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none ${conditionalClasses({
+                        light: 'text-gray-500',
+                        dark: 'text-gray-400'
+                      })}`}>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
 
-                  <div>
+                  <div className="relative">
                     <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
                       light: 'text-gray-700',
                       dark: 'text-gray-300'
                     })}`}>
                       Propiedad *
                     </label>
-                    <select
-                      value={formData.propiedad}
-                      onChange={(e) => setFormData({ ...formData, propiedad: e.target.value })}
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
-                        light: 'border-gray-200',
-                        dark: 'border-gray-600 bg-gray-700 text-white'
-                      })}`}
-                      required
-                    >
-                      <option value="">Seleccionar</option>
-                      <option value="PROPIO">PROPIO</option>
-                      <option value="MILENIO ARQUILER">MILENIO ARQUILER</option>
-                      <option value="MOVISTAR">MOVISTAR</option>
-                    </select>
+                    <div className="relative">
+                      <select
+                        value={formData.propiedad}
+                        onChange={(e) => setFormData({ ...formData, propiedad: e.target.value })}
+                        className={`w-full px-4 py-3 pr-10 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base appearance-none cursor-pointer ${conditionalClasses({
+                          light: 'border-gray-200 bg-white',
+                          dark: 'border-gray-600 bg-gray-700 text-white'
+                        })}`}
+                        required
+                      >
+                        <option value="">Seleccionar</option>
+                        <option value="PROPIO">PROPIO</option>
+                        <option value="MILENIO ARQUILER">MILENIO ARQUILER</option>
+                        <option value="MOVISTAR">MOVISTAR</option>
+                      </select>
+                      <div className={`absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none ${conditionalClasses({
+                        light: 'text-gray-500',
+                        dark: 'text-gray-400'
+                      })}`}>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
 
-                  <div>
+                  <div className="relative">
                     <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
                       light: 'text-gray-700',
                       dark: 'text-gray-300'
                     })}`}>
                       Estado *
                     </label>
-                    <select
-                      value={formData.status}
-                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
-                        light: 'border-gray-200',
-                        dark: 'border-gray-600 bg-gray-700 text-white'
-                      })}`}
-                      required
-                    >
-                      <option value="disponible">Disponible</option>
-                      <option value="en uso">En Uso</option>
-                      <option value="mantenimiento">Mantenimiento</option>
-                      <option value="fuera de servicio">Fuera de Servicio</option>
-                    </select>
+                    <div className="relative">
+                      <select
+                        value={formData.status}
+                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                        className={`w-full px-4 py-3 pr-10 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base appearance-none cursor-pointer ${conditionalClasses({
+                          light: 'border-gray-200 bg-white',
+                          dark: 'border-gray-600 bg-gray-700 text-white'
+                        })}`}
+                        required
+                      >
+                        <option value="disponible">Disponible</option>
+                        <option value="en uso">En Uso</option>
+                        <option value="mantenimiento">Mantenimiento</option>
+                        <option value="fuera de servicio">Fuera de Servicio</option>
+                      </select>
+                      <div className={`absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none ${conditionalClasses({
+                        light: 'text-gray-500',
+                        dark: 'text-gray-400'
+                      })}`}>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1304,7 +1334,7 @@ const Inventory = () => {
                   </div>
                   Asignación y Ubicación
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
                     <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
                       light: 'text-gray-700',
@@ -1325,59 +1355,95 @@ const Inventory = () => {
                     />
                   </div>
 
-                  <div>
+                  <div className="relative">
                     <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
                       light: 'text-gray-700',
                       dark: 'text-gray-300'
                     })}`}>
                       Área *
                     </label>
-                    <input
-                      type="text"
-                      list="area-options"
-                      placeholder="Seleccionar o escribir..."
-                      value={formData.area}
-                      onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
-                        light: 'border-gray-200 bg-white',
-                        dark: 'border-gray-600 bg-gray-700 text-white'
-                      })}`}
-                      required
-                    />
-                    <datalist id="area-options">
-                      <option value="CONTABILIDAD" />
-                      <option value="CARTERA" />
-                      <option value="TESORERIA" />
-                      <option value="FACTURACION" />
-                      <option value="COSTOS" />
-                      <option value="VENTAS" />
-                      <option value="MERCADEO" />
-                      <option value="DIRECCION VENTAS" />
-                      <option value="CALL CENTER" />
-                      <option value="SAC" />
-                      <option value="PRODUCCION" />
-                      <option value="MATERIA PRIMA" />
-                      <option value="PRODUCTO TERMINADO" />
-                      <option value="BODEGA" />
-                      <option value="DESPACHOS" />
-                      <option value="RECEPCION" />
-                      <option value="CALIDAD" />
-                      <option value="LABORATORIO" />
-                      <option value="INVESTIGACION" />
-                      <option value="SISTEMAS" />
-                      <option value="RRHH" />
-                      <option value="ADMINISTRATIVO" />
-                      <option value="GERENCIA" />
-                      <option value="MANTENIMIENTO" />
-                      <option value="AMBIENTAL" />
-                      <option value="ARCHIVO" />
-                      <option value="AUDITORIA" />
-                      <option value="PLANEACION" />
-                      <option value="COMPRAS" />
-                      <option value="SIN ASIGNAR" />
-                      <option value="TECNICO CAPILAR" />
-                      <option value="PRODUCTO TERMINADO" />
-                    </datalist>
+                    <div className="relative">
+                      <select
+                        value={formData.area}
+                        onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                        className={`w-full px-4 py-3 pr-10 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base appearance-none cursor-pointer ${conditionalClasses({
+                          light: 'border-gray-200 bg-white',
+                          dark: 'border-gray-600 bg-gray-700 text-white'
+                        })}`}
+                        required
+                      >
+                        <option value="">Seleccionar</option>
+                        <optgroup label="Producción y Operaciones">
+                          <option value="MATERIA PRIMA">Materia Prima</option>
+                          <option value="PRODUCCION">Producción</option>
+                          <option value="PRODUCTO TERMINADO">Producto Terminado</option>
+                          <option value="DESPACHOS">Despachos</option>
+                          <option value="DEVOLUCIONES">Devoluciones</option>
+                          <option value="BODEGA">Bodega</option>
+                          <option value="RECEPCION">Recepción</option>
+                          <option value="ALMACENISTA">Almacenista</option>
+                        </optgroup>
+                        <optgroup label="Calidad y Laboratorio">
+                          <option value="CALIDAD">Calidad</option>
+                          <option value="CALIDAD OROCCO">Calidad Orocco</option>
+                          <option value="LABORATORIO">Laboratorio</option>
+                          <option value="INVESTIGACION">Investigación</option>
+                        </optgroup>
+                        <optgroup label="Administración y Finanzas">
+                          <option value="CONTABILIDAD">Contabilidad</option>
+                          <option value="COSTOS">Costos</option>
+                          <option value="TESORERIA">Tesorería</option>
+                          <option value="CARTERA">Cartera</option>
+                          <option value="FACTURACION">Facturación</option>
+                          <option value="COMPRAS">Compras</option>
+                          <option value="JEFE COMPRAS">Jefe Compras</option>
+                        </optgroup>
+                        <optgroup label="Ventas y Mercadeo">
+                          <option value="VENTAS">Ventas</option>
+                          <option value="MERCADEO">Mercadeo</option>
+                          <option value="DIRECCION VENTAS">Dirección Ventas</option>
+                          <option value="CALL CENTER">Call Center</option>
+                          <option value="SAC">SAC</option>
+                        </optgroup>
+                        <optgroup label="Recursos Humanos">
+                          <option value="RH">Recursos Humanos</option>
+                          <option value="ADMINISTRATIVO">Administrativo</option>
+                        </optgroup>
+                        <optgroup label="Gerencia y Dirección">
+                          <option value="GERENCIA">Gerencia</option>
+                          <option value="SUB GERENCIA">Sub Gerencia</option>
+                          <option value="EJECUTIVA">Ejecutiva</option>
+                          <option value="COORDINADOR">Coordinador</option>
+                          <option value="PLANEACION">Planeación</option>
+                        </optgroup>
+                        <optgroup label="Servicios Generales">
+                          <option value="MANTENIMIENTO">Mantenimiento</option>
+                          <option value="REPARACION">Reparación</option>
+                          <option value="SERVICIO GENERAL">Servicio General</option>
+                          <option value="AMBIENTAL Y SST">Ambiental y SST</option>
+                        </optgroup>
+                        <optgroup label="Sistemas y Tecnología">
+                          <option value="SISTEMAS">Sistemas</option>
+                          <option value="DESARROLLO">Desarrollo</option>
+                        </optgroup>
+                        <optgroup label="Control y Auditoría">
+                          <option value="AUDITORIA">Auditoría</option>
+                          <option value="ARCHIVO">Archivo</option>
+                        </optgroup>
+                        <optgroup label="Otros">
+                          <option value="SIN ASIGNAR">Sin Asignar</option>
+                          <option value="TECNICO CAPILAR">Técnico Capilar</option>
+                        </optgroup>
+                      </select>
+                      <div className={`absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none ${conditionalClasses({
+                        light: 'text-gray-500',
+                        dark: 'text-gray-400'
+                      })}`}>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
 
                 </div>
@@ -1420,7 +1486,7 @@ const Inventory = () => {
                     )}
                   </button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
                     <label className={`block text-sm font-semibold mb-2 ${conditionalClasses({
                       light: 'text-gray-700',
