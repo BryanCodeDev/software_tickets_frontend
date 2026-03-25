@@ -925,12 +925,16 @@ const Inventory = () => {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-2">
                                 <span className="font-bold text-[#662d91]">{item.it}</span>
-                                <span className={`px-2 py-1 text-xs font-bold rounded-full ${
-                                  item.status === 'disponible' ? 'bg-green-100 text-green-700' :
-                                  item.status === 'en uso' ? 'bg-blue-100 text-blue-700' :
-                                  item.status === 'mantenimiento' ? 'bg-yellow-100 text-yellow-700' :
-                                  'bg-red-100 text-red-700'
-                                }`}>
+                                <span className={`px-2 py-1 text-xs font-bold rounded-full ${conditionalClasses({
+                                  light: item.status === 'disponible' ? 'bg-green-100 text-green-700' :
+                                    item.status === 'en uso' ? 'bg-blue-100 text-blue-700' :
+                                    item.status === 'mantenimiento' ? 'bg-yellow-100 text-yellow-700' :
+                                    'bg-red-100 text-red-700',
+                                  dark: item.status === 'disponible' ? 'bg-green-900/50 text-green-300' :
+                                    item.status === 'en uso' ? 'bg-blue-900/50 text-blue-300' :
+                                    item.status === 'mantenimiento' ? 'bg-yellow-900/50 text-yellow-300' :
+                                    'bg-red-900/50 text-red-300'
+                                })}`}>
                                   {item.status}
                                 </span>
                               </div>
@@ -958,7 +962,10 @@ const Inventory = () => {
                               {canEdit && (
                                 <button
                                   onClick={() => handleEdit(item)}
-                                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation"
+                                  className={`p-2 rounded-lg transition-all touch-manipulation ${conditionalClasses({
+                                    light: 'text-blue-600 hover:bg-blue-50',
+                                    dark: 'text-blue-400 hover:bg-blue-900/30'
+                                  })}`}
                                   title="Editar"
                                 >
                                   <FaEdit className="w-4 h-4" />
@@ -967,7 +974,10 @@ const Inventory = () => {
                               {canDelete && (
                                 <button
                                   onClick={() => handleDelete(item.id)}
-                                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all touch-manipulation"
+                                  className={`p-2 rounded-lg transition-all touch-manipulation ${conditionalClasses({
+                                    light: 'text-red-600 hover:bg-red-50',
+                                    dark: 'text-red-400 hover:bg-red-900/30'
+                                  })}`}
                                   title="Eliminar"
                                 >
                                   <FaTrash className="w-4 h-4" />
@@ -1049,21 +1059,28 @@ const Inventory = () => {
                               <span className="font-bold text-[#662d91]">{item.it}</span>
                             </td>
                             <td className="px-4 py-4">
-                              <span className={`px-2 py-1 text-xs font-bold rounded-full ${
-                                item.propiedad === 'PROPIO' ? 'bg-green-100 text-green-700' :
-                                item.propiedad === 'MILENIO ARQUILER' ? 'bg-blue-100 text-blue-700' :
-                                item.propiedad === 'MOVISTAR' ? 'bg-purple-100 text-purple-700' :
-                                'bg-[#f3ebf9] text-[#662d91]'
-                              }`}>
+                              <span className={`px-2 py-1 text-xs font-bold rounded-full ${conditionalClasses({
+                                light: item.propiedad === 'PROPIO' ? 'bg-green-100 text-green-700' :
+                                  item.propiedad === 'MILENIO ARQUILER' ? 'bg-blue-100 text-blue-700' :
+                                  item.propiedad === 'MOVISTAR' ? 'bg-purple-100 text-purple-700' :
+                                  'bg-[#f3ebf9] text-[#662d91]',
+                                dark: item.propiedad === 'PROPIO' ? 'bg-green-900/50 text-green-300' :
+                                  item.propiedad === 'MILENIO ARQUILER' ? 'bg-blue-900/50 text-blue-300' :
+                                  item.propiedad === 'MOVISTAR' ? 'bg-purple-900/50 text-purple-300' :
+                                  'bg-[#662d91]/30 text-purple-300'
+                              })}`}>
                                 {item.propiedad}
                               </span>
                             </td>
                             <td className="px-4 py-4">
-                              <span className={`px-2 py-1 text-xs font-bold rounded-full ${
-                                item.tipo_equipo === 'portatil' ? 'bg-orange-100 text-orange-700' :
-                                item.tipo_equipo === 'mesa' ? 'bg-cyan-100 text-cyan-700' :
-                                'bg-blue-100 text-blue-700'
-                              }`}>
+                              <span className={`px-2 py-1 text-xs font-bold rounded-full ${conditionalClasses({
+                                light: item.tipo_equipo === 'portatil' ? 'bg-orange-100 text-orange-700' :
+                                  item.tipo_equipo === 'mesa' ? 'bg-cyan-100 text-cyan-700' :
+                                  'bg-blue-100 text-blue-700',
+                                dark: item.tipo_equipo === 'portatil' ? 'bg-orange-900/50 text-orange-300' :
+                                  item.tipo_equipo === 'mesa' ? 'bg-cyan-900/50 text-cyan-300' :
+                                  'bg-blue-900/50 text-blue-300'
+                              })}`}>
                                 {item.tipo_equipo === 'portatil' ? 'Portátil' : item.tipo_equipo === 'mesa' ? 'Mesa' : 'PC'}
                               </span>
                             </td>
@@ -1083,8 +1100,8 @@ const Inventory = () => {
                             </td>
                             <td className="px-4 py-4">
                               <span className={`text-xs font-mono px-2 py-1 rounded ${conditionalClasses({
-                                light: 'bg-gray-100',
-                                dark: 'bg-gray-700'
+                                light: 'bg-gray-100 text-gray-700',
+                                dark: 'bg-gray-700 text-gray-300'
                               })}`}>{item.serial}</span>
                             </td>
                             <td className="px-4 py-4">
@@ -1098,12 +1115,16 @@ const Inventory = () => {
                               })}`}>{item.ram}</div>
                             </td>
                             <td className="px-4 py-4">
-                              <span className={`px-3 py-1 text-xs font-bold rounded-full ${
-                                item.status === 'disponible' ? 'bg-green-100 text-green-700' :
-                                item.status === 'en uso' ? 'bg-blue-100 text-blue-700' :
-                                item.status === 'mantenimiento' ? 'bg-yellow-100 text-yellow-700' :
-                                'bg-red-100 text-red-700'
-                              }`}>
+                              <span className={`px-3 py-1 text-xs font-bold rounded-full ${conditionalClasses({
+                                light: item.status === 'disponible' ? 'bg-green-100 text-green-700' :
+                                  item.status === 'en uso' ? 'bg-blue-100 text-blue-700' :
+                                  item.status === 'mantenimiento' ? 'bg-yellow-100 text-yellow-700' :
+                                  'bg-red-100 text-red-700',
+                                dark: item.status === 'disponible' ? 'bg-green-900/50 text-green-300' :
+                                  item.status === 'en uso' ? 'bg-blue-900/50 text-blue-300' :
+                                  item.status === 'mantenimiento' ? 'bg-yellow-900/50 text-yellow-300' :
+                                  'bg-red-900/50 text-red-300'
+                              })}`}>
                                 {item.status}
                               </span>
                             </td>
@@ -1137,7 +1158,10 @@ const Inventory = () => {
                                 {canEdit && (
                                   <button
                                     onClick={() => handleEdit(item)}
-                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                    className={`p-2 rounded-lg transition-all ${conditionalClasses({
+                                      light: 'text-blue-600 hover:bg-blue-50',
+                                      dark: 'text-blue-400 hover:bg-blue-900/30'
+                                    })}`}
                                     title="Editar"
                                   >
                                     <FaEdit className="w-4 h-4" />
@@ -1146,7 +1170,10 @@ const Inventory = () => {
                                 {canDelete && (
                                   <button
                                     onClick={() => handleDelete(item.id)}
-                                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                    className={`p-2 rounded-lg transition-all ${conditionalClasses({
+                                      light: 'text-red-600 hover:bg-red-50',
+                                      dark: 'text-red-400 hover:bg-red-900/30'
+                                    })}`}
                                     title="Eliminar"
                                   >
                                     <FaTrash className="w-4 h-4" />
