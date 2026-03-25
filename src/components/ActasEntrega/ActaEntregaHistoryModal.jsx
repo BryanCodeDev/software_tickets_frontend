@@ -64,6 +64,7 @@ const ActaEntregaHistoryModal = ({
     const fieldNames = {
       'it': 'Código IT',
       'propiedad': 'Propiedad',
+      'tipo_equipo': 'Tipo de Equipo',
       'responsable': 'Responsable',
       'area': 'Área',
       'marca': 'Marca',
@@ -77,6 +78,7 @@ const ActaEntregaHistoryModal = ({
       'purchaseDate': 'Fecha de Compra',
       'lastMaintenance': 'Último Mantenimiento',
       'cost': 'Costo',
+      'capacidad': 'Capacidad',
       'fecha_entrega': 'Fecha de Entrega',
       'fecha_devolucion': 'Fecha de Devolución',
       'estado_equipo_entrega': 'Estado del Equipo (Entrega)',

@@ -1334,15 +1334,50 @@ const Inventory = () => {
                     </label>
                     <input
                       type="text"
-                      placeholder="Ej: Contabilidad, Sistemas, Ventas..."
+                      list="area-options"
+                      placeholder="Seleccionar o escribir..."
                       value={formData.area}
                       onChange={(e) => setFormData({ ...formData, area: e.target.value })}
                       className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base ${conditionalClasses({
-                        light: 'border-gray-200',
+                        light: 'border-gray-200 bg-white',
                         dark: 'border-gray-600 bg-gray-700 text-white'
                       })}`}
                       required
                     />
+                    <datalist id="area-options">
+                      <option value="CONTABILIDAD" />
+                      <option value="CARTERA" />
+                      <option value="TESORERIA" />
+                      <option value="FACTURACION" />
+                      <option value="COSTOS" />
+                      <option value="VENTAS" />
+                      <option value="MERCADEO" />
+                      <option value="DIRECCION VENTAS" />
+                      <option value="CALL CENTER" />
+                      <option value="SAC" />
+                      <option value="PRODUCCION" />
+                      <option value="MATERIA PRIMA" />
+                      <option value="PRODUCTO TERMINADO" />
+                      <option value="BODEGA" />
+                      <option value="DESPACHOS" />
+                      <option value="RECEPCION" />
+                      <option value="CALIDAD" />
+                      <option value="LABORATORIO" />
+                      <option value="INVESTIGACION" />
+                      <option value="SISTEMAS" />
+                      <option value="RRHH" />
+                      <option value="ADMINISTRATIVO" />
+                      <option value="GERENCIA" />
+                      <option value="MANTENIMIENTO" />
+                      <option value="AMBIENTAL" />
+                      <option value="ARCHIVO" />
+                      <option value="AUDITORIA" />
+                      <option value="PLANEACION" />
+                      <option value="COMPRAS" />
+                      <option value="SIN ASIGNAR" />
+                      <option value="TECNICO CAPILAR" />
+                      <option value="PRODUCTO TERMINADO" />
+                    </datalist>
                   </div>
 
                 </div>
