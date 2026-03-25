@@ -444,7 +444,7 @@ const Profile = () => {
                                     </div>
                                     <div className={conditionalClasses({
                                       light: 'px-2 py-1 bg-[#f3ebf9] text-[#662d91] text-xs font-medium rounded',
-                                      dark: 'px-2 py-1 bg-[#f3ebf9]/20 text-[#8e4dbf] text-xs font-medium rounded'
+                                      dark: 'px-2 py-1 bg-[#662d91]/30 text-purple-300 text-xs font-medium rounded'
                                     })}>
                                       {phone.category}
                                     </div>
