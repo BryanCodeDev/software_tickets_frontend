@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organigrama del Sistema — DuvyClass</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0c10;
+    --surface: #13141a;
+    --surface2: #1c1d26;
+    --border: #2a2b38;
+    --accent: #662d91;
+    --accent2: #9b59d4;
+    --accent3: #c084fc;
+    --text: #e8e9f0;
+    --muted: #7c7e8e;
+    --admin: #f59e0b;
+    --jefe: #8b5cf6;
+    --tecnico: #3b82f6;
+    --empleado: #22c55e;
+    --calidad: #14b8a6;
+    --admin-coord: #ec4899;
+    --compras: #f97316;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(102,45,145,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(102,45,145,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    padding: 60px 0 48px;
+    position: relative;
+  }
+
+  header::after {
+    content: '';
+    display: block;
+    width: 120px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    margin: 24px auto 0;
+  }
+
+  .company-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(102,45,145,0.15);
+    border: 1px solid rgba(102,45,145,0.4);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 20px;
+  }
+
+  .company-badge::before {
+    content: '◆';
+    color: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff 0%, var(--accent3) 50%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 300;
+    letter-spacing: 0.3px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .tab:hover { border-color: var(--accent2); color: var(--text); }
+
+  .tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(102,45,145,0.4);
+  }
+
+  /* VIEW PANELS */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* === PANEL 1: ROLES === */
+  .roles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .role-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+
+  .role-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+
+  .role-header {
+    padding: 20px 20px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .role-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.06;
+  }
+
+  .role-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .role-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .role-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+
+  .role-body { padding: 16px 20px 20px; }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .modules-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .module-tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .perms-list {
+    list-style: none;
+  }
+
+  .perms-list li {
+    font-size: 12.5px;
+    color: var(--muted);
+    padding: 4px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+  }
+
+  .perms-list li::before {
+    content: '→';
+    font-size: 11px;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  /* Color variants */
+  .role-admin .role-header::before { background: var(--admin); }
+  .role-admin .role-icon { background: rgba(245,158,11,0.15); color: var(--admin); border: 1px solid rgba(245,158,11,0.3); }
+  .role-admin .perms-list li::before { color: var(--admin); }
+
+  .role-jefe .role-header::before { background: var(--jefe); }
+  .role-jefe .role-icon { background: rgba(139,92,246,0.15); color: var(--jefe); border: 1px solid rgba(139,92,246,0.3); }
+  .role-jefe .perms-list li::before { color: var(--jefe); }
+
+  .role-tecnico .role-header::before { background: var(--tecnico); }
+  .role-tecnico .role-icon { background: rgba(59,130,246,0.15); color: var(--tecnico); border: 1px solid rgba(59,130,246,0.3); }
+  .role-tecnico .perms-list li::before { color: var(--tecnico); }
+
+  .role-empleado .role-header::before { background: var(--empleado); }
+  .role-empleado .role-icon { background: rgba(34,197,94,0.15); color: var(--empleado); border: 1px solid rgba(34,197,94,0.3); }
+  .role-empleado .perms-list li::before { color: var(--empleado); }
+
+  .role-calidad .role-header::before { background: var(--calidad); }
+  .role-calidad .role-icon { background: rgba(20,184,166,0.15); color: var(--calidad); border: 1px solid rgba(20,184,166,0.3); }
+  .role-calidad .perms-list li::before { color: var(--calidad); }
+
+  .role-coord .role-header::before { background: var(--admin-coord); }
+  .role-coord .role-icon { background: rgba(236,72,153,0.15); color: var(--admin-coord); border: 1px solid rgba(236,72,153,0.3); }
+  .role-coord .perms-list li::before { color: var(--admin-coord); }
+
+  .role-compras .role-header::before { background: var(--compras); }
+  .role-compras .role-icon { background: rgba(249,115,22,0.15); color: var(--compras); border: 1px solid rgba(249,115,22,0.3); }
+  .role-compras .perms-list li::before { color: var(--compras); }
+
+  /* === PANEL 2: HIERARCHY === */
+  .hierarchy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .h-level {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    position: relative;
+    width: 100%;
+    padding: 0 20px;
+  }
+
+  .h-connector-down {
+    width: 2px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--accent2), transparent);
+    margin: 0 auto;
+  }
+
+  .h-connector-horizontal {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+    width: 100%;
+    padding: 0 20px;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .h-connector-horizontal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 15%;
+    right: 15%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  .h-node {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 22px;
+    text-align: center;
+    min-width: 160px;
+    max-width: 200px;
+    position: relative;
+    transition: all 0.2s;
+  }
+
+  .h-node::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px; right: -1px;
+    height: 3px;
+    border-radius: 14px 14px 0 0;
+  }
+
+  .h-node:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+
+  .h-node-top {
+    min-width: 220px;
+    padding: 22px 28px;
+    background: linear-gradient(135deg, rgba(102,45,145,0.2), rgba(102,45,145,0.05));
+    border-color: rgba(102,45,145,0.5);
+  }
+
+  .h-node-top::before { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  .h-node-icon { font-size: 28px; margin-bottom: 8px; }
+  .h-node-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .h-node-sub { font-size: 11px; color: var(--muted); }
+
+  /* === PANEL 3: MODULES === */
+  .modules-section { }
+
+  .modules-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .modules-count {
+    font-family: 'Syne', sans-serif;
+    font-size: 48px;
+    font-weight: 800;
+    color: rgba(102,45,145,0.3);
+    line-height: 1;
+  }
+
+  .modules-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .modules-sub { font-size: 13px; color: var(--muted); }
+
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .module-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .module-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+  }
+
+  .module-card:hover {
+    border-color: rgba(102,45,145,0.4);
+    transform: translateX(4px);
+  }
+
+  .module-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .module-card-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .module-card-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .module-card-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  .workflow-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--accent3);
+    font-family: 'DM Mono', monospace;
+    line-height: 1.5;
+  }
+
+  .features-count {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+
+  .features-count span {
+    color: var(--accent3);
+    font-weight: 600;
+  }
+
+  /* === PANEL 4: MATRIX === */
+  .matrix-wrapper {
+    overflow-x: auto;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+  }
+
+  thead th {
+    padding: 14px 16px;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-align: left;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  thead th:first-child { color: var(--muted); }
+
+  tbody tr { transition: background 0.15s; }
+  tbody tr:hover { background: rgba(102,45,145,0.05); }
+
+  tbody td {
+    padding: 11px 16px;
+    font-size: 12.5px;
+    border-bottom: 1px solid rgba(42,43,56,0.5);
+    vertical-align: middle;
+  }
+
+  tbody td:first-child {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .check { color: #22c55e; font-size: 16px; }
+  .partial { color: #f59e0b; font-size: 14px; }
+  .none { color: var(--border); font-size: 14px; }
+
+  .col-admin { color: var(--admin) !important; }
+  .col-jefe { color: var(--jefe) !important; }
+  .col-tecnico { color: var(--tecnico) !important; }
+  .col-empleado { color: var(--empleado) !important; }
+  .col-calidad { color: var(--calidad) !important; }
+  .col-coord { color: var(--admin-coord) !important; }
+  .col-compras { color: var(--compras) !important; }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .role-card, .module-card, .h-node {
+    animation: fadeInUp 0.4s ease both;
+  }
+
+  .role-card:nth-child(1) { animation-delay: 0.05s; }
+  .role-card:nth-child(2) { animation-delay: 0.1s; }
+  .role-card:nth-child(3) { animation-delay: 0.15s; }
+  .role-card:nth-child(4) { animation-delay: 0.2s; }
+  .role-card:nth-child(5) { animation-delay: 0.25s; }
+  .role-card:nth-child(6) { animation-delay: 0.3s; }
+  .role-card:nth-child(7) { animation-delay: 0.35s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .h-node { min-width: 130px; }
+    .h-connector-horizontal::before { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="company-badge">DuvyClass · Sistema de Gestión</div>
+    <h1>Organigrama del Sistema</h1>
+    <p class="subtitle">Roles, módulos, permisos y flujos de trabajo</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showPanel('roles')">👥 Roles y Permisos</button>
+    <button class="tab" onclick="showPanel('hierarchy')">🏗 Jerarquía</button>
+    <button class="tab" onclick="showPanel('modules')">📦 Módulos</button>
+    <button class="tab" onclick="showPanel('matrix')">📊 Matriz de Acceso</button>
+  </div>
+
+  <!-- PANEL 1: ROLES -->
+  <div id="panel-roles" class="panel active">
+    <div class="roles-grid">
+
+      <div class="role-card role-admin">
+        <div class="role-header">
+          <div class="role-icon">👑</div>
+          <div>
+            <div class="role-name">Administrador</div>
+            <div class="role-desc">Control total sobre todos los módulos</div>
+          </div>
+        </div>
+        <div class="role-body">
+          <div class="section-label">Módulos</div>
+          <div class="modules-list">
+            <span class="module-tag">Todos los módulos</span>
+            <span class="module-tag">Usuarios</span>
+            <span class="module-tag">Roles</span>
+            <span class="module-tag">Papelera</span>
+            <span class="module-tag">Auditoría</span>
+          </div>
+          <div class="section-label">Permisos clave</div>
+          <ul class="perms-list">
+            <li>Acceso completo a todos los módulos</li>
+            <li>Gestión de usuarios y roles</li>
+            <li>Ver y restaurar cualquier elemento de la papelera</li>
+            <li>Vaciar papelera completamente</li>
+            <li>Eliminar elementos permanentemente</li>
+            <li>Ver logs de auditoría del sistema</li>
+            <li>Configurar parámetros de limpieza automática</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="role-card role-jefe">
+        <div class="role-header">
+          <div class="role-icon">🏅</div>
+          <div>
+            <div class="role-name">Jefe</div>
+            <div class="role-desc">Supervisión de equipos y reportes avanzados</div>
+          </div>
+        </div>
+        <div class="role-body">
+          <div class="section-label">Módulos</div>
+          <div class="modules-list">
+            <span class="module-tag">Tickets</span>
+            <span class="module-tag">Sol. Cambio</span>
+            <span class="module-tag">Sol. Compra</span>
+            <span class="module-tag">Documentos</span>
+            <span class="module-tag">Calidad</span>
+          </div>
+          <div class="section-label">Permisos clave</div>
+          <ul class="perms-list">
+            <li>Ver todos los tickets del área</li>
+            <li>Asignar tickets a técnicos</li>
+            <li>Aprobar solicitudes de cambio</li>
+            <li>Ver estadísticas del departamento</li>
+            <li>Aprobar tickets de calidad</li>
+            <li>Ver métricas de equipo</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="role-card role-tecnico">
+        <div class="role-header">
+          <div class="role-icon">🔧</div>
+          <div>
+            <div class="role-name">Técnico</div>
+            <div class="role-desc">Resolución de tickets y gestión de inventario</div>
+          </div>
+        </div>
+        <div class="role-body">
+          <div class="section-label">Módulos</div>
+          <div class="modules-list">
+            <span class="module-tag">Tickets</span>
+            <span class="module-tag">Inventario</span>
+            <span class="module-tag">Credenciales</span>
+            <span class="module-tag">Teléfonos</span>
+            <span class="module-tag">Tablets</span>
+            <span class="module-tag">PDAs</span>
+          </div>
+          <div class="section-label">Permisos clave</div>
+          <ul class="perms-list">
+            <li>Crear y atender tickets</li>
+            <li>Asignarse tickets</li>
+            <li>Gestionar inventario técnico</li>
+            <li>Ver credenciales del sistema</li>
+            <li>Restaurar elementos de la papelera (propios)</li>
+            <li>Gestionar teléfonos, tablets y PDAs</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="role-card role-empleado">
+        <div class="role-header">
+          <div class="role-icon">👤</div>
+          <div>
+            <div class="role-name">Empleado</div>
+            <div class="role-desc">Usuario básico con acceso limitado</div>
+          </div>
+        </div>
+        <div class="role-body">
+          <div class="section-label">Módulos</div>
+          <div class="modules-list">
+            <span class="module-tag">Tickets</span>
+            <span class="module-tag">Documentos</span>
+            <span class="module-tag">Sol. Compra</span>
+            <span class="module-tag">Perfil</span>
+            <span class="module-tag">Inventario</span>
+          </div>
+          <div class="section-label">Permisos clave</div>
+          <ul class="perms-list">
+            <li>Crear y ver sus propios tickets</li>
+            <li>Ver documentos asignados</li>
+            <li>Crear solicitudes de compra</li>
+            <li>Cambiar contraseña</li>
+            <li>Acceso de solo lectura autorizado</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="role-card role-calidad">
+        <div class="role-header">
+          <div class="role-icon">✅</div>
+          <div>
+            <div class="role-name">Calidad</div>
+            <div class="role-desc">Gestión de calidad, auditoría y procesos</div>
+          </div>
+        </div>
+        <div class="role-body">
+          <div class="section-label">Módulos</div>
+          <div class="modules-list">
+            <span class="module-tag">Tickets Calidad</span>
+            <span class="module-tag">Documentos</span>
+            <span class="module-tag">Sol. Cambio</span>
+            <span class="module-tag">Auditoría</span>
+          </div>
+          <div class="section-label">Permisos clave</div>
+          <ul class="perms-list">
+            <li>Gestionar tickets de calidad</li>
+            <li>Crear y aprobar documentos</li>
+            <li>Aprobar solicitudes de cambio</li>
+            <li>Gestionar no conformidades</li>
+            <li>Auditoría de procesos</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="role-card role-coord">
+        <div class="role-header">
+          <div class="role-icon">💼</div>
+          <div>
+            <div class="role-name">Coord. Administrativa</div>
+            <div class="role-desc">Gestión de compras, actas y recursos</div>
+          </div>
+        </div>
+        <div class="role-body">
+          <div class="section-label">Módulos</div>
+          <div class="modules-list">
+            <span class="module-tag">Sol. Compra</span>
+            <span class="module-tag">Actas</span>
+            <span class="module-tag">Inventario</span>
+            <span class="module-tag">Credenciales</span>
+            <span class="module-tag">Reportes</span>
+          </div>
+          <div class="section-label">Permisos clave</div>
+          <ul class="perms-list">
+            <li>Gestionar solicitudes de compra</li>
+            <li>Crear y firmar actas de entrega</li>
+            <li>Aprobar solicitudes de compra</li>
+            <li>Ver reportes financieros</li>
+            <li>Gestionar presupuestos</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="role-card role-compras">
+        <div class="role-header">
+          <div class="role-icon">🛒</div>
+          <div>
+            <div class="role-name">Compras</div>
+            <div class="role-desc">Gestión del proceso de adquisiciones</div>
+          </div>
+        </div>
+        <div class="role-body">
+          <div class="section-label">Módulos</div>
+          <div class="modules-list">
+            <span class="module-tag">Sol. Compra</span>
+            <span class="module-tag">Proveedores</span>
+            <span class="module-tag">Órdenes</span>
+            <span class="module-tag">Inventario</span>
+            <span class="module-tag">Reportes</span>
+          </div>
+          <div class="section-label">Permisos clave</div>
+          <ul class="perms-list">
+            <li>Gestionar órdenes de compra</li>
+            <li>Ver catálogo de proveedores</li>
+            <li>Aprobar solicitudes (nivel compras)</li>
+            <li>Ver reportes de compras</li>
+            <li>Coordinar entregas</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PANEL 2: JERARQUÍA -->
+  <div id="panel-hierarchy" class="panel">
+    <div class="hierarchy">
+
+      <div class="h-level">
+        <div class="h-node h-node-top" style="border-color: rgba(245,158,11,0.4); background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.03));">
+          <div class="h-node-icon">👑</div>
+          <div class="h-node-title" style="color: var(--admin)">Administrador</div>
+          <div class="h-node-sub">Acceso completo · Todos los módulos</div>
+        </div>
+      </div>
+
+      <div class="h-connector-down"></div>
+
+      <div class="h-level" style="gap: 16px;">
+        <div class="h-node" style="border-color: rgba(139,92,246,0.3);">
+          <div class="h-node-icon">🏅</div>
+          <div class="h-node-title" style="color: var(--jefe)">Jefe</div>
+          <div class="h-node-sub">Supervisión · Reportes</div>
+        </div>
+        <div class="h-node" style="border-color: rgba(20,184,166,0.3);">
+          <div class="h-node-icon">✅</div>
+          <div class="h-node-title" style="color: var(--calidad)">Calidad</div>
+          <div class="h-node-sub">ISO 9001 · Auditoría</div>
+        </div>
+        <div class="h-node" style="border-color: rgba(236,72,153,0.3);">
+          <div class="h-node-icon">💼</div>
+          <div class="h-node-title" style="color: var(--admin-coord)">Coord. Adm.</div>
+          <div class="h-node-sub">Compras · Actas</div>
+        </div>
+      </div>
+
+      <div class="h-connector-down"></div>
+
+      <div class="h-level" style="gap: 16px;">
+        <div class="h-node" style="border-color: rgba(59,130,246,0.3);">
+          <div class="h-node-icon">🔧</div>
+          <div class="h-node-title" style="color: var(--tecnico)">Técnico</div>
+          <div class="h-node-sub">Tickets · Inventario</div>
+        </div>
+        <div class="h-node" style="border-color: rgba(249,115,22,0.3);">
+          <div class="h-node-icon">🛒</div>
+          <div class="h-node-title" style="color: var(--compras)">Compras</div>
+          <div class="h-node-sub">Adquisiciones</div>
+        </div>
+      </div>
+
+      <div class="h-connector-down"></div>
+
+      <div class="h-level">
+        <div class="h-node" style="border-color: rgba(34,197,94,0.3); background: linear-gradient(135deg, rgba(34,197,94,0.08), transparent);">
+          <div class="h-node-icon">👤</div>
+          <div class="h-node-title" style="color: var(--empleado)">Empleado</div>
+          <div class="h-node-sub">Acceso básico · Solo lectura</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 48px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; max-width: 700px; width: 100%;">
+        <div class="section-label" style="margin-bottom: 16px; color: var(--accent3);">🗑 Sistema de Papelera — Permisos por Rol</div>
+        <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; text-align: center;">
+          <div style="background: var(--surface2); border-radius: 10px; padding: 14px; border: 1px solid rgba(245,158,11,0.2);">
+            <div style="font-size: 20px; margin-bottom: 6px;">👑</div>
+            <div style="font-family: 'Syne', sans-serif; font-size: 12px; color: var(--admin); font-weight: 700;">Administrador</div>
+            <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">Acceso completo</div>
+          </div>
+          <div style="background: var(--surface2); border-radius: 10px; padding: 14px; border: 1px solid rgba(59,130,246,0.2);">
+            <div style="font-size: 20px; margin-bottom: 6px;">🔧</div>
+            <div style="font-family: 'Syne', sans-serif; font-size: 12px; color: var(--tecnico); font-weight: 700;">Técnico</div>
+            <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">Módulos asignados</div>
+          </div>
+          <div style="background: var(--surface2); border-radius: 10px; padding: 14px; border: 1px solid rgba(34,197,94,0.2);">
+            <div style="font-size: 20px; margin-bottom: 6px;">👤</div>
+            <div style="font-family: 'Syne', sans-serif; font-size: 12px; color: var(--empleado); font-weight: 700;">Empleado</div>
+            <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">Solo sus elementos</div>
+          </div>
+        </div>
+        <div style="margin-top: 14px; font-size: 11.5px; color: var(--muted); line-height: 1.6; text-align: center;">
+          Limpieza automática a las <strong style="color: var(--accent3)">2:00 AM</strong> · Elementos eliminados permanentemente tras <strong style="color: var(--accent3)">30 días</strong>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PANEL 3: MÓDULOS -->
+  <div id="panel-modules" class="panel">
+    <div class="modules-header">
+      <div class="modules-count">14</div>
+      <div>
+        <div class="modules-title">Módulos del Sistema</div>
+        <div class="modules-sub">Cada módulo con sus flujos de trabajo (workflows)</div>
+      </div>
+    </div>
+    <div class="modules-grid">
+
+      <div class="module-card" style="--c: var(--accent)">
+        <div class="module-card-header">
+          <div class="module-card-icon">🎫</div>
+          <div class="module-card-name" style="color: var(--accent3)">Tickets</div>
+        </div>
+        <div class="module-card-desc">Sistema de mesa de ayuda para gestión de solicitudes técnicas</div>
+        <div class="workflow-box">Nuevo → Asignado → En Progreso → Esperando → Resuelto → Cerrado</div>
+        <div class="features-count"><span>10</span> funcionalidades</div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-icon">📦</div>
+          <div class="module-card-name" style="color: #60a5fa">Inventario</div>
+        </div>
+        <div class="module-card-desc">Control de activos tecnológicos y equipos de la empresa</div>
+        <div class="workflow-box">Disponible → Asignado → Mantenimiento → Baja</div>
+        <div class="features-count"><span>10</span> funcionalidades</div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-icon">📱</div>
+          <div class="module-card-name" style="color: #818cf8">Tablets</div>
+        </div>
+        <div class="module-card-desc">Gestión específica de dispositivos tablets corporativos</div>
+        <div class="workflow-box">Almacén → Asignado → Mantenimiento → Reposición</div>
+        <div class="features-count"><span>10</span> funcionalidades</div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-icon">🔌</div>
+          <div class="module-card-name" style="color: var(--compras)">PDAs</div>
+        </div>
+        <div class="module-card-desc">Control de dispositivos de captura de datos</div>
+        <div class="workflow-box">Almacén → Asignado → Mantenimiento → Baja</div>
+        <div class="features-count"><span>10</span> funcionalidades</div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-icon">📞</div>
+          <div class="module-card-name" style="color: var(--admin-coord)">Teléfonos Corporativos</div>
+        </div>
+        <div class="module-card-desc">Gestión de telefonía móvil corporativa con categorías por cargo</div>
+        <div class="workflow-box">Disponible → Asignado → Reposición → Baja</div>
+        <div class="features-count"><span>10</span> funcionalidades</div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-icon">📄</div>
+          <div class="module-card-name" style="color: #4ade80">Documentos</div>
+        </div>
+        <div class="module-card-desc">Repositorio centralizado de documentación con control de versiones</div>
+        <div class="workflow-box">Borrador → En Revisión → Aprobado → Publicado → Archivado</div>
+        <div class="features-count"><span>10</span> funcionalidades</div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-icon">✏️</div>
+          <div class="module-card-name" style="color: #f87171">Solicitudes de Cambio</div>
+        </div>
+        <div class="module-card-desc">Gestión de cambios documentales bajo norma ISO 9001</div>
+        <div class="workflow-box">Borrador → Rev. Inicial → Aprobación → Implementación → Publicación</div>
+        <div class="features-count"><span>12</span> funcionalidades</div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-icon">🛒</div>
+          <div class="module-card-name" style="color: var(--compras)">Solicitudes de Compra</div>
+        </div>
+        <div class="module-card-desc">Proceso completo de adquisiciones con workflow multi-nivel</div>
+        <div class="workflow-box">Borrador → Enviado → Aprobación Manager → Aprobación Compras → Ordenado → Recibido</div>
+        <div class="features-count"><span>10</span> funcionalidades</div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-icon">📋</div>
+          <div class="module-card-name" style="color: #22d3ee">Actas de Entrega</div>
+        </div>
+        <div class="module-card-desc">Documentación oficial de entregas de equipos y bienes</div>
+        <div class="workflow-box">Borrador → Firmado → Entregado → Archivado</div>
+        <div class="features-count"><span>10</span> funcionalidades</div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-icon">🔑</div>
+          <div class="module-card-name" style="color: #facc15">Credenciales</div>
+        </div>
+        <div class="module-card-desc">Almacenamiento seguro y cifrado de credenciales y accesos</div>
+        <div class="workflow-box">Creado → Asignado → En Uso → Caducado</div>
+        <div class="features-count"><span>10</span> funcionalidades</div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-icon">👥</div>
+          <div class="module-card-name" style="color: #94a3b8">Usuarios</div>
+        </div>
+        <div class="module-card-desc">Gestión completa de cuentas y perfiles del sistema</div>
+        <div class="workflow-box">Creado → Activo → Inactivo → Eliminado</div>
+        <div class="features-count"><span>10</span> funcionalidades</div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-icon">🛡</div>
+          <div class="module-card-name" style="color: var(--accent3)">Roles</div>
+        </div>
+        <div class="module-card-desc">Configuración de roles, jerarquías y permisos del sistema</div>
+        <div class="workflow-box">Creado → Activo → Modificado → Desactivado</div>
+        <div class="features-count"><span>10</span> funcionalidades</div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-icon">🗑</div>
+          <div class="module-card-name" style="color: #f87171">Papelera</div>
+        </div>
+        <div class="module-card-desc">Sistema de recuperación de elementos eliminados (30 días)</div>
+        <div class="workflow-box">Eliminado → Papelera → [Restaurado | Eliminado Permanente]</div>
+        <div class="features-count"><span>9</span> funcionalidades · 11 módulos compatibles</div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-icon">⭐</div>
+          <div class="module-card-name" style="color: var(--calidad)">Tickets de Calidad</div>
+        </div>
+        <div class="module-card-desc">Gestión de No Conformidades, Auditorías, CAPA y Mejora continua</div>
+        <div class="workflow-box">Nuevo → Análisis → Acción → Verificación → Cierre</div>
+        <div class="features-count"><span>4</span> tipos: NCR · Auditoría · CAPA · Mejora</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PANEL 4: MATRIZ -->
+  <div id="panel-matrix" class="panel">
+    <div class="legend">
+      <div class="legend-item"><span class="check">✓</span> Acceso completo</div>
+      <div class="legend-item"><span class="partial">◐</span> Acceso parcial</div>
+      <div class="legend-item"><span class="none">✕</span> Sin acceso</div>
+    </div>
+    <div class="matrix-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Módulo</th>
+            <th class="col-admin">👑 Admin</th>
+            <th class="col-jefe">🏅 Jefe</th>
+            <th class="col-tecnico">🔧 Técnico</th>
+            <th class="col-empleado">👤 Empleado</th>
+            <th class="col-calidad">✅ Calidad</th>
+            <th class="col-coord">💼 Coord. Adm.</th>
+            <th class="col-compras">🛒 Compras</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Tickets</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="partial">◐</td><td class="partial">◐</td><td class="none">✕</td><td class="none">✕</td></tr>
+          <tr><td>Tickets de Calidad</td><td class="check">✓</td><td class="check">✓</td><td class="partial">◐</td><td class="partial">◐</td><td class="check">✓</td><td class="none">✕</td><td class="none">✕</td></tr>
+          <tr><td>Inventario</td><td class="check">✓</td><td class="partial">◐</td><td class="check">✓</td><td class="partial">◐</td><td class="none">✕</td><td class="partial">◐</td><td class="partial">◐</td></tr>
+          <tr><td>Tablets</td><td class="check">✓</td><td class="none">✕</td><td class="check">✓</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td></tr>
+          <tr><td>PDAs</td><td class="check">✓</td><td class="none">✕</td><td class="check">✓</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td></tr>
+          <tr><td>Teléfonos Corporativos</td><td class="check">✓</td><td class="none">✕</td><td class="check">✓</td><td class="none">✕</td><td class="none">✕</td><td class="check">✓</td><td class="none">✕</td></tr>
+          <tr><td>Documentos</td><td class="check">✓</td><td class="check">✓</td><td class="none">✕</td><td class="partial">◐</td><td class="check">✓</td><td class="none">✕</td><td class="none">✕</td></tr>
+          <tr><td>Solicitudes de Cambio</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="none">✕</td><td class="check">✓</td><td class="none">✕</td><td class="none">✕</td></tr>
+          <tr><td>Solicitudes de Compra</td><td class="check">✓</td><td class="check">✓</td><td class="none">✕</td><td class="check">✓</td><td class="none">✕</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td>Actas de Entrega</td><td class="check">✓</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td><td class="check">✓</td><td class="none">✕</td></tr>
+          <tr><td>Credenciales</td><td class="check">✓</td><td class="none">✕</td><td class="check">✓</td><td class="none">✕</td><td class="none">✕</td><td class="check">✓</td><td class="none">✕</td></tr>
+          <tr><td>Usuarios</td><td class="check">✓</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td></tr>
+          <tr><td>Roles</td><td class="check">✓</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td></tr>
+          <tr><td>Papelera</td><td class="check">✓</td><td class="none">✕</td><td class="partial">◐</td><td class="partial">◐</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td></tr>
+          <tr><td>Estadísticas / Reportes</td><td class="check">✓</td><td class="check">✓</td><td class="none">✕</td><td class="none">✕</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td>Auditoría del Sistema</td><td class="check">✓</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td><td class="check">✓</td><td class="none">✕</td><td class="none">✕</td></tr>
+          <tr><td>Configuración</td><td class="check">✓</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td><td class="none">✕</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
