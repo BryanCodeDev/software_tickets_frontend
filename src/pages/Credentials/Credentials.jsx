@@ -354,11 +354,11 @@ const Credentials = () => {
     setFormData({
       service: cred.service,
       username: cred.username,
-      password: cred.password,
+      password: '', // Dejar vacío por seguridad, no se muestra la contraseña actual
       area: cred.area || '',
       notes: cred.description || ''
     });
-    setPasswordStrength(checkPasswordStrength(cred.password));
+    setPasswordStrength(null);
     setShowModal(true);
   };
 
@@ -379,7 +379,12 @@ const Credentials = () => {
     e.preventDefault();
     setFormLoading(true);
     try {
-      const credentialData = { ...formData };
+      let credentialData = { ...formData };
+      // Si estamos editando y la contraseña está vacía, no la enviamos para mantener la existente
+      if (editingCredential && (!credentialData.password || credentialData.password.trim() === '')) {
+        delete credentialData.password;
+      }
+
       if (editingCredential) {
         await credentialsAPI.updateCredential(editingCredential.id, credentialData);
         notifySuccess('Credencial actualizada exitosamente');
@@ -1015,16 +1020,16 @@ const Credentials = () => {
 
                 <div>
                   <label className={`block text-xs sm:text-sm md:text-base lg:text-lg font-medium mb-1.5 sm:mb-2 md:mb-3 ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>
-                    Contraseña *
+                    Contraseña {!editingCredential && <span className="text-red-500">*</span>}
                   </label>
                   <div className="relative">
                     <input
                       type={showFormPassword ? "text" : "password"}
-                      placeholder="Contraseña"
+                      placeholder={editingCredential ? "Dejar vacío para mantener la contraseña actual" : "Contraseña"}
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                       className={`w-full px-3 sm:px-4 py-2 sm:py-3 lg:py-4 pr-16 sm:pr-20 md:pr-24 border rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-xs sm:text-sm md:text-base lg:text-base ${conditionalClasses({ light: 'border-gray-300 bg-white text-gray-900', dark: 'border-gray-600 bg-gray-700 text-white' })}`}
-                      required
+                      required={!editingCredential}
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-1.5 sm:pr-2 md:pr-3 gap-0.5 sm:gap-1 md:gap-2">
                       {/* NUEVA FUNCIONALIDAD: Botón para generar contraseña segura */}
