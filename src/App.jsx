@@ -35,8 +35,8 @@ const Settings = lazy(() => import('./pages/Settings'));
 const Help = lazy(() => import('./pages/Help'));
 const QualityDashboard = lazy(() => import('./pages/Quality/QualityDashboard'));
 
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useContext(AuthContext);
+const ProtectedRoute = ({ children, requiredPermission, requiredRole, module }) => {
+  const { user, loading, checkPermission, hasRole } = useContext(AuthContext);
   const { conditionalClasses } = useThemeClasses();
 
   if (loading) return (
@@ -53,7 +53,23 @@ const ProtectedRoute = ({ children }) => {
       </div>
     </div>
   );
-  return user ? children : <Navigate to="/login" />;
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  // ✅ VALIDACIÓN DE ROL REQUERIDO
+  if (requiredRole && !hasRole(requiredRole)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  // ✅ VALIDACIÓN DE PERMISO ESPECÍFICO POR MÓDULO
+  if (requiredPermission && module && !checkPermission(module, requiredPermission)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  // Si pasa todas las validaciones
+  return children;
 };
 
 const LoadingFallback = () => {
@@ -190,17 +206,59 @@ const AppContent = () => {
               </Layout>
             </ProtectedRoute>
           } />
+          <Route path="/users" element={
+            <ProtectedRoute requiredRole="Administrador">
+              <Layout>
+                <Users />
+              </Layout>
+            </ProtectedRoute>
+          } />
           <Route path="/roles" element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="Administrador">
               <Layout>
                 <Roles />
               </Layout>
             </ProtectedRoute>
           } />
           <Route path="/trash" element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="Administrador">
               <Layout>
                 <Trash />
+              </Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/credentials" element={
+            <ProtectedRoute requiredPermission="view" module="credentials">
+              <Layout>
+                <Credentials />
+              </Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/purchase-requests" element={
+            <ProtectedRoute requiredPermission="view" module="purchases">
+              <Layout>
+                <PurchaseRequests />
+              </Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/ticket_calidad" element={
+            <ProtectedRoute requiredPermission="view" module="quality">
+              <Layout>
+                <TicketCalidad />
+              </Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/document-change-requests" element={
+            <ProtectedRoute requiredPermission="view" module="documents">
+              <Layout>
+                <DocumentChangeRequests />
+              </Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/quality-dashboard" element={
+            <ProtectedRoute requiredPermission="view" module="quality">
+              <Layout>
+                <QualityDashboard />
               </Layout>
             </ProtectedRoute>
           } />
