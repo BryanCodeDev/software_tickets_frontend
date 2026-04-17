@@ -158,7 +158,7 @@ const Navbar = ({ toggleSidebar }) => {
                 </div>
 
                 {/* Avatar */}
-                <div className={`relative w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br ${roleBadge.gradient} rounded-xl flex items-center justify-center shadow-md ring-2 ring-white/30 transition-transform duration-150 group-hover:scale-105`}>
+                 <div className={`relative w-8 h-8 sm:w-9 sm:h-9 bg-linear-to-br ${roleBadge.gradient} rounded-xl flex items-center justify-center shadow-md ring-2 ring-white/30 transition-transform duration-150 group-hover:scale-105`}>
                   <span className="text-white text-xs sm:text-sm font-bold">{userInitial}</span>
                   {/* Online indicator */}
                   <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white dark:border-gray-900" />
@@ -188,7 +188,7 @@ const Navbar = ({ toggleSidebar }) => {
                   {/* User header */}
                   <div className="px-4 py-4">
                     <div className="flex items-center gap-3">
-                      <div className={`w-11 h-11 bg-gradient-to-br ${roleBadge.gradient} rounded-xl flex items-center justify-center shadow-md shrink-0`}>
+                       <div className={`w-11 h-11 bg-linear-to-br ${roleBadge.gradient} rounded-xl flex items-center justify-center shadow-md shrink-0`}>
                         <span className="text-white font-bold text-base">{userInitial}</span>
                       </div>
                       <div className="min-w-0">

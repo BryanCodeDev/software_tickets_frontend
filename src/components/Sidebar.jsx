@@ -10,62 +10,62 @@ import { useThemeClasses } from '../hooks/useThemeClasses';
 
 // ─── Icon helpers ─────────────────────────────────────────────────────────────
 const IconHome = () => (
-  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+  <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
   </svg>
 );
 const IconTicket = () => (
-  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+  <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
   </svg>
 );
 const IconCart = () => (
-  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+  <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
   </svg>
 );
 const IconBox = () => (
-  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+  <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
   </svg>
 );
 const IconLock = () => (
-  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+  <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
   </svg>
 );
 const IconUsers = () => (
-  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+  <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
   </svg>
 );
 const IconShield = () => (
-  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+  <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
   </svg>
 );
 const IconPhone = () => (
-  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+  <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
   </svg>
 );
 const IconTablet = () => (
-  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+  <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
   </svg>
 );
 const IconDoc = () => (
-  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+  <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
   </svg>
 );
 const IconDocAlt = () => (
-  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+  <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
   </svg>
 );
 const IconComputer = () => (
-  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+  <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
   </svg>
 );
@@ -85,16 +85,16 @@ const inventarioSubItems = [
 ];
 
 const calidadSubItemsFull = [
-  { path: '/quality-dashboard',        icon: <FaChartLine className="w-[17px] h-[17px]" />, label: 'Dashboard Calidad',     description: 'Vista general de calidad' },
+  { path: '/quality-dashboard',        icon: <FaChartLine className="w-4.25 h-4.25" />, label: 'Dashboard Calidad',     description: 'Vista general de calidad' },
   { path: '/documents',                icon: <IconDoc />,                                    label: 'Documentos',            description: 'Archivos oficiales' },
   { path: '/document-change-requests', icon: <IconDocAlt />,                                 label: 'Solicitudes de Cambio', description: 'Workflow documental' },
-  { path: '/ticket_calidad',           icon: <FaClipboardList className="w-[17px] h-[17px]" />, label: 'Ticket Calidad',    description: 'Reportes de calidad' },
+  { path: '/ticket_calidad',           icon: <FaClipboardList className="w-4.25 h-4.25" />, label: 'Ticket Calidad',    description: 'Reportes de calidad' },
 ];
 
 const calidadSubItemsBasic = [
   { path: '/documents',                icon: <IconDoc />,   label: 'Documentos',            description: 'Archivos oficiales' },
   { path: '/document-change-requests', icon: <IconDocAlt />, label: 'Solicitudes de Cambio', description: 'Workflow documental' },
-  { path: '/ticket_calidad',           icon: <FaClipboardList className="w-[17px] h-[17px]" />, label: 'Ticket Calidad', description: 'Reportes de calidad' },
+  { path: '/ticket_calidad',           icon: <FaClipboardList className="w-4.25 h-4.25" />, label: 'Ticket Calidad', description: 'Reportes de calidad' },
 ];
 
 const buildMenuItems = (role) => {
@@ -103,12 +103,12 @@ const buildMenuItems = (role) => {
   const ticketItem    = { path: '/tickets',           icon: <IconTicket />, label: 'Tickets',                description: 'Gestión de incidencias IT' };
   const purchaseItem  = { path: '/purchase-requests', icon: <IconCart />,   label: 'Solicitudes de Compra',  description: 'Periféricos y equipos' };
   const inventario    = { type: 'submenu', label: 'Inventario', icon: <IconBox />, description: 'Control de activos tecnológicos', subItems: inventarioSubItems };
-  const calidadFull   = { type: 'submenu', label: 'Calidad',    icon: <FaShieldAlt className="w-[18px] h-[18px]" />, description: 'ISO 9001 y gestión documental', subItems: calidadSubItemsFull };
-  const calidadBasic  = { type: 'submenu', label: 'Calidad',    icon: <FaShieldAlt className="w-[18px] h-[18px]" />, description: 'ISO 9001 y gestión documental', subItems: calidadSubItemsBasic };
+  const calidadFull   = { type: 'submenu', label: 'Calidad',    icon: <FaShieldAlt className="w-4.5 h-4.5" />, description: 'ISO 9001 y gestión documental', subItems: calidadSubItemsFull };
+  const calidadBasic  = { type: 'submenu', label: 'Calidad',    icon: <FaShieldAlt className="w-4.5 h-4.5" />, description: 'ISO 9001 y gestión documental', subItems: calidadSubItemsBasic };
   const credItem      = { path: '/credentials', icon: <IconLock />,   label: 'Credenciales',   description: 'Gestión de accesos seguros' };
   const usersItem     = { path: '/users',        icon: <IconUsers />,  label: 'Usuarios',       description: 'Administración de usuarios' };
   const rolesItem     = { path: '/roles',         icon: <IconShield />, label: 'Roles',          description: 'Permisos y control de acceso' };
-  const trashItem     = { path: '/trash',         icon: <FaDumpster className="w-[18px] h-[18px]" />, label: 'Papelera', description: 'Elementos eliminados' };
+  const trashItem     = { path: '/trash',         icon: <FaDumpster className="w-4.5 h-4.5" />, label: 'Papelera', description: 'Elementos eliminados' };
 
   if (role === 'Administrador') return [...base, ticketItem, purchaseItem, inventario, calidadFull, credItem, usersItem, rolesItem, trashItem];
   if (role === 'Técnico')       return [...base, ticketItem, purchaseItem, inventario, calidadBasic, credItem, trashItem];
@@ -158,10 +158,10 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
     dark: 'bg-gray-950 border-r border-gray-800/60'
   });
 
-  const headerBg = conditionalClasses({
-    light: 'bg-gradient-to-br from-[#4a1f6e] via-[#662d91] to-[#7c3aad]',
-    dark: 'bg-gradient-to-br from-gray-950 via-[#2a1048] to-gray-950 border-b border-purple-900/30'
-  });
+   const headerBg = conditionalClasses({
+     light: 'bg-linear-to-br from-[#4a1f6e] via-[#662d91] to-[#7c3aad]',
+     dark: 'bg-linear-to-br from-gray-950 via-[#2a1048] to-gray-950 border-b border-purple-900/30'
+   });
 
   const sectionLabel = conditionalClasses({
     light: 'text-gray-400',
@@ -349,7 +349,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
 
       <aside className={`
         fixed inset-y-0 left-0 z-50 flex flex-col
-        w-72 ${isCollapsed ? 'lg:w-[72px]' : 'lg:w-[280px]'}
+        w-72 ${isCollapsed ? 'lg:w-18' : 'lg:w-70'}
         shadow-xl transition-all duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
         ${sidebarBg}
@@ -362,7 +362,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
             backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)',
             backgroundSize: '28px 28px'
           }} />
-          <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-white/[0.04] -translate-y-1/2 translate-x-1/2" />
+           <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-white/4 -translate-y-1/2 translate-x-1/2" />
 
           <div className="relative flex items-center justify-between w-full">
             {/* Brand */}
@@ -404,7 +404,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
         <div className={`px-3 py-3 shrink-0 ${conditionalClasses({ light: 'border-b border-gray-100', dark: 'border-b border-gray-800/60' })}`}>
           {isCollapsed ? (
             <div className="flex justify-center">
-              <div className={`relative w-10 h-10 bg-gradient-to-br ${badge.gradient} rounded-xl flex items-center justify-center shadow-md`}>
+               <div className={`relative w-10 h-10 bg-linear-to-br ${badge.gradient} rounded-xl flex items-center justify-center shadow-md`}>
                 <span className="text-white font-bold text-sm">{userInitial}</span>
                 <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white dark:border-gray-950" />
               </div>
@@ -412,7 +412,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
           ) : (
             <div className={`flex items-center gap-3 px-3 py-3 rounded-xl ${conditionalClasses({ light: 'bg-gray-50', dark: 'bg-gray-900/60' })}`}>
               {/* Avatar */}
-              <div className={`relative w-10 h-10 bg-gradient-to-br ${badge.gradient} rounded-xl flex items-center justify-center shadow-md shrink-0`}>
+               <div className={`relative w-10 h-10 bg-linear-to-br ${badge.gradient} rounded-xl flex items-center justify-center shadow-md shrink-0`}>
                 <span className="text-white font-bold text-sm">{userInitial}</span>
                 <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white dark:border-gray-950" />
               </div>
@@ -429,7 +429,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                     {user.email}
                   </p>
                 )}
-                <span className={`inline-flex items-center mt-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold text-white bg-gradient-to-r ${badge.gradient}`}>
+                 <span className={`inline-flex items-center mt-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold text-white bg-linear-to-r ${badge.gradient}`}>
                   {user?.role?.name || 'Empleado'}
                 </span>
               </div>
