@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback, lazy, Suspense } from 'react';
+import useDebounce from '../../hooks/useDebounce';
 import { FaEdit, FaTrash, FaPlus, FaCheck, FaTimes, FaEye, FaSearch, FaFilter, FaDownload, FaChartBar, FaClock, FaExclamationTriangle, FaCheckCircle, FaSpinner, FaUserCircle, FaClipboardList, FaFileExport, FaSortAmountDown, FaSortAmountUp, FaArrowRight, FaCopy, FaUndo, FaShoppingCart, FaDollarSign, FaChartLine, FaBox, FaTruck, FaUser, FaExclamationCircle, FaTasks, FaBalanceScale, FaMoneyBillWave, FaWarehouse, FaShippingFast, FaChartPie, FaProjectDiagram } from 'react-icons/fa';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Bar, Doughnut } from 'react-chartjs-2';
@@ -41,6 +42,7 @@ const PurchaseRequests = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [editingRequest, setEditingRequest] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterItemType, setFilterItemType] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
@@ -49,6 +51,12 @@ const PurchaseRequests = () => {
   const [sortBy, setSortBy] = useState('updatedAt');
   const [sortOrder, setSortOrder] = useState('desc');
   const [viewMode, setViewMode] = useState('cards');
+
+  // Paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Dashboard stats
   const [dashboardStats, setDashboardStats] = useState(null);
@@ -71,14 +79,29 @@ const PurchaseRequests = () => {
 
   const fetchPurchaseRequests = useCallback(async () => {
     try {
-      const data = await purchaseRequestsAPI.fetchPurchaseRequests({});
+      const params = {
+        page: currentPage,
+        limit: itemsPerPage,
+        status: filterStatus !== 'all' ? filterStatus : undefined,
+        itemType: filterItemType !== 'all' ? filterItemType : undefined,
+        q: debouncedSearchTerm || undefined,
+        sortBy,
+        sortOrder
+      };
+
+      const data = await purchaseRequestsAPI.fetchPurchaseRequests(params);
       setRequests(data.requests || []);
+      if (data.pagination) {
+        setTotalPages(data.pagination.totalPages || 1);
+        setTotalItems(data.pagination.totalItems || 0);
+        setItemsPerPage(data.pagination.itemsPerPage || itemsPerPage);
+      }
     } catch {
       notifyError('Error al cargar las solicitudes');
     } finally {
       setLoading(false);
     }
-  }, [notifyError]);
+  }, [currentPage, itemsPerPage, filterStatus, filterItemType, debouncedSearchTerm, sortBy, sortOrder, notifyError]);
 
   // Fetch dashboard stats for purchases role
   const fetchDashboardStats = useCallback(async () => {
@@ -118,52 +141,9 @@ const PurchaseRequests = () => {
       offPurchaseRequestDeleted(handleDeleted);
       offPurchaseRequestsListUpdated(handleListUpdated);
     };
-  }, [fetchPurchaseRequests, fetchDashboardStats]);
+   }, [fetchPurchaseRequests, fetchDashboardStats]);
 
-  const filterAndSortRequests = useCallback(() => {
-    if (!Array.isArray(requests)) return [];
-    let filtered = [...requests];
-
-    // Permission-based filtering
-    if (!checkPermission('purchase_requests', 'view_all') && userRole !== 'Calidad') {
-      filtered = filtered.filter(request => request.userId === user?.id);
-    }
-
-    if (searchTerm) {
-      filtered = filtered.filter(request =>
-        request.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        request.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        request.requester?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (filterStatus !== 'all') {
-      filtered = filtered.filter(request => request.status?.toLowerCase() === filterStatus);
-    }
-
-    if (filterItemType !== 'all') {
-      filtered = filtered.filter(request => request.itemType?.toLowerCase() === filterItemType);
-    }
-
-    filtered.sort((a, b) => {
-      let aVal = a[sortBy];
-      let bVal = b[sortBy];
-      if (sortBy === 'createdAt' || sortBy === 'updatedAt') {
-        aVal = new Date(aVal);
-        bVal = new Date(bVal);
-      } else if (typeof aVal === 'string') {
-        aVal = aVal.toLowerCase();
-        bVal = bVal.toLowerCase();
-      }
-      return sortOrder === 'asc' ? (aVal > bVal ? 1 : -1) : (aVal < bVal ? 1 : -1);
-    });
-
-    return filtered;
-  }, [requests, checkPermission, user, userRole, searchTerm, filterStatus, filterItemType, sortBy, sortOrder]);
-
-  const filteredRequests = filterAndSortRequests();
-
-  const calculateStats = () => {
+   const calculateStats = () => {
     if (!Array.isArray(requests)) return { total: 0, solicitado: 0, pendienteCoordinadora: 0, aprobadoCoordinadora: 0, pendienteJefe: 0, aprobadoJefe: 0, enCompras: 0, completado: 0, rechazados: 0, paraCorreccion: 0 };
 
     const stats = {
@@ -232,8 +212,8 @@ const PurchaseRequests = () => {
       // Import dinámico de XLSX - solo se carga cuando el usuario hace clic en exportar
       const XLSX = await import('xlsx');
       
-      const headers = ['ID', 'Título', 'Tipo', 'Estado', 'Costo', 'Solicitante', 'Fecha', 'Rechazos'];
-      const rows = filteredRequests.map(r => [
+       const headers = ['ID', 'Título', 'Tipo', 'Estado', 'Costo', 'Solicitante', 'Fecha', 'Rechazos'];
+       const rows = requests.map(r => [
         r.id, r.title, r.itemType, r.status, r.estimatedCost, r.requester?.name, new Date(r.createdAt).toLocaleDateString(), r.rejectionCount || 0
       ]);
       const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
@@ -768,7 +748,7 @@ const PurchaseRequests = () => {
         {/* Results Summary */}
         <div className="flex items-center justify-between mb-3">
           <p className={conditionalClasses({ light: 'text-sm text-gray-600', dark: 'text-sm text-gray-400' })}>
-            Mostrando <span className="font-bold text-[#662d91]">{filteredRequests.length}</span> de <span className="font-bold">{requests.length}</span> solicitudes
+            Mostrando <span className="font-bold text-[#662d91]">{requests.length}</span> de <span className="font-bold">{totalItems}</span> solicitudes
           </p>
           <div className="flex gap-2">
             <button onClick={() => setViewMode('cards')} className={`px-3 py-2 rounded-lg text-sm ${viewMode === 'cards' ? 'bg-[#662d91] text-white' : conditionalClasses({ light: 'bg-white text-gray-600', dark: 'bg-gray-800 text-gray-400' })}`}>
@@ -781,7 +761,7 @@ const PurchaseRequests = () => {
         </div>
 
         {/* Content */}
-        {filteredRequests.length === 0 ? (
+        {requests.length === 0 ? (
           <div className={conditionalClasses({ light: 'bg-white rounded-xl shadow-lg border-2 border-gray-200 p-12 text-center', dark: 'bg-gray-800 rounded-xl shadow-lg border-2 border-gray-700 p-12 text-center' })}>
             <FaClipboardList className="w-16 h-16 text-[#662d91] mx-auto mb-4" />
             <h3 className={conditionalClasses({ light: 'text-xl font-bold text-gray-900 mb-2', dark: 'text-xl font-bold text-gray-100 mb-2' })}>
@@ -800,8 +780,8 @@ const PurchaseRequests = () => {
         ) : (
           <div className={conditionalClasses({ light: 'bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6', dark: 'bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-4 lg:p-6' })}>
             {viewMode === 'cards' ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredRequests.map((request) => (
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                 {requests.map((request) => (
                   <PurchaseRequestCard key={request.id} request={request} onViewDetail={handleViewDetail} onEdit={handleEdit} onDelete={handleDelete} user={user} userRole={userRole} />
                 ))}
               </div>
@@ -819,8 +799,8 @@ const PurchaseRequests = () => {
                       <th className="px-4 py-3 text-left text-xs font-bold uppercase">Acciones</th>
                     </tr>
                   </thead>
-                  <tbody className={conditionalClasses({ light: 'divide-y divide-gray-200', dark: 'divide-y divide-gray-600' })}>
-                    {filteredRequests.map((request) => (
+                   <tbody className={conditionalClasses({ light: 'divide-y divide-gray-200', dark: 'divide-y divide-gray-600' })}>
+                     {requests.map((request) => (
                       <tr key={request.id} className={conditionalClasses({ light: 'hover:bg-gray-50', dark: 'hover:bg-gray-700/50' })}>
                         <td className="px-4 py-4 font-bold text-[#662d91]">#{request.id}</td>
                         <td className="px-4 py-4">
@@ -853,6 +833,69 @@ const PurchaseRequests = () => {
                 </table>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Paginación */}
+        {totalPages > 1 && (
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className={conditionalClasses({
+                light: "px-4 py-2 rounded-lg bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all",
+                dark: "px-4 py-2 rounded-lg bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              })}
+            >
+              Anterior
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter(page => {
+                const maxVisible = 5;
+                if (totalPages <= maxVisible) return true;
+                if (page === 1 || page === totalPages) return true;
+                const diff = Math.abs(currentPage - page);
+                return diff <= 1;
+              })
+              .map((page, idx, arr) => {
+                if (idx > 0 && arr[idx - 1] !== page - 1) {
+                  return (
+                    <span key={`ellipsis-${page}`} className="px-2">...</span>
+                  );
+                }
+                return (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={conditionalClasses({
+                      light: `px-3 py-1 rounded-lg transition-all touch-manipulation ${
+                        page === currentPage
+                          ? 'bg-[#662d91] text-white shadow-md'
+                          : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                      }`,
+                      dark: `px-3 py-1 rounded-lg transition-all touch-manipulation ${
+                        page === currentPage
+                          ? 'bg-purple-600 text-white shadow-md'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600 border border-gray-600'
+                      }`
+                    })}
+                  >
+                    {page}
+                  </button>
+                );
+              })}
+
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className={conditionalClasses({
+                light: "px-4 py-2 rounded-lg bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all",
+                dark: "px-4 py-2 rounded-lg bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              })}
+            >
+              Siguiente
+            </button>
           </div>
         )}
 

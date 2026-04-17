@@ -7,14 +7,9 @@ export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const timeoutsRef = useRef(new Map());
 
-  // Limpiar timeout cuando el componente se desmonta
-  useEffect(() => {
-    const timeouts = timeoutsRef.current;
-    return () => {
-      timeouts.forEach(timeout => clearTimeout(timeout));
-      timeouts.clear();
-    };
-  }, []);
+  // =========================
+  // FUNCIONES (ANTES DE USARSE)
+  // =========================
 
   const removeTimeout = useCallback((id) => {
     if (timeoutsRef.current.has(id)) {
@@ -32,7 +27,7 @@ export const NotificationProvider = ({ children }) => {
     const id = typeof notification.id !== 'undefined' 
       ? notification.id 
       : Date.now() + Math.random();
-    
+
     const newNotification = {
       id,
       type: 'info',
@@ -49,11 +44,12 @@ export const NotificationProvider = ({ children }) => {
       return [...prev, newNotification];
     });
 
-    // Auto-remove after duration (except for persistent notifications)
+    // Auto-remove
     if (newNotification.duration && newNotification.duration > 0) {
       const timeoutId = setTimeout(() => {
         removeNotification(id);
       }, newNotification.duration);
+
       timeoutsRef.current.set(id, timeoutId);
     }
 
@@ -66,7 +62,46 @@ export const NotificationProvider = ({ children }) => {
     setNotifications([]);
   }, []);
 
-  // Convenience methods for different notification types
+  // =========================
+  // EFFECTS (DESPUÉS DE DEFINIR FUNCIONES)
+  // =========================
+
+  // Limpiar timeouts al desmontar
+  useEffect(() => {
+    const timeouts = timeoutsRef.current;
+    return () => {
+      timeouts.forEach(timeout => clearTimeout(timeout));
+      timeouts.clear();
+    };
+  }, []);
+
+  // Listener global de errores
+  useEffect(() => {
+    const handleGlobalApiError = (event) => {
+      const { title, message, status } = event.detail;
+
+      let notificationType = 'error';
+      if (status === 403) notificationType = 'warning';
+      if (status === 409) notificationType = 'warning';
+
+      addNotification({
+        type: notificationType,
+        title,
+        message,
+        duration: status === 409 ? 0 : 6000
+      });
+    };
+
+    window.addEventListener('global-api-error', handleGlobalApiError);
+    return () => {
+      window.removeEventListener('global-api-error', handleGlobalApiError);
+    };
+  }, [addNotification]);
+
+  // =========================
+  // HELPERS
+  // =========================
+
   const notifySuccess = useCallback((message, options = {}) => {
     return addNotification({
       type: 'success',
@@ -80,7 +115,7 @@ export const NotificationProvider = ({ children }) => {
     return addNotification({
       type: 'error',
       message,
-      duration: 0, // Don't auto-close errors
+      duration: 0,
       ...options
     });
   }, [addNotification]);
@@ -102,6 +137,10 @@ export const NotificationProvider = ({ children }) => {
       ...options
     });
   }, [addNotification]);
+
+  // =========================
+  // CONTEXT VALUE
+  // =========================
 
   const value = {
     notifications,

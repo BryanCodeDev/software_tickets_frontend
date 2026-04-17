@@ -4,21 +4,26 @@ import TicketCard from './TicketCard';
 import { getTimeAgo } from '../../utils';
 
 const TicketList = ({
-  filteredTickets,
   tickets,
+  totalItems,
+  currentPage,
+  itemsPerPage,
   conditionalClasses,
   handleViewDetail,
   handleEdit,
   handleDelete,
   canEditTicket,
   canDeleteTicket,
+  user,
   viewMode,
-  setViewMode
+  setViewMode,
+  onPageChange,
+  loading // ✅ agregado a props
 }) => {
   // Función helper para obtener colores de estado
   const getStatusColor = (status) => {
     const isDark = document.documentElement.classList.contains('dark');
-    
+
     const colors = {
       'abierto': isDark
         ? 'bg-purple-900/50 text-purple-200 border-purple-700'
@@ -40,7 +45,7 @@ const TicketList = ({
 
   const getPriorityColor = (priority) => {
     const isDark = document.documentElement.classList.contains('dark');
-    
+
     const colors = {
       'alta': isDark
         ? 'bg-red-900/50 text-red-200 border-red-700'
@@ -58,7 +63,7 @@ const TicketList = ({
   };
 
   const getStatusIcon = (status) => {
-    switch(status?.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case 'abierto': return <FaExclamationTriangle />;
       case 'en progreso': return <FaSpinner className="animate-spin" />;
       case 'resuelto': return <FaCheckCircle />;
@@ -67,7 +72,89 @@ const TicketList = ({
     }
   };
 
-  if (filteredTickets.length === 0) {
+  // ✅ Controles de paginación definidos FUERA del return principal
+  const totalPages = Math.ceil((totalItems || 0) / (itemsPerPage || 1));
+
+  const PaginationControls = () => {
+    if (totalPages <= 1) return null;
+
+    const pages = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => onPageChange(i)}
+          className={conditionalClasses({
+            light: `px-3 py-1 rounded-lg transition-all touch-manipulation ${
+              i === currentPage
+                ? 'bg-[#662d91] text-white shadow-md'
+                : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+            }`,
+            dark: `px-3 py-1 rounded-lg transition-all touch-manipulation ${
+              i === currentPage
+                ? 'bg-purple-600 text-white shadow-md'
+                : 'bg-gray-700 text-gray-300 hover:bg-gray-600 border border-gray-600'
+            }`
+          })}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return (
+      <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={conditionalClasses({
+            light: "px-4 py-2 rounded-lg bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all",
+            dark: "px-4 py-2 rounded-lg bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          })}
+        >
+          Anterior
+        </button>
+
+        {startPage > 1 && (
+          <>
+            <button onClick={() => onPageChange(1)} className={conditionalClasses({ light: "px-3 py-1 rounded-lg bg-white text-gray-700 border border-gray-200 hover:bg-gray-100", dark: "px-3 py-1 rounded-lg bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600" })}>1</button>
+            {startPage > 2 && <span className="px-2">...</span>}
+          </>
+        )}
+
+        {pages}
+
+        {endPage < totalPages && (
+          <>
+            {endPage < totalPages - 1 && <span className="px-2">...</span>}
+            <button onClick={() => onPageChange(totalPages)} className={conditionalClasses({ light: "px-3 py-1 rounded-lg bg-white text-gray-700 border border-gray-200 hover:bg-gray-100", dark: "px-3 py-1 rounded-lg bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600" })}>{totalPages}</button>
+          </>
+        )}
+
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={conditionalClasses({
+            light: "px-4 py-2 rounded-lg bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all",
+            dark: "px-4 py-2 rounded-lg bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          })}
+        >
+          Siguiente
+        </button>
+      </div>
+    );
+  };
+
+  // ✅ Estado vacío usando `tickets` (no `filteredTickets`)
+  if (!loading && tickets.length === 0) {
     return (
       <div className={conditionalClasses({
         light: "bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center",
@@ -92,6 +179,7 @@ const TicketList = ({
     );
   }
 
+  // ✅ Un único return principal con estructura correcta
   return (
     <>
       {/* Results Summary */}
@@ -100,7 +188,7 @@ const TicketList = ({
           light: "text-sm text-gray-600 font-medium",
           dark: "text-sm text-gray-300 font-medium"
         })}>
-          Mostrando <span className="font-bold text-[#662d91]">{filteredTickets.length}</span> de <span className="font-bold">{tickets.length}</span> tickets
+          Mostrando <span className="font-bold text-[#662d91]">{tickets.length}</span> de <span className="font-bold">{totalItems || 0}</span> tickets
         </p>
         <div className="flex gap-2">
           <button
@@ -142,262 +230,96 @@ const TicketList = ({
         </div>
       </div>
 
-      {/* Cards View */}
-      {viewMode === 'cards' && (
-        <div className={conditionalClasses({
-          light: "bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6",
-          dark: "bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-4 lg:p-6"
-        })}>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
-            {filteredTickets.map((ticket) => (
-              <TicketCard
-                key={ticket.id}
-                ticket={ticket}
-                onViewDetail={handleViewDetail}
-                onEdit={handleEdit}
-                canEditTicket={canEditTicket}
-              />
-            ))}
-          </div>
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <FaSpinner className="animate-spin text-4xl text-[#662d91]" />
         </div>
-      )}
-
-      {/* List View */}
-      {viewMode === 'list' && (
-        <div className={conditionalClasses({
-          light: "bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6 overflow-hidden",
-          dark: "bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-4 lg:p-6 overflow-hidden"
-        })}>
-          {/* Mobile Card View for List Mode */}
-          <div className="block md:hidden">
+      ) : (
+        <>
+          {/* Cards View */}
+          {viewMode === 'cards' ? (
             <div className={conditionalClasses({
-              light: "divide-y divide-gray-200",
-              dark: "divide-y divide-gray-600"
+              light: "bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6",
+              dark: "bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-4 lg:p-6"
             })}>
-              {filteredTickets.map((ticket) => (
-                <div key={ticket.id} className={conditionalClasses({
-                  light: "p-4 hover:bg-[#f3ebf9] transition-colors",
-                  dark: "p-4 hover:bg-gray-700 transition-colors"
-                })}>
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="font-bold text-[#662d91]">#{ticket.id}</span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${getStatusColor(ticket.status)}`}>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
+                {tickets.map((ticket) => (
+                  <TicketCard
+                    key={ticket.id}
+                    ticket={ticket}
+                    conditionalClasses={conditionalClasses}
+                    onViewDetail={() => handleViewDetail(ticket)}
+                    onEdit={() => handleEdit(ticket)}
+                    onDelete={() => handleDelete(ticket)}
+                    canEditTicket={canEditTicket}
+                    canDeleteTicket={canDeleteTicket}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            /* List View */
+            <div className="overflow-x-auto rounded-lg shadow">
+              <table className="w-full">
+                <thead>
+                  <tr className={conditionalClasses({ light: "bg-[#f3ebf9]", dark: "bg-gray-700" })}>
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Título</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Estado</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Prioridad</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Creado por</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Asignado a</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Fecha Creación</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tickets.map((ticket) => (
+                    <tr key={ticket.id} className="border-t border-gray-200 hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-3">
+                        <div className="font-medium">{ticket.title}</div>
+                        <div className="text-xs text-gray-500 truncate max-w-xs">{ticket.description}</div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(ticket.status)}`}>
                           {ticket.status}
                         </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${getPriorityColor(ticket.priority)}`}>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 rounded-full text-xs border ${getPriorityColor(ticket.priority)}`}>
                           {ticket.priority}
                         </span>
-                      </div>
-                      <h3 className={conditionalClasses({
-                        light: "font-semibold text-gray-900 text-sm mb-1 truncate",
-                        dark: "font-semibold text-white text-sm mb-1 truncate"
-                      })}>{ticket.title}</h3>
-                      <p className={conditionalClasses({
-                        light: "text-xs text-gray-500 line-clamp-2",
-                        dark: "text-xs text-gray-400 line-clamp-2"
-                      })}>{ticket.description}</p>
-                    </div>
-                    <div className="flex gap-1 ml-2">
-                      <button
-                        onClick={() => handleViewDetail(ticket)}
-                        className={conditionalClasses({
-                          light: "p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation",
-                          dark: "p-2 text-blue-400 hover:bg-blue-900/50 rounded-lg transition-all touch-manipulation"
-                        })}
-                        title="Ver detalles"
-                      >
-                        <FaEye className="w-4 h-4" />
-                      </button>
-                      {canEditTicket(ticket) && (
-                        <button
-                          onClick={() => handleEdit(ticket)}
-                          className={conditionalClasses({
-                            light: "p-2 text-[#662d91] hover:bg-[#f3ebf9] rounded-lg transition-all touch-manipulation",
-                            dark: "p-2 text-purple-400 hover:bg-purple-900/50 rounded-lg transition-all touch-manipulation"
-                          })}
-                          title="Editar"
-                        >
-                          <FaEdit className="w-4 h-4" />
-                        </button>
-                      )}
-                      {canDeleteTicket(ticket) && (
-                        <button
-                          onClick={() => handleDelete(ticket)}
-                          className={conditionalClasses({
-                            light: "p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all touch-manipulation",
-                            dark: "p-2 text-red-400 hover:bg-red-900/50 rounded-lg transition-all touch-manipulation"
-                          })}
-                          title="Eliminar"
-                        >
-                          <FaTrash className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  <div className={conditionalClasses({
-                    light: "grid grid-cols-2 gap-4 text-xs text-gray-600",
-                    dark: "grid grid-cols-2 gap-4 text-xs text-gray-300"
-                  })}>
-                    <div>
-                      <span className={conditionalClasses({
-                        light: "font-medium text-gray-600",
-                        dark: "font-medium text-gray-300"
-                      })}>Creado por:</span>
-                      <p className={conditionalClasses({
-                        light: "truncate text-gray-700",
-                        dark: "truncate text-gray-200"
-                      })}>{ticket.creator?.name || 'Usuario'}</p>
-                    </div>
-                    <div>
-                      <span className={conditionalClasses({
-                        light: "font-medium text-gray-600",
-                        dark: "font-medium text-gray-300"
-                      })}>Asignado a:</span>
-                      <p className={conditionalClasses({
-                        light: "truncate text-gray-700",
-                        dark: "truncate text-gray-200"
-                      })}>{ticket.assignee?.name || 'Sin asignar'}</p>
-                    </div>
-                    <div className="col-span-2">
-                      <span className={conditionalClasses({
-                        light: "font-medium text-gray-600",
-                        dark: "font-medium text-gray-300"
-                      })}>Actualizado:</span>
-                      <p className={conditionalClasses({
-                        light: "text-gray-700",
-                        dark: "text-gray-200"
-                      })}>{getTimeAgo(ticket.updatedAt)}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                      </td>
+                      <td className="px-4 py-3 text-sm">{ticket.creator?.name || 'N/A'}</td>
+                      <td className="px-4 py-3 text-sm">{ticket.assignee?.name || 'No asignado'}</td>
+                      <td className="px-4 py-3 text-sm">{new Date(ticket.createdAt).toLocaleDateString()}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center space-x-2">
+                          <button onClick={() => handleViewDetail(ticket)} className={conditionalClasses({ light: "p-2 text-blue-600 hover:bg-blue-50 rounded-lg", dark: "p-2 text-blue-400 hover:bg-blue-900/50 rounded-lg" })} title="Ver">
+                            <FaEye className="w-4 h-4" />
+                          </button>
+                          {canEditTicket(ticket) && (
+                            <button onClick={() => handleEdit(ticket)} className={conditionalClasses({ light: "p-2 text-green-600 hover:bg-green-50 rounded-lg", dark: "p-2 text-green-400 hover:bg-green-900/50 rounded-lg" })} title="Editar">
+                              <FaEdit className="w-4 h-4" />
+                            </button>
+                          )}
+                          {canDeleteTicket(ticket) && (
+                            <button onClick={() => handleDelete(ticket)} className={conditionalClasses({ light: "p-2 text-red-600 hover:bg-red-50 rounded-lg", dark: "p-2 text-red-400 hover:bg-red-900/50 rounded-lg" })} title="Eliminar">
+                              <FaTrash className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
+          )}
 
-          {/* Desktop Table View */}
-          <div className="hidden md:block">
-            <table className="w-full">
-              <thead className={conditionalClasses({
-                light: "bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white",
-                dark: "bg-linear-to-r from-purple-700 to-purple-800 text-white"
-              })}>
-                <tr>
-                  <th className="px-4 py-4 text-left text-xs font-bold uppercase">ID</th>
-                  <th className="px-4 py-4 text-left text-xs font-bold uppercase">Título</th>
-                  <th className="px-4 py-4 text-left text-xs font-bold uppercase">Estado</th>
-                  <th className="px-4 py-4 text-left text-xs font-bold uppercase">Prioridad</th>
-                  <th className={conditionalClasses({
-                    light: "px-4 py-4 text-left text-xs font-bold uppercase text-gray-700",
-                    dark: "px-4 py-4 text-left text-xs font-bold uppercase text-gray-300"
-                  })}>Creado por</th>
-                  <th className={conditionalClasses({
-                    light: "px-4 py-4 text-left text-xs font-bold uppercase text-gray-700",
-                    dark: "px-4 py-4 text-left text-xs font-bold uppercase text-gray-300"
-                  })}>Asignado a</th>
-                  <th className={conditionalClasses({
-                    light: "px-4 py-4 text-left text-xs font-bold uppercase text-gray-700",
-                    dark: "px-4 py-4 text-left text-xs font-bold uppercase text-gray-300"
-                  })}>Fecha</th>
-                  <th className="px-4 py-4 text-left text-xs font-bold uppercase">Acciones</th>
-                </tr>
-              </thead>
-              <tbody className={conditionalClasses({
-                light: "divide-y divide-gray-200",
-                dark: "divide-y divide-gray-600"
-              })}>
-                {filteredTickets.map((ticket) => (
-                  <tr key={ticket.id} className={conditionalClasses({
-                    light: "hover:bg-[#f3ebf9] transition-colors",
-                    dark: "hover:bg-gray-700 transition-colors"
-                  })}>
-                    <td className="px-4 py-4">
-                      <span className="font-bold text-[#662d91]">#{ticket.id}</span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className={conditionalClasses({
-                        light: "font-semibold text-gray-900",
-                        dark: "font-semibold text-white"
-                      })}>{ticket.title}</div>
-                      <div className={conditionalClasses({
-                        light: "text-xs text-gray-500 truncate max-w-xs",
-                        dark: "text-xs text-gray-400 truncate max-w-xs"
-                      })}>{ticket.description}</div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1 ${getStatusColor(ticket.status)}`}>
-                        {getStatusIcon(ticket.status)}
-                        {ticket.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${getPriorityColor(ticket.priority)}`}>
-                        {ticket.priority}
-                      </span>
-                    </td>
-                    <td className={conditionalClasses({
-                      light: "px-4 py-4 text-sm text-gray-700",
-                      dark: "px-4 py-4 text-sm text-gray-200"
-                    })}>
-                      {ticket.creator?.name || 'Usuario'}
-                    </td>
-                    <td className={conditionalClasses({
-                      light: "px-4 py-4 text-sm text-gray-700",
-                      dark: "px-4 py-4 text-sm text-gray-200"
-                    })}>
-                      {ticket.assignee?.name || 'Sin asignar'}
-                    </td>
-                    <td className={conditionalClasses({
-                      light: "px-4 py-4 text-sm text-gray-500",
-                      dark: "px-4 py-4 text-sm text-gray-400"
-                    })}>
-                      {getTimeAgo(ticket.updatedAt)}
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleViewDetail(ticket)}
-                          className={conditionalClasses({
-                            light: "p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all touch-manipulation",
-                            dark: "p-2 text-blue-400 hover:bg-blue-900/50 rounded-lg transition-all touch-manipulation"
-                          })}
-                          title="Ver detalles"
-                        >
-                          <FaEye className="w-4 h-4" />
-                        </button>
-                        {canEditTicket(ticket) && (
-                          <button
-                            onClick={() => handleEdit(ticket)}
-                            className={conditionalClasses({
-                              light: "p-2 text-[#662d91] hover:bg-[#f3ebf9] rounded-lg transition-all touch-manipulation",
-                              dark: "p-2 text-purple-400 hover:bg-purple-900/50 rounded-lg transition-all touch-manipulation"
-                            })}
-                            title="Editar"
-                          >
-                            <FaEdit className="w-4 h-4" />
-                          </button>
-                        )}
-                        {canDeleteTicket(ticket) && (
-                          <button
-                            onClick={() => handleDelete(ticket)}
-                            className={conditionalClasses({
-                              light: "p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all touch-manipulation",
-                              dark: "p-2 text-red-400 hover:bg-red-900/50 rounded-lg transition-all touch-manipulation"
-                            })}
-                            title="Eliminar"
-                          >
-                            <FaTrash className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-6">
+            <PaginationControls />
           </div>
-        </div>
+        </>
       )}
     </>
   );

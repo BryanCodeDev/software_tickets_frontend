@@ -72,23 +72,66 @@ const handleApiError = (error) => {
   return Promise.reject(error);
 };
 
-// Response interceptor to handle errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Token expired or invalid, redirect to login
-      console.warn('Token inválido o expirado, redirigiendo a login');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('token_timestamp');
-      window.location.href = '/login';
+    const status = error.response?.status;
+    const errorData = error.response?.data;
+    const message = errorData?.error || errorData?.message || error.message || 'Error desconocido';
+
+    // Mapeo de códigos a títulos de notificación
+    let notificationTitle = 'Error';
+    let notificationMessage = message;
+
+    switch (status) {
+      case 401:
+        // Token expired or invalid, redirect to login
+        console.warn('Token inválido o expirado, redirigiendo a login');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('token_timestamp');
+        window.location.href = '/login';
+        return; // No notificar, solo redirigir
+
+      case 403:
+        console.warn('Acceso denegado (403)');
+        notificationTitle = 'Acceso denegado';
+        notificationMessage = 'No tienes permiso para realizar esta acción.';
+        break;
+
+      case 409:
+        console.warn('Conflicto de concurrencia (409)');
+        notificationTitle = 'Conflicto de datos';
+        notificationMessage = errorData?.message || 'El registro fue modificado por otro usuario. Por favor, recarga la página e intenta de nuevo.';
+        break;
+
+      case 400:
+        // Validación o error de negocio
+        notificationTitle = 'Datos inválidos';
+        break;
+
+      case 500:
+      case 502:
+      case 503:
+      case 504:
+        console.error('Error del servidor:', status);
+        notificationTitle = 'Error del servidor';
+        notificationMessage = 'Ha ocurrido un error interno. Intenta más tarde.';
+        break;
+
+      default:
+        // Otros errores
+        break;
     }
-    // Don't redirect on 403 errors, just return the error
-    if (error.response?.status === 403) {
-      console.warn('Acceso denegado (403)');
-      return Promise.reject(error);
+
+    // Disparar evento global para notificación (si no es 401 que redirige)
+    if (status !== 401) {
+      const event = new CustomEvent('global-api-error', {
+        detail: { title: notificationTitle, message: notificationMessage, status }
+      });
+      window.dispatchEvent(event);
     }
+
     return handleApiError(error);
   }
 );

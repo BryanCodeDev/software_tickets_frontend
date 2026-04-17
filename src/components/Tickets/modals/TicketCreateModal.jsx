@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaPlus, FaSpinner, FaTimes } from 'react-icons/fa';
 import { useThemeClasses } from '../../../hooks/useThemeClasses';
 
@@ -17,8 +17,37 @@ const TicketCreateModal = ({
 }) => {
   const { conditionalClasses } = useThemeClasses();
   const canShowAssignment = ['Administrador', 'Jefe', 'Compras', 'Coordinadora Administrativa', 'Calidad', 'Empleado'].includes(userRole);
+
+  // Estado de errores de validación
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.title?.trim()) {
+      newErrors.title = 'La categoría es requerida';
+    }
+    if (!formData.description?.trim()) {
+      newErrors.description = 'La descripción es requerida';
+    } else if (formData.description.trim().length < 10) {
+      newErrors.description = 'La descripción debe tener al menos 10 caracteres';
+    }
+    if (!formData.priority) {
+      newErrors.priority = 'La prioridad es requerida';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      handleCreateSubmit(e);
+    }
+  };
   
   if (!showCreateModal) return null;
+
+  // Validación helper
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
@@ -38,7 +67,7 @@ const TicketCreateModal = ({
           </div>
         </div>
 
-        <form onSubmit={handleCreateSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6">
+        <form onSubmit={onSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
             <div className="md:col-span-2">
               <label className={conditionalClasses({
@@ -80,6 +109,9 @@ const TicketCreateModal = ({
                 rows="4 lg:rows-5"
                 required
               />
+              {errors.description && (
+                <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+              )}
             </div>
 
             <div>
@@ -89,19 +121,24 @@ const TicketCreateModal = ({
               })}>
                 Prioridad *
               </label>
-              <select
-                value={formData.priority}
-                onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                className={conditionalClasses({
-                  light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-gray-900 bg-white',
-                  dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-white bg-gray-700'
-                })}
-              >
-                <option value="baja">🟢 Baja</option>
-                <option value="media">🟡 Media</option>
-                <option value="alta">🔴 Alta</option>
-              </select>
-            </div>
+               <select
+                 value={formData.priority}
+                 onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                 className={conditionalClasses({
+                   light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-gray-900 bg-white',
+                   dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-white bg-gray-700'
+                 })}
+                 aria-invalid={!!errors.priority}
+                 aria-describedby={errors.priority ? "priority-error" : undefined}
+               >
+                 <option value="baja">🟢 Baja</option>
+                 <option value="media">🟡 Media</option>
+                 <option value="alta">🔴 Alta</option>
+               </select>
+               {errors.priority && (
+                 <p className="text-red-500 text-xs mt-1" id="priority-error">{errors.priority}</p>
+               )}
+             </div>
 
             <div>
               <label className={conditionalClasses({
@@ -186,8 +223,11 @@ const TicketCreateModal = ({
                       ))}
                     </optgroup>
                   )}
-                </select>
-              </div>
+               </select>
+               {errors.title && (
+                 <p className="text-red-500 text-xs mt-1">{errors.title}</p>
+               )}
+             </div>
             )}
           </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext, useRef, useCallback, useMemo } from 'react';
+import useDebounce from '../../hooks/useDebounce';
 import { FaCheck, FaTimes, FaExclamationTriangle } from 'react-icons/fa';
 import {
   Chart as ChartJS,
@@ -77,15 +78,22 @@ const Tickets = () => {
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef(null);
   
-  // Estados de filtros y búsqueda
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [filterPriority, setFilterPriority] = useState('all');
-  const [showFilters, setShowFilters] = useState(false);
-  const [sortBy, setSortBy] = useState('updatedAt');
-  const [sortOrder, setSortOrder] = useState('desc');
-  const [viewMode, setViewMode] = useState('cards');
-  const [titleFilter, setTitleFilter] = useState('');
+   // Estados de filtros y búsqueda
+   const [searchTerm, setSearchTerm] = useState('');
+   const debouncedSearchTerm = useDebounce(searchTerm, 300);
+   const [filterStatus, setFilterStatus] = useState('all');
+   const [filterPriority, setFilterPriority] = useState('all');
+   const [showFilters, setShowFilters] = useState(false);
+   const [sortBy, setSortBy] = useState('updatedAt');
+   const [sortOrder, setSortOrder] = useState('desc');
+   const [viewMode, setViewMode] = useState('cards');
+   const [titleFilter, setTitleFilter] = useState('');
+
+   // Paginación
+   const [currentPage, setCurrentPage] = useState(1);
+   const [totalPages, setTotalPages] = useState(1);
+   const [totalItems, setTotalItems] = useState(0);
+   const [itemsPerPage, setItemsPerPage] = useState(10);
   
   // Estados de formularios
   const [formData, setFormData] = useState({
@@ -137,14 +145,29 @@ const Tickets = () => {
 
   const fetchTickets = useCallback(async () => {
     try {
-      const data = await ticketsAPI.fetchTickets({});
+      const params = {
+        page: currentPage,
+        limit: itemsPerPage,
+        status: filterStatus !== 'all' ? filterStatus : undefined,
+        priority: filterPriority !== 'all' ? filterPriority : undefined,
+        q: debouncedSearchTerm || undefined,
+        sortBy,
+        sortOrder
+      };
+
+      const data = await ticketsAPI.fetchTickets(params);
       setTickets(data.tickets || []);
+      if (data.pagination) {
+        setTotalPages(data.pagination.totalPages || 1);
+        setTotalItems(data.pagination.totalItems || 0);
+        setItemsPerPage(data.pagination.itemsPerPage || itemsPerPage);
+      }
     } catch {
       notifyError('Error al cargar los tickets. Por favor, recarga la página.');
     } finally {
       setLoading(false);
     }
-  }, [notifyError]);
+  }, [currentPage, itemsPerPage, filterStatus, filterPriority, debouncedSearchTerm, sortBy, sortOrder, notifyError]);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -262,65 +285,11 @@ const Tickets = () => {
     fetchUsers();
   }, [fetchTickets, fetchUsers]);
 
-  // Filtrado y ordenamiento optimizado
-  const filteredTickets = useMemo(() => {
-    if (!Array.isArray(tickets)) return [];
-    let filtered = [...tickets];
+   // Filtrado y ordenamiento se realizan en el backend mediante parámetros
+   // Los estados se envían a la API y se devuelven tickets ya filtrados
 
-    // Filtro por permisos - Solo Administrador, Técnico y Coordinador/a Administrativa ven todos los tickets
-    const privilegedRoles = ['Administrador', 'Técnico', 'Coordinadora Administrativa'];
-    if (!privilegedRoles.includes(userRole) && !checkPermission('tickets', 'view_all')) {
-      filtered = filtered.filter(ticket => ticket.userId === user?.id);
-    }
-
-    // Aplicar filtros de búsqueda
-    if (searchTerm) {
-      filtered = filtered.filter(ticket =>
-        ticket.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ticket.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ticket.creator?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (filterStatus !== 'all') {
-      filtered = filtered.filter(ticket => ticket.status?.toLowerCase() === filterStatus);
-    }
-
-    if (filterPriority !== 'all') {
-      filtered = filtered.filter(ticket => ticket.priority?.toLowerCase() === filterPriority);
-    }
-
-    if (titleFilter) {
-      filtered = filtered.filter(ticket => 
-        ticket.title?.toLowerCase().includes(titleFilter.toLowerCase())
-      );
-    }
-
-    // Ordenamiento
-    filtered.sort((a, b) => {
-      let aVal = a[sortBy];
-      let bVal = b[sortBy];
-      
-      if (sortBy === 'createdAt' || sortBy === 'updatedAt') {
-        aVal = new Date(aVal);
-        bVal = new Date(bVal);
-      } else if (typeof aVal === 'string') {
-        aVal = aVal.toLowerCase();
-        bVal = bVal.toLowerCase();
-      }
-      
-      if (sortOrder === 'asc') {
-        return aVal > bVal ? 1 : -1;
-      } else {
-        return aVal < bVal ? 1 : -1;
-      }
-    });
-
-    return filtered;
-  }, [tickets, searchTerm, filterStatus, filterPriority, titleFilter, sortBy, sortOrder, userRole, user?.id, checkPermission]);
-
-  // Funciones de permisos - Solo Administrador, Técnico y Coordinador/a Administrativa tienen acceso completo
-  const privilegedRolesForCRUD = useMemo(() => ['Administrador', 'Técnico', 'Coordinadora Administrativa'], []);
+   // Funciones de permisos - Solo Administrador, Técnico y Coordinador/a Administrativa tienen acceso completo
+   const privilegedRolesForCRUD = useMemo(() => ['Administrador', 'Técnico', 'Coordinadora Administrativa'], []);
   const canCreate = checkPermission('tickets', 'create') ||
                    privilegedRolesForCRUD.includes(userRole);
 
@@ -347,20 +316,20 @@ const Tickets = () => {
     return false;
   }, [userRole, user?.id, checkPermission]);
 
-  // Estadísticas calculadas
-  const stats = useMemo(() => {
-    if (!Array.isArray(tickets)) return { total: 0, abiertos: 0, enProgreso: 0, resueltos: 0, alta: 0, resolutionRate: 0 };
-    const total = tickets.length;
-    const abiertos = tickets.filter(t => t.status?.toLowerCase() === 'abierto').length;
-    const enProgreso = tickets.filter(t => t.status?.toLowerCase() === 'en progreso').length;
-    const resueltos = tickets.filter(t =>
-      t.status?.toLowerCase() === 'resuelto' || t.status?.toLowerCase() === 'cerrado'
-    ).length;
-    const alta = tickets.filter(t => t.priority?.toLowerCase() === 'alta').length;
-    const resolutionRate = total > 0 ? ((resueltos / total) * 100).toFixed(1) : 0;
+   // Estadísticas calculadas (basadas en tickets paginados actuales o totales según vista)
+   const stats = useMemo(() => {
+     if (!Array.isArray(tickets)) return { total: 0, abiertos: 0, enProgreso: 0, resueltos: 0, alta: 0, resolutionRate: 0 };
+     const total = tickets.length;
+     const abiertos = tickets.filter(t => t.status?.toLowerCase() === 'abierto').length;
+     const enProgreso = tickets.filter(t => t.status?.toLowerCase() === 'en progreso').length;
+     const resueltos = tickets.filter(t =>
+       t.status?.toLowerCase() === 'resuelto' || t.status?.toLowerCase() === 'cerrado'
+     ).length;
+     const alta = tickets.filter(t => t.priority?.toLowerCase() === 'alta').length;
+     const resolutionRate = total > 0 ? ((resueltos / total) * 100).toFixed(1) : 0;
 
-    return { total, abiertos, enProgreso, resueltos, alta, resolutionRate };
-  }, [tickets]);
+     return { total, abiertos, enProgreso, resueltos, alta, resolutionRate };
+   }, [tickets]);
 
   // Datos para gráficos
   const adminChartData = useMemo(() => {
@@ -569,7 +538,7 @@ const Tickets = () => {
     // Import dinámico de XLSX - solo se carga cuando el usuario hace clic en exportar
     const XLSX = await import('xlsx');
     const headers = ['ID', 'Título', 'Descripción', 'Prioridad', 'Estado', 'Creado por', 'Asignado a', 'Fecha Creación'];
-    const rows = filteredTickets.map(ticket => [
+     const rows = tickets.map(ticket => [
       ticket.id,
       ticket.title,
       ticket.description,
@@ -775,20 +744,23 @@ const Tickets = () => {
           standardizedTitles={standardizedTitles}
         />
 
-        {/* Ticket List */}
-        <TicketList
-          filteredTickets={filteredTickets}
-          tickets={tickets}
-          conditionalClasses={conditionalClasses}
-          handleViewDetail={handleViewDetail}
-          handleEdit={handleEdit}
-          handleDelete={handleDelete}
-          canEditTicket={canEditTicket}
-          canDeleteTicket={canDeleteTicket}
-          user={user}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-        />
+         {/* Ticket List */}
+         <TicketList
+           tickets={tickets}
+           totalItems={totalItems}
+           currentPage={currentPage}
+           itemsPerPage={itemsPerPage}
+           conditionalClasses={conditionalClasses}
+           handleViewDetail={handleViewDetail}
+           handleEdit={handleEdit}
+           handleDelete={handleDelete}
+           canEditTicket={canEditTicket}
+           canDeleteTicket={canDeleteTicket}
+           user={user}
+           viewMode={viewMode}
+           setViewMode={setViewMode}
+           onPageChange={setCurrentPage}
+         />
 
         {/* Modals */}
         <TicketDetailModal

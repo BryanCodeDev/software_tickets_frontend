@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
+import useDebounce from '../../hooks/useDebounce';
 import { FaBox, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSearch, FaFilter, FaDownload, FaFileExport, FaChartBar, FaExclamationTriangle, FaCalendarAlt, FaCog, FaSortAmountDown, FaSortAmountUp, FaQrcode, FaPrint, FaHistory, FaIndustry, FaFlask, FaCalculator, FaShoppingCart, FaUsers, FaBuilding, FaTools, FaLaptop, FaClipboardCheck } from 'react-icons/fa';
 import AuthContext from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
@@ -36,6 +37,7 @@ const Inventory = () => {
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [detectingHardware, setDetectingHardware] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterArea, setFilterArea] = useState('all');
   const [filterPropiedad, setFilterPropiedad] = useState('all');
@@ -66,37 +68,33 @@ const Inventory = () => {
     }
   }, [notifyError]);
 
-  const filterAndSortInventory = useCallback(() => {
-    let filtered = [...inventory];
+   const filterAndSortInventory = useCallback(() => {
+     let filtered = [...inventory];
 
-    // Búsqueda mejorada - busca en campos específicos y relevantes
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase().trim();
-      filtered = filtered.filter(item =>
-        // Buscar en campos principales
-        item.it?.toLowerCase().includes(term) ||
-        item.serial?.toLowerCase().includes(term) ||
-        item.marca?.toLowerCase().includes(term) ||
-        item.propiedad?.toLowerCase().includes(term) ||
-        item.responsable?.toLowerCase().includes(term) ||
-        item.area?.toLowerCase().includes(term) ||
-        item.capacidad?.toLowerCase().includes(term) ||
-        item.ram?.toLowerCase().includes(term) ||
-        item.status?.toLowerCase().includes(term) ||
-        // Buscar en tipo de equipo (incluye versiones traducidas)
-        item.tipo_equipo?.toLowerCase().includes(term) ||
-        (term.includes('portat') && item.tipo_equipo === 'portatil') ||
-        (term.includes('laptop') && item.tipo_equipo === 'portatil') ||
-        (term.includes('escritorio') && item.tipo_equipo === 'pc') ||
-        (term.includes('mesa') && item.tipo_equipo === 'mesa') ||
-        // Buscar en IMEI (si existe)
-        (item.imei && item.imei.toLowerCase().includes(term)) ||
-        // Búsqueda general en cualquier campo
-        Object.values(item).some(val =>
-          val?.toString().toLowerCase().includes(term)
-        )
-      );
-    }
+     // Búsqueda mejorada - busca en campos específicos y relevantes
+     if (debouncedSearchTerm) {
+       const term = debouncedSearchTerm.toLowerCase().trim();
+       filtered = filtered.filter(item =>
+         item.it?.toLowerCase().includes(term) ||
+         item.serial?.toLowerCase().includes(term) ||
+         item.marca?.toLowerCase().includes(term) ||
+         item.propiedad?.toLowerCase().includes(term) ||
+         item.responsable?.toLowerCase().includes(term) ||
+         item.area?.toLowerCase().includes(term) ||
+         item.capacidad?.toLowerCase().includes(term) ||
+         item.ram?.toLowerCase().includes(term) ||
+         item.status?.toLowerCase().includes(term) ||
+         (item.tipo_equipo?.toLowerCase().includes(term)) ||
+         (term.includes('portat') && item.tipo_equipo === 'portatil') ||
+         (term.includes('laptop') && item.tipo_equipo === 'portatil') ||
+         (term.includes('escritorio') && item.tipo_equipo === 'pc') ||
+         (term.includes('mesa') && item.tipo_equipo === 'mesa') ||
+         (item.imei && item.imei.toLowerCase().includes(term)) ||
+         Object.values(item).some(val =>
+           val?.toString().toLowerCase().includes(term)
+         )
+       );
+     }
 
     // Filtro por estado
     if (filterStatus !== 'all') {
@@ -129,7 +127,7 @@ const Inventory = () => {
     });
 
     setFilteredInventory(filtered);
-  }, [inventory, searchTerm, filterStatus, filterArea, filterPropiedad, sortBy, sortOrder]);
+   }, [inventory, debouncedSearchTerm, filterStatus, filterArea, filterPropiedad, sortBy, sortOrder]);
 
   useEffect(() => {
     fetchInventory();

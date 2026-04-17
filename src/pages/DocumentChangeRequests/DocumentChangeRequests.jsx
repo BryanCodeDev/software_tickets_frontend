@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import useDebounce from '../../hooks/useDebounce';
 import { useAuth } from '../../hooks/useAuth';
 import { FaPlus, FaFilter, FaSearch, FaFileAlt, FaDownload, FaChartBar, FaTimes, FaCheck } from 'react-icons/fa';
 import documentChangeRequestsAPI from '../../api/documentChangeRequestsAPI';
@@ -29,6 +30,7 @@ const DocumentChangeRequestsPage = () => {
     priority: 'all'
   });
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   // Ordenamiento
   const [sortBy, setSortBy] = useState('createdAt');
@@ -163,20 +165,20 @@ const DocumentChangeRequestsPage = () => {
     await loadRequests();
   };
 
-  // Filtrar y ordenar solicitudes
-  const filteredRequests = requests.filter(request => {
-    // Filtro por búsqueda
-    if (searchTerm) {
-      const search = searchTerm.toLowerCase();
-      if (
-        !request.title?.toLowerCase().includes(search) &&
-        !request.description?.toLowerCase().includes(search) &&
-        !request.requester?.name?.toLowerCase().includes(search) &&
-        !request.document?.name?.toLowerCase().includes(search)
-      ) {
-        return false;
-      }
-    }
+   // Filtrar y ordenar solicitudes
+   const filteredRequests = requests.filter(request => {
+     // Filtro por búsqueda
+     if (debouncedSearchTerm) {
+       const search = debouncedSearchTerm.toLowerCase();
+       if (
+         !request.title?.toLowerCase().includes(search) &&
+         !request.description?.toLowerCase().includes(search) &&
+         !request.requester?.name?.toLowerCase().includes(search) &&
+         !request.document?.name?.toLowerCase().includes(search)
+       ) {
+         return false;
+       }
+     }
 
     // Filtro por status (workflowStatus)
     if (filters.status !== 'all' && request.workflowStatus !== filters.status) {

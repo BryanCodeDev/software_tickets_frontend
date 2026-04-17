@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaCheck, FaSpinner, FaTimes } from 'react-icons/fa';
 import { useThemeClasses } from '../../../hooks/useThemeClasses';
 
@@ -18,8 +18,35 @@ const TicketEditModal = ({
 }) => {
   const { conditionalClasses } = useThemeClasses();
   const canShowAssignment = ['Administrador', 'Jefe', 'Compras', 'Coordinadora Administrativa', 'Calidad', 'Empleado'].includes(userRole);
-  
-  // useEffect defensivo para asegurar que los datos del formulario estén sincronizados
+
+  // Validación
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!editFormData.title?.trim()) {
+      newErrors.title = 'La categoría es requerida';
+    }
+    if (!editFormData.description?.trim()) {
+      newErrors.description = 'La descripción es requerida';
+    } else if (editFormData.description.trim().length < 10) {
+      newErrors.description = 'La descripción debe tener al menos 10 caracteres';
+    }
+    if (!editFormData.priority) {
+      newErrors.priority = 'La prioridad es requerida';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      handleEditSubmit(e);
+    }
+  };
+
+  // useEffect defensivo...
   useEffect(() => {
     if (showEditModal && editingTicket && editFormData) {
       // Verificar que los datos del formulario correspondan al ticket actual
@@ -57,7 +84,7 @@ const TicketEditModal = ({
           </div>
         </div>
 
-        <form onSubmit={handleEditSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6">
+        <form onSubmit={onSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
             {userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Coordinadora Administrativa' || userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' ? (
               <>
@@ -68,21 +95,26 @@ const TicketEditModal = ({
                   })}>
                     Categoría del Problema *
                   </label>
-                  <select
-                    value={editFormData.title}
-                    onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                    className={conditionalClasses({
-                      light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
-                      dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
-                    })}
-                    required
-                  >
-                    <option value="">Selecciona una categoría</option>
-                    {standardizedTitles.map((title, index) => (
-                      <option key={index} value={title}>{title}</option>
-                    ))}
-                  </select>
-                </div>
+                   <select
+                     value={editFormData.title}
+                     onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                     className={conditionalClasses({
+                       light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
+                       dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
+                     })}
+                     aria-invalid={!!errors.title}
+                     aria-describedby={errors.title ? "title-error-edit" : undefined}
+                     required
+                   >
+                     <option value="">Selecciona una categoría</option>
+                     {standardizedTitles.map((title, index) => (
+                       <option key={index} value={title}>{title}</option>
+                     ))}
+                   </select>
+                   {errors.title && (
+                     <p className="text-red-500 text-xs mt-1" id="title-error-edit">{errors.title}</p>
+                   )}
+                 </div>
 
                 <div className="md:col-span-2">
                   <label className={conditionalClasses({
@@ -99,9 +131,12 @@ const TicketEditModal = ({
                       dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium resize-none text-sm lg:text-base'
                     })}
                     rows="4 lg:rows-5"
-                    required
-                  />
-                </div>
+                     required
+                   />
+                   {errors.description && (
+                     <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+                   )}
+                 </div>
               </>
             ) : null}
 
@@ -123,8 +158,11 @@ const TicketEditModal = ({
                 <option value="baja">🟢 Baja</option>
                 <option value="media">🟡 Media</option>
                 <option value="alta">🔴 Alta</option>
-              </select>
-            </div>
+               </select>
+               {errors.priority && (
+                 <p className="text-red-500 text-xs mt-1">{errors.priority}</p>
+               )}
+             </div>
 
             {(userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Coordinadora Administrativa' || userRole === 'Jefe' || userRole === 'Compras') && (
               <div>

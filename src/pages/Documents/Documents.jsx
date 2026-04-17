@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, Suspense, lazy, useMemo } from 'react';
+import useDebounce from '../../hooks/useDebounce';
 import { documentsAPI } from '../../api';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeClasses } from '../../hooks/useThemeClasses.js';
@@ -9,6 +10,13 @@ import { usePermissions } from '../../hooks/usePermissions.js';
 import { FaFile, FaUpload, FaDownload, FaEdit, FaTrash, FaCheck, FaTimes, FaFileAlt, FaTag, FaSearch, FaSortAmountDown, FaSortAmountUp, FaFilePdf, FaFileWord, FaFileExcel, FaFileImage, FaFileArchive, FaClock, FaUser, FaFolder, FaFolderOpen, FaPlus, FaArrowLeft } from 'react-icons/fa';
 import { ConfirmDialog, FilterPanel } from '../../components/common';
 
+// ✅ Imports estáticos ANTES de los lazy
+import DocumentCard from './components/DocumentCard.jsx';
+import FolderCard from './components/FolderCard.jsx';
+import DocumentHeader from './components/DocumentHeader.jsx';
+import FilterSection from './components/FilterSection.jsx';
+import EmptyState from './components/EmptyState.jsx';
+
 // Lazy load modals
 const UploadModal = lazy(() => import('./modals/UploadModal.jsx'));
 const EditModal = lazy(() => import('./modals/EditModal.jsx'));
@@ -16,11 +24,7 @@ const HistoryModal = lazy(() => import('./modals/HistoryModal.jsx'));
 const CreateFolderModal = lazy(() => import('./modals/CreateFolderModal.jsx'));
 const EditFolderModal = lazy(() => import('./modals/EditFolderModal.jsx'));
 const PermissionsModal = lazy(() => import('./modals/PermissionsModal.jsx'));
-import DocumentCard from './components/DocumentCard.jsx';
-import FolderCard from './components/FolderCard.jsx';
-import DocumentHeader from './components/DocumentHeader.jsx';
-import FilterSection from './components/FilterSection.jsx';
-import EmptyState from './components/EmptyState.jsx';
+
 import {
   onDocumentCreated,
   onDocumentUpdated,
@@ -44,7 +48,7 @@ const Documents = () => {
   const { conditionalClasses } = useThemeClasses();
   const { notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotifications();
   const { user } = useAuth();
-  
+
   // States
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -63,27 +67,33 @@ const Documents = () => {
     edit: { name: '', title: '', description: '', type: '', category: '', expiryDate: '' }
   });
   const [confirmDialog, setConfirmDialog] = useState(null);
-  
+
   // Show dialog
   const showConfirmDialog = useCallback((message, onConfirm) => {
     setConfirmDialog({ message, onConfirm });
   }, []);
-  
+
   // Search, filters and sorting
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
-  
+
+  // Paginación para documentos
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(12);
+  const [totalDocuments, setTotalDocuments] = useState(0);
+
   // Permissions states
   const [showPermissionsModal, setShowPermissionsModal] = useState(false);
   const [selectedItemForPermissions, setSelectedItemForPermissions] = useState(null);
   const [canWriteInCurrentFolder, setCanWriteInCurrentFolder] = useState(false);
-  
+
   // Custom hooks
   const documentPermissions = useDocumentPermissions();
   const permissionsHook = usePermissions(user);
-  
+
   const {
     permissions,
     allUsers,
@@ -102,19 +112,27 @@ const Documents = () => {
     handleDeselectAllUsers,
     handleUserToggle
   } = permissionsHook;
-  
+
   const { canManagePermissions } = documentPermissions;
-  
-  // Use filters hook
-  const filteredDocumentsList = useDocumentFilters(documents, searchTerm, filterType, sortBy, sortOrder, currentFolder);
-  
+
+  // Use filters hook (con debounced search term)
+  const filteredDocumentsList = useDocumentFilters(documents, debouncedSearchTerm, filterType, sortBy, sortOrder, currentFolder);
+
+  // Paginación sobre documentos filtrados (frontend)
+  const totalFiltered = filteredDocumentsList.length;
+  const totalPages = Math.ceil(totalFiltered / itemsPerPage);
+  const paginatedDocuments = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredDocumentsList.slice(start, start + itemsPerPage);
+  }, [filteredDocumentsList, currentPage, itemsPerPage]);
+
   // Calculate filtered folders
   const currentFolders = useMemo(() => {
     return folders.filter(folder =>
       currentFolder ? folder.parentFolderId === currentFolder.id : !folder.parentFolderId
     );
   }, [folders, currentFolder]);
-  
+
   // Fetch data
   const fetchDocuments = useCallback(async () => {
     try {
@@ -126,7 +144,7 @@ const Documents = () => {
       setLoading(false);
     }
   }, []);
-  
+
   const fetchFolders = useCallback(async () => {
     try {
       const data = await documentsAPI.fetchFolders();
@@ -135,45 +153,49 @@ const Documents = () => {
       // Error handled silently
     }
   }, []);
-  
+
   // Initial data load
   useEffect(() => {
     fetchDocuments();
     fetchFolders();
     fetchUsers();
   }, [fetchDocuments, fetchFolders, fetchUsers]);
-  
-  // Calculate write permissions
-  const calculateWritePermissions = useCallback(async () => {
-    if (!currentFolder) {
-      setCanWriteInCurrentFolder(true);
-      return;
-    }
-    
-    // Si es owner o admin, puede escribir
-    if (documentPermissions.isOwner(currentFolder) || documentPermissions.hasFullAccess()) {
-      setCanWriteInCurrentFolder(true);
-      return;
-    }
-    
-    // Verificar permisos de escritura
-    const permission = await documentPermissions.checkPermission(currentFolder, 'folder');
-    setCanWriteInCurrentFolder(permission.hasAccess && permission.permissionType === 'write');
-  }, [currentFolder, documentPermissions]);
-  
+
+  // Calculate write permissions (con cancelación segura)
   useEffect(() => {
-    calculateWritePermissions();
-  }, [calculateWritePermissions]);
-  
+    let isMounted = true;
+
+    const load = async () => {
+      if (!currentFolder) {
+        if (isMounted) setCanWriteInCurrentFolder(true);
+        return;
+      }
+
+      if (documentPermissions.isOwner(currentFolder) || documentPermissions.hasFullAccess()) {
+        if (isMounted) setCanWriteInCurrentFolder(true);
+        return;
+      }
+
+      const permission = await documentPermissions.checkPermission(currentFolder, 'folder');
+      if (isMounted) {
+        setCanWriteInCurrentFolder(permission.hasAccess && permission.permissionType === 'write');
+      }
+    };
+
+    load();
+
+    return () => { isMounted = false; };
+  }, [currentFolder, documentPermissions]);
+
   // Handle folder navigation
   const handleEnterFolder = useCallback((folder) => {
     setCurrentFolder(folder);
   }, []);
-  
+
   const handleGoBack = useCallback(() => {
     setCurrentFolder(prev => prev?.parentFolderId ? folders.find(f => f.id === prev.parentFolderId) : null);
   }, [folders]);
-  
+
   // Handle CRUD operations
   const handleCreateFolder = useCallback(async (e) => {
     e.preventDefault();
@@ -191,7 +213,7 @@ const Documents = () => {
       notifyError('Error al crear la carpeta');
     }
   }, [forms.upload.name, forms.upload.description, currentFolder, fetchFolders, notifySuccess, notifyError]);
-  
+
   const handleEditFolder = useCallback((folder) => {
     setForms(prev => ({
       ...prev,
@@ -200,7 +222,7 @@ const Documents = () => {
     setEditingDocument(folder);
     setShowEditFolderModal(true);
   }, []);
-  
+
   const handleUpdateFolder = useCallback(async (e) => {
     e.preventDefault();
     try {
@@ -215,7 +237,7 @@ const Documents = () => {
       notifyError('Error al actualizar la carpeta');
     }
   }, [editingDocument, forms.edit, fetchFolders, notifySuccess, notifyError]);
-  
+
   const handleDeleteFolder = useCallback(async (folderId) => {
     showConfirmDialog('¿Estás seguro de eliminar esta carpeta?', async () => {
       try {
@@ -230,7 +252,7 @@ const Documents = () => {
       }
     });
   }, [currentFolder, fetchFolders, showConfirmDialog, notifySuccess, notifyError]);
-  
+
   // Handle upload
   const handleUpload = async (e) => {
     e.preventDefault();
@@ -250,7 +272,7 @@ const Documents = () => {
       data.append('parentDocumentId', forms.upload.parentDocumentId);
       data.append('changeDescription', forms.upload.changeDescription);
     }
-    
+
     try {
       await documentsAPI.uploadDocument(data);
       setForms(prev => ({ ...prev, upload: { title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' } }));
@@ -264,7 +286,7 @@ const Documents = () => {
       setForms(prev => ({ ...prev, upload: { title: '', description: '', type: '', category: '', version: '1.0', file: null, isNewVersion: false, parentDocumentId: null, changeDescription: '' } }));
     }
   };
-  
+
   const handleEdit = (doc) => {
     setEditingDocument(doc);
     setForms(prev => ({
@@ -273,14 +295,14 @@ const Documents = () => {
     }));
     setShowEditModal(true);
   };
-  
+
   const handleViewHistory = (doc) => {
     const key = doc.parentDocumentId || doc.id;
     const versions = documents.filter(d => (d.parentDocumentId || d.id) === key).sort((a, b) => parseFloat(b.version) - parseFloat(a.version));
     setSelectedDocument({ ...doc, versions });
     setShowHistoryModal(true);
   };
-  
+
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
@@ -292,7 +314,7 @@ const Documents = () => {
       notifyError('Error al actualizar el documento');
     }
   };
-  
+
   const handleDelete = async (id) => {
     showConfirmDialog('¿Estás seguro de eliminar este documento?', async () => {
       try {
@@ -304,7 +326,7 @@ const Documents = () => {
       }
     });
   };
-  
+
   const handleDeleteVersion = async (versionId) => {
     showConfirmDialog('¿Estás seguro de eliminar esta versión?', async () => {
       try {
@@ -316,7 +338,7 @@ const Documents = () => {
       }
     });
   };
-  
+
   const handleDownloadDocument = async (documentId, fileName) => {
     try {
       await documentsAPI.downloadDocument(documentId, fileName);
@@ -325,7 +347,7 @@ const Documents = () => {
       notifyError('Error al descargar el documento');
     }
   };
-  
+
   // Notification helper
   const showNotification = useCallback((message, type) => {
     if (type === 'success') notifySuccess(message);
@@ -333,7 +355,7 @@ const Documents = () => {
     else if (type === 'warning') notifyWarning(message);
     else notifyInfo(message);
   }, [notifySuccess, notifyError, notifyWarning, notifyInfo]);
-  
+
   // Open permissions modal
   const handleOpenPermissionsModal = useCallback(async (item, type) => {
     if (!canManagePermissions()) {
@@ -342,36 +364,36 @@ const Documents = () => {
     }
     await handleOpenPermissionsModalHook(item, type, setSelectedItemForPermissions, setShowPermissionsModal, showNotification);
   }, [canManagePermissions, handleOpenPermissionsModalHook, showNotification, notifyWarning]);
-  
+
   const handleGrantPermissions = useCallback(async () => {
     await handleGrantPermissionsHook(selectedItemForPermissions, notifyError, showNotification);
   }, [handleGrantPermissionsHook, selectedItemForPermissions, notifyError, showNotification]);
-  
+
   const handleRevokePermission = useCallback(async (permissionId) => {
     await handleRevokePermissionHook(permissionId, showNotification, notifyError);
   }, [handleRevokePermissionHook, showNotification, notifyError]);
-  
+
   const handleConfirm = () => {
     if (confirmDialog?.onConfirm) {
       confirmDialog.onConfirm();
     }
     setConfirmDialog(null);
   };
-  
+
   const handleCancelConfirm = () => {
     setConfirmDialog(null);
   };
-  
+
   // Calculate total unique documents
   const totalUniqueDocuments = [...new Set(documents.map(doc => doc.parentDocumentId || doc.id))].length;
-  
+
   // Get unique types for filters
   const uniqueTypes = [...new Set(documents.map(doc => doc.type).filter(Boolean))];
-  
+
   // Get file icon
   const getFileIcon = (filePath) => {
     const extension = filePath?.split('.').pop().toLowerCase();
-    switch(extension) {
+    switch (extension) {
       case 'pdf': return <FaFilePdf className={`text-xl ${conditionalClasses({ light: 'text-red-600', dark: 'text-red-400' })}`} />;
       case 'doc':
       case 'docx': return <FaFileWord className={`text-xl ${conditionalClasses({ light: 'text-blue-600', dark: 'text-blue-400' })}`} />;
@@ -386,7 +408,7 @@ const Documents = () => {
       default: return <FaFileAlt className={`text-xl ${conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}`} />;
     }
   };
-  
+
   // Get download name
   const getDownloadName = (doc, version = null) => {
     const title = doc.title;
@@ -394,7 +416,7 @@ const Documents = () => {
     const ext = doc.filePath.split('.').pop();
     return `${title}_v${ver}.${ext}`;
   };
-  
+
   // Get time ago
   const getTimeAgo = (date) => {
     if (!date) return 'Desconocido';
@@ -410,14 +432,14 @@ const Documents = () => {
     if (months < 12) return `Hace ${months}m`;
     return `Hace ${Math.floor(months / 12)}a`;
   };
-  
+
   // Can edit check
   const getCanEdit = useCallback((item) => {
     if (canManagePermissions()) return true;
     if (item.createdBy === user?.id) return true;
     return false;
   }, [user, canManagePermissions]);
-  
+
   // WebSocket listeners
   useEffect(() => {
     const handleDocumentCreated = () => fetchDocuments();
@@ -428,7 +450,7 @@ const Documents = () => {
     const handleFolderUpdated = () => fetchFolders();
     const handleFolderDeleted = () => fetchFolders();
     const handleFoldersListUpdated = () => fetchFolders();
-    
+
     onDocumentCreated(handleDocumentCreated);
     onDocumentUpdated(handleDocumentUpdated);
     onDocumentDeleted(handleDocumentDeleted);
@@ -437,7 +459,7 @@ const Documents = () => {
     onFolderUpdated(handleFolderUpdated);
     onFolderDeleted(handleFolderDeleted);
     onFoldersListUpdated(handleFoldersListUpdated);
-    
+
     return () => {
       offDocumentCreated(handleDocumentCreated);
       offDocumentUpdated(handleDocumentUpdated);
@@ -449,7 +471,7 @@ const Documents = () => {
       offFoldersListUpdated(handleFoldersListUpdated);
     };
   }, [fetchDocuments, fetchFolders]);
-  
+
   if (loading) {
     return (
       <div className={`min-h-screen flex items-center justify-center ${conditionalClasses({ light: 'bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]', dark: 'bg-gray-900' })}`}>
@@ -460,11 +482,11 @@ const Documents = () => {
       </div>
     );
   }
-  
+
   return (
     <div className={`min-h-screen ${conditionalClasses({ light: 'bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]', dark: 'bg-gray-900' })}`}>
       <ConfirmDialog confirmDialog={confirmDialog} onClose={handleCancelConfirm} onConfirm={handleConfirm} />
-      
+
       <DocumentHeader
         currentFolder={currentFolder}
         totalUniqueDocuments={totalUniqueDocuments}
@@ -474,7 +496,7 @@ const Documents = () => {
         canWriteInCurrentFolder={canWriteInCurrentFolder}
         setShowUploadModal={setShowUploadModal}
       />
-      
+
       <FilterSection
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -487,7 +509,7 @@ const Documents = () => {
         uniqueTypes={uniqueTypes}
         filteredDocumentsList={filteredDocumentsList}
       />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         <div className={`rounded-2xl shadow-lg border ${conditionalClasses({ light: 'bg-white border-gray-200', dark: 'bg-gray-800 border-gray-700' })}`}>
           <div className={`px-6 py-4 border-b ${conditionalClasses({ light: 'bg-linear-to-r from-[#f3ebf9] to-[#e8d5f5] border-gray-200', dark: 'bg-gray-800 border-gray-700' })}`}>
@@ -501,46 +523,110 @@ const Documents = () => {
               </span>
             </div>
           </div>
-          
+
+          {/* ✅ div.p-6 correctamente cerrado, con paginación DENTRO */}
           <div className="p-6">
             {currentFolders.length === 0 && filteredDocumentsList.length === 0 ? (
               <EmptyState searchTerm={searchTerm} filterType={filterType} />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {currentFolders.map((folder) => (
-                  <FolderCard
-                    key={`folder-${folder.id}`}
-                    folder={folder}
-                    getTimeAgo={getTimeAgo}
-                    handleEnterFolder={handleEnterFolder}
-                    canEdit={getCanEdit}
-                    handleEditFolder={handleEditFolder}
-                    handleDeleteFolder={handleDeleteFolder}
-                    handleOpenPermissionsModal={handleOpenPermissionsModal}
-                    canManagePermissions={canManagePermissions()}
-                  />
-                ))}
-                
-                {filteredDocumentsList.map((doc) => (
-                  <DocumentCard
-                    key={doc.id}
-                    doc={doc}
-                    getFileIcon={getFileIcon}
-                    getTimeAgo={getTimeAgo}
-                    getDownloadName={getDownloadName}
-                    handleDownloadDocument={handleDownloadDocument}
-                    handleViewHistory={handleViewHistory}
-                    canEdit={getCanEdit}
-                    handleEdit={handleEdit}
-                    handleDelete={handleDelete}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {currentFolders.map((folder) => (
+                    <FolderCard
+                      key={`folder-${folder.id}`}
+                      folder={folder}
+                      getTimeAgo={getTimeAgo}
+                      handleEnterFolder={handleEnterFolder}
+                      canEdit={getCanEdit}
+                      handleEditFolder={handleEditFolder}
+                      handleDeleteFolder={handleDeleteFolder}
+                      handleOpenPermissionsModal={handleOpenPermissionsModal}
+                      canManagePermissions={canManagePermissions()}
+                    />
+                  ))}
+
+                  {paginatedDocuments.map((doc) => (
+                    <DocumentCard
+                      key={doc.id}
+                      doc={doc}
+                      getFileIcon={getFileIcon}
+                      getTimeAgo={getTimeAgo}
+                      getDownloadName={getDownloadName}
+                      handleDownloadDocument={handleDownloadDocument}
+                      handleViewHistory={handleViewHistory}
+                      canEdit={getCanEdit}
+                      handleEdit={handleEdit}
+                      handleDelete={handleDelete}
+                    />
+                  ))}
+                </div>
+
+                {/* ✅ Paginación DENTRO del bloque condicional, correctamente cerrada */}
+                {totalPages > 1 && (
+                  <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                      className={conditionalClasses({
+                        light: "px-4 py-2 rounded-lg bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all",
+                        dark: "px-4 py-2 rounded-lg bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                      })}
+                    >
+                      Anterior
+                    </button>
+
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter(page => {
+                        const maxVisible = 5;
+                        if (totalPages <= maxVisible) return true;
+                        if (page === 1 || page === totalPages) return true;
+                        const diff = Math.abs(currentPage - page);
+                        return diff <= 1;
+                      })
+                      .map((page, idx, arr) => {
+                        if (idx > 0 && arr[idx - 1] !== page - 1) {
+                          return <span key={`ellipsis-${page}`} className="px-2">...</span>;
+                        }
+                        return (
+                          <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={conditionalClasses({
+                              light: `px-3 py-1 rounded-lg transition-all touch-manipulation ${
+                                page === currentPage
+                                  ? 'bg-[#662d91] text-white shadow-md'
+                                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                              }`,
+                              dark: `px-3 py-1 rounded-lg transition-all touch-manipulation ${
+                                page === currentPage
+                                  ? 'bg-purple-600 text-white shadow-md'
+                                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600 border border-gray-600'
+                              }`
+                            })}
+                          >
+                            {page}
+                          </button>
+                        );
+                      })}
+
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                      disabled={currentPage === totalPages}
+                      className={conditionalClasses({
+                        light: "px-4 py-2 rounded-lg bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all",
+                        dark: "px-4 py-2 rounded-lg bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                      })}
+                    >
+                      Siguiente
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
       </div>
-      
+
       <Suspense fallback={<div>Cargando...</div>}>
         <UploadModal
           showUploadModal={showUploadModal}
@@ -552,7 +638,7 @@ const Documents = () => {
           documents={documents}
           folders={folders}
         />
-        
+
         <EditModal
           showEditModal={showEditModal}
           setShowEditModal={setShowEditModal}
@@ -560,7 +646,7 @@ const Documents = () => {
           setEditFormData={(data) => setForms(prev => ({ ...prev, edit: data }))}
           handleUpdate={handleUpdate}
         />
-        
+
         <HistoryModal
           showHistoryModal={showHistoryModal}
           setShowHistoryModal={setShowHistoryModal}
@@ -570,7 +656,7 @@ const Documents = () => {
           handleDeleteVersion={handleDeleteVersion}
           user={user}
         />
-        
+
         <CreateFolderModal
           showCreateFolderModal={showCreateFolderModal}
           setShowCreateFolderModal={setShowCreateFolderModal}
@@ -578,7 +664,7 @@ const Documents = () => {
           setFolderFormData={(data) => setForms(prev => ({ ...prev, upload: data }))}
           handleCreateFolder={handleCreateFolder}
         />
-        
+
         <EditFolderModal
           showEditFolderModal={showEditFolderModal}
           setShowEditFolderModal={setShowEditFolderModal}
@@ -586,7 +672,7 @@ const Documents = () => {
           setEditFolderFormData={(data) => setForms(prev => ({ ...prev, edit: data }))}
           handleUpdateFolder={handleUpdateFolder}
         />
-        
+
         <PermissionsModal
           showPermissionsModal={showPermissionsModal}
           setShowPermissionsModal={setShowPermissionsModal}
