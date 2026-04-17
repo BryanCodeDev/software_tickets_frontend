@@ -146,7 +146,7 @@ const Profile = () => {
           <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-4 sm:px-6 py-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+                 <div className="p-2 bg-white/20 dark:bg-gray-700/50 backdrop-blur-sm rounded-lg">
                   <FaShieldAlt className="text-white text-lg" />
                 </div>
                 <div>

@@ -785,7 +785,7 @@ const Inventory = () => {
                             {canEdit && (
                               <button
                                 onClick={() => handleEdit(item)}
-                                className="p-1.5 lg:p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all touch-manipulation"
+                                className="p-1.5 lg:p-2 bg-white/20 hover:bg-white/30 dark:bg-gray-700/50 dark:hover:bg-gray-600 rounded-lg transition-all touch-manipulation"
                                 title="Editar"
                               >
                                 <FaEdit className="w-3 h-3 lg:w-4 lg:h-4" />
@@ -794,7 +794,7 @@ const Inventory = () => {
                             {canDelete && (
                               <button
                                 onClick={() => handleDelete(item.id)}
-                                className="p-1.5 lg:p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all touch-manipulation"
+                                className="p-1.5 lg:p-2 bg-white/20 hover:bg-white/30 dark:bg-gray-700/50 dark:hover:bg-gray-600 rounded-lg transition-all touch-manipulation"
                                 title="Eliminar"
                               >
                                 <FaTrash className="w-3 h-3 lg:w-4 lg:h-4" />

@@ -87,7 +87,10 @@ const ForgotPassword = () => {
               dark: 'bg-black/20 backdrop-blur-sm rounded-xl p-4 border border-white/20'
             })}>
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${conditionalClasses({
+                  light: 'bg-white/20',
+                  dark: 'bg-gray-700/50'
+                })}`}>
                   <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
@@ -106,7 +109,10 @@ const ForgotPassword = () => {
               dark: 'bg-black/20 backdrop-blur-sm rounded-xl p-4 border border-white/20'
             })}>
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${conditionalClasses({
+                  light: 'bg-white/20',
+                  dark: 'bg-gray-700/50'
+                })}`}>
                   <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -129,7 +135,10 @@ const ForgotPassword = () => {
             <h3 className="text-white font-semibold text-lg mb-4">¿Cómo funciona?</h3>
             <ul className="space-y-3">
               <li className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${conditionalClasses({
+                  light: 'bg-white/20',
+                  dark: 'bg-gray-700/50'
+                })}`}>
                   <span className="text-white text-xs font-bold">1</span>
                 </div>
                 <span className={conditionalClasses({
@@ -138,7 +147,10 @@ const ForgotPassword = () => {
                 })}>Ingresa tu correo electrónico registrado</span>
               </li>
               <li className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${conditionalClasses({
+                  light: 'bg-white/20',
+                  dark: 'bg-gray-700/50'
+                })}`}>
                   <span className="text-white text-xs font-bold">2</span>
                 </div>
                 <span className={conditionalClasses({
@@ -147,7 +159,10 @@ const ForgotPassword = () => {
                 })}>Recibirás un enlace seguro en tu bandeja</span>
               </li>
               <li className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${conditionalClasses({
+                  light: 'bg-white/20',
+                  dark: 'bg-gray-700/50'
+                })}`}>
                   <span className="text-white text-xs font-bold">3</span>
                 </div>
                 <span className={conditionalClasses({
@@ -156,7 +171,10 @@ const ForgotPassword = () => {
                 })}>Haz clic y crea tu nueva contraseña</span>
               </li>
               <li className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${conditionalClasses({
+                  light: 'bg-white/20',
+                  dark: 'bg-gray-700/50'
+                })}`}>
                   <span className="text-white text-xs font-bold">4</span>
                 </div>
                 <span className={conditionalClasses({

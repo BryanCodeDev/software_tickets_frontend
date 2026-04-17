@@ -139,7 +139,10 @@ const Register = () => {
             <h3 className="text-white font-semibold text-lg mb-4">¿Por qué elegir DuvyClass?</h3>
             <ul className="space-y-3">
               <li className="flex items-center space-x-3">
-                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${conditionalClasses({
+                  light: 'bg-white/20',
+                  dark: 'bg-gray-700/50'
+                })}`}>
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
@@ -150,7 +153,10 @@ const Register = () => {
                 })}>Gestión de tickets en tiempo real</span>
               </li>
               <li className="flex items-center space-x-3">
-                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${conditionalClasses({
+                  light: 'bg-white/20',
+                  dark: 'bg-gray-700/50'
+                })}`}>
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
@@ -161,7 +167,10 @@ const Register = () => {
                 })}>Control completo de inventario IT</span>
               </li>
               <li className="flex items-center space-x-3">
-                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${conditionalClasses({
+                  light: 'bg-white/20',
+                  dark: 'bg-gray-700/50'
+                })}`}>
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
@@ -172,7 +181,10 @@ const Register = () => {
                 })}>Gestión de calidad ISO 9001</span>
               </li>
               <li className="flex items-center space-x-3">
-                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${conditionalClasses({
+                  light: 'bg-white/20',
+                  dark: 'bg-gray-700/50'
+                })}`}>
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
@@ -183,7 +195,10 @@ const Register = () => {
                 })}>Workflow de compras automatizado</span>
               </li>
               <li className="flex items-center space-x-3">
-                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${conditionalClasses({
+                  light: 'bg-white/20',
+                  dark: 'bg-gray-700/50'
+                })}`}>
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
@@ -194,7 +209,10 @@ const Register = () => {
                 })}>Control de versiones documentales</span>
               </li>
               <li className="flex items-center space-x-3">
-                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${conditionalClasses({
+                  light: 'bg-white/20',
+                  dark: 'bg-gray-700/50'
+                })}`}>
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>

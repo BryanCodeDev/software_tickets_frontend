@@ -139,16 +139,16 @@ const Dashboard = () => {
         <div className="relative overflow-hidden bg-linear-to-r from-[#662d91] via-[#7b2cbf] to-[#662d91] rounded-2xl shadow-2xl mb-6 lg:mb-8">
           {/* Patrón de fondo decorativo */}
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -mr-32 -mt-32"></div>
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full -ml-24 -mb-24"></div>
-            <div className="absolute top-1/2 left-1/2 w-32 h-32 bg-white rounded-full opacity-50"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white dark:bg-gray-700 rounded-full -mr-32 -mt-32"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white dark:bg-gray-700 rounded-full -ml-24 -mb-24"></div>
+            <div className="absolute top-1/2 left-1/2 w-32 h-32 bg-white/50 dark:bg-gray-600/50 rounded-full opacity-50"></div>
           </div>
           
           <div className="relative p-5 sm:p-7 lg:p-8">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2.5 bg-white/20 backdrop-blur-sm rounded-xl border border-white/30">
+                  <div className="p-2.5 bg-white/20 backdrop-blur-sm rounded-xl border border-white/30 dark:border-gray-600">
                     <FaTachometerAlt className="text-white text-xl sm:text-2xl" />
                   </div>
                   <div>
@@ -160,7 +160,7 @@ const Dashboard = () => {
                   Bienvenido de nuevo, <span className="font-bold text-white">{user?.name || 'Usuario'}</span>
                 </p>
                 <div className="flex flex-wrap items-center gap-2 text-xs text-purple-200">
-                  <span className="flex items-center gap-1.5 bg-white/10 px-2.5 py-1 rounded-full backdrop-blur-sm">
+                    <span className="flex items-center gap-1.5 bg-white/10 dark:bg-gray-700/50 px-2.5 py-1 rounded-full backdrop-blur-sm">
                     <FaUsers className="text-xs" />
                     {user?.role?.name || 'Empleado'}
                   </span>
@@ -174,7 +174,7 @@ const Dashboard = () => {
               
               {/* Panel de fecha y stats rápidos */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                <div className="bg-white/10 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-white/20 w-full sm:w-auto">
+                <div className="bg-white/10 dark:bg-gray-700/50 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-white/20 dark:border-gray-600 w-full sm:w-auto">
                   <div className="flex items-center gap-2 mb-1">
                     <FaClock className="text-purple-200 text-xs" />
                     <span className="text-xs text-purple-200 font-medium">Fecha Actual</span>

@@ -60,7 +60,7 @@ const TicketCreateModal = ({
             <h2 className="text-xl lg:text-2xl font-bold text-white">Crear Nuevo Ticket</h2>
             <button
               onClick={() => setShowCreateModal(false)}
-              className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+              className="p-2 hover:bg-white/20 dark:hover:bg-gray-700/50 rounded-lg transition-all text-white"
             >
               <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
             </button>

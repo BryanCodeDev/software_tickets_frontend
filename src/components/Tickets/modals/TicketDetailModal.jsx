@@ -93,7 +93,7 @@ const TicketDetailModal = ({
             <div className="min-w-0 flex-1">
               <h2 className="text-xl lg:text-2xl font-bold text-white mb-2 truncate">{selectedTicket.title}</h2>
               <div className="flex flex-wrap gap-2">
-                <span className={`px-2 lg:px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-white`}>
+                <span className={`px-2 lg:px-3 py-1 rounded-full text-xs font-bold bg-white/20 dark:bg-gray-700/50 text-white`}>
                   Ticket #{selectedTicket.id}
                 </span>
                 <span className={`px-2 lg:px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(selectedTicket.status)}`}>
@@ -106,7 +106,7 @@ const TicketDetailModal = ({
             </div>
             <button
               onClick={() => setShowDetailModal(false)}
-              className="p-2 hover:bg-white/20 rounded-lg transition-all text-white shrink-0"
+              className="p-2 hover:bg-white/20 dark:hover:bg-gray-700/50 rounded-lg transition-all text-white shrink-0"
             >
               <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
             </button>

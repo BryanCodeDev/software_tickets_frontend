@@ -679,13 +679,48 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
 
   const getRoleBadge = (roleName) => {
     const badges = {
-      'Administrador': { color: 'from-red-500 to-pink-600', icon: <FaCrown />, text: 'Admin', iconColor: 'text-red-500' },
-      'Coordinadora Administrativa': { color: 'from-orange-500 to-red-600', icon: <FaUserShield />, text: 'Coord', iconColor: 'text-orange-500' },
-      'Técnico': { color: 'from-blue-500 to-cyan-600', icon: <FaWrench />, text: 'Tech', iconColor: 'text-blue-500' },
-      'Jefe': { color: 'from-yellow-500 to-orange-600', icon: <FaUserCog />, text: 'Jefe', iconColor: 'text-yellow-500' },
-      'Compras': { color: 'from-teal-500 to-cyan-600', icon: <FaUser />, text: 'Compras', iconColor: 'text-teal-500' },
-      'Calidad': { color: 'from-[#662d91] to-[#8e4dbf]', icon: <FaShieldAlt />, text: 'Quality', iconColor: 'text-[#662d91]' },
-      'Empleado': { color: 'from-green-500 to-emerald-600', icon: <FaUser />, text: 'User', iconColor: 'text-green-500' }
+      'Administrador': { 
+        color: { light: 'from-red-500 to-pink-600', dark: 'from-red-600 to-pink-700' }, 
+        icon: <FaCrown />, 
+        text: 'Admin', 
+        iconColor: { light: 'text-red-500', dark: 'text-red-400' }
+      },
+      'Coordinadora Administrativa': { 
+        color: { light: 'from-orange-500 to-red-600', dark: 'from-orange-600 to-red-700' }, 
+        icon: <FaUserShield />, 
+        text: 'Coord', 
+        iconColor: { light: 'text-orange-500', dark: 'text-orange-400' }
+      },
+      'Técnico': { 
+        color: { light: 'from-blue-500 to-cyan-600', dark: 'from-blue-600 to-cyan-700' }, 
+        icon: <FaWrench />, 
+        text: 'Tech', 
+        iconColor: { light: 'text-blue-500', dark: 'text-blue-400' }
+      },
+      'Jefe': { 
+        color: { light: 'from-yellow-500 to-orange-600', dark: 'from-yellow-600 to-orange-700' }, 
+        icon: <FaUserCog />, 
+        text: 'Jefe', 
+        iconColor: { light: 'text-yellow-500', dark: 'text-yellow-400' }
+      },
+      'Compras': { 
+        color: { light: 'from-teal-500 to-cyan-600', dark: 'from-teal-600 to-cyan-700' }, 
+        icon: <FaUser />, 
+        text: 'Compras', 
+        iconColor: { light: 'text-teal-500', dark: 'text-teal-400' }
+      },
+      'Calidad': { 
+        color: { light: 'from-[#662d91] to-[#8e4dbf]', dark: 'from-purple-700 to-purple-900' }, 
+        icon: <FaShieldAlt />, 
+        text: 'Quality', 
+        iconColor: { light: 'text-[#662d91]', dark: 'text-purple-400' }
+      },
+      'Empleado': { 
+        color: { light: 'from-green-500 to-emerald-600', dark: 'from-green-600 to-emerald-700' }, 
+        icon: <FaUser />, 
+        text: 'User', 
+        iconColor: { light: 'text-green-500', dark: 'text-green-400' }
+      }
     };
     return badges[roleName] || badges['Empleado'];
   };
@@ -721,32 +756,43 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
             })}
           `}>
             {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 dark:bg-gray-800/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 dark:bg-gray-800/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
 
             <div className="relative flex items-center justify-between w-full">
               <div className="flex items-center space-x-2 min-w-0 flex-1">
-                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-200 shrink-0">
+                <div className={`
+                  w-10 h-10 rounded-xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-200 shrink-0
+                  ${conditionalClasses({
+                    light: 'bg-white',
+                    dark: 'bg-gray-700'
+                  })}
+                `}>
                   <span className="text-transparent bg-clip-text bg-linear-to-br from-[#662d91] to-[#7a3da8] font-bold text-xl">D</span>
                 </div>
                 {!isCollapsed && (
                   <div className="min-w-0 flex-1">
                     <h2 className="text-lg font-bold text-white truncate drop-shadow-lg">DuvyClass</h2>
-                    <p className="text-xs text-[#e8d5f5] font-medium truncate">Gestión Tecnológica</p>
+                     <p className={conditionalClasses({
+                       light: 'text-xs text-[#e8d5f5] font-medium truncate',
+                       dark: 'text-xs text-purple-200 font-medium truncate'
+                     })}>Gestión Tecnológica</p>
                   </div>
                 )}
               </div>
               <div className="flex items-center space-x-1">
-                <button
-                  onClick={toggleSidebarCollapse}
-                  className="hidden lg:block p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200 backdrop-blur-sm shrink-0"
-                  title={isCollapsed ? 'Expandir menú' : 'Colapsar menú'}
-                >
+                  <button
+                    onClick={toggleSidebarCollapse}
+                    className="hidden lg:block p-3 rounded-lg text-white/80 hover:text-white hover:bg-white/20 dark:hover:bg-gray-700/50 transition-all duration-200 backdrop-blur-sm shrink-0"
+                    title={isCollapsed ? 'Expandir menú' : 'Colapsar menú'}
+                    aria-label={isCollapsed ? 'Expandir menú' : 'Colapsar menú'}
+                  >
                   {isCollapsed ? <FaChevronRight className="w-4 h-4" /> : <FaChevronLeft className="w-4 h-4" />}
                 </button>
                 <button
                   onClick={toggleSidebar}
-                  className="lg:hidden p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200 backdrop-blur-sm shrink-0"
+                  className="lg:hidden p-3 rounded-lg text-white/80 hover:text-white hover:bg-white/20 dark:hover:bg-gray-700/50 transition-all duration-200 backdrop-blur-sm shrink-0"
+                  aria-label="Cerrar menú"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -765,14 +811,14 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                  dark: 'bg-gray-800 border-gray-700'
                })}
              `}>
-               {/* Gradient accent */}
-               <div className={`absolute inset-x-0 top-0 h-1 bg-linear-to-r ${roleBadge.color}`}></div>
+                {/* Gradient accent */}
+                <div className={`absolute inset-x-0 top-0 h-1 bg-linear-to-r ${conditionalClasses(roleBadge.color)}`}></div>
                
                {isCollapsed ? (
                  <div className="flex justify-center py-3">
-                   <div className={`
-                     relative w-12 h-12 rounded-xl bg-linear-to-br ${roleBadge.color} flex items-center justify-center shadow-lg ring-4 ring-white shrink-0
-                   `}>
+                  <div className={`
+                    relative w-12 h-12 rounded-xl bg-linear-to-br ${conditionalClasses(roleBadge.color)} flex items-center justify-center shadow-lg ring-4 ring-white shrink-0
+                  `}>
                      <span className="text-white font-bold text-lg">
                        {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
                      </span>
@@ -783,9 +829,9 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                  <div className="p-4">
                    <div className="flex items-start space-x-3">
                      {/* Avatar */}
-                     <div className={`
-                       relative w-14 h-14 rounded-xl bg-linear-to-br ${roleBadge.color} flex items-center justify-center shadow-lg ring-4 ring-white shrink-0
-                     `}>
+                      <div className={`
+                        relative w-14 h-14 rounded-xl bg-linear-to-br ${conditionalClasses(roleBadge.color)} flex items-center justify-center shadow-lg ring-4 ring-white shrink-0
+                      `}>
                        <span className="text-white font-bold text-xl">
                          {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
                        </span>
@@ -817,7 +863,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                              </p>
                            )}
                          </div>
-                         <span className={`shrink-0 text-lg ${roleBadge.iconColor}`}>{roleBadge.icon}</span>
+                          <span className={`shrink-0 text-lg ${conditionalClasses(roleBadge.iconColor)}`}>{roleBadge.icon}</span>
                        </div>
                        
                        {/* Role Badge */}
@@ -892,14 +938,20 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                       >
                         {/* Active indicator bar */}
                         {isSubmenuActive && (
-                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-white rounded-r-full shadow-lg"></div>
+                          <div className={conditionalClasses({
+                            light: "absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-white rounded-r-full shadow-lg",
+                            dark: "absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-gray-300 rounded-r-full shadow-lg"
+                          })}></div>
                         )}
 
                         {/* Icon container */}
                         <div className={`
                           shrink-0 w-11 h-11 rounded-xl flex items-center justify-center ${isCollapsed ? '' : 'mr-3'} transition-all duration-200
                           ${isSubmenuActive
-                            ? 'bg-white/20 shadow-inner'
+                            ? conditionalClasses({
+                                light: 'bg-white/20 shadow-inner',
+                                dark: 'bg-gray-700/50 shadow-inner'
+                              })
                             : conditionalClasses({
                                 light: 'bg-linear-to-br from-gray-100 to-gray-50 group-hover:from-[#f3ebf9] group-hover:to-[#e8d5f5] group-hover:scale-110 shadow-sm',
                                 dark: 'bg-gray-700 group-hover:bg-gray-600 group-hover:scale-110 shadow-sm'
@@ -925,7 +977,10 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                             </div>
                             <p className={`
                               text-xs truncate leading-tight
-                              ${isSubmenuActive ? 'text-[#e8d5f5]' : conditionalClasses({
+                              ${isSubmenuActive ? conditionalClasses({
+                                light: 'text-[#e8d5f5]',
+                                dark: 'text-purple-200'
+                              }) : conditionalClasses({
                                 light: 'text-gray-500 group-hover:text-[#8e4dbf]',
                                 dark: 'text-gray-400 group-hover:text-purple-400'
                               })}
@@ -986,14 +1041,20 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                               >
                                 {/* Active indicator bar */}
                                 {isSubActive && (
-                                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full shadow-sm"></div>
+                                  <div className={conditionalClasses({
+                                    light: "absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full shadow-sm",
+                                    dark: "absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gray-300 rounded-r-full shadow-sm"
+                                  })}></div>
                                 )}
 
                                 {/* Icon container */}
                                 <div className={`
                                   shrink-0 w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-all duration-200
                                   ${isSubActive
-                                    ? 'bg-white/20'
+                                    ? conditionalClasses({
+                                        light: 'bg-white/20',
+                                        dark: 'bg-gray-700/50'
+                                      })
                                     : conditionalClasses({
                                         light: 'bg-gray-100 group-hover:bg-[#e8d5f5] group-hover:scale-105',
                                         dark: 'bg-gray-700 group-hover:bg-gray-600 group-hover:scale-105'
@@ -1016,7 +1077,10 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                                   <span className="font-medium text-sm truncate">{subItem.label}</span>
                                   <p className={`
                                     text-xs truncate leading-tight
-                                    ${isSubActive ? 'text-[#e8d5f5]' : conditionalClasses({
+                                    ${isSubActive ? conditionalClasses({
+                                      light: 'text-[#e8d5f5]',
+                                      dark: 'text-purple-200'
+                                    }) : conditionalClasses({
                                       light: 'text-gray-400 group-hover:text-[#8e4dbf]',
                                       dark: 'text-gray-500 group-hover:text-purple-400'
                                     })}
@@ -1060,14 +1124,20 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                 >
                   {/* Active indicator bar */}
                   {isActive && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-white rounded-r-full shadow-lg"></div>
+                    <div className={conditionalClasses({
+                      light: "absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-white rounded-r-full shadow-lg",
+                      dark: "absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-gray-300 rounded-r-full shadow-lg"
+                    })}></div>
                   )}
 
                   {/* Icon container */}
                   <div className={`
                     shrink-0 w-11 h-11 rounded-xl flex items-center justify-center ${isCollapsed ? '' : 'mr-3'} transition-all duration-200
                     ${isActive
-                      ? 'bg-white/20 shadow-inner'
+                      ? conditionalClasses({
+                          light: 'bg-white/20 shadow-inner',
+                          dark: 'bg-gray-700/50 shadow-inner'
+                        })
                       : conditionalClasses({
                           light: 'bg-linear-to-br from-gray-100 to-gray-50 group-hover:from-[#f3ebf9] group-hover:to-[#e8d5f5] group-hover:scale-110 shadow-sm',
                           dark: 'bg-gray-700 group-hover:bg-gray-600 group-hover:scale-110 shadow-sm'
@@ -1105,13 +1175,16 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                           </span>
                         )}
                       </div>
-                      <p className={`
-                        text-xs truncate leading-tight
-                        ${isActive ? 'text-[#e8d5f5]' : conditionalClasses({
-                          light: 'text-gray-500 group-hover:text-[#8e4dbf]',
-                          dark: 'text-gray-400 group-hover:text-purple-400'
-                        })}
-                      `}>
+                       <p className={`
+                         text-xs truncate leading-tight
+                         ${isActive ? conditionalClasses({
+                           light: 'text-[#e8d5f5]',
+                           dark: 'text-purple-200'
+                         }) : conditionalClasses({
+                           light: 'text-gray-500 group-hover:text-[#8e4dbf]',
+                           dark: 'text-gray-400 group-hover:text-purple-400'
+                         })}
+                       `}>
                         {item.description}
                       </p>
                     </div>

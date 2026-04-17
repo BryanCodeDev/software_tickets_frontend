@@ -893,7 +893,7 @@ const Credentials = () => {
                 </h2>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="p-1.5 sm:p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                  className="p-1.5 sm:p-2 hover:bg-white/20 dark:hover:bg-gray-700/50 rounded-lg transition-all text-white"
                 >
                   <FaTimes className="w-4 h-4 sm:w-5 lg:w-6 lg:h-6" />
                 </button>
@@ -1140,7 +1140,7 @@ const Credentials = () => {
                 <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Nueva Carpeta</h2>
                 <button
                   onClick={() => setShowFolderModal(false)}
-                  className="p-1.5 sm:p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                  className="p-1.5 sm:p-2 hover:bg-white/20 dark:hover:bg-gray-700/50 rounded-lg transition-all text-white"
                 >
                   <FaTimes className="w-4 h-4 sm:w-5 lg:w-6 lg:h-6" />
                 </button>
@@ -1214,7 +1214,7 @@ const Credentials = () => {
                 <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Editar Carpeta</h2>
                 <button
                   onClick={() => setShowEditFolderModal(false)}
-                  className="p-1.5 sm:p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                  className="p-1.5 sm:p-2 hover:bg-white/20 dark:hover:bg-gray-700/50 rounded-lg transition-all text-white"
                 >
                   <FaTimes className="w-4 h-4 sm:w-5 lg:w-6 lg:h-6" />
                 </button>

@@ -193,7 +193,7 @@ const Settings = () => {
           {/* Security Section Header */}
           <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-4 sm:px-6 py-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+              <div className="p-2 bg-white/20 dark:bg-gray-700/50 backdrop-blur-sm rounded-lg">
                 <FaShieldAlt className="text-white text-lg" />
               </div>
               <div>
@@ -473,7 +473,7 @@ const Settings = () => {
               <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-6 py-5 rounded-t-2xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+                    <div className="p-2 bg-white/20 dark:bg-gray-700/50 backdrop-blur-sm rounded-lg">
                       <FaLock className="text-white text-lg" />
                     </div>
                     <h2 className="text-xl font-bold text-white">
@@ -482,7 +482,7 @@ const Settings = () => {
                   </div>
                   <button
                     onClick={() => setShowPasswordModal(false)}
-                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                    className="p-2 hover:bg-white/10 dark:hover:bg-gray-700/30 rounded-lg transition-colors"
                   >
                     <FaTimes className="w-5 h-5 text-white" />
                   </button>
@@ -643,7 +643,7 @@ const Settings = () => {
               <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-6 py-5 rounded-t-2xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+                    <div className="p-2 bg-white/20 dark:bg-gray-700/50 backdrop-blur-sm rounded-lg">
                       <FaShieldAlt className="text-white text-lg" />
                     </div>
                     <h2 className="text-xl font-bold text-white">
@@ -655,7 +655,7 @@ const Settings = () => {
                       setShow2FAModal(false);
                       setTwoFactorData(prev => ({ ...prev, secret: '', qrCode: '', token: '' }));
                     }}
-                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                    className="p-2 hover:bg-white/10 dark:hover:bg-gray-700/30 rounded-lg transition-colors"
                   >
                     <FaTimes className="w-5 h-5 text-white" />
                   </button>

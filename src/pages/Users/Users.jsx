@@ -794,7 +794,7 @@ const Users = () => {
                 </h2>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all text-white"
+                  className="p-2 hover:bg-white/20 dark:hover:bg-gray-700/50 rounded-lg transition-all text-white"
                 >
                   <FaTimes className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
                 </button>

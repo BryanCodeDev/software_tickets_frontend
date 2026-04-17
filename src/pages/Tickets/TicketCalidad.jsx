@@ -824,7 +824,7 @@ const TicketCalidad = () => {
                       setShowChangeRequestModal(false);
                       setChangeRequestTicket(null);
                     }}
-                    className="p-2 hover:bg-white/20 rounded-lg transition-all text-white shrink-0"
+                    className="p-2 hover:bg-white/20 dark:hover:bg-gray-700/50 rounded-lg transition-all text-white shrink-0"
                   >
                     <FaTimes className="w-5 h-5 lg:w-6 lg:h-6" />
                   </button>

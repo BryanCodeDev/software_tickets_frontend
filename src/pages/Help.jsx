@@ -797,7 +797,7 @@ const Help = () => {
                   dark: 'bg-linear-to-r from-[#4a1f6b] to-[#6b3590] rounded-xl shadow-lg p-3 xs:p-4 sm:p-6 mb-3 xs:mb-4 sm:mb-6'
                 })}>
                   <div className="flex flex-col sm:flex-row items-center gap-2 xs:gap-3 sm:gap-4">
-                    <div className="p-1.5 xs:p-2 sm:p-3 bg-white/20 backdrop-blur-sm rounded-xl shrink-0">
+                     <div className="p-1.5 xs:p-2 sm:p-3 bg-white/20 dark:bg-gray-700/50 backdrop-blur-sm rounded-xl shrink-0">
                       <FaBook className="text-white text-lg xs:text-xl sm:text-2xl" />
                     </div>
                     <div className="text-center sm:text-left">
