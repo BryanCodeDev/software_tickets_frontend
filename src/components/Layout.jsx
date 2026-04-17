@@ -7,54 +7,54 @@ const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isDesktop, setIsDesktop] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 1024;
-    }
+    if (typeof window !== 'undefined') return window.innerWidth >= 1024;
     return true;
   });
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth >= 1024);
-    };
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Si pasa a móvil, forzar sidebar expandido
+  // Reset collapse state on mobile
   useEffect(() => {
-    if (!isDesktop && sidebarCollapsed) {
-      setSidebarCollapsed(false);
-    }
+    if (!isDesktop && sidebarCollapsed) setSidebarCollapsed(false);
   }, [isDesktop, sidebarCollapsed]);
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
+  // Prevent body scroll when mobile sidebar is open
+  useEffect(() => {
+    if (!isDesktop && sidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [sidebarOpen, isDesktop]);
 
-  const toggleSidebarCollapse = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
+  const toggleSidebar = () => setSidebarOpen(prev => !prev);
+  const toggleSidebarCollapse = () => setSidebarCollapsed(prev => !prev);
 
   return (
-    <div className="flex">
-      <Sidebar 
-        isOpen={sidebarOpen} 
+    <div className="flex min-h-screen">
+      <Sidebar
+        isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
         isCollapsed={sidebarCollapsed}
         toggleSidebarCollapse={toggleSidebarCollapse}
       />
-      <div className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-80'}`}>
+
+      {/* Main content area */}
+      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-18' : 'lg:ml-70'}`}>
         <Navbar toggleSidebar={toggleSidebar} />
-        <main className="p-0 sm:p-1 lg:p-2">
+        <main className="flex-1 p-3 sm:p-4 lg:p-5">
           {children}
         </main>
       </div>
+
       <NotificationSystem />
     </div>
   );
 };
 
 export default Layout;
-
-

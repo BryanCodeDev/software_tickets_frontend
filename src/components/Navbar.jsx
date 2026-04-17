@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext.jsx';
 import { useThemeClasses } from '../hooks/useThemeClasses';
@@ -12,73 +12,24 @@ const Navbar = ({ toggleSidebar }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { conditionalClasses } = useThemeClasses();
-
-  // Configuración de estilos con soporte para tema oscuro
-  const navbarConfig = {
-    normal: {
-      light: 'bg-gradient-to-br from-[#662d91] via-[#7a3da8] to-[#8e4dbf] shadow-lg',
-      dark: 'bg-gradient-to-br from-gray-800 via-gray-900 to-purple-900 shadow-lg'
-    },
-    scrolled: {
-      light: 'bg-white shadow-sm',
-      dark: 'bg-gray-900 shadow-sm'
-    }
-  };
-
-  const buttonConfig = {
-    light: 'text-white/80 hover:text-white hover:bg-white/20 focus:ring-white',
-    dark: 'text-gray-300 hover:text-white hover:bg-gray-700/50 focus:ring-gray-400'
-  };
-
-  const scrolledButtonConfig = {
-    light: 'text-gray-600 hover:text-[#662d91] hover:bg-[#f3ebf9] focus:ring-[#662d91]',
-    dark: 'text-gray-300 hover:text-purple-400 hover:bg-gray-800 focus:ring-purple-500'
-  };
-
-  const textConfig = {
-    light: 'text-white',
-    dark: 'text-gray-100'
-  };
-
-  const scrolledTextConfig = {
-    light: 'text-gray-900',
-    dark: 'text-gray-100'
-  };
-
-  const subtextConfig = {
-    light: 'text-[#e8d5f5]',
-    dark: 'text-gray-400'
-  };
-
-  const scrolledSubtextConfig = {
-    light: 'text-gray-500',
-    dark: 'text-gray-400'
-  };
-
-  const menuConfig = {
-    light: 'bg-white border-gray-200',
-    dark: 'bg-gray-800 border-gray-700'
-  };
-
-  const menuItemConfig = {
-    light: 'text-gray-700 hover:bg-gray-50 hover:text-[#662d91]',
-    dark: 'text-gray-300 hover:bg-gray-700 hover:text-purple-400'
-  };
+  const menuRef = useRef(null);
 
   const getRoleBadge = (roleName) => {
     const badges = {
-      'Administrador': { color: 'from-red-500 to-pink-600', icon: <FaCrown />, text: 'Admin', iconColor: 'text-red-500' },
-      'Coordinadora Administrativa': { color: 'from-orange-500 to-red-600', icon: <FaUserShield />, text: 'Coord', iconColor: 'text-orange-500' },
-      'Técnico': { color: 'from-blue-500 to-cyan-600', icon: <FaWrench />, text: 'Tech', iconColor: 'text-blue-500' },
-      'Jefe': { color: 'from-yellow-500 to-orange-600', icon: <FaUserCog />, text: 'Jefe', iconColor: 'text-yellow-500' },
-      'Compras': { color: 'from-teal-500 to-cyan-600', icon: <FaUser />, text: 'Compras', iconColor: 'text-teal-500' },
-      'Calidad': { color: 'from-[#662d91] to-[#8e4dbf]', icon: <FaShieldAlt />, text: 'Quality', iconColor: 'text-[#662d91]' },
-      'Empleado': { color: 'from-green-500 to-emerald-600', icon: <FaUser />, text: 'User', iconColor: 'text-green-500' }
+      'Administrador':            { gradient: 'from-red-500 to-rose-600',     icon: <FaCrown />,      label: 'Admin',    iconColor: 'text-red-400' },
+      'Coordinadora Administrativa': { gradient: 'from-orange-500 to-red-500', icon: <FaUserShield />, label: 'Coord',    iconColor: 'text-orange-400' },
+      'Técnico':                  { gradient: 'from-sky-500 to-blue-600',      icon: <FaWrench />,     label: 'Técnico',  iconColor: 'text-sky-400' },
+      'Jefe':                     { gradient: 'from-amber-500 to-orange-500',  icon: <FaUserCog />,    label: 'Jefe',     iconColor: 'text-amber-400' },
+      'Compras':                  { gradient: 'from-teal-500 to-emerald-600',  icon: <FaUser />,       label: 'Compras',  iconColor: 'text-teal-400' },
+      'Calidad':                  { gradient: 'from-[#662d91] to-[#8e4dbf]',  icon: <FaShieldAlt />,  label: 'Calidad',  iconColor: 'text-purple-400' },
+      'Empleado':                 { gradient: 'from-emerald-500 to-green-600', icon: <FaUser />,       label: 'Empleado', iconColor: 'text-emerald-400' },
     };
     return badges[roleName] || badges['Empleado'];
   };
 
   const roleBadge = getRoleBadge(user?.role?.name);
+  const userInitial = (user?.name || user?.username || 'U').charAt(0).toUpperCase();
+  const userName = user?.name || user?.username || 'Usuario';
 
   const handleLogout = () => {
     logout();
@@ -86,134 +37,245 @@ const Navbar = ({ toggleSidebar }) => {
   };
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Close menu on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowUserMenu(false);
+      }
+    };
+    if (showUserMenu) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showUserMenu]);
 
   if (!user) return null;
 
-  const navbarClasses = conditionalClasses(isScrolled ? navbarConfig.scrolled : navbarConfig.normal);
-  const buttonClasses = conditionalClasses(isScrolled ? scrolledButtonConfig : buttonConfig);
-  const textClasses = conditionalClasses(isScrolled ? scrolledTextConfig : textConfig);
-  const subtextClasses = conditionalClasses(isScrolled ? scrolledSubtextConfig : subtextConfig);
+  // ─── Style tokens ───────────────────────────────────────────────────────────
+   const navBg = isScrolled
+     ? conditionalClasses({ light: 'bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm', dark: 'bg-gray-900/95 backdrop-blur-md border-b border-gray-800 shadow-sm' })
+     : conditionalClasses({ light: 'bg-linear-to-r from-[#4a1f6e] via-[#662d91] to-[#7c3aad] shadow-lg', dark: 'bg-linear-to-r from-gray-950 via-[#2d1254] to-gray-950 shadow-lg border-b border-purple-900/30' });
+
+  const iconBtn = isScrolled
+    ? conditionalClasses({ light: 'text-gray-500 hover:text-[#662d91] hover:bg-[#f5eeff]', dark: 'text-gray-400 hover:text-purple-400 hover:bg-gray-800' })
+    : 'text-white/75 hover:text-white hover:bg-white/15';
+
+  const primaryText = isScrolled
+    ? conditionalClasses({ light: 'text-gray-900', dark: 'text-gray-100' })
+    : 'text-white';
+
+  const secondaryText = isScrolled
+    ? conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-500' })
+    : 'text-white/55';
+
+  const chevronColor = isScrolled
+    ? conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-600' })
+    : 'text-white/50';
+
+  const dropdownBg = conditionalClasses({ light: 'bg-white border border-gray-100 shadow-2xl shadow-gray-200/80', dark: 'bg-gray-900 border border-gray-800 shadow-2xl shadow-black/50' });
+  const dividerColor = conditionalClasses({ light: 'border-gray-100', dark: 'border-gray-800' });
+  const menuItem = conditionalClasses({ light: 'text-gray-600 hover:text-[#662d91] hover:bg-[#f8f3ff]', dark: 'text-gray-400 hover:text-purple-300 hover:bg-gray-800' });
+  const headerText = conditionalClasses({ light: 'text-gray-900', dark: 'text-gray-100' });
+  const subText = conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-500' });
 
   return (
-    <nav className={`sticky top-0 z-30 transition-all duration-300 ${navbarClasses}`}>
-      <div className="px-2 sm:px-4 lg:px-8">
+    <nav className={`sticky top-0 z-30 transition-all duration-300 ${navBg}`}>
+      <div className="px-3 sm:px-5 lg:px-8">
         <div className="flex items-center justify-between h-14 sm:h-16">
-          {/* Left side - Menu button and Title for mobile */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
+
+          {/* ── Left: sidebar toggle + mobile brand ── */}
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={toggleSidebar}
-              className={`lg:hidden p-1.5 sm:p-2 rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${buttonClasses}`}
+              aria-label="Abrir menú"
+              className={`lg:hidden p-2 rounded-xl transition-all duration-200 focus:outline-none ${iconBtn}`}
             >
-              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
 
-            <div className="lg:hidden flex items-center">
-              <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mr-2 ${isScrolled ? 'bg-white shadow-sm' : 'bg-white'}`}>
-                <span className="text-transparent bg-clip-text bg-linear-to-br from-[#662d91] to-[#7a3da8] font-bold text-xs sm:text-sm">D</span>
+            {/* Mobile brand mark */}
+            <div className="lg:hidden flex items-center gap-2.5">
+              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shadow-sm ${isScrolled ? 'bg-[#662d91]' : 'bg-white/20 border border-white/25'}`}>
+                <svg className={`w-4 h-4 ${isScrolled ? 'text-white' : 'text-white'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                </svg>
               </div>
-              <div className="min-w-0">
-                <h1 className={`text-base sm:text-lg font-bold truncate ${textClasses}`}>Duvy Class</h1>
-                <p className={`text-xs truncate ${subtextClasses}`}>Sistema IT</p>
+              <div>
+                <p className={`text-sm font-bold leading-none ${primaryText}`}>DuvyClass</p>
+                <p className={`text-[10px] leading-none mt-0.5 tracking-wide ${secondaryText}`}>Sistema IT</p>
               </div>
             </div>
           </div>
 
-          {/* Right side - Theme Toggle and User menu */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* ── Right: notifications + theme + user ── */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+
             {/* Notifications */}
-            <NotificationsPanel />
-            
-            {/* Theme Toggle */}
-            <ThemeToggle size="sm" variant="button" className="hidden sm:block" />
-            
-            {/* User Menu */}
-            <div className="relative">
+            <div className={`rounded-xl transition-all duration-200 ${iconBtn}`}>
+              <NotificationsPanel />
+            </div>
+
+            {/* Theme toggle */}
+            <div className="hidden sm:block">
+              <ThemeToggle size="sm" variant="button" />
+            </div>
+
+            {/* Separator */}
+            <div className={`hidden sm:block h-6 w-px mx-1 ${isScrolled
+              ? conditionalClasses({ light: 'bg-gray-200', dark: 'bg-gray-700' })
+              : 'bg-white/20'}`}
+            />
+
+            {/* User menu trigger */}
+            <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className={`flex items-center space-x-2 sm:space-x-3 p-1.5 rounded-xl transition-all duration-200 ${
-                  isScrolled ? 'hover:bg-gray-50 dark:hover:bg-gray-800' : 'hover:bg-white/20'
+                aria-label="Menú de usuario"
+                aria-expanded={showUserMenu}
+                className={`flex items-center gap-2 sm:gap-2.5 px-1.5 sm:px-2 py-1.5 rounded-xl transition-all duration-200 focus:outline-none group ${
+                  isScrolled
+                    ? conditionalClasses({ light: 'hover:bg-gray-50', dark: 'hover:bg-gray-800' })
+                    : 'hover:bg-white/10'
                 }`}
               >
-                <div className="hidden sm:block text-right">
-                  <div className="flex items-center gap-2">
-                    <p className={`text-sm font-semibold truncate max-w-20 ${textClasses}`}>{user?.name || user?.username || 'Usuario'}</p>
-                    <span className={`shrink-0 text-base ${roleBadge.iconColor}`}>{roleBadge.icon}</span>
+                {/* Name + role (desktop) */}
+                 <div className="hidden sm:block text-right">
+                   <div className="flex items-center justify-end gap-1.5">
+                     <p className={`text-sm font-semibold leading-tight max-w-25 truncate ${primaryText}`}>
+                       {userName}
+                     </p>
+                    <span className={`text-xs ${roleBadge.iconColor}`}>{roleBadge.icon}</span>
                   </div>
-                  <p className={`text-xs truncate max-w-24 ${subtextClasses}`}>{user?.role?.name || 'Rol'}</p>
+                   <p className={`text-xs leading-tight max-w-27.5 truncate ${secondaryText}`}>
+                     {user?.role?.name || 'Sin rol'}
+                   </p>
                 </div>
-                <div className={`w-8 h-8 sm:w-10 sm:h-10 bg-linear-to-br ${roleBadge.color} rounded-xl flex items-center justify-center shadow-md ring-2 ${isScrolled ? 'ring-white' : 'ring-white'}`}>
-                  <span className="text-white text-xs sm:text-sm font-bold">
-                    {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
-                  </span>
+
+                {/* Avatar */}
+                <div className={`relative w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br ${roleBadge.gradient} rounded-xl flex items-center justify-center shadow-md ring-2 ring-white/30 transition-transform duration-150 group-hover:scale-105`}>
+                  <span className="text-white text-xs sm:text-sm font-bold">{userInitial}</span>
+                  {/* Online indicator */}
+                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white dark:border-gray-900" />
                 </div>
-                <svg className={`hidden sm:block w-4 h-4 ${isScrolled ? 'text-gray-400' : 'text-white/80'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+
+                {/* Chevron */}
+                <svg
+                  className={`hidden sm:block w-3.5 h-3.5 transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''} ${chevronColor}`}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
-              {/* Dropdown Menu */}
+              {/* ── Dropdown menu ── */}
               {showUserMenu && (
-                <div className={`absolute right-0 mt-2 w-64 sm:w-72 rounded-xl shadow-lg border py-2 z-50 ${conditionalClasses(menuConfig)}`}>
-                  <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                    <p className={`text-sm font-semibold truncate ${conditionalClasses({ light: 'text-gray-900', dark: 'text-gray-100' })}`}>{user?.name || user?.username || 'Usuario'}</p>
-                    <p className={`text-xs truncate ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>{user?.email || 'email@ejemplo.com'}</p>
-                    {user?.department && (
-                      <p className={`text-xs truncate ${conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-500' })}`}>{user?.department}</p>
-                    )}
-                    <span className="inline-block mt-2 px-2 py-1 bg-[#f3ebf9] text-[#662d91] dark:bg-purple-900 dark:text-purple-300 text-xs font-medium rounded-md">
-                      {user?.role?.name || 'Rol'}
-                    </span>
-                  </div>
-                  
-                  <div className="py-2">
-                    <Link
-                      to="/profile"
-                      className={`flex items-center px-4 py-2 text-sm transition-colors ${conditionalClasses(menuItemConfig)}`}
-                    >
-                      <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                      Mi Perfil
-                    </Link>
-                    <Link
-                      to="/settings"
-                      className={`flex items-center px-4 py-2 text-sm transition-colors ${conditionalClasses(menuItemConfig)}`}
-                    >
-                      <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      Configuración
-                    </Link>
-                    <Link
-                      to="/help"
-                      className={`flex items-center px-4 py-2 text-sm transition-colors ${conditionalClasses(menuItemConfig)}`}
-                    >
-                      <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      Ayuda
-                    </Link>
+                <div className={`absolute right-0 mt-2 w-64 sm:w-72 rounded-2xl overflow-hidden z-50 ${dropdownBg}`}
+                  style={{ animation: 'fadeDown 0.15s ease-out' }}
+                >
+                  <style>{`
+                    @keyframes fadeDown {
+                      from { opacity: 0; transform: translateY(-6px); }
+                      to   { opacity: 1; transform: translateY(0); }
+                    }
+                  `}</style>
+
+                  {/* User header */}
+                  <div className="px-4 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-11 h-11 bg-gradient-to-br ${roleBadge.gradient} rounded-xl flex items-center justify-center shadow-md shrink-0`}>
+                        <span className="text-white font-bold text-base">{userInitial}</span>
+                      </div>
+                      <div className="min-w-0">
+                        <p className={`text-sm font-bold truncate ${headerText}`}>{userName}</p>
+                        <p className={`text-xs truncate ${subText}`}>{user?.email || '—'}</p>
+                        {user?.department && (
+                          <p className={`text-xs truncate ${subText}`}>{user.department}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="mt-3">
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#f3ebff] text-[#662d91] dark:bg-purple-900/40 dark:text-purple-300`}>
+                        <span className="text-[10px]">{roleBadge.icon}</span>
+                        {user?.role?.name || 'Sin rol'}
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="border-t border-gray-200 dark:border-gray-700 py-2">
+                  <div className={`border-t ${dividerColor}`} />
+
+                  {/* Navigation links */}
+                  <div className="py-1.5">
+                    {[
+                      {
+                        to: '/profile',
+                        label: 'Mi perfil',
+                        desc: 'Información personal y cuenta',
+                        icon: (
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        )
+                      },
+                      {
+                        to: '/settings',
+                        label: 'Configuración',
+                        desc: 'Preferencias y seguridad',
+                        icon: (
+                          <>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </>
+                        )
+                      },
+                      {
+                        to: '/help',
+                        label: 'Centro de ayuda',
+                        desc: 'Guías, manuales y soporte',
+                        icon: (
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        )
+                      }
+                    ].map(({ to, label, desc, icon }) => (
+                      <Link
+                        key={to}
+                        to={to}
+                        onClick={() => setShowUserMenu(false)}
+                        className={`flex items-center gap-3 px-4 py-2.5 transition-colors duration-150 ${menuItem}`}
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${conditionalClasses({ light: 'bg-gray-100', dark: 'bg-gray-800' })}`}>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            {icon}
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium leading-tight">{label}</p>
+                          <p className={`text-xs leading-tight ${subText}`}>{desc}</p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+
+                  <div className={`border-t ${dividerColor}`} />
+
+                  {/* Logout */}
+                  <div className="py-1.5">
                     <button
                       onClick={handleLogout}
-                      className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                      className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors duration-150"
                     >
-                      <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                      </svg>
-                      Cerrar Sesión
+                      <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/40 flex items-center justify-center shrink-0">
+                        <svg className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="font-medium leading-tight">Cerrar sesión</p>
+                        <p className="text-xs text-red-400/70 leading-tight">Finalizar sesión actual</p>
+                      </div>
                     </button>
                   </div>
                 </div>
@@ -222,16 +284,6 @@ const Navbar = ({ toggleSidebar }) => {
           </div>
         </div>
       </div>
-
-      {/* Close dropdown when clicking outside */}
-      {showUserMenu && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => {
-            setShowUserMenu(false);
-          }}
-        />
-      )}
     </nav>
   );
 };

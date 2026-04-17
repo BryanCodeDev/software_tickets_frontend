@@ -1,1306 +1,512 @@
 import React, { useContext, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaCrown, FaWrench, FaUser, FaShieldAlt, FaClipboardList, FaUserShield, FaUserCog, FaDumpster, FaChartLine, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import {
+  FaCrown, FaWrench, FaUser, FaShieldAlt, FaClipboardList,
+  FaUserShield, FaUserCog, FaDumpster, FaChartLine,
+  FaChevronLeft, FaChevronRight
+} from 'react-icons/fa';
 import AuthContext from '../context/AuthContext.jsx';
 import { useThemeClasses } from '../hooks/useThemeClasses';
 
+// ─── Icon helpers ─────────────────────────────────────────────────────────────
+const IconHome = () => (
+  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+  </svg>
+);
+const IconTicket = () => (
+  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+  </svg>
+);
+const IconCart = () => (
+  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+  </svg>
+);
+const IconBox = () => (
+  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+  </svg>
+);
+const IconLock = () => (
+  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+  </svg>
+);
+const IconUsers = () => (
+  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+  </svg>
+);
+const IconShield = () => (
+  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+  </svg>
+);
+const IconPhone = () => (
+  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+  </svg>
+);
+const IconTablet = () => (
+  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+  </svg>
+);
+const IconDoc = () => (
+  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+  </svg>
+);
+const IconDocAlt = () => (
+  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+  </svg>
+);
+const IconComputer = () => (
+  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+  </svg>
+);
+const IconClose = () => (
+  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+  </svg>
+);
+
+// ─── Menu definitions ─────────────────────────────────────────────────────────
+const inventarioSubItems = [
+  { path: '/inventory',        icon: <IconComputer />, label: 'Computadores',          description: 'Equipos de cómputo' },
+  { path: '/corporate-phones', icon: <IconPhone />,    label: 'Celulares Corporativos', description: 'Teléfonos corporativos' },
+  { path: '/tablets',          icon: <IconTablet />,   label: 'Tablets',               description: 'Tablets corporativas' },
+  { path: '/pdas',             icon: <IconTablet />,   label: 'PDAs',                  description: 'PDAs corporativas' },
+  { path: '/actas-entrega',    icon: <IconDocAlt />,   label: 'Actas de Entrega',      description: 'Entrega y devolución' },
+];
+
+const calidadSubItemsFull = [
+  { path: '/quality-dashboard',        icon: <FaChartLine className="w-[17px] h-[17px]" />, label: 'Dashboard Calidad',     description: 'Vista general de calidad' },
+  { path: '/documents',                icon: <IconDoc />,                                    label: 'Documentos',            description: 'Archivos oficiales' },
+  { path: '/document-change-requests', icon: <IconDocAlt />,                                 label: 'Solicitudes de Cambio', description: 'Workflow documental' },
+  { path: '/ticket_calidad',           icon: <FaClipboardList className="w-[17px] h-[17px]" />, label: 'Ticket Calidad',    description: 'Reportes de calidad' },
+];
+
+const calidadSubItemsBasic = [
+  { path: '/documents',                icon: <IconDoc />,   label: 'Documentos',            description: 'Archivos oficiales' },
+  { path: '/document-change-requests', icon: <IconDocAlt />, label: 'Solicitudes de Cambio', description: 'Workflow documental' },
+  { path: '/ticket_calidad',           icon: <FaClipboardList className="w-[17px] h-[17px]" />, label: 'Ticket Calidad', description: 'Reportes de calidad' },
+];
+
+const buildMenuItems = (role) => {
+  const base = [{ path: '/dashboard', icon: <IconHome />, label: 'Panel Principal', description: 'Vista general del sistema' }];
+
+  const ticketItem    = { path: '/tickets',           icon: <IconTicket />, label: 'Tickets',                description: 'Gestión de incidencias IT' };
+  const purchaseItem  = { path: '/purchase-requests', icon: <IconCart />,   label: 'Solicitudes de Compra',  description: 'Periféricos y equipos' };
+  const inventario    = { type: 'submenu', label: 'Inventario', icon: <IconBox />, description: 'Control de activos tecnológicos', subItems: inventarioSubItems };
+  const calidadFull   = { type: 'submenu', label: 'Calidad',    icon: <FaShieldAlt className="w-[18px] h-[18px]" />, description: 'ISO 9001 y gestión documental', subItems: calidadSubItemsFull };
+  const calidadBasic  = { type: 'submenu', label: 'Calidad',    icon: <FaShieldAlt className="w-[18px] h-[18px]" />, description: 'ISO 9001 y gestión documental', subItems: calidadSubItemsBasic };
+  const credItem      = { path: '/credentials', icon: <IconLock />,   label: 'Credenciales',   description: 'Gestión de accesos seguros' };
+  const usersItem     = { path: '/users',        icon: <IconUsers />,  label: 'Usuarios',       description: 'Administración de usuarios' };
+  const rolesItem     = { path: '/roles',         icon: <IconShield />, label: 'Roles',          description: 'Permisos y control de acceso' };
+  const trashItem     = { path: '/trash',         icon: <FaDumpster className="w-[18px] h-[18px]" />, label: 'Papelera', description: 'Elementos eliminados' };
+
+  if (role === 'Administrador') return [...base, ticketItem, purchaseItem, inventario, calidadFull, credItem, usersItem, rolesItem, trashItem];
+  if (role === 'Técnico')       return [...base, ticketItem, purchaseItem, inventario, calidadBasic, credItem, trashItem];
+  if (role === 'Empleado')      return [...base, ticketItem, purchaseItem, inventario, calidadBasic];
+  if (role === 'Jefe')          return [...base, ticketItem, purchaseItem, calidadBasic];
+  if (role === 'Compras')       return [...base, ticketItem, purchaseItem, calidadBasic];
+  if (role === 'Calidad')       return [...base, ticketItem, calidadFull];
+  if (role === 'Coordinadora Administrativa') return [...base, ticketItem, purchaseItem, inventario, calidadFull, credItem, usersItem, rolesItem, trashItem];
+  return base;
+};
+
+// ─── Role badge config ────────────────────────────────────────────────────────
+const roleBadges = {
+  'Administrador':               { gradient: 'from-red-500 to-rose-600',      icon: <FaCrown />,      iconColor: 'text-red-400' },
+  'Coordinadora Administrativa': { gradient: 'from-orange-500 to-red-500',    icon: <FaUserShield />, iconColor: 'text-orange-400' },
+  'Técnico':                     { gradient: 'from-sky-500 to-blue-600',       icon: <FaWrench />,     iconColor: 'text-sky-400' },
+  'Jefe':                        { gradient: 'from-amber-500 to-orange-500',   icon: <FaUserCog />,    iconColor: 'text-amber-400' },
+  'Compras':                     { gradient: 'from-teal-500 to-emerald-600',   icon: <FaUser />,       iconColor: 'text-teal-400' },
+  'Calidad':                     { gradient: 'from-[#662d91] to-[#8e4dbf]',   icon: <FaShieldAlt />,  iconColor: 'text-purple-400' },
+  'Empleado':                    { gradient: 'from-emerald-500 to-green-600',  icon: <FaUser />,       iconColor: 'text-emerald-400' },
+};
+
+// ─── Component ────────────────────────────────────────────────────────────────
 const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) => {
   const { user } = useContext(AuthContext);
   const location = useLocation();
-  const [isCalidadOpen, setIsCalidadOpen] = useState(false);
-  const [isInventarioOpen, setIsInventarioOpen] = useState(false);
+  const [openSubmenus, setOpenSubmenus] = useState({});
   const { conditionalClasses } = useThemeClasses();
 
-  const menuItems = [];
-
-  // Common items for all roles
-  menuItems.push({
-    path: '/dashboard',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-      </svg>
-    ),
-    label: 'Panel Principal',
-    description: 'Vista general del sistema'
-  });
-
-  // Role-based menu items
   const role = user?.role?.name;
+  const menuItems = buildMenuItems(role);
+  const badge = roleBadges[role] || roleBadges['Empleado'];
+  const userInitial = (user?.name || user?.username || 'U').charAt(0).toUpperCase();
+  const userName = user?.name || user?.username || 'Usuario';
 
-  if (role === 'Administrador') {
-    menuItems.push(
-      {
-        path: '/tickets',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        ),
-        label: 'Tickets',
-        description: 'Gestión de incidencias IT'
-      },
-      {
-        path: '/purchase-requests',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-        ),
-        label: 'Solicitudes de Compra',
-        description: 'Periféricos y electrodomésticos'
-      },
-      {
-        type: 'submenu',
-        label: 'Inventario',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-        ),
-        description: 'Control de activos tecnológicos',
-        subItems: [
-          {
-            path: '/inventory',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-              </svg>
-            ),
-            label: 'Computadores',
-            description: 'Inventario de equipos de cómputo'
-          },
-          {
-            path: '/corporate-phones',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-            ),
-            label: 'Celulares Corporativos',
-            description: 'Gestión de teléfonos corporativos'
-          },
-          {
-            path: '/tablets',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            ),
-            label: 'Tablets',
-            description: 'Inventario de tablets corporativas'
-          },
-          {
-            path: '/pdas',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            ),
-            label: 'PDAs',
-            description: 'Inventario de PDAs corporativas'
-          },
-          {
-            path: '/actas-entrega',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            ),
-            label: 'Actas de Entrega',
-            description: 'Documentos de entrega y devolución'
-          }
-        ]
-      },
-      {
-        type: 'submenu',
-        label: 'Calidad',
-        icon: <FaShieldAlt className="w-5 h-5" />,
-        description: 'Gestión de calidad y documentación',
-        subItems: [
-          {
-            path: '/quality-dashboard',
-            icon: <FaChartLine className="w-5 h-5" />,
-            label: 'Dashboard Calidad',
-            description: 'Vista general de calidad'
-          },
-          {
-            path: '/documents',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            ),
-            label: 'Documentos',
-            description: 'Archivos oficiales y políticas'
-          },
-          {
-            path: '/document-change-requests',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            ),
-            label: 'Solicitudes de Cambio',
-            description: 'Workflow de cambios documentales'
-          },
-          {
-            path: '/ticket_calidad',
-            icon: <FaClipboardList className="w-5 h-5" />,
-            label: 'Ticket Calidad',
-            description: 'Reportes de calidad y cambios documentales'
-          }
-        ]
-      },
-      {
-        path: '/credentials',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
-        ),
-        label: 'Credenciales',
-        description: 'Gestión segura de accesos'
-      },
-      {
-        path: '/users',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-          </svg>
-        ),
-        label: 'Usuarios',
-        description: 'Administración de usuarios'
-      },
-      {
-        path: '/roles',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-          </svg>
-        ),
-        label: 'Roles',
-        description: 'Gestión de roles y permisos'
-      },
-      {
-        path: '/trash',
-        icon: (
-          <FaDumpster className="w-5 h-5" />
-        ),
-        label: 'Papelera',
-        description: 'Elementos eliminados del sistema'
-      }
-    );
-  } else if (role === 'Técnico') {
-    menuItems.push(
-      {
-        path: '/tickets',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        ),
-        label: 'Tickets',
-        description: 'Gestión de incidencias IT'
-      },
-      {
-        path: '/purchase-requests',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-        ),
-        label: 'Solicitudes de Compra',
-        description: 'Periféricos y electrodomésticos'
-      },
-      {
-        type: 'submenu',
-        label: 'Inventario',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-        ),
-        description: 'Control de activos tecnológicos',
-        subItems: [
-          {
-            path: '/inventory',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-              </svg>
-            ),
-            label: 'Computadores',
-            description: 'Inventario de equipos de cómputo'
-          },
-          {
-            path: '/corporate-phones',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-            ),
-            label: 'Celulares Corporativos',
-            description: 'Gestión de teléfonos corporativos'
-          },
-          {
-            path: '/tablets',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            ),
-            label: 'Tablets',
-            description: 'Inventario de tablets corporativas'
-          },
-          {
-            path: '/pdas',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            ),
-            label: 'PDAs',
-            description: 'Inventario de PDAs corporativas'
-          },
-          {
-            path: '/actas-entrega',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            ),
-            label: 'Actas de Entrega',
-            description: 'Documentos de entrega y devolución'
-          }
-        ]
-      },
-      {
-        type: 'submenu',
-        label: 'Calidad',
-        icon: <FaShieldAlt className="w-5 h-5" />,
-        description: 'Gestión de calidad y documentación',
-        subItems: [
-          {
-            path: '/documents',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            ),
-            label: 'Documentos',
-            description: 'Documentación técnica'
-          },
-          {
-            path: '/document-change-requests',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            ),
-            label: 'Solicitudes de Cambio',
-            description: 'Workflow de cambios documentales'
-          },
-          {
-            path: '/ticket_calidad',
-            icon: <FaClipboardList className="w-5 h-5" />,
-            label: 'Ticket Calidad',
-            description: 'Reportes de calidad y cambios documentales'
-          }
-        ]
-      },
-      {
-        path: '/credentials',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
-        ),
-        label: 'Credenciales',
-        description: 'Gestión de accesos seguros'
-      },
-      {
-        path: '/trash',
-        icon: (
-          <FaDumpster className="w-5 h-5" />
-        ),
-        label: 'Papelera',
-        description: 'Elementos eliminados del sistema'
-      }
-    );
-  } else if (role === 'Empleado') {
-    menuItems.push(
-      {
-        path: '/tickets',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        ),
-        label: 'Tickets',
-        description: 'Crear y seguir solicitudes'
-      },
-      {
-        path: '/purchase-requests',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-        ),
-        label: 'Solicitudes de Compra',
-        description: 'Periféricos y electrodomésticos'
-      },
-      {
-        type: 'submenu',
-        label: 'Calidad',
-        icon: <FaShieldAlt className="w-5 h-5" />,
-        description: 'Gestión de calidad y documentación',
-        subItems: [
-          {
-            path: '/documents',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            ),
-            label: 'Documentos',
-            description: 'Documentos públicos'
-          },
-          {
-            path: '/document-change-requests',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            ),
-            label: 'Solicitudes de Cambio',
-            description: 'Workflow de cambios documentales'
-          },
-          {
-            path: '/ticket_calidad',
-            icon: <FaClipboardList className="w-5 h-5" />,
-            label: 'Ticket Calidad',
-            description: 'Reportes de calidad y cambios documentales'
-          }
-        ]
-      }
-    );
-  } else if (role === 'Calidad') {
-    menuItems.push(
-      {
-        path: '/tickets',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        ),
-        label: 'Tickets',
-        description: 'Gestión de incidencias IT'
-      },
-      {
-        path: '/purchase-requests',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-        ),
-        label: 'Solicitudes de Compra',
-        description: 'Periféricos y electrodomésticos'
-      },
-      {
-        type: 'submenu',
-        label: 'Calidad',
-        icon: <FaShieldAlt className="w-5 h-5" />,
-        description: 'Gestión de calidad y documentación',
-        subItems: [
-          {
-            path: '/documents',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            ),
-            label: 'Documentos',
-            description: 'Gestión de documentos de calidad'
-          },
-          {
-            path: '/document-change-requests',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            ),
-            label: 'Solicitudes de Cambio',
-            description: 'Workflow de cambios documentales'
-          },
-          {
-            path: '/ticket_calidad',
-            icon: <FaClipboardList className="w-5 h-5" />,
-            label: 'Ticket Calidad',
-            description: 'Reportes de calidad y cambios documentales'
-          }
-        ]
-      }
-    );
-  } else if (role === 'Coordinadora Administrativa') {
-    menuItems.push(
-      {
-        path: '/tickets',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        ),
-        label: 'Tickets',
-        description: 'Gestión de incidencias IT'
-      },
-      {
-        path: '/purchase-requests',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-        ),
-        label: 'Solicitudes de Compra',
-        description: 'Periféricos y electrodomésticos'
-      },
-      {
-        type: 'submenu',
-        label: 'Inventario',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-        ),
-        description: 'Control de activos tecnológicos',
-        subItems: [
-          {
-            path: '/inventory',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-              </svg>
-            ),
-            label: 'Computadores',
-            description: 'Inventario de equipos de cómputo'
-          },
-          {
-            path: '/corporate-phones',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-            ),
-            label: 'Celulares Corporativos',
-            description: 'Gestión de teléfonos corporativos'
-          },
-          {
-            path: '/tablets',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            ),
-            label: 'Tablets',
-            description: 'Inventario de tablets corporativas'
-          },
-          {
-            path: '/pdas',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            ),
-            label: 'PDAs',
-            description: 'Inventario de PDAs corporativas'
-          },
-          {
-            path: '/actas-entrega',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            ),
-            label: 'Actas de Entrega',
-            description: 'Documentos de entrega y devolución'
-          }
-        ]
-      },
-      {
-        type: 'submenu',
-        label: 'Calidad',
-        icon: <FaShieldAlt className="w-5 h-5" />,
-        description: 'Gestión de calidad y documentación',
-        subItems: [
-          {
-            path: '/documents',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            ),
-            label: 'Documentos',
-            description: 'Documentos administrativos'
-          },
-          {
-            path: '/document-change-requests',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            ),
-            label: 'Solicitudes de Cambio',
-            description: 'Workflow de cambios documentales'
-          },
-          {
-            path: '/ticket_calidad',
-            icon: <FaClipboardList className="w-5 h-5" />,
-            label: 'Ticket Calidad',
-            description: 'Reportes de calidad y cambios documentales'
-          }
-        ]
-      }
-    );
-  } else if (role === 'Jefe') {
-    menuItems.push(
-      {
-        path: '/tickets',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        ),
-        label: 'Tickets',
-        description: 'Gestión de incidencias IT'
-      },
-      {
-        path: '/purchase-requests',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-        ),
-        label: 'Solicitudes de Compra',
-        description: 'Periféricos y electrodomésticos'
-      },
-      {
-        type: 'submenu',
-        label: 'Calidad',
-        icon: <FaShieldAlt className="w-5 h-5" />,
-        description: 'Gestión de calidad y documentación',
-        subItems: [
-          {
-            path: '/documents',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            ),
-            label: 'Documentos',
-            description: 'Documentos operativos'
-          },
-          {
-            path: '/document-change-requests',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            ),
-            label: 'Solicitudes de Cambio',
-            description: 'Workflow de cambios documentales'
-          },
-          {
-            path: '/ticket_calidad',
-            icon: <FaClipboardList className="w-5 h-5" />,
-            label: 'Ticket Calidad',
-            description: 'Reportes de calidad y cambios documentales'
-          }
-        ]
-      }
-    );
-  } else if (role === 'Compras') {
-    menuItems.push(
-      {
-        path: '/tickets',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        ),
-        label: 'Tickets',
-        description: 'Gestión de incidencias'
-      },
-      {
-        path: '/purchase-requests',
-        icon: (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-        ),
-        label: 'Solicitudes de Compra',
-        description: 'Periféricos y electrodomésticos'
-      },
-      {
-        type: 'submenu',
-        label: 'Calidad',
-        icon: <FaShieldAlt className="w-5 h-5" />,
-        description: 'Gestión de calidad y documentación',
-        subItems: [
-          {
-            path: '/documents',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            ),
-            label: 'Documentos',
-            description: 'Documentos de compras'
-          },
-          {
-            path: '/document-change-requests',
-            icon: (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            ),
-            label: 'Solicitudes de Cambio',
-            description: 'Workflow de cambios documentales'
-          },
-          {
-            path: '/ticket_calidad',
-            icon: <FaClipboardList className="w-5 h-5" />,
-            label: 'Ticket Calidad',
-            description: 'Reportes de calidad y cambios documentales'
-          }
-        ]
-      }
-    );
-  }
-
-  const getRoleBadge = (roleName) => {
-    const badges = {
-      'Administrador': { 
-        color: { light: 'from-red-500 to-pink-600', dark: 'from-red-600 to-pink-700' }, 
-        icon: <FaCrown />, 
-        text: 'Admin', 
-        iconColor: { light: 'text-red-500', dark: 'text-red-400' }
-      },
-      'Coordinadora Administrativa': { 
-        color: { light: 'from-orange-500 to-red-600', dark: 'from-orange-600 to-red-700' }, 
-        icon: <FaUserShield />, 
-        text: 'Coord', 
-        iconColor: { light: 'text-orange-500', dark: 'text-orange-400' }
-      },
-      'Técnico': { 
-        color: { light: 'from-blue-500 to-cyan-600', dark: 'from-blue-600 to-cyan-700' }, 
-        icon: <FaWrench />, 
-        text: 'Tech', 
-        iconColor: { light: 'text-blue-500', dark: 'text-blue-400' }
-      },
-      'Jefe': { 
-        color: { light: 'from-yellow-500 to-orange-600', dark: 'from-yellow-600 to-orange-700' }, 
-        icon: <FaUserCog />, 
-        text: 'Jefe', 
-        iconColor: { light: 'text-yellow-500', dark: 'text-yellow-400' }
-      },
-      'Compras': { 
-        color: { light: 'from-teal-500 to-cyan-600', dark: 'from-teal-600 to-cyan-700' }, 
-        icon: <FaUser />, 
-        text: 'Compras', 
-        iconColor: { light: 'text-teal-500', dark: 'text-teal-400' }
-      },
-      'Calidad': { 
-        color: { light: 'from-[#662d91] to-[#8e4dbf]', dark: 'from-purple-700 to-purple-900' }, 
-        icon: <FaShieldAlt />, 
-        text: 'Quality', 
-        iconColor: { light: 'text-[#662d91]', dark: 'text-purple-400' }
-      },
-      'Empleado': { 
-        color: { light: 'from-green-500 to-emerald-600', dark: 'from-green-600 to-emerald-700' }, 
-        icon: <FaUser />, 
-        text: 'User', 
-        iconColor: { light: 'text-green-500', dark: 'text-green-400' }
-      }
-    };
-    return badges[roleName] || badges['Empleado'];
+  const toggleSubmenu = (label) => {
+    if (!isCollapsed) setOpenSubmenus(prev => ({ ...prev, [label]: !prev[label] }));
   };
 
-  const roleBadge = getRoleBadge(role);
+  const closeMobileIfNeeded = () => {
+    if (window.innerWidth < 1024) toggleSidebar();
+  };
 
-  return (
-    <>
-      {/* Mobile Overlay */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300"
-          onClick={toggleSidebar}
-        />
-      )}
+  // ── Style tokens ────────────────────────────────────────────────────────────
+  const sidebarBg = conditionalClasses({
+    light: 'bg-white border-r border-gray-100',
+    dark: 'bg-gray-950 border-r border-gray-800/60'
+  });
 
-       {/* Sidebar */}
-       <aside className={`
-         fixed inset-y-0 left-0 z-50 w-72 ${isCollapsed ? 'lg:w-20' : 'lg:w-80'} shadow-xl transform transition-transform duration-300 ease-in-out
-         ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
-         ${conditionalClasses({
-           light: 'bg-linear-to-b from-gray-50 to-white border-gray-200',
-           dark: 'bg-linear-to-b from-gray-900 to-gray-800 border-gray-700'
-         })}
-       `}>
-         <div className="flex flex-col h-screen">
-          {/* Header */}
-          <div className={`
-            relative h-14 sm:h-16 flex items-center px-4 overflow-hidden
-            ${conditionalClasses({
-              light: 'bg-linear-to-br from-[#662d91] via-[#7a3da8] to-[#8e4dbf]',
-              dark: 'bg-linear-to-br from-gray-800 via-gray-900 to-purple-900'
-            })}
-          `}>
-            {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 dark:bg-gray-800/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 dark:bg-gray-800/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+  const headerBg = conditionalClasses({
+    light: 'bg-gradient-to-br from-[#4a1f6e] via-[#662d91] to-[#7c3aad]',
+    dark: 'bg-gradient-to-br from-gray-950 via-[#2a1048] to-gray-950 border-b border-purple-900/30'
+  });
 
-            <div className="relative flex items-center justify-between w-full">
-              <div className="flex items-center space-x-2 min-w-0 flex-1">
-                <div className={`
-                  w-10 h-10 rounded-xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-200 shrink-0
-                  ${conditionalClasses({
-                    light: 'bg-white',
-                    dark: 'bg-gray-700'
-                  })}
-                `}>
-                  <span className="text-transparent bg-clip-text bg-linear-to-br from-[#662d91] to-[#7a3da8] font-bold text-xl">D</span>
-                </div>
-                {!isCollapsed && (
-                  <div className="min-w-0 flex-1">
-                    <h2 className="text-lg font-bold text-white truncate drop-shadow-lg">DuvyClass</h2>
-                     <p className={conditionalClasses({
-                       light: 'text-xs text-[#e8d5f5] font-medium truncate',
-                       dark: 'text-xs text-purple-200 font-medium truncate'
-                     })}>Gestión Tecnológica</p>
-                  </div>
-                )}
-              </div>
-              <div className="flex items-center space-x-1">
-                  <button
-                    onClick={toggleSidebarCollapse}
-                    className="hidden lg:block p-3 rounded-lg text-white/80 hover:text-white hover:bg-white/20 dark:hover:bg-gray-700/50 transition-all duration-200 backdrop-blur-sm shrink-0"
-                    title={isCollapsed ? 'Expandir menú' : 'Colapsar menú'}
-                    aria-label={isCollapsed ? 'Expandir menú' : 'Colapsar menú'}
-                  >
-                  {isCollapsed ? <FaChevronRight className="w-4 h-4" /> : <FaChevronLeft className="w-4 h-4" />}
-                </button>
-                <button
-                  onClick={toggleSidebar}
-                  className="lg:hidden p-3 rounded-lg text-white/80 hover:text-white hover:bg-white/20 dark:hover:bg-gray-700/50 transition-all duration-200 backdrop-blur-sm shrink-0"
-                  aria-label="Cerrar menú"
-                >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
+  const sectionLabel = conditionalClasses({
+    light: 'text-gray-400',
+    dark: 'text-gray-600'
+  });
 
-           {/* User Info Card */}
-           <div className="p-4">
-             <div className={`
-               relative rounded-2xl shadow-lg overflow-hidden
-               ${conditionalClasses({
-                 light: 'bg-white border-gray-100',
-                 dark: 'bg-gray-800 border-gray-700'
-               })}
-             `}>
-                {/* Gradient accent */}
-                <div className={`absolute inset-x-0 top-0 h-1 bg-linear-to-r ${conditionalClasses(roleBadge.color)}`}></div>
-               
-               {isCollapsed ? (
-                 <div className="flex justify-center py-3">
-                  <div className={`
-                    relative w-12 h-12 rounded-xl bg-linear-to-br ${conditionalClasses(roleBadge.color)} flex items-center justify-center shadow-lg ring-4 ring-white shrink-0
-                  `}>
-                     <span className="text-white font-bold text-lg">
-                       {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
-                     </span>
-                     <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-md animate-pulse"></div>
-                   </div>
-                 </div>
-               ) : (
-                 <div className="p-4">
-                   <div className="flex items-start space-x-3">
-                     {/* Avatar */}
-                      <div className={`
-                        relative w-14 h-14 rounded-xl bg-linear-to-br ${conditionalClasses(roleBadge.color)} flex items-center justify-center shadow-lg ring-4 ring-white shrink-0
-                      `}>
-                       <span className="text-white font-bold text-xl">
-                         {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
-                       </span>
-                       <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white shadow-md animate-pulse"></div>
-                     </div>
-                     
-                     {/* User Info */}
-                     <div className="flex-1 min-w-0">
-                       <div className="flex items-start justify-between gap-2">
-                         <div className="flex-1 min-w-0">
-                           <p className={`
-                             text-sm font-bold truncate
-                             ${conditionalClasses({
-                               light: 'text-gray-900',
-                               dark: 'text-gray-100'
-                             })}
-                           `}>
-                             {user?.name || user?.username || 'Usuario'}
-                           </p>
-                           {user?.email && (
-                             <p className={`
-                               text-xs truncate
-                               ${conditionalClasses({
-                                 light: 'text-gray-500',
-                                 dark: 'text-gray-400'
-                               })}
-                             `}>
-                               {user.email}
-                             </p>
-                           )}
-                         </div>
-                          <span className={`shrink-0 text-lg ${conditionalClasses(roleBadge.iconColor)}`}>{roleBadge.icon}</span>
-                       </div>
-                       
-                       {/* Role Badge */}
-                       <div className="mt-2 flex items-center gap-2">
-                         <span className={`
-                           inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold text-white bg-linear-to-r ${roleBadge.color} shadow-sm
-                         `}>
-                           {user?.role?.name || 'Empleado'}
-                         </span>
-                         {user?.department && (
-                           <span className={conditionalClasses({
-                             light: 'inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium text-gray-600 bg-gray-100',
-                             dark: 'inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium text-gray-300 bg-gray-700'
-                           })}>
-                             {user.department}
-                           </span>
-                         )}
-                       </div>
-                     </div>
-                   </div>
-               </div>
-               )}
-             </div>
-           </div>
+  const footerBg = conditionalClasses({
+    light: 'border-t border-gray-100 bg-gray-50/80',
+    dark: 'border-t border-gray-800/60 bg-gray-950'
+  });
 
-          {/* Navigation Menu */}
-          <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto sidebar-scrollbar">
-            <div className="mb-3 px-3">
-              <p className={`
-                text-xs font-bold uppercase tracking-wider flex items-center gap-2
-                ${conditionalClasses({
-                  light: 'text-gray-500',
-                  dark: 'text-gray-400'
-                })}
-              `}>
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-                Menú Principal
-              </p>
-            </div>
-            
-            {menuItems.map((item) => {
-                if (item.type === 'submenu') {
-                  const isSubmenuActive = item.subItems.some(subItem => location.pathname === subItem.path);
+  // Active item
+  const activeItem = conditionalClasses({
+    light: 'bg-gradient-to-r from-[#662d91] to-[#8e4dbf] text-white shadow-md shadow-[#662d91]/20',
+    dark: 'bg-gradient-to-r from-[#662d91]/80 to-[#8e4dbf]/70 text-white shadow-md shadow-purple-900/30'
+  });
 
-                  return (
-                    <div key={item.label}>
-                      <button
-                        onClick={() => {
-                          if (!isCollapsed) {
-                            if (item.label === 'Calidad') {
-                              setIsCalidadOpen(!isCalidadOpen);
-                            } else if (item.label === 'Inventario') {
-                              setIsInventarioOpen(!isInventarioOpen);
-                            }
-                          }
-                        }}
-                        className={`
-                          group relative flex ${isCollapsed ? 'justify-center' : ''} items-center w-full px-3 py-3.5 rounded-xl transition-all duration-200
-                          ${isSubmenuActive
-                            ? conditionalClasses({
-                                light: 'bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white shadow-lg shadow-[#662d91]/30 scale-[1.02]',
-                                dark: 'bg-linear-to-r from-purple-700 to-purple-900 text-white shadow-lg shadow-purple-700/30 scale-[1.02]'
-                              })
-                            : conditionalClasses({
-                                light: 'text-gray-700 hover:text-[#662d91] hover:bg-[#f3ebf9]',
-                                dark: 'text-gray-300 hover:text-purple-400 hover:bg-gray-700'
-                              })
-                          }
-                        `}
-                      >
-                        {/* Active indicator bar */}
-                        {isSubmenuActive && (
-                          <div className={conditionalClasses({
-                            light: "absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-white rounded-r-full shadow-lg",
-                            dark: "absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-gray-300 rounded-r-full shadow-lg"
-                          })}></div>
-                        )}
+  // Inactive item
+  const inactiveItem = conditionalClasses({
+    light: 'text-gray-600 hover:text-[#662d91] hover:bg-[#f8f3ff]',
+    dark: 'text-gray-400 hover:text-purple-300 hover:bg-gray-800/60'
+  });
 
-                        {/* Icon container */}
-                        <div className={`
-                          shrink-0 w-11 h-11 rounded-xl flex items-center justify-center ${isCollapsed ? '' : 'mr-3'} transition-all duration-200
-                          ${isSubmenuActive
-                            ? conditionalClasses({
-                                light: 'bg-white/20 shadow-inner',
-                                dark: 'bg-gray-700/50 shadow-inner'
-                              })
-                            : conditionalClasses({
-                                light: 'bg-linear-to-br from-gray-100 to-gray-50 group-hover:from-[#f3ebf9] group-hover:to-[#e8d5f5] group-hover:scale-110 shadow-sm',
-                                dark: 'bg-gray-700 group-hover:bg-gray-600 group-hover:scale-110 shadow-sm'
-                              })
-                          }
-                        `}>
-                          <div className={`
-                            transition-colors
-                            ${isSubmenuActive ? 'text-white' : conditionalClasses({
-                              light: 'text-gray-600 group-hover:text-[#662d91]',
-                              dark: 'text-gray-400 group-hover:text-purple-400'
-                            })}
-                          `}>
-                            {item.icon}
-                          </div>
-                        </div>
+  // Active icon bg
+  const activeIconBg = 'bg-white/15';
 
-                        {/* Text content */}
-                        {!isCollapsed && (
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between mb-0.5">
-                              <span className="font-bold text-sm truncate">{item.label}</span>
-                            </div>
-                            <p className={`
-                              text-xs truncate leading-tight
-                              ${isSubmenuActive ? conditionalClasses({
-                                light: 'text-[#e8d5f5]',
-                                dark: 'text-purple-200'
-                              }) : conditionalClasses({
-                                light: 'text-gray-500 group-hover:text-[#8e4dbf]',
-                                dark: 'text-gray-400 group-hover:text-purple-400'
-                              })}
-                            `}>
-                              {item.description}
-                            </p>
-                          </div>
-                        )}
+  // Inactive icon bg
+  const inactiveIconBg = conditionalClasses({
+    light: 'bg-gray-100 group-hover:bg-[#ede5f9]',
+    dark: 'bg-gray-800 group-hover:bg-gray-700'
+  });
 
-                        {/* Arrow indicator */}
-                        {!isCollapsed && (
-                          <svg
-                            className={`
-                              w-5 h-5 transition-transform duration-200
-                              ${(item.label === 'Calidad' && isCalidadOpen) || (item.label === 'Inventario' && isInventarioOpen) ? 'rotate-90' : ''}
-                              ${isSubmenuActive ? 'text-white' : conditionalClasses({
-                                light: 'text-gray-400',
-                                dark: 'text-gray-500'
-                              })}
-                            `}
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        )}
-                      </button>
+  // Active sub-description
+  const activeSubDesc = conditionalClasses({
+    light: 'text-purple-200',
+    dark: 'text-purple-300'
+  });
 
-                      {/* Submenu items */}
-                      {((item.label === 'Calidad' && isCalidadOpen) || (item.label === 'Inventario' && isInventarioOpen)) && !isCollapsed && (
-                        <div className="ml-6 mt-1 space-y-1">
-                          {item.subItems.map((subItem) => {
-                            const isSubActive = location.pathname === subItem.path;
+  // Inactive sub-description
+  const inactiveSubDesc = conditionalClasses({
+    light: 'text-gray-400 group-hover:text-[#8e4dbf]',
+    dark: 'text-gray-500 group-hover:text-purple-400'
+  });
 
-                            return (
-                              <Link
-                                key={subItem.path}
-                                to={subItem.path}
-                                onClick={() => {
-                                  if (window.innerWidth < 1024) {
-                                    toggleSidebar();
-                                  }
-                                }}
-                                className={`
-                                  group relative flex items-center px-3 py-2.5 rounded-lg transition-all duration-200
-                                  ${isSubActive
-                                    ? conditionalClasses({
-                                        light: 'bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white shadow-md scale-[1.01]',
-                                        dark: 'bg-linear-to-r from-purple-700 to-purple-900 text-white shadow-md scale-[1.01]'
-                                      })
-                                    : conditionalClasses({
-                                        light: 'text-gray-600 hover:text-[#662d91] hover:bg-[#f3ebf9]',
-                                        dark: 'text-gray-400 hover:text-purple-400 hover:bg-gray-700'
-                                      })
-                                  }
-                                `}
-                              >
-                                {/* Active indicator bar */}
-                                {isSubActive && (
-                                  <div className={conditionalClasses({
-                                    light: "absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full shadow-sm",
-                                    dark: "absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gray-300 rounded-r-full shadow-sm"
-                                  })}></div>
-                                )}
+  // ── Render nav item (link) ──────────────────────────────────────────────────
+  const renderLink = (item) => {
+    const isActive = location.pathname === item.path;
+    return (
+      <Link
+        key={item.path}
+        to={item.path}
+        onClick={closeMobileIfNeeded}
+        title={isCollapsed ? item.label : undefined}
+        className={`group relative flex items-center ${isCollapsed ? 'justify-center px-0' : 'px-2.5'} py-2.5 rounded-xl transition-all duration-150 ${isActive ? activeItem : inactiveItem}`}
+      >
+        {/* Active bar */}
+        {isActive && (
+          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white/60 rounded-r-full" />
+        )}
 
-                                {/* Icon container */}
-                                <div className={`
-                                  shrink-0 w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-all duration-200
-                                  ${isSubActive
-                                    ? conditionalClasses({
-                                        light: 'bg-white/20',
-                                        dark: 'bg-gray-700/50'
-                                      })
-                                    : conditionalClasses({
-                                        light: 'bg-gray-100 group-hover:bg-[#e8d5f5] group-hover:scale-105',
-                                        dark: 'bg-gray-700 group-hover:bg-gray-600 group-hover:scale-105'
-                                      })
-                                  }
-                                `}>
-                                  <div className={`
-                                    transition-colors text-xs
-                                    ${isSubActive ? 'text-white' : conditionalClasses({
-                                      light: 'text-gray-500 group-hover:text-[#662d91]',
-                                      dark: 'text-gray-400 group-hover:text-purple-400'
-                                    })}
-                                  `}>
-                                    {subItem.icon}
-                                  </div>
-                                </div>
+        {/* Icon */}
+        <span className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-150 ${isCollapsed ? '' : 'mr-2.5'} ${isActive ? activeIconBg : inactiveIconBg}`}>
+          <span className={isActive ? 'text-white' : conditionalClasses({ light: 'text-gray-500 group-hover:text-[#662d91]', dark: 'text-gray-500 group-hover:text-purple-300' })}>
+            {item.icon}
+          </span>
+        </span>
 
-                                {/* Text content */}
-                                <div className="flex-1 min-w-0">
-                                  <span className="font-medium text-sm truncate">{subItem.label}</span>
-                                  <p className={`
-                                    text-xs truncate leading-tight
-                                    ${isSubActive ? conditionalClasses({
-                                      light: 'text-[#e8d5f5]',
-                                      dark: 'text-purple-200'
-                                    }) : conditionalClasses({
-                                      light: 'text-gray-400 group-hover:text-[#8e4dbf]',
-                                      dark: 'text-gray-500 group-hover:text-purple-400'
-                                    })}
-                                  `}>
-                                    {subItem.description}
-                                  </p>
-                                </div>
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  );
-                }
+        {/* Label + description */}
+        {!isCollapsed && (
+          <span className="flex-1 min-w-0">
+            <span className="block text-[13px] font-semibold leading-tight truncate">{item.label}</span>
+            <span className={`block text-[11px] truncate leading-tight mt-0.5 ${isActive ? activeSubDesc : inactiveSubDesc}`}>
+              {item.description}
+            </span>
+          </span>
+        )}
 
-              const isActive = location.pathname === item.path;
+        {/* Active arrow */}
+        {isActive && !isCollapsed && (
+          <svg className="w-3.5 h-3.5 text-white/60 shrink-0 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        )}
+      </Link>
+    );
+  };
 
+  // ── Render submenu ──────────────────────────────────────────────────────────
+  const renderSubmenu = (item) => {
+    const isSubmenuActive = item.subItems.some(s => location.pathname === s.path);
+    const isOpen = openSubmenus[item.label];
+
+    return (
+      <div key={item.label}>
+        <button
+          onClick={() => toggleSubmenu(item.label)}
+          title={isCollapsed ? item.label : undefined}
+          className={`group relative flex items-center w-full ${isCollapsed ? 'justify-center px-0' : 'px-2.5'} py-2.5 rounded-xl transition-all duration-150 ${isSubmenuActive ? activeItem : inactiveItem}`}
+        >
+          {isSubmenuActive && (
+            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white/60 rounded-r-full" />
+          )}
+
+          {/* Icon */}
+          <span className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-150 ${isCollapsed ? '' : 'mr-2.5'} ${isSubmenuActive ? activeIconBg : inactiveIconBg}`}>
+            <span className={isSubmenuActive ? 'text-white' : conditionalClasses({ light: 'text-gray-500 group-hover:text-[#662d91]', dark: 'text-gray-500 group-hover:text-purple-300' })}>
+              {item.icon}
+            </span>
+          </span>
+
+          {/* Text */}
+          {!isCollapsed && (
+            <span className="flex-1 min-w-0 text-left">
+              <span className="block text-[13px] font-semibold leading-tight truncate">{item.label}</span>
+              <span className={`block text-[11px] truncate leading-tight mt-0.5 ${isSubmenuActive ? activeSubDesc : inactiveSubDesc}`}>
+                {item.description}
+              </span>
+            </span>
+          )}
+
+          {/* Chevron */}
+          {!isCollapsed && (
+            <svg
+              className={`w-3.5 h-3.5 shrink-0 ml-1 transition-transform duration-200 ${isOpen ? 'rotate-90' : ''} ${isSubmenuActive ? 'text-white/60' : conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-600' })}`}
+              fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          )}
+        </button>
+
+        {/* Submenu items */}
+        {isOpen && !isCollapsed && (
+          <div className="mt-1 ml-4 pl-3 space-y-0.5 border-l-2 border-dashed border-[#662d91]/20 dark:border-purple-800/30">
+            {item.subItems.map((sub) => {
+              const isSubActive = location.pathname === sub.path;
               return (
                 <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => {
-                    if (window.innerWidth < 1024) {
-                      toggleSidebar();
-                    }
-                  }}
-                  className={`
-                    group relative flex ${isCollapsed ? 'justify-center' : ''} items-center px-3 py-3.5 rounded-xl transition-all duration-200
-                    ${isActive
-                      ? conditionalClasses({
-                          light: 'bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white shadow-lg shadow-[#662d91]/30 scale-[1.02]',
-                          dark: 'bg-linear-to-r from-purple-700 to-purple-900 text-white shadow-lg shadow-purple-700/30 scale-[1.02]'
-                        })
-                      : conditionalClasses({
-                          light: 'text-gray-700 hover:text-[#662d91] hover:bg-[#f3ebf9]',
-                          dark: 'text-gray-300 hover:text-purple-400 hover:bg-gray-700'
-                        })
-                    }
-                  `}
+                  key={sub.path}
+                  to={sub.path}
+                  onClick={closeMobileIfNeeded}
+                  className={`group flex items-center px-2.5 py-2 rounded-lg transition-all duration-150 ${
+                    isSubActive
+                      ? conditionalClasses({ light: 'bg-[#f3ebff] text-[#662d91]', dark: 'bg-purple-900/30 text-purple-300' })
+                      : conditionalClasses({ light: 'text-gray-500 hover:text-[#662d91] hover:bg-[#f8f3ff]', dark: 'text-gray-500 hover:text-purple-300 hover:bg-gray-800/60' })
+                  }`}
                 >
-                  {/* Active indicator bar */}
-                  {isActive && (
-                    <div className={conditionalClasses({
-                      light: "absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-white rounded-r-full shadow-lg",
-                      dark: "absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-gray-300 rounded-r-full shadow-lg"
-                    })}></div>
-                  )}
-
-                  {/* Icon container */}
-                  <div className={`
-                    shrink-0 w-11 h-11 rounded-xl flex items-center justify-center ${isCollapsed ? '' : 'mr-3'} transition-all duration-200
-                    ${isActive
-                      ? conditionalClasses({
-                          light: 'bg-white/20 shadow-inner',
-                          dark: 'bg-gray-700/50 shadow-inner'
-                        })
-                      : conditionalClasses({
-                          light: 'bg-linear-to-br from-gray-100 to-gray-50 group-hover:from-[#f3ebf9] group-hover:to-[#e8d5f5] group-hover:scale-110 shadow-sm',
-                          dark: 'bg-gray-700 group-hover:bg-gray-600 group-hover:scale-110 shadow-sm'
-                        })
-                    }
-                  `}>
-                    <div className={`
-                      transition-colors
-                      ${isActive ? 'text-white' : conditionalClasses({
-                        light: 'text-gray-600 group-hover:text-[#662d91]',
-                        dark: 'text-gray-400 group-hover:text-purple-400'
-                      })}
-                    `}>
-                      {item.icon}
-                    </div>
-                  </div>
-
-                  {/* Text content */}
-                  {!isCollapsed && (
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-0.5">
-                        <span className="font-bold text-sm truncate">{item.label}</span>
-                        {item.badge && (
-                          <span className={`
-                            ml-2 px-2 py-0.5 text-xs font-bold rounded-full
-                            ${isActive
-                              ? 'bg-white/30 text-white'
-                              : conditionalClasses({
-                                  light: 'bg-[#e8d5f5] text-[#662d91]',
-                                  dark: 'bg-purple-900 text-purple-300'
-                                })
-                            }
-                          `}>
-                            {item.badge}
-                          </span>
-                        )}
-                      </div>
-                       <p className={`
-                         text-xs truncate leading-tight
-                         ${isActive ? conditionalClasses({
-                           light: 'text-[#e8d5f5]',
-                           dark: 'text-purple-200'
-                         }) : conditionalClasses({
-                           light: 'text-gray-500 group-hover:text-[#8e4dbf]',
-                           dark: 'text-gray-400 group-hover:text-purple-400'
-                         })}
-                       `}>
-                        {item.description}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Arrow indicator */}
-                  {isActive && !isCollapsed && (
-                    <svg className="w-5 h-5 text-white animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                    </svg>
+                  <span className={`shrink-0 w-7 h-7 rounded-lg flex items-center justify-center mr-2.5 transition-all duration-150 ${
+                    isSubActive
+                      ? conditionalClasses({ light: 'bg-[#662d91]/10', dark: 'bg-purple-800/30' })
+                      : conditionalClasses({ light: 'bg-gray-100 group-hover:bg-[#ede5f9]', dark: 'bg-gray-800 group-hover:bg-gray-700' })
+                  }`}>
+                    <span className={`text-[13px] ${isSubActive ? conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-300' }) : conditionalClasses({ light: 'text-gray-400 group-hover:text-[#662d91]', dark: 'text-gray-600 group-hover:text-purple-400' })}`}>
+                      {sub.icon}
+                    </span>
+                  </span>
+                  <span className="flex-1 min-w-0">
+                    <span className="block text-[12px] font-semibold truncate leading-tight">{sub.label}</span>
+                    <span className={`block text-[10px] truncate leading-tight mt-0.5 ${isSubActive ? conditionalClasses({ light: 'text-[#8e4dbf]', dark: 'text-purple-400' }) : conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-600' })}`}>
+                      {sub.description}
+                    </span>
+                  </span>
+                  {isSubActive && (
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${conditionalClasses({ light: 'bg-[#662d91]', dark: 'bg-purple-400' })}`} />
                   )}
                 </Link>
               );
             })}
-          </nav>
-
-          {/* Footer */}
-          <div className={conditionalClasses({
-            light: 'p-4 border-t border-gray-200 bg-linear-to-br from-gray-50 to-white',
-            dark: 'p-4 border-t border-gray-700 bg-linear-to-br from-gray-900 to-gray-800'
-          })}>
-            {isCollapsed ? (
-              <div className="flex flex-col items-center space-y-3 py-2">
-                <Link
-                  to="/settings"
-                  onClick={() => { if (window.innerWidth < 1024) toggleSidebar(); }}
-                  className={conditionalClasses({
-                    light: 'p-2 rounded-lg text-gray-400 hover:text-[#662d91] hover:bg-[#f3ebf9] transition-all duration-200 hover:scale-110',
-                    dark: 'p-2 rounded-lg text-gray-500 hover:text-purple-400 hover:bg-gray-700 transition-all duration-200 hover:scale-110'
-                  })}
-                  title="Configuración"
-                >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </Link>
-                <Link
-                  to="/help"
-                  onClick={() => { if (window.innerWidth < 1024) toggleSidebar(); }}
-                  className={conditionalClasses({
-                    light: 'p-2 rounded-lg text-gray-400 hover:text-[#662d91] hover:bg-[#f3ebf9] transition-all duration-200 hover:scale-110',
-                    dark: 'p-2 rounded-lg text-gray-500 hover:text-purple-400 hover:bg-gray-700 transition-all duration-200 hover:scale-110'
-                  })}
-                  title="Ayuda"
-                >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </Link>
-              </div>
-            ) : (
-              <>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex-1 min-w-0">
-                    <p className={`
-                      text-xs font-bold truncate
-                      ${conditionalClasses({
-                        light: 'text-gray-700',
-                        dark: 'text-gray-100'
-                      })}
-                    `}>Sistema DuvyClass</p>
-                    <p className={`
-                      text-xs flex items-center gap-1
-                      ${conditionalClasses({
-                        light: 'text-gray-500',
-                        dark: 'text-gray-400'
-                      })}
-                    `}>
-                      <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                      Versión 1.0.0
-                    </p>
-                  </div>
-                  <div className="flex space-x-1">
-                    <Link
-                      to="/settings"
-                      onClick={() => { if (window.innerWidth < 1024) toggleSidebar(); }}
-                      className={conditionalClasses({
-                        light: 'p-2 rounded-lg text-gray-400 hover:text-[#662d91] hover:bg-[#f3ebf9] transition-all duration-200 hover:scale-110',
-                        dark: 'p-2 rounded-lg text-gray-500 hover:text-purple-400 hover:bg-gray-700 transition-all duration-200 hover:scale-110'
-                      })}
-                    >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    </Link>
-                    <Link
-                      to="/help"
-                      onClick={() => { if (window.innerWidth < 1024) toggleSidebar(); }}
-                      className={conditionalClasses({
-                        light: 'p-2 rounded-lg text-gray-400 hover:text-[#662d91] hover:bg-[#f3ebf9] transition-all duration-200 hover:scale-110',
-                        dark: 'p-2 rounded-lg text-gray-500 hover:text-purple-400 hover:bg-gray-700 transition-all duration-200 hover:scale-110'
-                      })}
-                    >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </Link>
-                  </div>
-                </div>
-                
-                <p className={`
-                  text-xs text-center
-                  ${conditionalClasses({
-                    light: 'text-gray-400',
-                    dark: 'text-gray-500'
-                  })}
-                `}>
-                  © 2025 Desarrollado por <span className={conditionalClasses({
-                    light: 'font-semibold text-[#662d91]',
-                    dark: 'font-semibold text-purple-400'
-                  })}>Bryan Muñoz</span>
-                </p>
-              </>
-            )}
           </div>
+        )}
+      </div>
+    );
+  };
+
+  // ── Render ──────────────────────────────────────────────────────────────────
+  return (
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+          onClick={toggleSidebar}
+        />
+      )}
+
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 flex flex-col
+        w-72 ${isCollapsed ? 'lg:w-[72px]' : 'lg:w-[280px]'}
+        shadow-xl transition-all duration-300 ease-in-out
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
+        ${sidebarBg}
+      `}>
+
+        {/* ── Header ── */}
+        <div className={`relative h-14 sm:h-16 flex items-center px-3 shrink-0 overflow-hidden ${headerBg}`}>
+          {/* Subtle background grid */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)',
+            backgroundSize: '28px 28px'
+          }} />
+          <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-white/[0.04] -translate-y-1/2 translate-x-1/2" />
+
+          <div className="relative flex items-center justify-between w-full">
+            {/* Brand */}
+            <div className="flex items-center gap-2.5 min-w-0 flex-1">
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-lg border border-white/20 ${conditionalClasses({ light: 'bg-white/15 backdrop-blur-sm', dark: 'bg-white/10 backdrop-blur-sm' })}`}>
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                </svg>
+              </div>
+              {!isCollapsed && (
+                <div className="min-w-0">
+                  <p className="text-white font-bold text-base leading-none tracking-tight">DuvyClass</p>
+                  <p className="text-[10px] text-white/50 leading-none mt-1 tracking-[0.12em] uppercase font-medium">
+                    Enterprise IT
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Toggle buttons */}
+            <button
+              onClick={toggleSidebarCollapse}
+              aria-label={isCollapsed ? 'Expandir menú' : 'Contraer menú'}
+              className="hidden lg:flex w-7 h-7 items-center justify-center rounded-lg text-white/60 hover:text-white hover:bg-white/15 transition-all duration-150 shrink-0"
+            >
+              {isCollapsed ? <FaChevronRight className="w-3 h-3" /> : <FaChevronLeft className="w-3 h-3" />}
+            </button>
+            <button
+              onClick={toggleSidebar}
+              aria-label="Cerrar menú"
+              className="lg:hidden w-7 h-7 flex items-center justify-center rounded-lg text-white/60 hover:text-white hover:bg-white/15 transition-all duration-150 shrink-0"
+            >
+              <IconClose />
+            </button>
+          </div>
+        </div>
+
+        {/* ── User card ── */}
+        <div className={`px-3 py-3 shrink-0 ${conditionalClasses({ light: 'border-b border-gray-100', dark: 'border-b border-gray-800/60' })}`}>
+          {isCollapsed ? (
+            <div className="flex justify-center">
+              <div className={`relative w-10 h-10 bg-gradient-to-br ${badge.gradient} rounded-xl flex items-center justify-center shadow-md`}>
+                <span className="text-white font-bold text-sm">{userInitial}</span>
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white dark:border-gray-950" />
+              </div>
+            </div>
+          ) : (
+            <div className={`flex items-center gap-3 px-3 py-3 rounded-xl ${conditionalClasses({ light: 'bg-gray-50', dark: 'bg-gray-900/60' })}`}>
+              {/* Avatar */}
+              <div className={`relative w-10 h-10 bg-gradient-to-br ${badge.gradient} rounded-xl flex items-center justify-center shadow-md shrink-0`}>
+                <span className="text-white font-bold text-sm">{userInitial}</span>
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white dark:border-gray-950" />
+              </div>
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-1">
+                  <p className={`text-[13px] font-bold truncate leading-tight ${conditionalClasses({ light: 'text-gray-900', dark: 'text-gray-100' })}`}>
+                    {userName}
+                  </p>
+                  <span className={`text-xs shrink-0 ${badge.iconColor}`}>{badge.icon}</span>
+                </div>
+                {user?.email && (
+                  <p className={`text-[11px] truncate leading-tight mt-0.5 ${conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-500' })}`}>
+                    {user.email}
+                  </p>
+                )}
+                <span className={`inline-flex items-center mt-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold text-white bg-gradient-to-r ${badge.gradient}`}>
+                  {user?.role?.name || 'Empleado'}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── Navigation ── */}
+        <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-0.5 sidebar-scrollbar">
+          {/* Section label */}
+          {!isCollapsed && (
+            <p className={`text-[10px] font-bold uppercase tracking-[0.15em] px-2.5 pb-2 ${sectionLabel}`}>
+              Navegación
+            </p>
+          )}
+
+          {menuItems.map((item) =>
+            item.type === 'submenu' ? renderSubmenu(item) : renderLink(item)
+          )}
+        </nav>
+
+        {/* ── Footer ── */}
+        <div className={`px-3 py-3 shrink-0 ${footerBg}`}>
+          {isCollapsed ? (
+            <div className="flex flex-col items-center gap-2">
+              {[
+                { to: '/settings', title: 'Configuración', icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
+                { to: '/help', title: 'Centro de ayuda', icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+              ].map(({ to, title, icon }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  title={title}
+                  onClick={closeMobileIfNeeded}
+                  className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 ${conditionalClasses({ light: 'text-gray-400 hover:text-[#662d91] hover:bg-[#f3ebf9]', dark: 'text-gray-600 hover:text-purple-400 hover:bg-gray-800' })}`}
+                >
+                  {icon}
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div>
+              <div className="flex items-center justify-between mb-2.5">
+                <div>
+                  <p className={`text-[12px] font-bold ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>
+                    DuvyClass
+                  </p>
+                  <p className={`text-[10px] flex items-center gap-1.5 mt-0.5 ${conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-600' })}`}>
+                    <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
+                    v1.0.0 · Operativo
+                  </p>
+                </div>
+                <div className="flex gap-1">
+                  {[
+                    { to: '/settings', title: 'Configuración', icon: <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
+                    { to: '/help', title: 'Centro de ayuda', icon: <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+                  ].map(({ to, title, icon }) => (
+                    <Link
+                      key={to}
+                      to={to}
+                      title={title}
+                      onClick={closeMobileIfNeeded}
+                      className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all duration-150 ${conditionalClasses({ light: 'text-gray-400 hover:text-[#662d91] hover:bg-[#f3ebf9]', dark: 'text-gray-600 hover:text-purple-400 hover:bg-gray-800' })}`}
+                    >
+                      {icon}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+              <p className={`text-[10px] text-center ${conditionalClasses({ light: 'text-gray-300', dark: 'text-gray-700' })}`}>
+                © 2026 Desarrollado por{' '}
+                <span className={`font-semibold ${conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-500' })}`}>
+                  Bryan Muñoz
+                </span>
+              </p>
+            </div>
+          )}
         </div>
       </aside>
     </>
