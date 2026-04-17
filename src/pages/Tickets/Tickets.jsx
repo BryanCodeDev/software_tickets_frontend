@@ -90,12 +90,22 @@ const Tickets = () => {
    const [titleFilter, setTitleFilter] = useState('');
 
    // Paginación
-   const [currentPage, setCurrentPage] = useState(1);
-   const [totalPages, setTotalPages] = useState(1);
-   const [totalItems, setTotalItems] = useState(0);
-   const [itemsPerPage, setItemsPerPage] = useState(10);
-  
-  // Estados de formularios
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState('10'); // string | 'all'
+
+    // Estadísticas globales (totales, no paginadas)
+    const [ticketStats, setTicketStats] = useState({
+      total: 0,
+      abiertos: 0,
+      enProgreso: 0,
+      resueltos: 0,
+      alta: 0,
+      resolutionRate: 0
+    });
+   
+   // Estados de formularios
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -145,11 +155,13 @@ const Tickets = () => {
 
   const fetchTickets = useCallback(async () => {
     try {
+      // Si itemsPerPage es 'all', no enviar page ni limit para obtener todos
       const params = {
-        page: currentPage,
-        limit: itemsPerPage,
+        page: itemsPerPage === 'all' ? undefined : currentPage,
+        limit: itemsPerPage === 'all' ? undefined : itemsPerPage,
         status: filterStatus !== 'all' ? filterStatus : undefined,
         priority: filterPriority !== 'all' ? filterPriority : undefined,
+        category: titleFilter || undefined,
         q: debouncedSearchTerm || undefined,
         sortBy,
         sortOrder
@@ -157,17 +169,54 @@ const Tickets = () => {
 
       const data = await ticketsAPI.fetchTickets(params);
       setTickets(data.tickets || []);
+
+      // Actualizar paginación
       if (data.pagination) {
         setTotalPages(data.pagination.totalPages || 1);
         setTotalItems(data.pagination.totalItems || 0);
-        setItemsPerPage(data.pagination.itemsPerPage || itemsPerPage);
+        setItemsPerPage(String(data.pagination.itemsPerPage));
+      } else {
+        // Si no hay paginación (ej. todos los tickets), calcular localmente
+        const total = data.total || data.tickets.length;
+        setTotalItems(total);
+        setTotalPages(1);
+        // itemsPerPage se mantiene como 'all' si fue seleccionado
+      }
+
+      // Calcular estadísticas globales desde datos del backend
+      if (data.stats) {
+        const total = data.total || data.tickets.length;
+        const abiertos = data.stats.statusCounts?.abierto || 0;
+        const enProgreso = data.stats.statusCounts?.['en progreso'] || 0;
+        const resueltos = (data.stats.statusCounts?.resuelto || 0) + (data.stats.statusCounts?.cerrado || 0);
+        const alta = data.stats.priorityCounts?.alta || 0;
+        const resolutionRate = total > 0 ? ((resueltos / total) * 100).toFixed(1) : 0;
+
+        setTicketStats({
+          total,
+          abiertos,
+          enProgreso,
+          resueltos,
+          alta,
+          resolutionRate
+        });
+      } else {
+        // Fallback: calcular desde tickets recibidos (solo para casos sin stats del backend)
+        const receivedTickets = data.tickets || [];
+        const total = receivedTickets.length;
+        const abiertos = receivedTickets.filter(t => t.status?.toLowerCase() === 'abierto').length;
+        const enProgreso = receivedTickets.filter(t => t.status?.toLowerCase() === 'en progreso').length;
+        const resueltos = receivedTickets.filter(t => t.status?.toLowerCase() === 'resuelto' || t.status?.toLowerCase() === 'cerrado').length;
+        const alta = receivedTickets.filter(t => t.priority?.toLowerCase() === 'alta').length;
+        const resolutionRate = total > 0 ? ((resueltos / total) * 100).toFixed(1) : 0;
+        setTicketStats({ total, abiertos, enProgreso, resueltos, alta, resolutionRate });
       }
     } catch {
       notifyError('Error al cargar los tickets. Por favor, recarga la página.');
     } finally {
       setLoading(false);
     }
-  }, [currentPage, itemsPerPage, filterStatus, filterPriority, debouncedSearchTerm, sortBy, sortOrder, notifyError]);
+  }, [currentPage, itemsPerPage, filterStatus, filterPriority, titleFilter, debouncedSearchTerm, sortBy, sortOrder, notifyError]);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -279,11 +328,17 @@ const Tickets = () => {
     };
   }, [fetchTickets]);
 
-  // Inicialización de datos
-  useEffect(() => {
-    fetchTickets();
-    fetchUsers();
-  }, [fetchTickets, fetchUsers]);
+   // Restablecer ordenamiento a "más recientes" cuando cambian los filtros
+   useEffect(() => {
+     setSortBy('updatedAt');
+     setSortOrder('desc');
+   }, [filterStatus, filterPriority, titleFilter, debouncedSearchTerm]);
+
+   // Inicialización de datos
+   useEffect(() => {
+     fetchTickets();
+     fetchUsers();
+   }, [fetchTickets, fetchUsers]);
 
    // Filtrado y ordenamiento se realizan en el backend mediante parámetros
    // Los estados se envían a la API y se devuelven tickets ya filtrados
@@ -316,22 +371,7 @@ const Tickets = () => {
     return false;
   }, [userRole, user?.id, checkPermission]);
 
-   // Estadísticas calculadas (basadas en tickets paginados actuales o totales según vista)
-   const stats = useMemo(() => {
-     if (!Array.isArray(tickets)) return { total: 0, abiertos: 0, enProgreso: 0, resueltos: 0, alta: 0, resolutionRate: 0 };
-     const total = tickets.length;
-     const abiertos = tickets.filter(t => t.status?.toLowerCase() === 'abierto').length;
-     const enProgreso = tickets.filter(t => t.status?.toLowerCase() === 'en progreso').length;
-     const resueltos = tickets.filter(t =>
-       t.status?.toLowerCase() === 'resuelto' || t.status?.toLowerCase() === 'cerrado'
-     ).length;
-     const alta = tickets.filter(t => t.priority?.toLowerCase() === 'alta').length;
-     const resolutionRate = total > 0 ? ((resueltos / total) * 100).toFixed(1) : 0;
-
-     return { total, abiertos, enProgreso, resueltos, alta, resolutionRate };
-   }, [tickets]);
-
-  // Datos para gráficos
+   // Datos para gráficos
   const adminChartData = useMemo(() => {
     const adminCounts = {};
     administrators.forEach(admin => {
@@ -375,8 +415,14 @@ const Tickets = () => {
     };
   }, [tickets]);
 
-  // Handlers principales
-  const handleCreate = useCallback(() => {
+   // Handlers principales
+   const handleItemsPerPageChange = useCallback((e) => {
+     const value = e.target.value;
+     setItemsPerPage(value);
+     setCurrentPage(1);
+   }, []);
+
+   const handleCreate = useCallback(() => {
     setFormData({
       title: '',
       description: '',
@@ -682,8 +728,8 @@ const Tickets = () => {
           handleCreate={handleCreate}
         />
 
-        {/* Stats Cards */}
-        {showStats && <TicketStats stats={stats} />}
+         {/* Stats Cards */}
+         {showStats && <TicketStats stats={ticketStats} />}
 
         {/* Charts */}
         {showStats && (
@@ -744,23 +790,24 @@ const Tickets = () => {
           standardizedTitles={standardizedTitles}
         />
 
-         {/* Ticket List */}
-         <TicketList
-           tickets={tickets}
-           totalItems={totalItems}
-           currentPage={currentPage}
-           itemsPerPage={itemsPerPage}
-           conditionalClasses={conditionalClasses}
-           handleViewDetail={handleViewDetail}
-           handleEdit={handleEdit}
-           handleDelete={handleDelete}
-           canEditTicket={canEditTicket}
-           canDeleteTicket={canDeleteTicket}
-           user={user}
-           viewMode={viewMode}
-           setViewMode={setViewMode}
-           onPageChange={setCurrentPage}
-         />
+          {/* Ticket List */}
+          <TicketList
+            tickets={tickets}
+            totalItems={totalItems}
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            conditionalClasses={conditionalClasses}
+            handleViewDetail={handleViewDetail}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+            canEditTicket={canEditTicket}
+            canDeleteTicket={canDeleteTicket}
+            user={user}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={handleItemsPerPageChange}
+          />
 
         {/* Modals */}
         <TicketDetailModal

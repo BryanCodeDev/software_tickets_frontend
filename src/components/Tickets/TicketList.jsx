@@ -18,6 +18,7 @@ const TicketList = ({
   viewMode,
   setViewMode,
   onPageChange,
+  onItemsPerPageChange, // nuevo prop
   loading // ✅ agregado a props
 }) => {
   // Función helper para obtener colores de estado
@@ -72,8 +73,9 @@ const TicketList = ({
     }
   };
 
-  // ✅ Controles de paginación definidos FUERA del return principal
-  const totalPages = Math.ceil((totalItems || 0) / (itemsPerPage || 1));
+   // ✅ Controles de paginación definidos FUERA del return principal
+   const effectiveItemsPerPage = itemsPerPage === 'all' ? (totalItems || 1) : Number(itemsPerPage);
+   const totalPages = Math.ceil((totalItems || 0) / effectiveItemsPerPage);
 
   const PaginationControls = () => {
     if (totalPages <= 1) return null;
@@ -190,7 +192,7 @@ const TicketList = ({
         })}>
           Mostrando <span className="font-bold text-[#662d91]">{tickets.length}</span> de <span className="font-bold">{totalItems || 0}</span> tickets
         </p>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setViewMode('cards')}
             className={conditionalClasses({
@@ -227,6 +229,21 @@ const TicketList = ({
             <FaChartBar className="w-4 h-4" />
             <span className="hidden sm:inline ml-2">Lista</span>
           </button>
+          {/* Selector de items por página */}
+          <select
+            value={itemsPerPage === 'all' ? 'all' : itemsPerPage}
+            onChange={onItemsPerPageChange}
+            className={conditionalClasses({
+              light: "px-3 py-2 rounded-lg border-2 border-gray-200 bg-white text-gray-700 font-medium text-sm focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all",
+              dark: "px-3 py-2 rounded-lg border-2 border-gray-600 bg-gray-700 text-gray-200 font-medium text-sm focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all"
+            })}
+          >
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="all">Todas</option>
+          </select>
         </div>
       </div>
 
@@ -263,21 +280,21 @@ const TicketList = ({
               <table className="w-full">
                 <thead>
                   <tr className={conditionalClasses({ light: "bg-[#f3ebf9]", dark: "bg-gray-700" })}>
-                    <th className="px-4 py-3 text-left text-sm font-semibold">Título</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold">Estado</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold">Prioridad</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold">Creado por</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold">Asignado a</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold">Fecha Creación</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold">Acciones</th>
+                    <th className={conditionalClasses({ light: "px-4 py-3 text-left text-sm font-semibold text-gray-900", dark: "px-4 py-3 text-left text-sm font-semibold text-gray-100" })}>Título</th>
+                    <th className={conditionalClasses({ light: "px-4 py-3 text-left text-sm font-semibold text-gray-900", dark: "px-4 py-3 text-left text-sm font-semibold text-gray-100" })}>Estado</th>
+                    <th className={conditionalClasses({ light: "px-4 py-3 text-left text-sm font-semibold text-gray-900", dark: "px-4 py-3 text-left text-sm font-semibold text-gray-100" })}>Prioridad</th>
+                    <th className={conditionalClasses({ light: "px-4 py-3 text-left text-sm font-semibold text-gray-900", dark: "px-4 py-3 text-left text-sm font-semibold text-gray-100" })}>Creado por</th>
+                    <th className={conditionalClasses({ light: "px-4 py-3 text-left text-sm font-semibold text-gray-900", dark: "px-4 py-3 text-left text-sm font-semibold text-gray-100" })}>Asignado a</th>
+                    <th className={conditionalClasses({ light: "px-4 py-3 text-left text-sm font-semibold text-gray-900", dark: "px-4 py-3 text-left text-sm font-semibold text-gray-100" })}>Fecha Creación</th>
+                    <th className={conditionalClasses({ light: "px-4 py-3 text-left text-sm font-semibold text-gray-900", dark: "px-4 py-3 text-left text-sm font-semibold text-gray-100" })}>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {tickets.map((ticket) => (
-                    <tr key={ticket.id} className="border-t border-gray-200 hover:bg-gray-50 transition-colors">
+                    <tr key={ticket.id} className={conditionalClasses({ light: "border-t border-gray-200 hover:bg-gray-50 transition-colors", dark: "border-t border-gray-700 hover:bg-gray-700/50 transition-colors" })}>
                       <td className="px-4 py-3">
-                        <div className="font-medium">{ticket.title}</div>
-                        <div className="text-xs text-gray-500 truncate max-w-xs">{ticket.description}</div>
+                        <div className={conditionalClasses({ light: "font-medium text-gray-900", dark: "font-medium text-gray-100" })}>{ticket.title}</div>
+                        <div className={conditionalClasses({ light: "text-xs text-gray-500 truncate max-w-xs", dark: "text-xs text-gray-400 truncate max-w-xs" })}>{ticket.description}</div>
                       </td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(ticket.status)}`}>
@@ -289,9 +306,9 @@ const TicketList = ({
                           {ticket.priority}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-sm">{ticket.creator?.name || 'N/A'}</td>
-                      <td className="px-4 py-3 text-sm">{ticket.assignee?.name || 'No asignado'}</td>
-                      <td className="px-4 py-3 text-sm">{new Date(ticket.createdAt).toLocaleDateString()}</td>
+                      <td className={conditionalClasses({ light: "px-4 py-3 text-sm text-gray-700", dark: "px-4 py-3 text-sm text-gray-300" })}>{ticket.creator?.name || 'N/A'}</td>
+                      <td className={conditionalClasses({ light: "px-4 py-3 text-sm text-gray-700", dark: "px-4 py-3 text-sm text-gray-300" })}>{ticket.assignee?.name || 'No asignado'}</td>
+                      <td className={conditionalClasses({ light: "px-4 py-3 text-sm text-gray-700", dark: "px-4 py-3 text-sm text-gray-300" })}>{new Date(ticket.createdAt).toLocaleDateString()}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center space-x-2">
                           <button onClick={() => handleViewDetail(ticket)} className={conditionalClasses({ light: "p-2 text-blue-600 hover:bg-blue-50 rounded-lg", dark: "p-2 text-blue-400 hover:bg-blue-900/50 rounded-lg" })} title="Ver">
