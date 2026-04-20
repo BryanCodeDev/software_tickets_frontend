@@ -24,7 +24,10 @@ const TicketCreateModal = ({
   const validateForm = () => {
     const newErrors = {};
     if (!formData.title?.trim()) {
-      newErrors.title = 'La categoría es requerida';
+      newErrors.title = 'El título del ticket es requerido';
+    }
+    if (!formData.category?.trim()) {
+      newErrors.category = 'La categoría es requerida';
     }
     if (!formData.description?.trim()) {
       newErrors.description = 'La descripción es requerida';
@@ -55,7 +58,7 @@ const TicketCreateModal = ({
         light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in custom-scrollbar',
         dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-600 animate-scale-in custom-scrollbar'
       })}>
-        <div className="sticky top-0 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
+        <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
           <div className="flex items-center justify-between">
             <h2 className="text-xl lg:text-2xl font-bold text-white">Crear Nuevo Ticket</h2>
             <button
@@ -69,28 +72,54 @@ const TicketCreateModal = ({
 
         <form onSubmit={onSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-            <div className="md:col-span-2">
-              <label className={conditionalClasses({
-                light: 'block text-sm font-semibold text-gray-700 mb-2',
-                dark: 'block text-sm font-semibold text-gray-200 mb-2'
-              })}>
-                Categoría del Problema *
-              </label>
-              <select
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className={conditionalClasses({
-                  light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-gray-900 bg-white',
-                  dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-white bg-gray-700'
-                })}
-                required
-              >
-                <option value="">Selecciona una categoría</option>
-                {standardizedTitles.map((title, index) => (
-                  <option key={index} value={title}>{title}</option>
-                ))}
-              </select>
-            </div>
+             <div className="md:col-span-2">
+               <label className={conditionalClasses({
+                 light: 'block text-sm font-semibold text-gray-700 mb-2',
+                 dark: 'block text-sm font-semibold text-gray-200 mb-2'
+               })}>
+                 Título del Ticket *
+               </label>
+               <input
+                 type="text"
+                 value={formData.title}
+                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                 placeholder="Ej: Problema con acceso al correo"
+                 className={conditionalClasses({
+                   light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-gray-900 bg-white placeholder-gray-500',
+                   dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-white bg-gray-700 placeholder-gray-400'
+                 })}
+                 required
+               />
+               {errors.title && (
+                 <p className="text-red-500 text-xs mt-1">{errors.title}</p>
+               )}
+             </div>
+
+             <div className="md:col-span-2">
+               <label className={conditionalClasses({
+                 light: 'block text-sm font-semibold text-gray-700 mb-2',
+                 dark: 'block text-sm font-semibold text-gray-200 mb-2'
+               })}>
+                 Categoría del Problema *
+               </label>
+               <select
+                 value={formData.category || ''}
+                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                 className={conditionalClasses({
+                   light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-gray-900 bg-white',
+                   dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-white bg-gray-700'
+                 })}
+                 required
+               >
+                 <option value="">Selecciona una categoría</option>
+                 {standardizedTitles.map((title, index) => (
+                   <option key={index} value={title}>{title}</option>
+                 ))}
+               </select>
+               {errors.category && (
+                 <p className="text-red-500 text-xs mt-1">{errors.category}</p>
+               )}
+             </div>
 
             <div className="md:col-span-2">
               <label className={conditionalClasses({
@@ -248,7 +277,7 @@ const TicketCreateModal = ({
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 lg:px-6 py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-sm lg:text-base"
+              className="flex-1 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-sm lg:text-base"
               disabled={formLoading}
             >
               {formLoading ? (

@@ -9,6 +9,7 @@ export const useTicketEdit = () => {
   const [editFormData, setEditFormData] = useState({
     title: '',
     description: '',
+    category: '',
     priority: 'media',
     status: 'abierto',
     assignedTo: ''
@@ -18,22 +19,23 @@ export const useTicketEdit = () => {
    * Configura los datos del formulario de edición según el ticket
    * @param {Object} ticket - Ticket a editar
    */
-  const handleEdit = (ticket) => {
-    if (!ticket) return;
+   const handleEdit = (ticket) => {
+     if (!ticket) return;
 
-    // Configurar datos del formulario según el rol
-    // Todos los roles ahora tienen acceso a todos los campos con los datos del ticket
-    let formData = {
-      title: ticket.title || '',
-      description: ticket.description || '',
-      priority: ticket.priority || 'media',
-      status: ticket.status || 'abierto',
-      assignedTo: ticket.assignedTo || ''
-    };
+     // Configurar datos del formulario según el rol
+     // Todos los roles ahora tienen acceso a todos los campos con los datos del ticket
+     let formData = {
+       title: ticket.title || '',
+       description: ticket.description || '',
+       category: ticket.category || '',
+       priority: ticket.priority || 'media',
+       status: ticket.status || 'abierto',
+       assignedTo: ticket.assignedTo || ''
+     };
 
-    setEditFormData(formData);
-    setEditingTicket(ticket);
-  };
+     setEditFormData(formData);
+     setEditingTicket(ticket);
+   };
 
   /**
    * Limpia los datos de edición
@@ -43,6 +45,7 @@ export const useTicketEdit = () => {
     setEditFormData({
       title: '',
       description: '',
+      category: '',
       priority: 'media',
       status: 'abierto',
       assignedTo: ''

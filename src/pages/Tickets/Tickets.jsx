@@ -106,14 +106,15 @@ const Tickets = () => {
     });
    
    // Estados de formularios
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    priority: 'media',
-    status: 'abierto',
-    assignedTo: '',
-    attachment: null
-  });
+   const [formData, setFormData] = useState({
+     title: '',
+     description: '',
+     category: '',
+     priority: 'media',
+     status: 'abierto',
+     assignedTo: '',
+     attachment: null
+   });
   
   // Usar el hook personalizado para manejar la edición de tickets
   const { editingTicket, editFormData, setEditFormData, handleEdit: handleEditTicket, clearEditData } = useTicketEdit();
@@ -343,8 +344,8 @@ const Tickets = () => {
    // Filtrado y ordenamiento se realizan en el backend mediante parámetros
    // Los estados se envían a la API y se devuelven tickets ya filtrados
 
-   // Funciones de permisos - Solo Administrador, Técnico y Coordinador/a Administrativa tienen acceso completo
-   const privilegedRolesForCRUD = useMemo(() => ['Administrador', 'Técnico', 'Coordinadora Administrativa'], []);
+   // Funciones de permisos - Solo roles específicos tienen acceso completo
+   const privilegedRolesForCRUD = useMemo(() => ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa', 'Jefe', 'Compras'], []);
   const canCreate = checkPermission('tickets', 'create') ||
                    privilegedRolesForCRUD.includes(userRole);
 
@@ -423,16 +424,17 @@ const Tickets = () => {
    }, []);
 
    const handleCreate = useCallback(() => {
-    setFormData({
-      title: '',
-      description: '',
-      priority: 'media',
-      status: 'abierto',
-      assignedTo: '',
-      attachment: null
-    });
-    setShowCreateModal(true);
-  }, []);
+     setFormData({
+       title: '',
+       description: '',
+       category: '',
+       priority: 'media',
+       status: 'abierto',
+       assignedTo: '',
+       attachment: null
+     });
+     setShowCreateModal(true);
+   }, []);
 
   const handleEdit = useCallback((ticket) => {
     if (!canEditTicket(ticket)) {
@@ -476,33 +478,35 @@ const Tickets = () => {
         assignedToValue = administrators.length > 0 ? administrators[0].id : null;
       }
 
-      if (formData.attachment) {
-        const formDataToSend = new FormData();
-        formDataToSend.append('title', formData.title);
-        formDataToSend.append('description', formData.description);
-        formDataToSend.append('priority', formData.priority);
-        formDataToSend.append('status', formData.status);
-        formDataToSend.append('assignedTo', assignedToValue || '');
-        formDataToSend.append('createdAt', new Date().toISOString());
-        formDataToSend.append('attachment', formData.attachment);
+       if (formData.attachment) {
+         const formDataToSend = new FormData();
+         formDataToSend.append('title', formData.title);
+         formDataToSend.append('description', formData.description);
+         formDataToSend.append('category', formData.category);
+         formDataToSend.append('priority', formData.priority);
+         formDataToSend.append('status', formData.status);
+         formDataToSend.append('assignedTo', assignedToValue || '');
+         formDataToSend.append('createdAt', new Date().toISOString());
+         formDataToSend.append('attachment', formData.attachment);
 
-        await ticketsAPI.createTicketWithAttachment(formDataToSend);
-        setShowCreateModal(false);
-        notifySuccess('Ticket creado exitosamente');
-      } else {
-        const ticketData = {
-          title: formData.title,
-          description: formData.description,
-          priority: formData.priority,
-          status: formData.status,
-          assignedTo: assignedToValue || null,
-          createdAt: new Date().toISOString()
-        };
+         await ticketsAPI.createTicketWithAttachment(formDataToSend);
+         setShowCreateModal(false);
+         notifySuccess('Ticket creado exitosamente');
+       } else {
+         const ticketData = {
+           title: formData.title,
+           description: formData.description,
+           category: formData.category,
+           priority: formData.priority,
+           status: formData.status,
+           assignedTo: assignedToValue || null,
+           createdAt: new Date().toISOString()
+         };
 
-        await ticketsAPI.createTicket(ticketData);
-        setShowCreateModal(false);
-        notifySuccess('Ticket creado exitosamente');
-      }
+         await ticketsAPI.createTicket(ticketData);
+         setShowCreateModal(false);
+         notifySuccess('Ticket creado exitosamente');
+       }
     } catch (err) {
       if (err.response?.status === 403) {
         notifyError('No tienes permisos para crear tickets');
@@ -519,7 +523,10 @@ const Tickets = () => {
     setFormLoading(true);
     try {
       let assignedToValue = editFormData.assignedTo;
-      const updateData = { ...editFormData, assignedTo: assignedToValue || null };
+      const updateData = { 
+        ...editFormData, 
+        assignedTo: assignedToValue || null 
+      };
       await ticketsAPI.updateTicket(editingTicket.id, updateData);
       setShowEditModal(false);
       notifySuccess('Ticket actualizado exitosamente');
@@ -680,7 +687,7 @@ const Tickets = () => {
             })}>
               <div className="p-4 lg:p-6">
                 <div className="flex items-center justify-center mb-4">
-                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-linear-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
                     <FaExclamationTriangle className="w-6 h-6 lg:w-8 lg:h-8 text-white" />
                   </div>
                 </div>
@@ -707,7 +714,7 @@ const Tickets = () => {
                       confirmDialog.onConfirm();
                       setConfirmDialog(null);
                     }}
-                    className="flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base touch-manipulation"
+                    className="flex-1 px-4 py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base touch-manipulation"
                   >
                     Confirmar
                   </button>

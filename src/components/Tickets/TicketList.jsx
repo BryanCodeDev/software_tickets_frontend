@@ -162,7 +162,7 @@ const TicketList = ({
         light: "bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center",
         dark: "bg-gray-800 rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-700 p-6 lg:p-12 text-center"
       })}>
-        <div className="w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4">
            <FaClipboardList className="w-8 h-8 lg:w-10 lg:h-10 text-purple-800" />
         </div>
         <h3 className={conditionalClasses({
@@ -259,20 +259,19 @@ const TicketList = ({
               light: "bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-4 lg:p-6",
               dark: "bg-gray-800 rounded-2xl shadow-lg border-2 border-gray-700 p-4 lg:p-6"
             })}>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
-                {tickets.map((ticket) => (
-                  <TicketCard
-                    key={ticket.id}
-                    ticket={ticket}
-                    conditionalClasses={conditionalClasses}
-                    onViewDetail={() => handleViewDetail(ticket)}
-                    onEdit={() => handleEdit(ticket)}
-                    onDelete={() => handleDelete(ticket)}
-                    canEditTicket={canEditTicket}
-                    canDeleteTicket={canDeleteTicket}
-                  />
-                ))}
-              </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
+                 {tickets.map((ticket) => (
+                   <TicketCard
+                     key={ticket.id}
+                     ticket={ticket}
+                     onViewDetail={() => handleViewDetail(ticket)}
+                     onEdit={() => handleEdit(ticket)}
+                     onDelete={() => handleDelete(ticket)}
+                     canEditTicket={canEditTicket}
+                     canDeleteTicket={canDeleteTicket}
+                   />
+                 ))}
+               </div>
             </div>
           ) : (
             /* List View */

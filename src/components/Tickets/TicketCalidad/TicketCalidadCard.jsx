@@ -92,16 +92,16 @@ const TicketCalidadCard = ({
       <div className={`
         p-3 lg:p-4 border-b-2
         ${ticket.priority === 'alta' ? conditionalClasses({
-          light: 'bg-gradient-to-r from-red-50 to-red-100 border-red-200',
-          dark: 'bg-gradient-to-r from-red-900/20 to-red-800/20 border-red-700'
+          light: 'bg-linear-to-r from-red-50 to-red-100 border-red-200',
+          dark: 'bg-linear-to-r from-red-900/20 to-red-800/20 border-red-700'
         }) :
         ticket.priority === 'media' ? conditionalClasses({
-          light: 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200',
-          dark: 'bg-gradient-to-r from-yellow-900/20 to-yellow-800/20 border-yellow-700'
+          light: 'bg-linear-to-r from-yellow-50 to-yellow-100 border-yellow-200',
+          dark: 'bg-linear-to-r from-yellow-900/20 to-yellow-800/20 border-yellow-700'
         }) :
         conditionalClasses({
-          light: 'bg-gradient-to-r from-green-50 to-green-100 border-green-200',
-          dark: 'bg-gradient-to-r from-green-900/20 to-green-800/20 border-green-700'
+          light: 'bg-linear-to-r from-green-50 to-green-100 border-green-200',
+          dark: 'bg-linear-to-r from-green-900/20 to-green-800/20 border-green-700'
         })
       }`}>
         <div className="flex items-start justify-between mb-2">
@@ -119,20 +119,28 @@ const TicketCalidadCard = ({
                 </span>
               </div>
             </div>
-            <h3 className={`
-              text-base lg:text-lg font-bold mb-1 truncate
-              ${conditionalClasses({
-                light: 'text-gray-900',
-                dark: 'text-gray-100'
-              })}
-            `}>{ticket.title}</h3>
-            <p className={`
-              text-xs
-              ${conditionalClasses({
-                light: 'text-gray-500',
-                dark: 'text-gray-400'
-              })}
-            `}>Ticket Calidad #{ticket.id}</p>
+             <h3 className={`
+               text-base lg:text-lg font-bold mb-1 truncate
+               ${conditionalClasses({
+                 light: 'text-gray-900',
+                 dark: 'text-gray-100'
+               })}
+             `}>{ticket.title}</h3>
+             {(ticket.category || ticket.title) && (
+               <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium mb-1 ${conditionalClasses({
+                 light: 'bg-purple-100 text-purple-700 border border-purple-200',
+                 dark: 'bg-purple-900/40 text-purple-300 border border-purple-700'
+               })}`}>
+                 {ticket.category || ticket.title}
+               </span>
+             )}
+             <p className={`
+               text-xs
+               ${conditionalClasses({
+                 light: 'text-gray-500',
+                 dark: 'text-gray-400'
+               })}
+             `}>Ticket Calidad #{ticket.id}</p>
           </div>
           {canEditTicket(ticket) && (
             <div className="flex gap-1 lg:gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" onClick={(e) => e.stopPropagation()}>

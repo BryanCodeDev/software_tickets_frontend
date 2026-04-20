@@ -25,7 +25,10 @@ const TicketEditModal = ({
   const validateForm = () => {
     const newErrors = {};
     if (!editFormData.title?.trim()) {
-      newErrors.title = 'La categoría es requerida';
+      newErrors.title = 'El título del ticket es requerido';
+    }
+    if (!editFormData.category?.trim()) {
+      newErrors.category = 'La categoría es requerida';
     }
     if (!editFormData.description?.trim()) {
       newErrors.description = 'La descripción es requerida';
@@ -46,23 +49,24 @@ const TicketEditModal = ({
     }
   };
 
-  // useEffect defensivo...
-  useEffect(() => {
-    if (showEditModal && editingTicket && editFormData) {
-      // Verificar que los datos del formulario correspondan al ticket actual
-      // Si hay discrepancia, actualizar el formulario con los datos del ticket
-      if (!editFormData.title && editingTicket.title) {
-        setEditFormData(prev => ({
-          ...prev,
-          title: editingTicket.title || '',
-          description: editingTicket.description || '',
-          priority: editingTicket.priority || 'media',
-          status: editingTicket.status || 'abierto',
-          assignedTo: editingTicket.assignedTo || ''
-        }));
-      }
-    }
-  }, [showEditModal, editingTicket, editFormData, setEditFormData]);
+   // useEffect defensivo...
+   useEffect(() => {
+     if (showEditModal && editingTicket && editFormData) {
+       // Verificar que los datos del formulario correspondan al ticket actual
+       // Si hay discrepancia, actualizar el formulario con los datos del ticket
+       if (!editFormData.title && editingTicket.title) {
+         setEditFormData(prev => ({
+           ...prev,
+           title: editingTicket.title || '',
+           description: editingTicket.description || '',
+           category: editingTicket.category || '',
+           priority: editingTicket.priority || 'media',
+           status: editingTicket.status || 'abierto',
+           assignedTo: editingTicket.assignedTo || ''
+         }));
+       }
+     }
+   }, [showEditModal, editingTicket, editFormData, setEditFormData]);
   
   if (!showEditModal || !editingTicket) return null;
 
@@ -86,35 +90,56 @@ const TicketEditModal = ({
 
         <form onSubmit={onSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-            {userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Coordinadora Administrativa' || userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' ? (
-              <>
-                <div className="md:col-span-2">
-                  <label className={conditionalClasses({
-                    light: 'block text-sm font-semibold text-gray-700 mb-2',
-                    dark: 'block text-sm font-semibold text-gray-200 mb-2'
-                  })}>
-                    Categoría del Problema *
-                  </label>
-                   <select
-                     value={editFormData.title}
-                     onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                     className={conditionalClasses({
-                       light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base',
-                       dark: 'w-full px-4 py-3 border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base'
-                     })}
-                     aria-invalid={!!errors.title}
-                     aria-describedby={errors.title ? "title-error-edit" : undefined}
-                     required
-                   >
-                     <option value="">Selecciona una categoría</option>
-                     {standardizedTitles.map((title, index) => (
-                       <option key={index} value={title}>{title}</option>
-                     ))}
-                   </select>
-                   {errors.title && (
-                     <p className="text-red-500 text-xs mt-1" id="title-error-edit">{errors.title}</p>
-                   )}
-                 </div>
+             {userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Coordinadora Administrativa' || userRole === 'Empleado' || userRole === 'Jefe' || userRole === 'Compras' ? (
+               <>
+                 <div className="md:col-span-2">
+                   <label className={conditionalClasses({
+                     light: 'block text-sm font-semibold text-gray-700 mb-2',
+                     dark: 'block text-sm font-semibold text-gray-200 mb-2'
+                   })}>
+                     Título del Ticket *
+                   </label>
+                    <input
+                      type="text"
+                      value={editFormData.title}
+                      onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                      placeholder="Título descriptivo del ticket"
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-gray-900 bg-white placeholder-gray-500',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-white bg-gray-700 placeholder-gray-400'
+                      })}
+                      required
+                    />
+                    {errors.title && (
+                      <p className="text-red-500 text-xs mt-1" id="title-error-edit">{errors.title}</p>
+                    )}
+                  </div>
+
+                 <div className="md:col-span-2">
+                   <label className={conditionalClasses({
+                     light: 'block text-sm font-semibold text-gray-700 mb-2',
+                     dark: 'block text-sm font-semibold text-gray-200 mb-2'
+                   })}>
+                     Categoría del Problema *
+                   </label>
+                    <select
+                      value={editFormData.category || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                      className={conditionalClasses({
+                        light: 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-gray-900 bg-white',
+                        dark: 'w-full px-4 py-3 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8e4dbf] focus:border-transparent outline-none transition-all font-medium text-sm lg:text-base text-white bg-gray-700'
+                      })}
+                      required
+                    >
+                      <option value="">Selecciona una categoría</option>
+                      {standardizedTitles.map((title, index) => (
+                        <option key={index} value={title}>{title}</option>
+                      ))}
+                    </select>
+                    {errors.category && (
+                      <p className="text-red-500 text-xs mt-1" id="category-error-edit">{errors.category}</p>
+                    )}
+                  </div>
 
                 <div className="md:col-span-2">
                   <label className={conditionalClasses({
