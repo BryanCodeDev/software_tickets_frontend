@@ -33,11 +33,7 @@ const ticketsAPI = {
   },
 
   createTicketWithAttachment: async (formData) => {
-    const response = await api.post('/tickets', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
+    const response = await api.post('/tickets', formData);
     return response.data;
   },
 
@@ -56,11 +52,7 @@ const ticketsAPI = {
   },
 
   uploadAttachment: async (id, formData) => {
-    const response = await api.post(`/tickets/${id}/attachments`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
+    const response = await api.post(`/tickets/${id}/attachments`, formData);
     return response.data;
   },
 };

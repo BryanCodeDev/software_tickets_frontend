@@ -55,9 +55,7 @@ const documentChangeRequestsAPI = {
   uploadFile: async (id, file) => {
     const formData = new FormData();
     formData.append('file', file);
-    const response = await api.post(`${BASE_URL}/${id}/upload`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
+    const response = await api.post(`${BASE_URL}/${id}/upload`, formData);
     return response.data;
   },
 

@@ -27,11 +27,7 @@ const qualityTicketsAPI = {
   },
 
   createQualityTicketWithAttachment: async (formData) => {
-    const response = await api.post('/quality-tickets', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
+    const response = await api.post('/quality-tickets', formData);
     return response.data;
   },
 
@@ -50,11 +46,7 @@ const qualityTicketsAPI = {
   },
 
   uploadAttachmentToQualityTicket: async (id, formData) => {
-    const response = await api.post(`/quality-tickets/${id}/attachments`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
+    const response = await api.post(`/quality-tickets/${id}/attachments`, formData);
     return response.data;
   },
 

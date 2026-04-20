@@ -29,9 +29,7 @@ const documentsAPI = {
   },
 
   uploadDocument: async (formData) => {
-    const response = await api.post('/documents', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const response = await api.post('/documents', formData);
     return response.data;
   },
 

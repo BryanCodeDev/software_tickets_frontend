@@ -51,10 +51,23 @@ api.interceptors.request.use((config) => {
     }
   }
 
-  // SANITIZACION GLOBAL DE TODAS LAS ENTRADAS ANTES DE ENVIAR AL BACKEND
-  if (config.data && typeof config.data === 'object') {
-    config.data = sanitizeObject(config.data);
-  }
+   // SANITIZACION GLOBAL DE TODAS LAS ENTRADAS ANTES DE ENVIAR AL BACKEND
+   if (config.data && typeof config.data === 'object') {
+     if (config.data instanceof FormData) {
+       // Sanitize FormData fields while preserving files
+       const sanitizedFormData = new FormData();
+       for (const [key, value] of config.data.entries()) {
+         if (typeof value === 'string') {
+           sanitizedFormData.append(key, DOMPurify.sanitize(value, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] }));
+         } else {
+           sanitizedFormData.append(key, value);
+         }
+       }
+       config.data = sanitizedFormData;
+     } else {
+       config.data = sanitizeObject(config.data);
+     }
+   }
 
   return config;
 });

@@ -175,12 +175,7 @@ const purchaseRequestsAPI = {
     try {
       const formData = new FormData();
       formData.append('file', file);
-
-      const response = await api.post(`/purchase-requests/${requestId}/attachments`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      const response = await api.post(`/purchase-requests/${requestId}/attachments`, formData);
       return response.data;
     } catch (error) {
       console.error('Error uploading attachment:', error);
