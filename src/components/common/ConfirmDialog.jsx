@@ -18,7 +18,7 @@ const ConfirmDialog = React.memo(({ confirmDialog, onClose, onConfirm }) => {
       `}>
         <div className="p-4 lg:p-6">
           <div className="flex items-center justify-center mb-4">
-            <div className="w-12 h-12 lg:w-16 lg:h-16 bg-linear-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
               <FaExclamationTriangle className="w-6 h-6 lg:w-8 lg:h-8 text-white" />
             </div>
           </div>
@@ -51,7 +51,7 @@ const ConfirmDialog = React.memo(({ confirmDialog, onClose, onConfirm }) => {
             </button>
             <button
               onClick={onConfirm}
-              className="flex-1 px-4 py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base touch-manipulation"
+              className="flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base touch-manipulation"
             >
               Confirmar
             </button>

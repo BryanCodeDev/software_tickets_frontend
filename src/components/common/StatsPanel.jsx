@@ -14,7 +14,7 @@ const StatsPanel = React.memo(({ stats, showStats, statsConfig }) => {
         return (
           <div
             key={stat.key}
-            className={`bg-linear-to-br ${stat.gradient} rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg ${colSpan}`}
+            className={`bg-gradient-to-br ${stat.gradient} rounded-xl lg:rounded-2xl p-3 lg:p-5 text-white shadow-lg ${colSpan}`}
           >
             <div className="flex items-center justify-between mb-1 lg:mb-2">
               <stat.icon className="w-6 h-6 lg:w-8 lg:h-8 opacity-80" />

@@ -171,11 +171,11 @@ const QualityDashboard = () => {
   );
 
   if (loading) {
-    return (
-      <div className={conditionalClasses({
-        light: 'min-h-screen bg-linear-to-br from-gray-50 via-gray-50 to-gray-100 flex items-center justify-center',
-        dark: 'min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center'
-      })}>
+  return (
+    <div className={conditionalClasses({
+      light: 'min-h-screen',
+      dark: 'min-h-screen'
+    })}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#662d91] mx-auto mb-4"></div>
           <p className={conditionalClasses({ light: 'text-lg text-gray-600 font-medium', dark: 'text-lg text-gray-300 font-medium' })}>Cargando dashboard de calidad...</p>
@@ -186,13 +186,13 @@ const QualityDashboard = () => {
 
   return (
     <div className={conditionalClasses({
-      light: 'min-h-screen bg-linear-to-br from-gray-50 via-gray-50 to-gray-100',
-      dark: 'min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900'
+      light: 'min-h-screen',
+      dark: 'min-h-screen'
     })}>
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         
         {/* Header - Diseño Enterprise Premium */}
-        <div className="relative overflow-hidden bg-linear-to-r from-[#059669] via-[#10b981] to-[#059669] rounded-2xl shadow-2xl mb-6 lg:mb-8">
+        <div className="relative overflow-hidden bg-gradient-to-r from-[#059669] via-[#10b981] to-[#059669] rounded-2xl shadow-2xl mb-6 lg:mb-8">
           {/* Patrón de fondo decorativo */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white dark:bg-gray-700 rounded-full -mr-32 -mt-32"></div>
@@ -252,7 +252,7 @@ const QualityDashboard = () => {
           </div>
           
           {/* Barra inferior decorativa */}
-          <div className="h-1.5 bg-linear-to-r from-emerald-300 via-teal-300 to-emerald-300"></div>
+          <div className="h-1.5 bg-gradient-to-r from-emerald-300 via-teal-300 to-emerald-300"></div>
         </div>
 
         {/* Botones de acción rápida */}
@@ -436,7 +436,7 @@ const QualityDashboard = () => {
                 dark: 'w-full bg-gray-600 rounded-full h-2 overflow-hidden'
               })}>
                 <div
-                  className="bg-linear-to-r from-purple-600 to-purple-500 h-2 rounded-full transition-all duration-500"
+                  className="bg-gradient-to-r from-purple-600 to-purple-500 h-2 rounded-full transition-all duration-500"
                   style={{ width: `${documentHealthRate}%` }}
                 ></div>
               </div>
@@ -518,7 +518,7 @@ const QualityDashboard = () => {
                 dark: 'w-full bg-gray-600 rounded-full h-2 overflow-hidden'
               })}>
                 <div
-                  className="bg-linear-to-r from-emerald-600 to-emerald-500 h-2 rounded-full transition-all duration-500"
+                  className="bg-gradient-to-r from-emerald-600 to-emerald-500 h-2 rounded-full transition-all duration-500"
                   style={{ width: `${qualityTicketResolutionRate}%` }}
                 ></div>
               </div>
@@ -607,7 +607,7 @@ const QualityDashboard = () => {
               dark: 'w-full bg-gray-600 rounded-full h-2 overflow-hidden'
             })}>
               <div
-                className="bg-linear-to-r from-blue-600 to-blue-500 h-2 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-blue-600 to-blue-500 h-2 rounded-full transition-all duration-500"
                 style={{ width: `${changeRequestCompletionRate}%` }}
               ></div>
             </div>

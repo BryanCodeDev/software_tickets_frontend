@@ -7,8 +7,8 @@ const TermsAndConditions = () => {
 
   return (
     <div className={conditionalClasses({
-      light: 'min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8',
-      dark: 'min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8'
+      light: 'min-h-screen py-12 px-4 sm:px-6 lg:px-8',
+      dark: 'min-h-screen py-12 px-4 sm:px-6 lg:px-8'
     })}>
       <div className="max-w-4xl mx-auto">
         <div className={conditionalClasses({
@@ -16,7 +16,7 @@ const TermsAndConditions = () => {
           dark: 'bg-gray-800 shadow-xl rounded-2xl overflow-hidden'
         })}>
           {/* Header */}
-          <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-8 py-6">
+          <div className="bg-gradient-to-r from-[#662d91] to-[#8e4dbf] px-8 py-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg ${conditionalClasses({

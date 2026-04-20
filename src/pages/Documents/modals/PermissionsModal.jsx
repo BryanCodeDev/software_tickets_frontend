@@ -61,7 +61,7 @@ const PermissionsModal = ({
           light: 'bg-white border-gray-200',
           dark: 'bg-gray-800 border-gray-600'
         })}`}>
-          <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
+          <div className="sticky top-0 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
@@ -389,7 +389,7 @@ const PermissionsModal = ({
                 <button
                   onClick={handleGrantPermissions}
                   disabled={selectedUsers.length === 0}
-                  className="flex-1 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Otorgar Permisos
                 </button>

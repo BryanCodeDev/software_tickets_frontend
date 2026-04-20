@@ -25,20 +25,20 @@ const TicketList = ({
   const getStatusColor = (status) => {
     const isDark = document.documentElement.classList.contains('dark');
 
-    const colors = {
-      'abierto': isDark
-        ? 'bg-purple-900/50 text-purple-200 border-purple-700'
-        : 'bg-[#f3ebf9] text-[#662d91] border-[#e8d5f5]',
-      'en progreso': isDark
-        ? 'bg-blue-900/50 text-blue-200 border-blue-700'
-        : 'bg-blue-100 text-blue-700 border-blue-200',
-      'cerrado': isDark
-        ? 'bg-gray-700 text-gray-300 border-gray-600'
-        : 'bg-gray-200 text-gray-700 border-gray-300',
-      'resuelto': isDark
-        ? 'bg-green-900/50 text-green-200 border-green-700'
-        : 'bg-green-100 text-green-700 border-green-200'
-    };
+     const colors = {
+       'abierto': isDark
+         ? 'bg-purple-900/50 text-purple-200 border-purple-700'
+         : 'bg-purple-100 text-purple-700 border-purple-200',
+       'en progreso': isDark
+         ? 'bg-blue-900/50 text-blue-200 border-blue-700'
+         : 'bg-blue-100 text-blue-700 border-blue-200',
+       'cerrado': isDark
+         ? 'bg-gray-700 text-gray-300 border-gray-600'
+         : 'bg-gray-200 text-gray-700 border-gray-300',
+       'resuelto': isDark
+         ? 'bg-green-900/50 text-green-200 border-green-700'
+         : 'bg-green-100 text-green-700 border-green-200'
+     };
     return colors[status?.toLowerCase()] || (isDark
       ? 'bg-gray-700 text-gray-400 border-gray-600'
       : 'bg-gray-100 text-gray-600 border-gray-200');
@@ -162,8 +162,8 @@ const TicketList = ({
         light: "bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center",
         dark: "bg-gray-800 rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-700 p-6 lg:p-12 text-center"
       })}>
-        <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4">
-          <FaClipboardList className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
+        <div className="w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4">
+           <FaClipboardList className="w-8 h-8 lg:w-10 lg:h-10 text-purple-800" />
         </div>
         <h3 className={conditionalClasses({
           light: "text-lg lg:text-xl font-bold text-gray-900 mb-2",
@@ -190,7 +190,7 @@ const TicketList = ({
           light: "text-sm text-gray-600 font-medium",
           dark: "text-sm text-gray-300 font-medium"
         })}>
-          Mostrando <span className="font-bold text-[#662d91]">{tickets.length}</span> de <span className="font-bold">{totalItems || 0}</span> tickets
+           Mostrando <span className="font-bold text-purple-800">{tickets.length}</span> de <span className="font-bold">{totalItems || 0}</span> tickets
         </p>
         <div className="flex flex-wrap items-center gap-2">
           <button
@@ -249,7 +249,7 @@ const TicketList = ({
 
       {loading ? (
         <div className="flex justify-center items-center py-12">
-          <FaSpinner className="animate-spin text-4xl text-[#662d91]" />
+          <FaSpinner className="animate-spin text-4xl text-purple-800" />
         </div>
       ) : (
         <>
@@ -276,7 +276,7 @@ const TicketList = ({
             </div>
           ) : (
             /* List View */
-            <div className="overflow-x-auto rounded-lg shadow">
+            <div className="overflow-x-auto rounded-lg shadow custom-scrollbar">
               <table className="w-full">
                 <thead>
                   <tr className={conditionalClasses({ light: "bg-[#f3ebf9]", dark: "bg-gray-700" })}>
@@ -290,9 +290,12 @@ const TicketList = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {tickets.map((ticket) => (
-                    <tr key={ticket.id} className={conditionalClasses({ light: "border-t border-gray-200 hover:bg-gray-50 transition-colors", dark: "border-t border-gray-700 hover:bg-gray-700/50 transition-colors" })}>
-                      <td className="px-4 py-3">
+                  {tickets.map((ticket, index) => (
+                    <tr key={ticket.id} className={conditionalClasses({ 
+                      light: index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50', 
+                      dark: index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-800/50' 
+                    })}>
+                      <td className="px-4 py-3 border-t border-gray-200 dark:border-gray-700">
                         <div className={conditionalClasses({ light: "font-medium text-gray-900", dark: "font-medium text-gray-100" })}>{ticket.title}</div>
                         <div className={conditionalClasses({ light: "text-xs text-gray-500 truncate max-w-xs", dark: "text-xs text-gray-400 truncate max-w-xs" })}>{ticket.description}</div>
                       </td>

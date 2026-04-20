@@ -310,11 +310,11 @@ const DocumentChangeRequestsPage = () => {
 
 
 
-  return (
-    <div className={conditionalClasses({
-      light: 'min-h-screen bg-gray-50',
-      dark: 'min-h-screen bg-gray-900'
-    })}>
+   return (
+     <div className={conditionalClasses({
+       light: 'min-h-screen',
+       dark: 'min-h-screen'
+     })}>
       {/* Header */}
       <div className={conditionalClasses({
         light: 'bg-white shadow-sm border-b border-gray-200',

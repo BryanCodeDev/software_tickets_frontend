@@ -96,7 +96,7 @@ const ActaEntregaHistoryModal = ({ showModal, onClose, actaId }) => {
         dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-hidden border-2 border-gray-600 animate-scale-in'
       })}>
         {/* Header */}
-        <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6">
+        <div className="bg-gradient-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 lg:w-10 lg:h-10 bg-white/20 rounded-lg flex items-center justify-center">

@@ -123,7 +123,7 @@ const ActaEntregaHistoryModal = ({
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
       <div className="bg-white dark:bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-hidden border-2 border-gray-200 dark:border-gray-700 animate-scale-in">
         {/* Header */}
-        <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6">
+        <div className="bg-gradient-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 lg:w-10 lg:h-10 bg-white/20 dark:bg-gray-700/50 rounded-lg flex items-center justify-center">
@@ -155,7 +155,7 @@ const ActaEntregaHistoryModal = ({
         </div>
 
         {/* Content */}
-        <div className="overflow-y-auto max-h-[calc(95vh-120px)] lg:max-h-[calc(90vh-120px)]">
+        <div className="overflow-y-auto max-h-[calc(95vh-120px)] lg:max-h-[calc(90vh-120px)] custom-scrollbar">
           {isLoading ? (
             <div className="flex items-center justify-center p-8 lg:p-12">
               <div className="text-center">

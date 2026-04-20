@@ -175,7 +175,7 @@ const DocumentChangeRequestCard = ({
             })}
           `}>
             <div
-              className="h-full bg-linear-to-r from-purple-500 to-purple-600 transition-all duration-500"
+              className="h-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-500"
               style={{ width: `${progressPercent}%` }}
             />
           </div>

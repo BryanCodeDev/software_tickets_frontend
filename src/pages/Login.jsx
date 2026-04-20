@@ -75,13 +75,13 @@ const Login = () => {
 
   return (
     <div className={conditionalClasses({
-      light: 'min-h-screen bg-linear-to-br from-slate-950 via-[#3d1a57] to-slate-950 flex',
-      dark: 'min-h-screen bg-linear-to-br from-gray-950 via-[#2a1040] to-gray-950 flex'
+      light: 'min-h-screen flex',
+      dark: 'min-h-screen flex'
     })}>
       {/* Left Panel - Branding */}
       <div className={conditionalClasses({
-        light: 'hidden lg:flex lg:w-[52%] bg-linear-to-br from-[#4a1f6e] via-[#662d91] to-[#7c3aad] p-14 flex-col justify-between relative overflow-hidden',
-        dark: 'hidden lg:flex lg:w-[52%] bg-linear-to-br from-[#1a0a2e] via-[#2d1254] to-[#1a0a2e] p-14 flex-col justify-between relative overflow-hidden'
+        light: 'hidden lg:flex lg:w-[52%] bg-gradient-to-br from-[#4a1f6e] via-[#662d91] to-[#7c3aad] p-14 flex-col justify-between relative overflow-hidden',
+        dark: 'hidden lg:flex lg:w-[52%] bg-gradient-to-br from-[#3d1069] via-[#662d91] to-[#4a1f6e] p-14 flex-col justify-between relative overflow-hidden'
       })}>
         {/* Geometric decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -103,10 +103,10 @@ const Login = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
               </svg>
             </div>
-            <div>
-              <span className="text-2xl font-bold text-white tracking-tight">DuvyClass</span>
-              <div className="text-[10px] text-purple-300 tracking-[0.2em] uppercase font-medium">Enterprise Platform</div>
-            </div>
+             <div>
+               <span className="text-2xl font-bold text-white tracking-tight">DuvyClass</span>
+               <div className="text-xs text-purple-300 tracking-[0.2em] uppercase font-medium">Enterprise Platform</div>
+             </div>
           </div>
 
           <div className="space-y-5 mb-12">
@@ -161,18 +161,18 @@ const Login = () => {
             <span className="text-xl font-bold text-[#662d91]">DuvyClass</span>
           </div>
 
-           {/* Header */}
-           <div className="mb-8">
-             <h2 className={conditionalClasses({
-               light: 'text-3xl font-bold text-gray-900 mb-2 tracking-tight',
-               dark: 'text-3xl font-bold text-white mb-2 tracking-tight'
-             })}>
-               {requires2FA ? 'Verificación en dos pasos' : 'Acceso al sistema'}
-             </h2>
-             <p className={conditionalClasses({
-               light: 'text-sm text-gray-500 leading-relaxed',
-               dark: 'text-sm text-gray-400 leading-relaxed'
-             })}>
+            {/* Header */}
+            <div className="mb-8">
+              <h2 className={conditionalClasses({
+                light: 'text-2xl sm:text-3xl font-bold text-gray-900 mb-2 tracking-tight',
+                dark: 'text-2xl sm:text-3xl font-bold text-white mb-2 tracking-tight'
+              })}>
+                {requires2FA ? 'Verificación en dos pasos' : 'Acceso al sistema'}
+              </h2>
+              <p className={conditionalClasses({
+                light: 'text-sm text-gray-600 leading-relaxed',
+                dark: 'text-sm text-gray-300 leading-relaxed'
+              })}>
                {requires2FA
                  ? 'Ingresa el código generado por tu aplicación de autenticación.'
                  : 'Ingresa tus credenciales corporativas para continuar.'}
@@ -181,25 +181,34 @@ const Login = () => {
 
           {/* Error message */}
           {error && (
-            <div className="mb-5 flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-3.5">
-              <svg className="w-4 h-4 text-red-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className={`mb-5 flex items-start gap-3 rounded-xl p-3.5 animate-fade-down ${conditionalClasses({
+              light: 'bg-red-50 border border-red-200',
+              dark: 'bg-red-900/20 border border-red-800'
+            })}`}>
+              <svg className={`w-4 h-4 mt-0.5 shrink-0 ${conditionalClasses({
+                light: 'text-red-500',
+                dark: 'text-red-400'
+              })}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p className="text-sm text-red-700">{error}</p>
+              <p className={`text-sm ${conditionalClasses({
+                light: 'text-red-700',
+                dark: 'text-red-200'
+              })}`}>{error}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {!requires2FA ? (
               <>
-                {/* Email */}
-                <div>
-                  <label htmlFor="email" className={conditionalClasses({
-                    light: 'block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide',
-                    dark: 'block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wide'
-                  })}>
-                    Correo electrónico
-                  </label>
+                 {/* Email */}
+                 <div>
+                   <label htmlFor="email" className={conditionalClasses({
+                     light: 'block text-sm font-semibold text-gray-700 mb-1.5 uppercase tracking-wide',
+                     dark: 'block text-sm font-semibold text-gray-300 mb-1.5 uppercase tracking-wide'
+                   })}>
+                     Correo electrónico
+                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                       <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -214,23 +223,23 @@ const Login = () => {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className={conditionalClasses({
-                        light: 'block w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/30 focus:border-[#662d91] transition-all bg-gray-50 hover:bg-white',
-                        dark: 'block w-full pl-10 pr-4 py-2.5 border border-gray-700 rounded-xl text-gray-100 placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/40 focus:border-[#662d91] transition-all bg-gray-800'
-                      })}
+                       className={conditionalClasses({
+                         light: 'block w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/30 focus:border-[#662d91] transition-all bg-gray-50 hover:bg-white',
+                         dark: 'block w-full pl-10 pr-4 py-2.5 border border-gray-700 rounded-xl text-gray-300 placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/40 focus:border-[#662d91] transition-all bg-gray-800'
+                       })}
                       placeholder="usuario@empresa.com"
                     />
                   </div>
                 </div>
 
-                {/* Password */}
-                <div>
-                  <label htmlFor="password" className={conditionalClasses({
-                    light: 'block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide',
-                    dark: 'block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wide'
-                  })}>
-                    Contraseña
-                  </label>
+                 {/* Password */}
+                 <div>
+                   <label htmlFor="password" className={conditionalClasses({
+                     light: 'block text-sm font-semibold text-gray-700 mb-1.5 uppercase tracking-wide',
+                     dark: 'block text-sm font-semibold text-gray-300 mb-1.5 uppercase tracking-wide'
+                   })}>
+                     Contraseña
+                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                       <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -245,16 +254,19 @@ const Login = () => {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className={conditionalClasses({
-                        light: 'block w-full pl-10 pr-11 py-2.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/30 focus:border-[#662d91] transition-all bg-gray-50 hover:bg-white',
-                        dark: 'block w-full pl-10 pr-11 py-2.5 border border-gray-700 rounded-xl text-gray-100 placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/40 focus:border-[#662d91] transition-all bg-gray-800'
-                      })}
+                       className={conditionalClasses({
+                         light: 'block w-full pl-10 pr-11 py-2.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/30 focus:border-[#662d91] transition-all bg-gray-50 hover:bg-white',
+                         dark: 'block w-full pl-10 pr-11 py-2.5 border border-gray-700 rounded-xl text-gray-300 placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/40 focus:border-[#662d91] transition-all bg-gray-800'
+                       })}
                       placeholder="••••••••"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                       className={`absolute inset-y-0 right-0 pr-3.5 flex items-center ${conditionalClasses({
+                         light: 'text-gray-400 hover:text-gray-600',
+                         dark: 'text-gray-300 hover:text-gray-200'
+                       })} transition-colors`}
                     >
                       {showPassword ? (
                         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -275,16 +287,19 @@ const Login = () => {
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
-                      className="h-3.5 w-3.5 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
+                      className="h-3.5 w-3.5 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded dark:border-gray-600"
                     />
                     <span className={conditionalClasses({
                       light: 'text-sm text-gray-600',
-                      dark: 'text-sm text-gray-400'
+                      dark: 'text-sm text-gray-300'
                     })}>Mantener sesión activa</span>
                   </label>
-                  <Link to="/forgot-password" className="text-sm font-medium text-[#662d91] hover:text-[#8e4dbf] transition-colors">
-                    ¿Olvidaste tu contraseña?
-                  </Link>
+                   <Link to="/forgot-password" className={`${conditionalClasses({
+                     light: 'text-sm font-medium text-[#662d91] hover:text-[#8e4dbf]',
+                     dark: 'text-sm font-medium text-purple-400 hover:text-purple-300'
+                   })} transition-colors`}>
+                     ¿Olvidaste tu contraseña?
+                   </Link>
                 </div>
               </>
             ) : (
@@ -324,10 +339,10 @@ const Login = () => {
                     required
                     value={twoFactorToken}
                     onChange={(e) => setTwoFactorToken(e.target.value)}
-                    className={conditionalClasses({
-                      light: 'block w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/30 focus:border-[#662d91] transition-all bg-gray-50 tracking-[0.4em] text-center font-mono',
-                      dark: 'block w-full pl-10 pr-4 py-2.5 border border-gray-700 rounded-xl text-gray-100 placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/40 focus:border-[#662d91] transition-all bg-gray-800 tracking-[0.4em] text-center font-mono'
-                    })}
+                     className={conditionalClasses({
+                       light: 'block w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/30 focus:border-[#662d91] transition-all bg-gray-50 tracking-[0.4em] text-center font-mono',
+                       dark: 'block w-full pl-10 pr-4 py-2.5 border border-gray-700 rounded-xl text-gray-300 placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/40 focus:border-[#662d91] transition-all bg-gray-800 tracking-[0.4em] text-center font-mono'
+                     })}
                     placeholder="000000"
                     maxLength="6"
                   />
@@ -340,7 +355,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center items-center py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#5a2480] hover:to-[#7c3aad] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#662d91] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg hover:shadow-[#662d91]/25"
+                className="w-full flex justify-center items-center py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#5a2480] hover:to-[#7c3aad] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#662d91] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg hover:shadow-[#662d91]/25"
               >
                 {loading ? (
                   <>
@@ -369,12 +384,12 @@ const Login = () => {
                   dark: 'w-full border-t border-gray-700/60'
                 })}></div>
               </div>
-              <div className="relative flex justify-center text-xs">
-                <span className={conditionalClasses({
-                  light: 'px-3 bg-white text-gray-400',
-                  dark: 'px-3 bg-gray-900 text-gray-500'
-                })}>¿Aún no tienes acceso?</span>
-              </div>
+               <div className="relative flex justify-center text-xs">
+                 <span className={`px-3 ${conditionalClasses({
+                   light: 'bg-white text-gray-500',
+                   dark: 'bg-gray-900 text-gray-300'
+                 })}`}>¿Aún no tienes acceso?</span>
+               </div>
             </div>
 
             <Link
@@ -393,7 +408,7 @@ const Login = () => {
 
           <p className={conditionalClasses({
             light: 'mt-8 text-center text-xs text-gray-400',
-            dark: 'mt-8 text-center text-xs text-gray-600'
+            dark: 'mt-8 text-center text-xs text-gray-400'
           })}>
             © 2026 DuvyClass · Desarrollado por Bryan Muñoz · Todos los derechos reservados.
           </p>

@@ -374,7 +374,7 @@ const PurchaseRequestDetailModal = ({
         <div className="p-4 lg:p-6 border-b border-gray-200 dark:border-gray-600 shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 lg:w-12 lg:h-12 bg-linear-to-br from-green-600 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-green-600 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-lg">#{selectedRequest.id}</span>
               </div>
               <div>
@@ -419,7 +419,7 @@ const PurchaseRequestDetailModal = ({
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 lg:p-6">
+        <div className="flex-1 overflow-y-auto p-4 lg:p-6 custom-scrollbar">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">

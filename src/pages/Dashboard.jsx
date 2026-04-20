@@ -61,8 +61,8 @@ const Dashboard = () => {
   // Componente de tarjeta principal con diseño profesional
   const StatCard = ({ title, value, description, colorClass, bgClass, icon }) => (
     <div className={conditionalClasses({
-      light: `relative overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 ${bgClass || 'bg-white'}`,
-      dark: `relative overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-600 ${bgClass || 'bg-gray-800'}`
+      light: `relative overflow-hidden rounded-xl elevation-flat hover:elevation-raised transition-all duration-300 border border-gray-200 ${bgClass || 'bg-white'}`,
+      dark: `relative overflow-hidden rounded-xl elevation-flat hover:elevation-raised transition-all duration-300 border border-gray-600 ${bgClass || 'bg-gray-800'}`
     })}>
       <div className="p-4 sm:p-5 lg:p-6">
         <div className="flex items-start justify-between">
@@ -82,10 +82,10 @@ const Dashboard = () => {
             })}>
               {loading ? '...' : value.toLocaleString()}
             </p>
-            <p className={conditionalClasses({
-              light: 'text-xs text-gray-500',
-              dark: 'text-xs text-gray-400'
-            })}>{description}</p>
+             <p className={conditionalClasses({
+               light: 'text-xs text-gray-500',
+               dark: 'text-xs text-gray-300'
+             })}>{description}</p>
           </div>
         </div>
       </div>
@@ -98,8 +98,8 @@ const Dashboard = () => {
   // Componente de métrica rápida
   const MetricCard = ({ label, value, color, subtext, icon }) => (
     <div className={conditionalClasses({
-      light: 'bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-all duration-200',
-      dark: 'bg-gray-800 rounded-lg border border-gray-600 p-4 hover:shadow-md transition-all duration-200'
+      light: 'bg-white rounded-xl border border-gray-200 p-4 elevation-flat hover:elevation-raised transition-all duration-200',
+      dark: 'bg-gray-800 rounded-xl border border-gray-600 p-4 elevation-flat hover:elevation-raised transition-all duration-200'
     })}>
       <div className="flex items-center justify-between mb-2">
         <div className={`p-2.5 rounded-lg ${color} bg-opacity-10`}>
@@ -116,10 +116,10 @@ const Dashboard = () => {
         light: 'text-xs font-medium text-gray-600 mb-0.5',
         dark: 'text-xs font-medium text-gray-300 mb-0.5'
       })}>{label}</p>
-      {subtext && <p className={conditionalClasses({
-        light: 'text-xs text-gray-400',
-        dark: 'text-xs text-gray-500'
-      })}>{subtext}</p>}
+       {subtext && <p className={conditionalClasses({
+         light: 'text-xs text-gray-400',
+         dark: 'text-xs text-gray-300'
+       })}>{subtext}</p>}
     </div>
   );
 
@@ -130,13 +130,13 @@ const Dashboard = () => {
 
   return (
     <div className={conditionalClasses({
-      light: 'min-h-screen bg-linear-to-br from-gray-50 via-gray-50 to-gray-100',
-      dark: 'min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900'
+      light: 'min-h-screen',
+      dark: 'min-h-screen'
     })}>
       <div className="max-w-400 mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8">
         
         {/* Header - Diseño Enterprise Premium */}
-        <div className="relative overflow-hidden bg-linear-to-r from-[#662d91] via-[#7b2cbf] to-[#662d91] rounded-2xl shadow-2xl mb-6 lg:mb-8">
+        <div className="relative overflow-hidden bg-gradient-to-r from-[#662d91] via-[#8e4dbf] to-[#662d91] rounded-2xl elevation-hero mb-6 lg:mb-8">
           {/* Patrón de fondo decorativo */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white dark:bg-gray-700 rounded-full -mr-32 -mt-32"></div>
@@ -194,7 +194,7 @@ const Dashboard = () => {
           </div>
           
           {/* Barra inferior decorativa */}
-          <div className="h-1.5 bg-linear-to-r from-purple-400 via-pink-400 to-indigo-400"></div>
+          <div className="h-1.5 bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400"></div>
         </div>
 
         {/* Grid principal de estadísticas - Módulos Principales */}
@@ -341,8 +341,8 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 mb-6 lg:mb-8">
           {/* Tickets IT */}
           <div className={conditionalClasses({
-            light: 'bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6',
-            dark: 'bg-gray-800 rounded-xl shadow-sm border border-gray-600 p-4 sm:p-6'
+            light: 'bg-white rounded-xl elevation-flat border border-gray-200 p-4 sm:p-6',
+            dark: 'bg-gray-800 rounded-xl elevation-flat border border-gray-600 p-4 sm:p-6'
           })}>
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div className="flex items-center gap-3">
@@ -355,16 +355,16 @@ const Dashboard = () => {
                     dark: 'text-purple-400 text-lg'
                   })} />
                 </div>
-                <div>
-                  <h2 className={conditionalClasses({
-                    light: 'text-base sm:text-lg font-bold text-gray-900',
-                    dark: 'text-base sm:text-lg font-bold text-gray-100'
-                  })}>Tickets de Soporte IT</h2>
-                  <p className={conditionalClasses({
-                    light: 'text-xs text-gray-500',
-                    dark: 'text-xs text-gray-400'
-                  })}>Estado actual de solicitudes</p>
-                </div>
+                 <div>
+                   <h2 className={conditionalClasses({
+                     light: 'text-base sm:text-lg font-bold text-gray-900',
+                     dark: 'text-base sm:text-lg font-bold text-gray-100'
+                   })}>Tickets de Soporte IT</h2>
+                   <p className={conditionalClasses({
+                     light: 'text-xs text-gray-500',
+                     dark: 'text-xs text-gray-300'
+                   })}>Estado actual de solicitudes</p>
+                 </div>
               </div>
             </div>
             
@@ -408,7 +408,7 @@ const Dashboard = () => {
                 dark: 'w-full bg-gray-600 rounded-full h-2 overflow-hidden'
               })}>
                 <div
-                  className="bg-linear-to-r from-purple-600 to-purple-500 h-2 rounded-full transition-all duration-500"
+                  className="bg-gradient-to-r from-purple-600 to-purple-500 h-2 rounded-full transition-all duration-500"
                   style={{ width: `${completionRate}%` }}
                 ></div>
               </div>
@@ -417,8 +417,8 @@ const Dashboard = () => {
 
           {/* Tickets de Calidad */}
           <div className={conditionalClasses({
-            light: 'bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6',
-            dark: 'bg-gray-800 rounded-xl shadow-sm border border-gray-600 p-4 sm:p-6'
+            light: 'bg-white rounded-xl elevation-flat border border-gray-200 p-4 sm:p-6',
+            dark: 'bg-gray-800 rounded-xl elevation-flat border border-gray-600 p-4 sm:p-6'
           })}>
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div className="flex items-center gap-3">
@@ -438,7 +438,7 @@ const Dashboard = () => {
                   })}>Tickets de Calidad</h2>
                   <p className={conditionalClasses({
                     light: 'text-xs text-gray-500',
-                    dark: 'text-xs text-gray-400'
+                    dark: 'text-xs text-gray-300'
                   })}>Gestión de calidad y auditoría</p>
                 </div>
               </div>
@@ -484,7 +484,7 @@ const Dashboard = () => {
                 dark: 'w-full bg-gray-600 rounded-full h-2 overflow-hidden'
               })}>
                 <div
-                  className="bg-linear-to-r from-emerald-600 to-emerald-500 h-2 rounded-full transition-all duration-500"
+                  className="bg-gradient-to-r from-emerald-600 to-emerald-500 h-2 rounded-full transition-all duration-500"
                   style={{ width: `${qualityCompletionRate}%` }}
                 ></div>
               </div>
@@ -497,29 +497,29 @@ const Dashboard = () => {
           
           {/* Resumen del Sistema - Todos los módulos */}
           <div className={conditionalClasses({
-            light: 'bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6',
-            dark: 'bg-gray-800 rounded-xl shadow-sm border border-gray-600 p-4 sm:p-6'
+            light: 'bg-white rounded-xl elevation-flat border border-gray-200 p-4 sm:p-6',
+            dark: 'bg-gray-800 rounded-xl elevation-flat border border-gray-600 p-4 sm:p-6'
           })}>
             <div className="flex items-center gap-3 mb-5">
               <div className={conditionalClasses({
-                light: 'p-2.5 bg-linear-to-br from-purple-100 to-purple-50 rounded-lg',
-                dark: 'p-2.5 bg-linear-to-br from-purple-900/50 to-purple-800/30 rounded-lg'
+                light: 'p-2.5 bg-gradient-to-br from-purple-100 to-purple-50 rounded-lg',
+                dark: 'p-2.5 bg-gradient-to-br from-purple-900/50 to-purple-800/30 rounded-lg'
               })}>
                 <FaServer className={conditionalClasses({
                   light: 'text-purple-600 text-lg',
                   dark: 'text-purple-400 text-lg'
                 })} />
               </div>
-              <div>
-                <h2 className={conditionalClasses({
-                  light: 'text-base sm:text-lg font-bold text-gray-900',
-                  dark: 'text-base sm:text-lg font-bold text-gray-100'
-                })}>Resumen del Sistema</h2>
-                <p className={conditionalClasses({
-                  light: 'text-xs text-gray-500',
-                  dark: 'text-xs text-gray-400'
-                })}>Todos los módulos activos</p>
-              </div>
+               <div>
+                 <h2 className={conditionalClasses({
+                   light: 'text-base sm:text-lg font-bold text-gray-900',
+                   dark: 'text-base sm:text-lg font-bold text-gray-100'
+                 })}>Resumen del Sistema</h2>
+                 <p className={conditionalClasses({
+                   light: 'text-xs text-gray-500',
+                   dark: 'text-xs text-gray-300'
+                 })}>Todos los módulos activos</p>
+               </div>
             </div>
             
             <div className="space-y-3">
@@ -645,8 +645,8 @@ const Dashboard = () => {
             
             <div className="space-y-4">
               <div className={conditionalClasses({
-                light: 'p-4 bg-linear-to-br from-green-50 to-emerald-50 rounded-lg border border-green-200',
-                dark: 'p-4 bg-linear-to-br from-green-900/20 to-emerald-900/20 rounded-lg border border-green-800'
+                light: 'p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-200',
+                dark: 'p-4 bg-gradient-to-br from-green-900/20 to-emerald-900/20 rounded-lg border border-green-800'
               })}>
                 <div className="flex justify-between items-start mb-3">
                   <div>
@@ -718,8 +718,8 @@ const Dashboard = () => {
               </div>
 
               <div className={conditionalClasses({
-                light: 'p-3 bg-linear-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200',
-                dark: 'p-3 bg-linear-to-r from-purple-900/20 to-pink-900/20 rounded-lg border border-purple-800'
+                light: 'p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200',
+                dark: 'p-3 bg-gradient-to-r from-purple-900/20 to-pink-900/20 rounded-lg border border-purple-800'
               })}>
                 <p className={conditionalClasses({
                   light: 'text-xs font-medium text-gray-600 mb-1',
@@ -736,8 +736,8 @@ const Dashboard = () => {
 
           {/* Estado del Sistema */}
           <div className={conditionalClasses({
-            light: 'bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6',
-            dark: 'bg-gray-800 rounded-xl shadow-sm border border-gray-600 p-4 sm:p-6'
+            light: 'bg-white rounded-xl elevation-flat border border-gray-200 p-4 sm:p-6',
+            dark: 'bg-gray-800 rounded-xl elevation-flat border border-gray-600 p-4 sm:p-6'
           })}>
             <div className="flex items-center gap-3">
               <div className={conditionalClasses({
@@ -749,16 +749,16 @@ const Dashboard = () => {
                   dark: 'text-blue-400 text-lg'
                 })} />
               </div>
-              <div>
-                <h2 className={conditionalClasses({
-                  light: 'text-base sm:text-lg font-bold text-gray-900',
-                  dark: 'text-base sm:text-lg font-bold text-gray-100'
-                })}>Estado del Sistema</h2>
-                <p className={conditionalClasses({
-                  light: 'text-xs text-gray-500',
-                  dark: 'text-xs text-gray-400'
-                })}>Monitoreo en tiempo real</p>
-              </div>
+               <div>
+                 <h2 className={conditionalClasses({
+                   light: 'text-base sm:text-lg font-bold text-gray-900',
+                   dark: 'text-base sm:text-lg font-bold text-gray-100'
+                 })}>Estado del Sistema</h2>
+                 <p className={conditionalClasses({
+                   light: 'text-xs text-gray-500',
+                   dark: 'text-xs text-gray-300'
+                 })}>Monitoreo en tiempo real</p>
+               </div>
             </div>
             
             <div className="space-y-3">
@@ -836,8 +836,8 @@ const Dashboard = () => {
 
               {user?.role?.name === 'Administrador' && (
                 <div className={conditionalClasses({
-                  light: 'mt-4 p-4 bg-linear-to-r from-purple-600 to-purple-700 rounded-lg text-white',
-                  dark: 'mt-4 p-4 bg-linear-to-r from-purple-700 to-purple-800 rounded-lg text-white'
+                  light: 'mt-4 p-4 bg-gradient-to-r from-purple-600 to-purple-700 rounded-lg text-white',
+                  dark: 'mt-4 p-4 bg-gradient-to-r from-purple-700 to-purple-800 rounded-lg text-white'
                 })}>
                   <div className="flex items-center justify-center gap-2">
                     <FaUserClock className="text-sm" />

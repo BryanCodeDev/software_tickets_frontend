@@ -85,10 +85,10 @@ const TicketDetailModal = ({
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
       <div className={conditionalClasses({
-        light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in',
-        dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-600 animate-scale-in'
+        light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in custom-scrollbar',
+        dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-600 animate-scale-in custom-scrollbar'
       })}>
-        <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
+        <div className="sticky top-0 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
           <div className="flex items-center justify-between">
             <div className="min-w-0 flex-1">
               <h2 className="text-xl lg:text-2xl font-bold text-white mb-2 truncate">{selectedTicket.title}</h2>
@@ -126,7 +126,7 @@ const TicketDetailModal = ({
                   light: 'text-base lg:text-lg font-bold text-gray-900 mb-3 flex items-center gap-2',
                   dark: 'text-base lg:text-lg font-bold text-white mb-3 flex items-center gap-2'
                 })}>
-                  <FaClipboardList className="text-[#662d91] w-4 h-4 lg:w-5 lg:h-5" />
+                  <FaClipboardList className="text-purple-800 w-4 h-4 lg:w-5 lg:h-5" />
                   Descripción del Problema
                 </h3>
                 <p className={conditionalClasses({
@@ -210,8 +210,8 @@ const TicketDetailModal = ({
                 dark: 'bg-gray-700 rounded-xl border-2 border-gray-600 overflow-hidden'
               })}>
                 <div className={conditionalClasses({
-                  light: 'bg-linear-to-r from-[#f3ebf9] to-[#e8d5f5] px-4 lg:px-5 py-3 border-b-2 border-gray-200',
-                  dark: 'bg-linear-to-r from-gray-700 to-gray-600 px-4 lg:px-5 py-3 border-b-2 border-gray-600'
+                  light: 'bg-gradient-to-r from-[#f3ebf9] to-[#e8d5f5] px-4 lg:px-5 py-3 border-b-2 border-gray-200',
+                  dark: 'bg-gradient-to-r from-gray-700 to-gray-600 px-4 lg:px-5 py-3 border-b-2 border-gray-600'
                 })}>
                   <h3 className={conditionalClasses({
                     light: 'text-base lg:text-lg font-bold text-gray-900 flex items-center gap-2',
@@ -223,7 +223,7 @@ const TicketDetailModal = ({
                 </div>
 
                 <div className="p-4 lg:p-5">
-                  <div className="space-y-3 lg:space-y-4 max-h-80 lg:max-h-96 overflow-y-auto mb-4">
+                  <div className="space-y-3 lg:space-y-4 max-h-80 lg:max-h-96 overflow-y-auto mb-4 custom-scrollbar">
                     {messages.length === 0 ? (
                       <div className="text-center py-6 lg:py-8">
                         <div className={conditionalClasses({
@@ -244,7 +244,7 @@ const TicketDetailModal = ({
                         <div key={message.id} className={`flex ${message.sender?.id === user?.id ? 'justify-end' : 'justify-start'}`}>
                           <div className={`max-w-xs lg:max-w-md px-3 lg:px-4 py-2 lg:py-3 rounded-2xl ${
                             message.sender?.id === user?.id
-                              ? 'bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white'
+                              ? 'bg-gradient-to-r from-[#662d91] to-[#8e4dbf] text-white'
                               : conditionalClasses({
                                   light: 'bg-gray-100 border-2 border-gray-200 text-gray-900',
                                   dark: 'bg-gray-600 border-2 border-gray-500 text-white'
@@ -291,7 +291,7 @@ const TicketDetailModal = ({
                       />
                       <button
                         type="submit"
-                        className="px-4 lg:px-5 py-2 lg:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl transition-all flex items-center gap-2 disabled:opacity-50"
+                        className="px-4 lg:px-5 py-2 lg:py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl transition-all flex items-center gap-2 disabled:opacity-50"
                         disabled={!newMessage.trim()}
                       >
                         <FaPaperPlane className="w-3 h-3 lg:w-4 lg:h-4" />
@@ -315,8 +315,8 @@ const TicketDetailModal = ({
             <div className="space-y-4 lg:space-y-6">
               {/* Ticket Info Card */}
               <div className={conditionalClasses({
-                light: 'bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-xl p-4 lg:p-5 border-2 border-[#e8d5f5]',
-                dark: 'bg-linear-to-br from-gray-700 to-gray-600 rounded-xl p-4 lg:p-5 border-2 border-gray-500'
+                light: 'bg-gradient-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-xl p-4 lg:p-5 border-2 border-[#e8d5f5]',
+                dark: 'bg-gradient-to-br from-gray-700 to-gray-600 rounded-xl p-4 lg:p-5 border-2 border-gray-500'
               })}>
                 <h4 className={conditionalClasses({
                   light: 'font-bold text-gray-900 mb-4 flex items-center gap-2 text-sm lg:text-base',

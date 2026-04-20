@@ -1,38 +1,95 @@
 @import 'tailwindcss';
+@import './design-system/shadows.css';
 
-/* Custom scrollbar para el sidebar */
-.sidebar-scrollbar::-webkit-scrollbar {
-  width: 6px;
+/* ─── Theme Transition: Smooth color transitions ─── */
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.sidebar-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+/* Elements that change color in dark mode - smooth transition */
+.bg-white,
+.bg-gray-50,
+.bg-gray-100,
+.bg-gray-800,
+.bg-gray-900,
+.bg-gray-950,
+.text-gray-900,
+.text-gray-100,
+.text-gray-700,
+.text-gray-300,
+.text-gray-500,
+.text-gray-400,
+.border-gray-200,
+.border-gray-600,
+.border-gray-800 {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-.sidebar-scrollbar::-webkit-scrollbar-thumb {
+/* ─── Animations ─── */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-fade-down {
+  animation: fadeDown 0.2s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.2s ease-out;
+}
+
+/* ─── Custom scrollbar para áreas con overflow ─── */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: rgb(243 244 246);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background-color: rgb(31 41 55);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: rgb(209 213 219);
   border-radius: 9999px;
-  transition: background-color 0.2s;
 }
 
-.sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: rgb(156 163 175);
-}
-
-.dark .sidebar-scrollbar::-webkit-scrollbar-thumb {
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: rgb(75 85 99);
 }
 
-.dark .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(156 163 175);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgb(107 114 128);
 }
 
 /* Firefox scrollbar */
-.sidebar-scrollbar {
+.custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgb(209 213 219) transparent;
 }
 
-.dark .sidebar-scrollbar {
+.dark .custom-scrollbar {
   scrollbar-color: rgb(75 85 99) transparent;
 }

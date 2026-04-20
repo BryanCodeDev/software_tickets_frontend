@@ -68,7 +68,7 @@ const ActaEntregaTable = ({
     })}>
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white">
+          <thead className="bg-gradient-to-r from-[#662d91] to-[#8e4dbf] text-white">
             <tr>
               <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">ID</th>
               <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Tipo</th>

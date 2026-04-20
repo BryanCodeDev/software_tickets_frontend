@@ -97,7 +97,7 @@ const TicketCalidadList = React.memo(({
         dark: "bg-gray-800 rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-700 p-6 lg:p-12 text-center"
       })}>
         <div className={conditionalClasses({
-          light: "w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4",
+          light: "w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4",
           dark: "w-16 h-16 lg:w-20 lg:h-20 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4"
         })}>
           <FaClipboardList className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
@@ -117,7 +117,7 @@ const TicketCalidadList = React.memo(({
         {canCreate && (
           <button
             onClick={handleCreate}
-            className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
+            className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -318,8 +318,8 @@ const TicketCalidadList = React.memo(({
           <div className="hidden md:block">
             <table className="w-full">
               <thead className={conditionalClasses({
-                light: "bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white",
-                dark: "bg-linear-to-r from-purple-700 to-purple-800 text-white"
+                light: "bg-gradient-to-r from-[#662d91] to-[#8e4dbf] text-white",
+                dark: "bg-gradient-to-r from-purple-700 to-purple-800 text-white"
               })}>
                 <tr>
                   <th className="px-4 py-4 text-left text-xs font-bold uppercase">ID</th>

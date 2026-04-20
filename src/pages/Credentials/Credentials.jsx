@@ -503,7 +503,7 @@ const Credentials = () => {
   const isGlobalSearch = searchTerm && !currentFolder;
 
   return (
-    <div className={`min-h-screen py-4 sm:py-6 md:py-8 px-2 sm:px-4 md:px-6 lg:px-8 ${conditionalClasses({ light: 'bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]', dark: 'bg-gray-900' })}`}>
+    <div className={`min-h-screen py-4 sm:py-6 md:py-8 px-2 sm:px-4 md:px-6 lg:px-8 ${conditionalClasses({ light: '', dark: '' })}`}>
       {/* Confirm Dialog */}
       <ConfirmDialog
         confirmDialog={confirmDialog}
@@ -516,7 +516,7 @@ const Credentials = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
             <div>
               <h1 className={`text-xl sm:text-2xl md:text-3xl font-bold flex items-center ${conditionalClasses({ light: 'text-gray-900', dark: 'text-white' })}`}>
-                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg">
                   <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
@@ -546,7 +546,7 @@ const Credentials = () => {
                 hasPermission('credentials', 'create') && (
                   <button
                     onClick={handleCreate}
-                    className="flex items-center justify-center space-x-2 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto text-sm sm:text-base"
+                    className="flex items-center justify-center space-x-2 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto text-sm sm:text-base"
                   >
                     <FaPlus className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
                     <span>Nueva Credencial</span>
@@ -556,7 +556,7 @@ const Credentials = () => {
                 hasPermission('credentials', 'manage_folders') && !isGlobalSearch && (
                   <button
                     onClick={handleCreateFolder}
-                    className="flex items-center justify-center space-x-2 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto text-sm sm:text-base"
+                    className="flex items-center justify-center space-x-2 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto text-sm sm:text-base"
                   >
                     <FaPlus className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
                     <span>Nueva Carpeta</span>
@@ -826,10 +826,10 @@ const Credentials = () => {
                     <div
                       key={folder.id}
                       onClick={() => handleEnterFolder(folder)}
-                      className={`group rounded-xl p-3 sm:p-4 md:p-5 border hover:shadow-md transition-all duration-200 cursor-pointer ${conditionalClasses({ light: 'bg-linear-to-r from-blue-50 to-indigo-50 border-blue-200 hover:border-blue-300', dark: 'bg-gray-700 border-gray-600 hover:border-gray-500' })}`}
+                      className={`group rounded-xl p-3 sm:p-4 md:p-5 border hover:shadow-md transition-all duration-200 cursor-pointer ${conditionalClasses({ light: 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:border-blue-300', dark: 'bg-gray-700 border-gray-600 hover:border-gray-500' })}`}
                     >
                       <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left space-y-2 sm:space-y-0 sm:space-x-3 md:space-x-4">
-                        <div className={`w-10 h-10 sm:w-10 sm:h-10 md:w-12 rounded-xl flex items-center justify-center shrink-0 ${conditionalClasses({ light: 'bg-linear-to-br from-blue-100 to-indigo-100', dark: 'bg-gray-600' })}`}>
+                        <div className={`w-10 h-10 sm:w-10 sm:h-10 md:w-12 rounded-xl flex items-center justify-center shrink-0 ${conditionalClasses({ light: 'bg-gradient-to-br from-blue-100 to-indigo-100', dark: 'bg-gray-600' })}`}>
                           <FaFolder className={`text-lg sm:text-lg md:text-xl ${conditionalClasses({ light: 'text-blue-600', dark: 'text-gray-300' })}`} />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -886,7 +886,7 @@ const Credentials = () => {
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-1 sm:p-2 md:p-4 animate-fade-in">
           <div className={`rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({ light: 'bg-white border-gray-200', dark: 'bg-gray-800 border-gray-700' })}`}>
-            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-3 sm:p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] p-3 sm:p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">
                   {editingCredential ? 'Editar Credencial' : 'Nueva Credencial'}
@@ -1109,7 +1109,7 @@ const Credentials = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 lg:py-3 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-xs sm:text-sm md:text-base bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7]"
+                  className="flex-1 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 lg:py-3 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-xs sm:text-sm md:text-base bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7]"
                   disabled={formLoading}
                 >
                   {formLoading ? (
@@ -1135,7 +1135,7 @@ const Credentials = () => {
       {showFolderModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-1 sm:p-2 md:p-4 animate-fade-in">
           <div className={`rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({ light: 'bg-white border-gray-200', dark: 'bg-gray-800 border-gray-700' })}`}>
-            <div className="sticky top-0 bg-linear-to-r from-green-600 to-green-700 p-3 sm:p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-gradient-to-r from-green-600 to-green-700 p-3 sm:p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Nueva Carpeta</h2>
                 <button
@@ -1184,7 +1184,7 @@ const Credentials = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 sm:px-6 py-2 sm:py-3 text-white font-bold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-xs sm:text-sm bg-linear-to-r from-green-600 to-green-600 hover:from-green-700 hover:to-green-700"
+                  className="flex-1 px-4 sm:px-6 py-2 sm:py-3 text-white font-bold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-xs sm:text-sm bg-gradient-to-r from-green-600 to-green-600 hover:from-green-700 hover:to-green-700"
                   disabled={folderFormLoading}
                 >
                   {folderFormLoading ? (
@@ -1209,7 +1209,7 @@ const Credentials = () => {
       {showEditFolderModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-1 sm:p-2 md:p-4 animate-fade-in">
           <div className={`rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-md max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 animate-scale-in ${conditionalClasses({ light: 'bg-white border-gray-200', dark: 'bg-gray-800 border-gray-700' })}`}>
-            <div className="sticky top-0 bg-linear-to-r from-blue-600 to-blue-700 p-3 sm:p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 p-3 sm:p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Editar Carpeta</h2>
                 <button
@@ -1258,7 +1258,7 @@ const Credentials = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 sm:px-6 py-2 sm:py-3 text-white font-bold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-xs sm:text-sm bg-linear-to-r from-blue-600 to-blue-600 hover:from-blue-700 hover:to-blue-700"
+                  className="flex-1 px-4 sm:px-6 py-2 sm:py-3 text-white font-bold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-xs sm:text-sm bg-gradient-to-r from-blue-600 to-blue-600 hover:from-blue-700 hover:to-blue-700"
                   disabled={editFolderFormLoading}
                 >
                   {editFolderFormLoading ? (

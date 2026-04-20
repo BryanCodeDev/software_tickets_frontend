@@ -190,10 +190,10 @@ const Trash = () => {
   // Solo Administrador y Técnico tienen acceso a la papelera
   if (!user || (user.role?.name !== 'Administrador' && user.role?.name !== 'Técnico')) {
     return (
-      <div className={conditionalClasses({
-        light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-6 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8',
-        dark: 'min-h-screen bg-gray-900 py-6 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8'
-      })}>
+        <div className={conditionalClasses({
+          light: 'min-h-screen py-6 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8',
+          dark: 'min-h-screen py-6 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8'
+        })}>
         <div className="container mx-auto">
           <div className={conditionalClasses({
             light: 'bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-center',
@@ -214,11 +214,11 @@ const Trash = () => {
     );
   }
 
-  return (
-    <div className={conditionalClasses({
-      light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-6 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8',
-      dark: 'min-h-screen bg-gray-900 py-6 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8'
-    })}>
+    return (
+      <div className={conditionalClasses({
+        light: 'min-h-screen py-6 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8',
+        dark: 'min-h-screen py-6 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8'
+      })}>
       {/* Confirm Dialog */}
       <ConfirmDialog
         confirmDialog={confirmDialog}
@@ -235,8 +235,8 @@ const Trash = () => {
                 dark: 'text-xl sm:text-2xl md:text-3xl font-bold text-gray-100 flex items-center'
               })}>
                 <div className={conditionalClasses({
-                  light: 'w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-r from-gray-600 to-gray-700 rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg',
-                  dark: 'w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-r from-gray-600 to-gray-700 rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg'
+                  light: 'w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-gray-600 to-gray-700 rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg',
+                  dark: 'w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-gray-600 to-gray-700 rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg'
                 })}>
                   <FaDumpster className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
@@ -408,8 +408,8 @@ const Trash = () => {
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
                           <div className={conditionalClasses({
-                            light: `w-8 h-8 sm:w-10 sm:h-10 bg-linear-to-r ${getModuleColor(item.moduleType)} rounded-full flex items-center justify-center text-white`,
-                            dark: `w-8 h-8 sm:w-10 sm:h-10 bg-linear-to-r ${getModuleColor(item.moduleType)} rounded-full flex items-center justify-center text-white`
+                            light: `w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r ${getModuleColor(item.moduleType)} rounded-full flex items-center justify-center text-white`,
+                            dark: `w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r ${getModuleColor(item.moduleType)} rounded-full flex items-center justify-center text-white`
                           })}>
                             {getModuleIcon(item.moduleType)}
                           </div>
@@ -555,8 +555,8 @@ const Trash = () => {
             dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-600 animate-scale-in'
           })}>
             <div className={conditionalClasses({
-              light: 'sticky top-0 bg-linear-to-r from-gray-600 to-gray-700 p-3 sm:p-4 lg:p-6 z-10',
-              dark: 'sticky top-0 bg-linear-to-r from-gray-600 to-gray-700 p-3 sm:p-4 lg:p-6 z-10'
+              light: 'sticky top-0 bg-gradient-to-r from-gray-600 to-gray-700 p-3 sm:p-4 lg:p-6 z-10',
+              dark: 'sticky top-0 bg-gradient-to-r from-gray-600 to-gray-700 p-3 sm:p-4 lg:p-6 z-10'
             })}>
               <div className="flex items-center justify-between">
                 <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white flex items-center gap-2">
@@ -591,8 +591,8 @@ const Trash = () => {
                   })}>Módulo</label>
                   <div className="flex items-center gap-2">
                     <div className={conditionalClasses({
-                      light: `w-5 h-5 sm:w-6 sm:h-6 bg-linear-to-r ${getModuleColor(selectedItem.moduleType)} rounded-full flex items-center justify-center text-white`,
-                      dark: `w-5 h-5 sm:w-6 sm:h-6 bg-linear-to-r ${getModuleColor(selectedItem.moduleType)} rounded-full flex items-center justify-center text-white`
+                      light: `w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r ${getModuleColor(selectedItem.moduleType)} rounded-full flex items-center justify-center text-white`,
+                      dark: `w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r ${getModuleColor(selectedItem.moduleType)} rounded-full flex items-center justify-center text-white`
                     })}>
                       {getModuleIcon(selectedItem.moduleType)}
                     </div>

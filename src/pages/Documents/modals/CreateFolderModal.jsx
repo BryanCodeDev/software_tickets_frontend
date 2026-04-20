@@ -18,7 +18,7 @@ const CreateFolderModal = ({
           light: 'bg-white border-gray-200',
           dark: 'bg-gray-800 border-gray-600'
         })}`}>
-          <div className="sticky top-0 bg-linear-to-r from-green-600 to-green-700 p-4 lg:p-6 z-10">
+          <div className="sticky top-0 bg-gradient-to-r from-green-600 to-green-700 p-4 lg:p-6 z-10">
             <div className="flex items-center justify-between">
               <h2 className="text-xl lg:text-2xl font-bold text-white">Nueva Carpeta</h2>
               <button
@@ -84,7 +84,7 @@ const CreateFolderModal = ({
               </button>
               <button
                 type="submit"
-                className="flex-1 px-6 py-3 bg-linear-to-r from-green-600 to-green-600 hover:from-green-700 hover:to-green-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                className="flex-1 px-6 py-3 bg-gradient-to-r from-green-600 to-green-600 hover:from-green-700 hover:to-green-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
               >
                 Crear Carpeta
               </button>

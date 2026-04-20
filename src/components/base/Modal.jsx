@@ -57,17 +57,17 @@ const Modal = React.memo(({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in">
-      <div
-        className={`
-          rounded-2xl shadow-2xl w-full ${sizeClasses[size]} max-h-[90vh] overflow-hidden transform transition-all animate-in zoom-in-95
-          ${conditionalClasses({
-            light: 'bg-white',
-            dark: 'bg-gray-800'
-          })}
-          ${className}
-        `}
-        onClick={handleBackdropClick}
-      >
+        <div
+          className={`
+            rounded-2xl elevation-modal w-full ${sizeClasses[size]} max-h-[90vh] overflow-hidden transform transition-all animate-in zoom-in-95
+            ${conditionalClasses({
+              light: 'bg-white',
+              dark: 'bg-gray-800'
+            })}
+            ${className}
+          `}
+          onClick={handleBackdropClick}
+        >
         {/* Header */}
         {(title || showCloseButton) && (
           <div className={`
@@ -104,7 +104,7 @@ const Modal = React.memo(({
         )}
 
         {/* Content */}
-        <div className="overflow-y-auto max-h-[calc(90vh-5rem)]">
+        <div className="overflow-y-auto max-h-[calc(90vh-5rem)] custom-scrollbar">
           {children}
         </div>
       </div>

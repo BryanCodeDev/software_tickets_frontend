@@ -474,7 +474,7 @@ const Documents = () => {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${conditionalClasses({ light: 'bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]', dark: 'bg-gray-900' })}`}>
+      <div className={`min-h-screen flex items-center justify-center ${conditionalClasses({ light: '', dark: '' })}`}>
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-[#662d91] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className={conditionalClasses({ light: 'text-gray-600 font-medium', dark: 'text-gray-300 font-medium' })}>Cargando documentos...</p>
@@ -484,7 +484,7 @@ const Documents = () => {
   }
 
   return (
-    <div className={`min-h-screen ${conditionalClasses({ light: 'bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe]', dark: 'bg-gray-900' })}`}>
+    <div className={`min-h-screen ${conditionalClasses({ light: '', dark: '' })}`}>
       <ConfirmDialog confirmDialog={confirmDialog} onClose={handleCancelConfirm} onConfirm={handleConfirm} />
 
       <DocumentHeader
@@ -512,7 +512,7 @@ const Documents = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         <div className={`rounded-2xl shadow-lg border ${conditionalClasses({ light: 'bg-white border-gray-200', dark: 'bg-gray-800 border-gray-700' })}`}>
-          <div className={`px-6 py-4 border-b ${conditionalClasses({ light: 'bg-linear-to-r from-[#f3ebf9] to-[#e8d5f5] border-gray-200', dark: 'bg-gray-800 border-gray-700' })}`}>
+          <div className={`px-6 py-4 border-b ${conditionalClasses({ light: 'bg-gradient-to-r from-[#f3ebf9] to-[#e8d5f5] border-gray-200', dark: 'bg-gray-800 border-gray-700' })}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <FaFile className={`text-[#662d91] text-lg ${conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}`} />

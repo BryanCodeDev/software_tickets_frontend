@@ -1,0 +1,53 @@
+/**
+ * Shadow Elevation Scale - DuvyClass
+ * Semantic shadow classes for consistent visual hierarchy
+ * Usage: className="elevation-flat", "elevation-raised", "elevation-floating", "elevation-modal", "elevation-hero"
+ */
+
+/* ─── FLAT (Cards, Inputs) ───────────────────────────────────────────────────── */
+.elevation-flat {
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+.dark .elevation-flat {
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+}
+
+/* ─── RAISED (Buttons, Navbar) ───────────────────────────────────────────────── */
+.elevation-raised {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+.dark .elevation-raised {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+}
+
+/* ─── FLOATING (Dropdowns, Tooltips) ─────────────────────────────────────────── */
+.elevation-floating {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+.dark .elevation-floating {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+}
+
+/* ─── MODAL (Dialogs, Popups) ───────────────────────────────────────────────── */
+.elevation-modal {
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+}
+.dark .elevation-modal {
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.75);
+}
+
+/* ─── HERO (Hero sections, Prominent banners) ───────────────────────────────── */
+.elevation-hero {
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+.dark .elevation-hero {
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+}
+
+/* ─── INNER (Pressed state, inner shadows) ───────────────────────────────────── */
+.elevation-inner {
+  box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.06);
+}
+.dark .elevation-inner {
+  box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.3);
+}

@@ -18,14 +18,14 @@ const DocumentCard = ({
   return (
     <div
       className={`group rounded-xl p-5 border transition-all duration-200 ${conditionalClasses({
-        light: 'bg-linear-to-r from-gray-50 to-white border-gray-200 hover:border-[#8e4dbf] hover:shadow-md',
+        light: 'bg-gradient-to-r from-gray-50 to-white border-gray-200 hover:border-[#8e4dbf] hover:shadow-md',
         dark: 'bg-gray-800 border-gray-600 hover:border-[#8e4dbf] hover:shadow-lg'
       })}`}
     >
       {/* Document Header with Icon and Info */}
       <div className="flex items-start space-x-4 mb-4">
         <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${conditionalClasses({
-          light: 'bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5]',
+          light: 'bg-gradient-to-br from-[#f3ebf9] to-[#e8d5f5]',
           dark: 'bg-gray-700'
         })}`}>
           {getFileIcon(doc.filePath)}
@@ -99,7 +99,7 @@ const DocumentCard = ({
       })}`}>
         <button
           onClick={() => handleDownloadDocument(doc.id, getDownloadName(doc))}
-          className="inline-flex items-center px-4 py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all"
+          className="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all"
         >
           <FaDownload className="mr-2" />
           Descargar

@@ -415,7 +415,7 @@ const ActasEntrega = () => {
 
   if (loading) return (
     <div className={conditionalClasses({
-      light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4',
+      light: 'min-h-screen bg-gradient-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4',
       dark: 'min-h-screen bg-gray-900 py-8 px-4'
     })}>
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -432,7 +432,7 @@ const ActasEntrega = () => {
 
   return (
     <div className={conditionalClasses({
-      light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8',
+      light: 'min-h-screen bg-gradient-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8',
       dark: 'min-h-screen bg-gray-900 py-4 px-3 sm:py-6 sm:px-4 lg:px-8'
     })}>
       <NotificationSystem
@@ -452,7 +452,7 @@ const ActasEntrega = () => {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 lg:gap-4 mb-3">
-                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-2xl flex items-center justify-center shadow-xl shrink-0">
+                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-[#662d91] to-[#8e4dbf] rounded-2xl flex items-center justify-center shadow-xl shrink-0">
                   <FaClipboardCheck className="text-white text-xl lg:text-2xl" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -486,7 +486,7 @@ const ActasEntrega = () => {
               {canCreate && (
                 <button
                   onClick={handleCreate}
-                  className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
+                  className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
                 >
                   <FaPlus className="w-4 h-4" />
                   <span>Nueva Acta</span>
@@ -626,7 +626,7 @@ const ActasEntrega = () => {
             light: 'bg-white rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-200 p-6 lg:p-12 text-center',
             dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-700 p-6 lg:p-12 text-center'
           })}>
-            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#dbeafe] rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-[#f3ebf9] to-[#dbeafe] rounded-full flex items-center justify-center mx-auto mb-4">
               <FaClipboardCheck className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
             </div>
             <h3 className={conditionalClasses({
@@ -648,7 +648,7 @@ const ActasEntrega = () => {
             {canCreate && !searchTerm && filterStatus === 'all' && filterTipo === 'all' && (
               <button
                 onClick={handleCreate}
-                className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
+                className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
               >
                 <FaPlus className="w-4 h-4" />
                 Crear Primera Acta

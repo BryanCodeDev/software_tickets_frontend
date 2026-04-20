@@ -60,7 +60,7 @@ const ActaEntregaCard = ({ acta, onEdit, onDelete, onHistory, canEdit, canDelete
       dark: 'bg-gray-800 rounded-xl lg:rounded-2xl border-2 border-gray-600 hover:border-[#8e4dbf] hover:shadow-xl transition-all duration-300 overflow-hidden group'
     })}>
       {/* Card Header */}
-      <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-3 lg:p-4 text-white">
+      <div className="bg-gradient-to-r from-[#662d91] to-[#8e4dbf] p-3 lg:p-4 text-white">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">

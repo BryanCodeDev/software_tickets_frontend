@@ -5,6 +5,7 @@ import { useThemeClasses } from '../hooks/useThemeClasses';
 import ThemeToggle from './ThemeToggle';
 import NotificationsPanel from './common/NotificationsPanel.jsx';
 import { FaCrown, FaWrench, FaUser, FaShieldAlt, FaUserShield, FaUserCog } from 'react-icons/fa';
+import { GRADIENTS } from '../design-system/tokens';
 
 const Navbar = ({ toggleSidebar }) => {
   const { user, logout } = useContext(AuthContext);
@@ -55,14 +56,17 @@ const Navbar = ({ toggleSidebar }) => {
 
   if (!user) return null;
 
-  // ─── Style tokens ───────────────────────────────────────────────────────────
-   const navBg = isScrolled
-     ? conditionalClasses({ light: 'bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm', dark: 'bg-gray-900/95 backdrop-blur-md border-b border-gray-800 shadow-sm' })
-     : conditionalClasses({ light: 'bg-linear-to-r from-[#4a1f6e] via-[#662d91] to-[#7c3aad] shadow-lg', dark: 'bg-linear-to-r from-gray-950 via-[#2d1254] to-gray-950 shadow-lg border-b border-purple-900/30' });
+   // ─── Style tokens ───────────────────────────────────────────────────────────
+    const navBg = isScrolled
+      ? conditionalClasses({ light: 'bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm', dark: 'bg-gray-900/95 backdrop-blur-md border-b border-gray-800 shadow-sm' })
+      : conditionalClasses({
+          light: `${GRADIENTS.brandHorizontal.light} shadow-lg`,
+          dark: `${GRADIENTS.brandHorizontal.dark} shadow-lg border-b border-purple-900/30`
+        });
 
-  const iconBtn = isScrolled
-    ? conditionalClasses({ light: 'text-gray-500 hover:text-[#662d91] hover:bg-[#f5eeff]', dark: 'text-gray-400 hover:text-purple-400 hover:bg-gray-800' })
-    : 'text-white/75 hover:text-white hover:bg-white/15';
+   const iconBtn = isScrolled
+     ? conditionalClasses({ light: 'text-gray-500 hover:text-purple-800 hover:bg-purple-50', dark: 'text-gray-400 hover:text-purple-400 hover:bg-gray-800' })
+     : 'text-white/75 hover:text-white hover:bg-white/15';
 
   const primaryText = isScrolled
     ? conditionalClasses({ light: 'text-gray-900', dark: 'text-gray-100' })
@@ -78,9 +82,9 @@ const Navbar = ({ toggleSidebar }) => {
 
   const dropdownBg = conditionalClasses({ light: 'bg-white border border-gray-100 shadow-2xl shadow-gray-200/80', dark: 'bg-gray-900 border border-gray-800 shadow-2xl shadow-black/50' });
   const dividerColor = conditionalClasses({ light: 'border-gray-100', dark: 'border-gray-800' });
-  const menuItem = conditionalClasses({ light: 'text-gray-600 hover:text-[#662d91] hover:bg-[#f8f3ff]', dark: 'text-gray-400 hover:text-purple-300 hover:bg-gray-800' });
-  const headerText = conditionalClasses({ light: 'text-gray-900', dark: 'text-gray-100' });
-  const subText = conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-500' });
+    const menuItem = conditionalClasses({ light: 'text-gray-600 hover:text-purple-800 hover:bg-purple-50', dark: 'text-gray-300 hover:text-purple-300 hover:bg-gray-800' });
+   const headerText = conditionalClasses({ light: 'text-gray-900', dark: 'text-gray-100' });
+   const subText = conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' });
 
   return (
     <nav className={`sticky top-0 z-30 transition-all duration-300 ${navBg}`}>
@@ -89,11 +93,11 @@ const Navbar = ({ toggleSidebar }) => {
 
           {/* ── Left: sidebar toggle + mobile brand ── */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <button
-              onClick={toggleSidebar}
-              aria-label="Abrir menú"
-              className={`lg:hidden p-2 rounded-xl transition-all duration-200 focus:outline-none ${iconBtn}`}
-            >
+             <button
+               onClick={toggleSidebar}
+               aria-label="Abrir menú"
+               className={`lg:hidden p-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:ring-opacity-60 focus:ring-offset-2 dark:focus:ring-offset-gray-900 ${iconBtn}`}
+             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
@@ -106,10 +110,10 @@ const Navbar = ({ toggleSidebar }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                 </svg>
               </div>
-              <div>
-                <p className={`text-sm font-bold leading-none ${primaryText}`}>DuvyClass</p>
-                <p className={`text-[10px] leading-none mt-0.5 tracking-wide ${secondaryText}`}>Sistema IT</p>
-              </div>
+                 <div>
+                   <p className={`text-sm font-bold leading-none ${primaryText}`}>DuvyClass</p>
+                   <p className={`text-xs leading-none mt-0.5 tracking-wide ${secondaryText}`}>Sistema IT</p>
+                 </div>
             </div>
           </div>
 
@@ -138,11 +142,11 @@ const Navbar = ({ toggleSidebar }) => {
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 aria-label="Menú de usuario"
                 aria-expanded={showUserMenu}
-                className={`flex items-center gap-2 sm:gap-2.5 px-1.5 sm:px-2 py-1.5 rounded-xl transition-all duration-200 focus:outline-none group ${
-                  isScrolled
-                    ? conditionalClasses({ light: 'hover:bg-gray-50', dark: 'hover:bg-gray-800' })
-                    : 'hover:bg-white/10'
-                }`}
+               className={`flex items-center gap-2 sm:gap-2.5 px-1.5 sm:px-2 py-1.5 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#662d91] focus:ring-opacity-60 focus:ring-offset-2 dark:focus:ring-offset-gray-900 group ${
+                 isScrolled
+                   ? conditionalClasses({ light: 'hover:bg-gray-50', dark: 'hover:bg-gray-800' })
+                   : 'hover:bg-white/10'
+               }`}
               >
                 {/* Name + role (desktop) */}
                  <div className="hidden sm:block text-right">
@@ -158,7 +162,7 @@ const Navbar = ({ toggleSidebar }) => {
                 </div>
 
                 {/* Avatar */}
-                 <div className={`relative w-8 h-8 sm:w-9 sm:h-9 bg-linear-to-br ${roleBadge.gradient} rounded-xl flex items-center justify-center shadow-md ring-2 ring-white/30 transition-transform duration-150 group-hover:scale-105`}>
+                 <div className={`relative w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br ${roleBadge.gradient} rounded-xl flex items-center justify-center shadow-md ring-2 ring-white/30 transition-transform duration-150 group-hover:scale-105`}>
                   <span className="text-white text-xs sm:text-sm font-bold">{userInitial}</span>
                   {/* Online indicator */}
                   <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white dark:border-gray-900" />
@@ -188,7 +192,7 @@ const Navbar = ({ toggleSidebar }) => {
                   {/* User header */}
                   <div className="px-4 py-4">
                     <div className="flex items-center gap-3">
-                       <div className={`w-11 h-11 bg-linear-to-br ${roleBadge.gradient} rounded-xl flex items-center justify-center shadow-md shrink-0`}>
+                       <div className={`w-11 h-11 bg-gradient-to-br ${roleBadge.gradient} rounded-xl flex items-center justify-center shadow-md shrink-0`}>
                         <span className="text-white font-bold text-base">{userInitial}</span>
                       </div>
                       <div className="min-w-0">
@@ -200,8 +204,8 @@ const Navbar = ({ toggleSidebar }) => {
                       </div>
                     </div>
                     <div className="mt-3">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#f3ebff] text-[#662d91] dark:bg-purple-900/40 dark:text-purple-300`}>
-                        <span className="text-[10px]">{roleBadge.icon}</span>
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300`}>
+                        <span className="text-xs">{roleBadge.icon}</span>
                         {user?.role?.name || 'Sin rol'}
                       </span>
                     </div>

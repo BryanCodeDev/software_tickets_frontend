@@ -302,10 +302,10 @@ const PurchaseRequestStats = ({ stats, userRole }) => {
         return (
           <div
             key={index}
-            className={`bg-linear-to-br ${stat.bgColor} rounded-xl lg:rounded-2xl p-4 lg:p-6 border-2 ${stat.borderColor} shadow-lg hover:shadow-xl transition-all duration-200`}
+            className={`bg-gradient-to-br ${stat.bgColor} rounded-xl lg:rounded-2xl p-4 lg:p-6 border-2 ${stat.borderColor} shadow-lg hover:shadow-xl transition-all duration-200`}
           >
             <div className="flex items-center justify-between mb-3">
-              <div className={`w-10 h-10 lg:w-12 lg:h-12 bg-linear-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg`}>
+              <div className={`w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg`}>
                 <IconComponent className="text-white text-lg lg:text-xl" />
               </div>
             </div>

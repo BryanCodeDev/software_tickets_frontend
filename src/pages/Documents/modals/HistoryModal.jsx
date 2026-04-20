@@ -22,7 +22,7 @@ const HistoryModal = ({
           light: 'bg-white border-gray-200',
           dark: 'bg-gray-800 border-gray-600'
         })}`}>
-          <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
+          <div className="sticky top-0 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
             <div className="flex items-center justify-between">
               <h2 className="text-xl lg:text-2xl font-bold text-white">Historial de Versiones: {selectedDocument.title}</h2>
               <button

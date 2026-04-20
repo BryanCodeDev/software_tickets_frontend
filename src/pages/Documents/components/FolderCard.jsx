@@ -18,13 +18,13 @@ const FolderCard = ({
     <div
       onClick={() => handleEnterFolder(folder)}
       className={`group rounded-xl p-5 border transition-all duration-200 cursor-pointer ${conditionalClasses({
-        light: 'bg-linear-to-r from-blue-50 to-indigo-50 border-blue-200 hover:border-blue-300 hover:shadow-md',
+        light: 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:border-blue-300 hover:shadow-md',
         dark: 'bg-gray-800 border-gray-600 hover:border-blue-400 hover:shadow-lg'
       })}`}
     >
       <div className="flex items-start space-x-4 mb-4">
         <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${conditionalClasses({
-          light: 'bg-linear-to-br from-blue-100 to-indigo-100',
+          light: 'bg-gradient-to-br from-blue-100 to-indigo-100',
           dark: 'bg-gray-700'
         })}`}>
           <FaFolder className={`text-xl ${conditionalClasses({

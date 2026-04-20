@@ -112,15 +112,15 @@ const Profile = () => {
 
   return (
     <div className={conditionalClasses({
-      light: 'min-h-screen bg-linear-to-br from-gray-50 via-gray-50 to-gray-100',
-      dark: 'min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900'
+      light: 'min-h-screen',
+      dark: 'min-h-screen'
     })}>
       <div className="max-w-5xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         
         {/* Header Section */}
         <div className="mb-6 lg:mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2.5 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-lg shadow-lg">
+            <div className="p-2.5 bg-gradient-to-br from-[#662d91] to-[#8e4dbf] rounded-lg shadow-lg">
               <FaUser className="text-white text-xl sm:text-2xl" />
             </div>
             <div>
@@ -143,7 +143,7 @@ const Profile = () => {
         })}>
           
           {/* Role Badge Section */}
-          <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-4 sm:px-6 py-4">
+          <div className="bg-gradient-to-r from-[#662d91] to-[#8e4dbf] px-4 sm:px-6 py-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                  <div className="p-2 bg-white/20 dark:bg-gray-700/50 backdrop-blur-sm rounded-lg">
@@ -569,8 +569,8 @@ const Profile = () => {
                 onClick={handleSubmit}
                 disabled={loading}
                 className={conditionalClasses({
-                  light: 'w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl',
-                  dark: 'w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5]/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl'
+                  light: 'w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl',
+                  dark: 'w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5]/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl'
                 })}
               >
                 {loading ? (

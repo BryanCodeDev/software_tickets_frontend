@@ -160,15 +160,15 @@ const Settings = () => {
 
   return (
     <div className={conditionalClasses({
-      light: 'min-h-screen bg-linear-to-br from-gray-50 via-gray-50 to-gray-100',
-      dark: 'min-h-screen bg-gray-900 py-8 px-4 sm:px-6 lg:px-8'
+      light: 'min-h-screen py-8 px-4 sm:px-6 lg:px-8',
+      dark: 'min-h-screen py-8 px-4 sm:px-6 lg:px-8'
     })}>
       <div className="max-w-5xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         
         {/* Header Section */}
         <div className="mb-6 lg:mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2.5 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-lg shadow-lg">
+            <div className="p-2.5 bg-gradient-to-br from-[#662d91] to-[#8e4dbf] rounded-lg shadow-lg">
               <FaCog className="text-white text-xl sm:text-2xl" />
             </div>
             <div>
@@ -191,7 +191,7 @@ const Settings = () => {
         })}>
           
           {/* Security Section Header */}
-          <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-4 sm:px-6 py-4">
+          <div className="bg-gradient-to-r from-[#662d91] to-[#8e4dbf] px-4 sm:px-6 py-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white/20 dark:bg-gray-700/50 backdrop-blur-sm rounded-lg">
                 <FaShieldAlt className="text-white text-lg" />
@@ -444,7 +444,7 @@ const Settings = () => {
                 type="button"
                 disabled={loading}
                 onClick={() => notifySuccess('Configuración actualizada')}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
               >
                 {loading ? (
                   <>
@@ -470,7 +470,7 @@ const Settings = () => {
               light: 'bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200',
               dark: 'bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-600'
             })}>
-              <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-6 py-5 rounded-t-2xl">
+              <div className="bg-gradient-to-r from-[#662d91] to-[#8e4dbf] px-6 py-5 rounded-t-2xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-white/20 dark:bg-gray-700/50 backdrop-blur-sm rounded-lg">
@@ -615,7 +615,7 @@ const Settings = () => {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#662d91] text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#662d91] text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                     disabled={passwordLoading}
                   >
                     {passwordLoading ? (
@@ -640,7 +640,7 @@ const Settings = () => {
               light: 'bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200',
               dark: 'bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-600'
             })}>
-              <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-6 py-5 rounded-t-2xl">
+              <div className="bg-gradient-to-r from-[#662d91] to-[#8e4dbf] px-6 py-5 rounded-t-2xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-white/20 dark:bg-gray-700/50 backdrop-blur-sm rounded-lg">
@@ -737,7 +737,7 @@ const Settings = () => {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#662d91] text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#662d91] text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                     disabled={twoFactorLoading}
                   >
                     {twoFactorLoading ? (

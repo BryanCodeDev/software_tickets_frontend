@@ -380,8 +380,8 @@ const Roles = () => {
   if (!user || !hasRolesAccess) {
     return (
       <div className={conditionalClasses({
-        light: "container mx-auto p-6 bg-white min-h-screen",
-        dark: "container mx-auto p-6 bg-gray-900 min-h-screen"
+        light: "container mx-auto p-6 min-h-screen",
+        dark: "container mx-auto p-6 min-h-screen"
       })}>
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
@@ -410,8 +410,8 @@ const Roles = () => {
 
   if (loading) return (
     <div className={conditionalClasses({
-      light: "min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] flex items-center justify-center",
-      dark: "min-h-screen bg-gray-900 flex items-center justify-center"
+      light: "min-h-screen flex items-center justify-center",
+      dark: "min-h-screen flex items-center justify-center"
     })}>
       <div className="text-center">
         <div className="flex justify-center mb-4">
@@ -430,8 +430,8 @@ const Roles = () => {
 
   return (
     <div className={conditionalClasses({
-      light: "min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-2 sm:py-6 sm:px-4 md:px-6 lg:px-8",
-      dark: "min-h-screen bg-gray-900 py-4 px-2 sm:py-6 sm:px-4 md:px-6 lg:px-8"
+      light: "min-h-screen py-4 px-2 sm:py-6 sm:px-4 md:px-6 lg:px-8",
+      dark: "min-h-screen py-4 px-2 sm:py-6 sm:px-4 md:px-6 lg:px-8"
     })}>
       {/* Confirm Dialog */}
       <ConfirmDialog
@@ -451,7 +451,7 @@ const Roles = () => {
                 light: "text-2xl sm:text-3xl font-bold text-gray-900 flex items-center",
                 dark: "text-2xl sm:text-3xl font-bold text-white flex items-center"
               })}>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg">
                   <FaShieldAlt className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 Gestión de Roles
@@ -508,8 +508,8 @@ const Roles = () => {
                   <button
                     onClick={handleCreate}
                     className={conditionalClasses({
-                      light: "flex items-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base",
-                      dark: "flex items-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base"
+                      light: "flex items-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base",
+                      dark: "flex items-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base"
                     })}
                   >
                     <FaPlus className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -748,7 +748,7 @@ const Roles = () => {
             light: "bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-2xl md:max-w-4xl max-h-[98vh] sm:max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in",
             dark: "bg-gray-800 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-2xl md:max-w-4xl max-h-[98vh] sm:max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-700 animate-scale-in"
           })}>
-            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-3 sm:p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] p-3 sm:p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Crear Nuevo Rol</h2>
                 <button
@@ -899,8 +899,8 @@ const Roles = () => {
                 <button
                   type="submit"
                   className={conditionalClasses({
-                    light: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base",
-                    dark: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base"
+                    light: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base",
+                    dark: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base"
                   })}
                   disabled={formLoading}
                 >
@@ -932,7 +932,7 @@ const Roles = () => {
             light: "bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-2xl md:max-w-4xl max-h-[98vh] sm:max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in",
             dark: "bg-gray-800 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-2xl md:max-w-4xl max-h-[98vh] sm:max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-700 animate-scale-in"
           })}>
-            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-3 sm:p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] p-3 sm:p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Editar Rol</h2>
                 <button
@@ -1088,8 +1088,8 @@ const Roles = () => {
                 <button
                   type="submit"
                   className={conditionalClasses({
-                    light: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base",
-                    dark: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base"
+                    light: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base",
+                    dark: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base"
                   })}
                   disabled={formLoading}
                 >
@@ -1121,7 +1121,7 @@ const Roles = () => {
             light: "bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-2xl md:max-w-3xl max-h-[98vh] sm:max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in",
             dark: "bg-gray-800 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-2xl md:max-w-3xl max-h-[98vh] sm:max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-700 animate-scale-in"
           })}>
-            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-purple-700 p-3 sm:p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-gradient-to-r from-purple-600 to-purple-700 p-3 sm:p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 sm:gap-3">
                   <div className={conditionalClasses({
@@ -1269,8 +1269,8 @@ const Roles = () => {
                       handleEdit(selectedRoleForPreview);
                     }}
                     className={conditionalClasses({
-                      light: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base",
-                      dark: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base"
+                      light: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base",
+                      dark: "w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base"
                     })}
                   >
                     Editar Permisos

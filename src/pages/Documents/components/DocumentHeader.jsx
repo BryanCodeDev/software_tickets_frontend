@@ -24,7 +24,7 @@ const DocumentHeader = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="w-14 h-14 bg-gradient-to-br from-[#662d91] to-[#8e4dbf] rounded-2xl flex items-center justify-center shadow-lg">
               <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
               </svg>
@@ -79,7 +79,7 @@ const DocumentHeader = ({
             {(FULL_ACCESS_ROLES.includes(user?.role?.name) || canWriteInCurrentFolder) && (
               <button
                 onClick={() => setShowUploadModal(true)}
-                className="inline-flex items-center px-5 py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                className="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
               >
                 <FaUpload className="mr-2" />
                 Nuevo Documento

@@ -337,7 +337,7 @@ const DocumentChangeRequestModal = ({
           })}>
             <div className="p-4 lg:p-6">
               <div className="flex items-center justify-center mb-4">
-                <div className="w-12 h-12 lg:w-16 lg:h-16 bg-linear-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
+                <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
                   <svg className="w-6 h-6 lg:w-8 lg:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                   </svg>
@@ -366,7 +366,7 @@ const DocumentChangeRequestModal = ({
                     confirmDialog.onConfirm();
                     setConfirmDialog(null);
                   }}
-                  className="flex-1 px-4 py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base touch-manipulation"
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base touch-manipulation"
                 >
                   Confirmar
                 </button>
@@ -381,7 +381,7 @@ const DocumentChangeRequestModal = ({
         {/* Header */}
         <div className={`p-4 sm:p-6 border-b flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shrink-0 ${conditionalClasses({ light: 'border-gray-200', dark: 'border-gray-700' })}`}>
           <div className="flex items-center gap-3 sm:gap-4 w-full">
-            <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-linear-to-br from-purple-600 to-purple-500 flex items-center justify-center shadow-lg shrink-0">
+            <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-600 to-purple-500 flex items-center justify-center shadow-lg shrink-0">
               <span className="text-white font-bold text-base sm:text-xl">#{request?.id || 'N'}</span>
             </div>
             <div className="min-w-0 flex-1">
@@ -420,7 +420,7 @@ const DocumentChangeRequestModal = ({
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
           <div className="grid grid-cols-1 lg:grid-cols-3 min-h-full">
             {/* Main Content */}
             <div className="lg:col-span-2 p-4 sm:p-6 space-y-4 sm:space-y-6">
@@ -435,7 +435,7 @@ const DocumentChangeRequestModal = ({
                 <h3 className={`text-sm sm:text-lg font-bold mb-3 sm:mb-5 ${conditionalClasses({ light: 'text-gray-900', dark: 'text-white' })}`}>
                   Progreso
                 </h3>
-                <div className="flex items-center justify-between overflow-x-auto pb-2">
+                <div className="flex items-center justify-between overflow-x-auto pb-2 custom-scrollbar">
                   {workflowSteps.map((step, index) => {
                     const isCompleted = index < currentStepIndex;
                     const isCurrent = index === currentStepIndex;
@@ -665,7 +665,7 @@ const DocumentChangeRequestModal = ({
                   </div>
                   
                   {/* Lista de comentarios */}
-                  <div className="space-y-2 mb-3 sm:mb-4 max-h-60 overflow-y-auto">
+                  <div className="space-y-2 mb-3 sm:mb-4 max-h-60 overflow-y-auto custom-scrollbar">
                     {loadingComments ? (
                       <div className="text-center py-2">
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-500 mx-auto"></div>

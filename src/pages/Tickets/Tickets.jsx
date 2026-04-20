@@ -651,8 +651,8 @@ const Tickets = () => {
   if (loading) {
     return (
       <div className={conditionalClasses({
-        light: "min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] flex items-center justify-center",
-        dark: "min-h-screen bg-gray-900 flex items-center justify-center"
+        light: "min-h-screen flex items-center justify-center",
+        dark: "min-h-screen flex items-center justify-center"
       })}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#662d91] mx-auto mb-4"></div>
@@ -665,11 +665,11 @@ const Tickets = () => {
     );
   }
 
-  return (
-    <div className={conditionalClasses({
-      light: "min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8",
-      dark: "min-h-screen bg-gray-900 py-4 px-3 sm:py-6 sm:px-4 lg:px-8"
-    })}>
+    return (
+      <div className={conditionalClasses({
+        light: "min-h-screen py-4 px-3 sm:py-6 sm:px-4 lg:px-8",
+        dark: "min-h-screen py-4 px-3 sm:py-6 sm:px-4 lg:px-8"
+      })}>
       <div className="max-w-7xl mx-auto">
         {/* Confirm Dialog */}
         {confirmDialog && (
@@ -680,7 +680,7 @@ const Tickets = () => {
             })}>
               <div className="p-4 lg:p-6">
                 <div className="flex items-center justify-center mb-4">
-                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-linear-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
                     <FaExclamationTriangle className="w-6 h-6 lg:w-8 lg:h-8 text-white" />
                   </div>
                 </div>
@@ -707,7 +707,7 @@ const Tickets = () => {
                       confirmDialog.onConfirm();
                       setConfirmDialog(null);
                     }}
-                    className="flex-1 px-4 py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base touch-manipulation"
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base touch-manipulation"
                   >
                     Confirmar
                   </button>

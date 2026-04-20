@@ -178,7 +178,7 @@ const PurchaseRequestCreateModal = ({
         light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] border-2 border-gray-200 animate-scale-in flex flex-col',
         dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] lg:max-h-[90vh] border-2 border-gray-600 animate-scale-in flex flex-col'
       })}>
-        <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
+        <div className="sticky top-0 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
           <div className="flex items-center justify-between">
             <h2 className="text-xl lg:text-2xl font-bold text-white">Nueva Solicitud de Compra</h2>
             <button
@@ -190,7 +190,7 @@ const PurchaseRequestCreateModal = ({
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6 overflow-y-auto flex-1 min-h-0">
+        <form onSubmit={handleSubmit} className="p-4 lg:p-6 space-y-4 lg:space-y-6 overflow-y-auto flex-1 min-h-0 custom-scrollbar">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
             <div className="md:col-span-2">
               <label className={conditionalClasses({
@@ -451,7 +451,7 @@ const PurchaseRequestCreateModal = ({
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-sm lg:text-base"
+              className="flex-1 px-4 lg:px-6 py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-sm lg:text-base"
               disabled={formLoading}
             >
               {formLoading ? (

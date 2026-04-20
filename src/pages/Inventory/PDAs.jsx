@@ -348,28 +348,28 @@ const PDAs = () => {
     return { status: 'good', days: diffDays };
   };
   
-  if (loading) return (
-    <div className={conditionalClasses({
-      light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4',
-      dark: 'min-h-screen bg-gray-900 py-8 px-4'
-    })}>
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#662d91] mx-auto mb-4"></div>
-          <p className={conditionalClasses({
-            light: 'text-lg text-gray-600 font-medium',
-            dark: 'text-lg text-gray-300 font-medium'
-          })}>Cargando PDAs...</p>
-        </div>
-      </div>
-    </div>
-  );
+   if (loading) return (
+     <div className={conditionalClasses({
+       light: 'min-h-screen py-8 px-4',
+       dark: 'min-h-screen py-8 px-4'
+     })}>
+       <div className="flex items-center justify-center min-h-[60vh]">
+         <div className="text-center">
+           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#662d91] mx-auto mb-4"></div>
+           <p className={conditionalClasses({
+             light: 'text-lg text-gray-600 font-medium',
+             dark: 'text-lg text-gray-300 font-medium'
+           })}>Cargando PDAs...</p>
+         </div>
+       </div>
+     </div>
+   );
 
-  return (
-    <div className={conditionalClasses({
-      light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-4 px-3 sm:py-6 sm:px-4 lg:px-8',
-      dark: 'min-h-screen bg-gray-900 py-4 px-3 sm:py-6 sm:px-4 lg:px-8'
-    })}>
+   return (
+     <div className={conditionalClasses({
+       light: 'min-h-screen py-4 px-3 sm:py-6 sm:px-4 lg:px-8',
+       dark: 'min-h-screen py-4 px-3 sm:py-6 sm:px-4 lg:px-8'
+     })}>
       {/* Confirm Dialog */}
       <ConfirmDialog
         confirmDialog={confirmDialog}
@@ -383,7 +383,7 @@ const PDAs = () => {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 lg:gap-4 mb-3">
-                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-2xl flex items-center justify-center shadow-xl shrink-0">
+                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-[#662d91] to-[#8e4dbf] rounded-2xl flex items-center justify-center shadow-xl shrink-0">
                   <FaMobile className="text-white text-xl lg:text-2xl" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -427,7 +427,7 @@ const PDAs = () => {
               {canCreate && (
                 <button
                   onClick={handleCreate}
-                  className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
+                  className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm lg:text-base"
                 >
                   <FaPlus className="w-4 h-4" />
                   <span>Nueva PDA</span>
@@ -664,7 +664,7 @@ const PDAs = () => {
             dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-lg border-2 border-gray-700 p-6 lg:p-12 text-center'
           })}>
             <div className={conditionalClasses({
-              light: "w-16 h-16 lg:w-20 lg:h-20 bg-linear-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4",
+              light: "w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-[#f3ebf9] to-[#e8d5f5] rounded-full flex items-center justify-center mx-auto mb-4",
               dark: "w-16 h-16 lg:w-20 lg:h-20 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4"
             })}>
               <FaMobile className="w-8 h-8 lg:w-10 lg:h-10 text-[#662d91]" />
@@ -688,7 +688,7 @@ const PDAs = () => {
             {canCreate && !searchTerm && filterStatus === 'all' && filterArea === 'all' && filterPropiedad === 'all' && (
               <button
                 onClick={handleCreate}
-                className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
+                className="inline-flex items-center gap-2 px-4 lg:px-6 py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base"
               >
                 <FaPlus className="w-4 h-4" />
                 Agregar Primera PDA
@@ -711,7 +711,7 @@ const PDAs = () => {
                       })}
                     >
                       {/* Card Header */}
-                      <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-3 lg:p-4 text-white">
+                      <div className="bg-gradient-to-r from-[#662d91] to-[#8e4dbf] p-3 lg:p-4 text-white">
                         <div className="flex items-start justify-between">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
@@ -968,7 +968,7 @@ const PDAs = () => {
                 {/* Desktop Table View */}
                 <div className="hidden md:block overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white">
+                    <thead className="bg-gradient-to-r from-[#662d91] to-[#8e4dbf] text-white">
                       <tr>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">IT</th>
                         <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Propiedad</th>
@@ -1125,7 +1125,7 @@ const PDAs = () => {
             light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in',
             dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-700 animate-scale-in'
           })}>
-            <div className="sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
+            <div className="sticky top-0 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] p-4 lg:p-6 z-10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl lg:text-2xl font-bold text-white">
                   {editingItem ? 'Editar PDA' : 'Nueva PDA'}
@@ -1598,7 +1598,7 @@ const PDAs = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 lg:px-6 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-sm lg:text-base"
+                  className="flex-1 px-4 lg:px-6 py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-violet-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-sm lg:text-base"
                   disabled={formLoading}
                 >
                   {formLoading ? (

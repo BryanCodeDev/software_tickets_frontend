@@ -7,6 +7,7 @@ import {
 } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext.jsx';
 import { useThemeClasses } from '../hooks/useThemeClasses';
+import { GRADIENTS, BG_COLORS, INTERACTIVE } from '../design-system/tokens';
 
 // ─── Icon helpers ─────────────────────────────────────────────────────────────
 const IconHome = () => (
@@ -127,7 +128,7 @@ const roleBadges = {
   'Técnico':                     { gradient: 'from-sky-500 to-blue-600',       icon: <FaWrench />,     iconColor: 'text-sky-400' },
   'Jefe':                        { gradient: 'from-amber-500 to-orange-500',   icon: <FaUserCog />,    iconColor: 'text-amber-400' },
   'Compras':                     { gradient: 'from-teal-500 to-emerald-600',   icon: <FaUser />,       iconColor: 'text-teal-400' },
-  'Calidad':                     { gradient: 'from-[#662d91] to-[#8e4dbf]',   icon: <FaShieldAlt />,  iconColor: 'text-purple-400' },
+   'Calidad':                     { gradient: 'from-purple-800 to-purple-500',   icon: <FaShieldAlt />,  iconColor: 'text-purple-400' },
   'Empleado':                    { gradient: 'from-emerald-500 to-green-600',  icon: <FaUser />,       iconColor: 'text-emerald-400' },
 };
 
@@ -145,64 +146,65 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
   const userName = user?.name || user?.username || 'Usuario';
 
   const toggleSubmenu = (label) => {
-    if (!isCollapsed) setOpenSubmenus(prev => ({ ...prev, [label]: !prev[label] }));
+    if (isCollapsed) {
+      // Si está colapsado, expandir primero y abrir el submenu
+      toggleSidebarCollapse();
+      // Abrir este submenu specific
+      setOpenSubmenus(prev => ({ ...prev, [label]: true }));
+    } else {
+      setOpenSubmenus(prev => ({ ...prev, [label]: !prev[label] }));
+    }
   };
 
   const closeMobileIfNeeded = () => {
     if (window.innerWidth < 1024) toggleSidebar();
   };
 
-  // ── Style tokens ────────────────────────────────────────────────────────────
-  const sidebarBg = conditionalClasses({
-    light: 'bg-white border-r border-gray-100',
-    dark: 'bg-gray-950 border-r border-gray-800/60'
-  });
+   // ── Style tokens ────────────────────────────────────────────────────────────
+   const sidebarBg = conditionalClasses(BG_COLORS.sidebar);
 
    const headerBg = conditionalClasses({
-     light: 'bg-linear-to-br from-[#4a1f6e] via-[#662d91] to-[#7c3aad]',
-     dark: 'bg-linear-to-br from-gray-950 via-[#2a1048] to-gray-950 border-b border-purple-900/30'
+     light: GRADIENTS.brand.light,
+     dark: `${GRADIENTS.brand.dark} border-b border-purple-900/30`
    });
 
-  const sectionLabel = conditionalClasses({
-    light: 'text-gray-400',
-    dark: 'text-gray-600'
-  });
+   const sectionLabel = conditionalClasses({
+     light: 'text-gray-500',
+     dark: 'text-gray-400'
+   });
 
   const footerBg = conditionalClasses({
     light: 'border-t border-gray-100 bg-gray-50/80',
     dark: 'border-t border-gray-800/60 bg-gray-950'
   });
 
-  // Active item
-  const activeItem = conditionalClasses({
-    light: 'bg-gradient-to-r from-[#662d91] to-[#8e4dbf] text-white shadow-md shadow-[#662d91]/20',
-    dark: 'bg-gradient-to-r from-[#662d91]/80 to-[#8e4dbf]/70 text-white shadow-md shadow-purple-900/30'
-  });
+   // Active item
+   const activeItem = conditionalClasses(INTERACTIVE.activeItem);
 
   // Inactive item
   const inactiveItem = conditionalClasses({
-    light: 'text-gray-600 hover:text-[#662d91] hover:bg-[#f8f3ff]',
+    light: 'text-gray-600 hover:text-purple-800 hover:bg-purple-50',
     dark: 'text-gray-400 hover:text-purple-300 hover:bg-gray-800/60'
   });
 
   // Active icon bg
-  const activeIconBg = 'bg-white/15';
+  const activeIconBg = 'bg-purple-600/20';
 
   // Inactive icon bg
   const inactiveIconBg = conditionalClasses({
-    light: 'bg-gray-100 group-hover:bg-[#ede5f9]',
+    light: 'bg-gray-100 group-hover:bg-purple-100',
     dark: 'bg-gray-800 group-hover:bg-gray-700'
   });
 
   // Active sub-description
   const activeSubDesc = conditionalClasses({
-    light: 'text-purple-200',
+    light: 'text-purple-700',
     dark: 'text-purple-300'
   });
 
   // Inactive sub-description
   const inactiveSubDesc = conditionalClasses({
-    light: 'text-gray-400 group-hover:text-[#8e4dbf]',
+    light: 'text-gray-400 group-hover:text-purple-500',
     dark: 'text-gray-500 group-hover:text-purple-400'
   });
 
@@ -219,25 +221,25 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
       >
         {/* Active bar */}
         {isActive && (
-          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white/60 rounded-r-full" />
+          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-purple-600 rounded-r-full" />
         )}
 
         {/* Icon */}
         <span className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-150 ${isCollapsed ? '' : 'mr-2.5'} ${isActive ? activeIconBg : inactiveIconBg}`}>
-          <span className={isActive ? 'text-white' : conditionalClasses({ light: 'text-gray-500 group-hover:text-[#662d91]', dark: 'text-gray-500 group-hover:text-purple-300' })}>
+          <span className={isActive ? 'text-white' : conditionalClasses({ light: 'text-gray-500 group-hover:text-purple-800', dark: 'text-gray-500 group-hover:text-purple-300' })}>
             {item.icon}
           </span>
         </span>
 
-        {/* Label + description */}
-        {!isCollapsed && (
-          <span className="flex-1 min-w-0">
-            <span className="block text-[13px] font-semibold leading-tight truncate">{item.label}</span>
-            <span className={`block text-[11px] truncate leading-tight mt-0.5 ${isActive ? activeSubDesc : inactiveSubDesc}`}>
-              {item.description}
-            </span>
-          </span>
-        )}
+         {/* Label + description */}
+         {!isCollapsed && (
+           <span className="flex-1 min-w-0">
+             <span className="block text-sm font-semibold leading-tight truncate">{item.label}</span>
+             <span className={`block text-xs truncate leading-tight mt-0.5 ${isActive ? activeSubDesc : inactiveSubDesc}`}>
+               {item.description}
+             </span>
+           </span>
+         )}
 
         {/* Active arrow */}
         {isActive && !isCollapsed && (
@@ -275,8 +277,8 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
           {/* Text */}
           {!isCollapsed && (
             <span className="flex-1 min-w-0 text-left">
-              <span className="block text-[13px] font-semibold leading-tight truncate">{item.label}</span>
-              <span className={`block text-[11px] truncate leading-tight mt-0.5 ${isSubmenuActive ? activeSubDesc : inactiveSubDesc}`}>
+              <span className="block text-sm font-semibold leading-tight truncate">{item.label}</span>
+              <span className={`block text-xs truncate leading-tight mt-0.5 ${isSubmenuActive ? activeSubDesc : inactiveSubDesc}`}>
                 {item.description}
               </span>
             </span>
@@ -295,7 +297,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
 
         {/* Submenu items */}
         {isOpen && !isCollapsed && (
-          <div className="mt-1 ml-4 pl-3 space-y-0.5 border-l-2 border-dashed border-[#662d91]/20 dark:border-purple-800/30">
+          <div className="mt-1 ml-4 pl-3 space-y-0.5 border-l-2 border-dashed border-purple-500/20 dark:border-purple-800/30">
             {item.subItems.map((sub) => {
               const isSubActive = location.pathname === sub.path;
               return (
@@ -309,24 +311,24 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                       : conditionalClasses({ light: 'text-gray-500 hover:text-[#662d91] hover:bg-[#f8f3ff]', dark: 'text-gray-500 hover:text-purple-300 hover:bg-gray-800/60' })
                   }`}
                 >
-                  <span className={`shrink-0 w-7 h-7 rounded-lg flex items-center justify-center mr-2.5 transition-all duration-150 ${
-                    isSubActive
-                      ? conditionalClasses({ light: 'bg-[#662d91]/10', dark: 'bg-purple-800/30' })
-                      : conditionalClasses({ light: 'bg-gray-100 group-hover:bg-[#ede5f9]', dark: 'bg-gray-800 group-hover:bg-gray-700' })
-                  }`}>
-                    <span className={`text-[13px] ${isSubActive ? conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-300' }) : conditionalClasses({ light: 'text-gray-400 group-hover:text-[#662d91]', dark: 'text-gray-600 group-hover:text-purple-400' })}`}>
-                      {sub.icon}
+                   <span className={`shrink-0 w-7 h-7 rounded-lg flex items-center justify-center mr-2.5 transition-all duration-150 ${
+                     isSubActive
+                       ? conditionalClasses({ light: 'bg-purple-100', dark: 'bg-purple-800/30' })
+                       : conditionalClasses({ light: 'bg-gray-100 group-hover:bg-purple-100', dark: 'bg-gray-800 group-hover:bg-gray-700' })
+                   }`}>
+                      <span className={`text-sm ${isSubActive ? conditionalClasses({ light: 'text-purple-800', dark: 'text-purple-300' }) : conditionalClasses({ light: 'text-gray-500 group-hover:text-purple-800', dark: 'text-gray-600 group-hover:text-purple-400' })}`}>
+                        {sub.icon}
+                      </span>
                     </span>
-                  </span>
-                  <span className="flex-1 min-w-0">
-                    <span className="block text-[12px] font-semibold truncate leading-tight">{sub.label}</span>
-                    <span className={`block text-[10px] truncate leading-tight mt-0.5 ${isSubActive ? conditionalClasses({ light: 'text-[#8e4dbf]', dark: 'text-purple-400' }) : conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-600' })}`}>
-                      {sub.description}
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-sm font-semibold truncate leading-tight">{sub.label}</span>
+                      <span className={`block text-xs truncate leading-tight mt-0.5 ${isSubActive ? activeSubDesc : inactiveSubDesc}`}>
+                        {sub.description}
+                      </span>
                     </span>
-                  </span>
-                  {isSubActive && (
-                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${conditionalClasses({ light: 'bg-[#662d91]', dark: 'bg-purple-400' })}`} />
-                  )}
+                    {isSubActive && (
+                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${conditionalClasses({ light: 'bg-purple-600', dark: 'bg-purple-400' })}`} />
+                    )}
                 </Link>
               );
             })}
@@ -350,13 +352,13 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
       <aside className={`
         fixed inset-y-0 left-0 z-50 flex flex-col
         w-72 ${isCollapsed ? 'lg:w-18' : 'lg:w-70'}
-        shadow-xl transition-all duration-300 ease-in-out
+        elevation-floating transition-all duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
         ${sidebarBg}
       `}>
 
         {/* ── Header ── */}
-        <div className={`relative h-14 sm:h-16 flex items-center px-3 shrink-0 overflow-hidden ${headerBg}`}>
+        <div className={`relative h-14 sm:h-16 flex items-center px-3 shrink-0 overflow-visible ${headerBg}`}>
           {/* Subtle background grid */}
           <div className="absolute inset-0 pointer-events-none" style={{
             backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)',
@@ -404,7 +406,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
         <div className={`px-3 py-3 shrink-0 ${conditionalClasses({ light: 'border-b border-gray-100', dark: 'border-b border-gray-800/60' })}`}>
           {isCollapsed ? (
             <div className="flex justify-center">
-               <div className={`relative w-10 h-10 bg-linear-to-br ${badge.gradient} rounded-xl flex items-center justify-center shadow-md`}>
+               <div className={`relative w-10 h-10 bg-gradient-to-br ${badge.gradient} rounded-xl flex items-center justify-center shadow-md`}>
                 <span className="text-white font-bold text-sm">{userInitial}</span>
                 <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white dark:border-gray-950" />
               </div>
@@ -412,24 +414,24 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
           ) : (
             <div className={`flex items-center gap-3 px-3 py-3 rounded-xl ${conditionalClasses({ light: 'bg-gray-50', dark: 'bg-gray-900/60' })}`}>
               {/* Avatar */}
-               <div className={`relative w-10 h-10 bg-linear-to-br ${badge.gradient} rounded-xl flex items-center justify-center shadow-md shrink-0`}>
+               <div className={`relative w-10 h-10 bg-gradient-to-br ${badge.gradient} rounded-xl flex items-center justify-center shadow-md shrink-0`}>
                 <span className="text-white font-bold text-sm">{userInitial}</span>
                 <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white dark:border-gray-950" />
               </div>
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-1">
-                  <p className={`text-[13px] font-bold truncate leading-tight ${conditionalClasses({ light: 'text-gray-900', dark: 'text-gray-100' })}`}>
-                    {userName}
-                  </p>
+                 <div className="flex items-center justify-between gap-1">
+                   <p className={`text-sm font-bold truncate leading-tight ${conditionalClasses({ light: 'text-gray-900', dark: 'text-gray-100' })}`}>
+                     {userName}
+                   </p>
                   <span className={`text-xs shrink-0 ${badge.iconColor}`}>{badge.icon}</span>
                 </div>
-                {user?.email && (
-                  <p className={`text-[11px] truncate leading-tight mt-0.5 ${conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-500' })}`}>
-                    {user.email}
-                  </p>
-                )}
-                 <span className={`inline-flex items-center mt-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold text-white bg-linear-to-r ${badge.gradient}`}>
+                 {user?.email && (
+                   <p className={`text-xs truncate leading-tight mt-0.5 ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>
+                     {user.email}
+                   </p>
+                 )}
+                  <span className={`inline-flex items-center mt-1.5 px-2 py-0.5 rounded-md text-xs font-semibold text-white bg-gradient-to-r ${badge.gradient}`}>
                   {user?.role?.name || 'Empleado'}
                 </span>
               </div>
@@ -438,13 +440,13 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
         </div>
 
         {/* ── Navigation ── */}
-        <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-0.5 sidebar-scrollbar">
+        <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-0.5 custom-scrollbar">
           {/* Section label */}
-          {!isCollapsed && (
-            <p className={`text-[10px] font-bold uppercase tracking-[0.15em] px-2.5 pb-2 ${sectionLabel}`}>
-              Navegación
-            </p>
-          )}
+           {!isCollapsed && (
+             <p className={`text-xs font-bold uppercase tracking-[0.15em] px-2.5 pb-2 ${sectionLabel}`}>
+               Navegación
+             </p>
+           )}
 
           {menuItems.map((item) =>
             item.type === 'submenu' ? renderSubmenu(item) : renderLink(item)
@@ -464,7 +466,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                   to={to}
                   title={title}
                   onClick={closeMobileIfNeeded}
-                  className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 ${conditionalClasses({ light: 'text-gray-400 hover:text-[#662d91] hover:bg-[#f3ebf9]', dark: 'text-gray-600 hover:text-purple-400 hover:bg-gray-800' })}`}
+                       className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 ${conditionalClasses({ light: 'text-gray-400 hover:text-purple-800 hover:bg-purple-50', dark: 'text-gray-400 hover:text-purple-300 hover:bg-gray-800' })}`}
                 >
                   {icon}
                 </Link>
@@ -473,15 +475,11 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
           ) : (
             <div>
               <div className="flex items-center justify-between mb-2.5">
-                <div>
-                  <p className={`text-[12px] font-bold ${conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}`}>
-                    DuvyClass
-                  </p>
-                  <p className={`text-[10px] flex items-center gap-1.5 mt-0.5 ${conditionalClasses({ light: 'text-gray-400', dark: 'text-gray-600' })}`}>
-                    <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-                    v1.0.0 · Operativo
-                  </p>
-                </div>
+                 <div>
+                   <p className="text-sm text-white/50 leading-none mt-1 tracking-[0.12em] uppercase font-medium">
+                     Enterprise IT
+                   </p>
+                 </div>
                 <div className="flex gap-1">
                   {[
                     { to: '/settings', title: 'Configuración', icon: <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
@@ -492,14 +490,14 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                       to={to}
                       title={title}
                       onClick={closeMobileIfNeeded}
-                      className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all duration-150 ${conditionalClasses({ light: 'text-gray-400 hover:text-[#662d91] hover:bg-[#f3ebf9]', dark: 'text-gray-600 hover:text-purple-400 hover:bg-gray-800' })}`}
+                       className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all duration-150 ${conditionalClasses({ light: 'text-gray-400 hover:text-purple-800 hover:bg-purple-50', dark: 'text-gray-400 hover:text-purple-300 hover:bg-gray-800' })}`}
                     >
                       {icon}
                     </Link>
                   ))}
                 </div>
               </div>
-              <p className={`text-[10px] text-center ${conditionalClasses({ light: 'text-gray-300', dark: 'text-gray-700' })}`}>
+               <p className={`text-xs text-center ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>
                 © 2026 Desarrollado por{' '}
                 <span className={`font-semibold ${conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-500' })}`}>
                   Bryan Muñoz

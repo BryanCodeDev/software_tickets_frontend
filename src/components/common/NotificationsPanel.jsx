@@ -196,7 +196,7 @@ const NotificationsPanel = () => {
           </div>
 
           {/* Lista de notificaciones */}
-          <div className="max-h-96 overflow-y-auto">
+          <div className="max-h-96 overflow-y-auto custom-scrollbar">
             {loading ? (
               <div className="p-8 text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#662d91] mx-auto"></div>
@@ -281,13 +281,13 @@ const NotificationsPanel = () => {
               light: 'p-3 border-t border-gray-200 text-center',
               dark: 'p-3 border-t border-gray-600 text-center'
             })}>
-              <button
-                onClick={() => { /* Navegar a página de notificaciones */ }}
-                className={conditionalClasses({
-                  light: 'text-sm text-[#662d91] hover:text-[#8e4dbf] font-medium',
-                  dark: 'text-sm text-[#8e4dbf] hover:text-[#662d91] font-medium'
-                })}
-              >
+               <button
+                 onClick={() => { /* Navegar a página de notificaciones */ }}
+                 className={conditionalClasses({
+                   light: 'text-sm text-purple-800 hover:text-purple-900 font-medium',
+                   dark: 'text-sm text-purple-400 hover:text-purple-300 font-medium'
+                 })}
+               >
                 Ver todas las notificaciones
               </button>
             </div>

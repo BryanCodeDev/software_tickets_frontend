@@ -83,26 +83,26 @@ const Register = () => {
 
   const strengthLabel = getStrengthLabel();
 
-  const inputClass = (extra = '') => conditionalClasses({
-    light: `block w-full py-2.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/30 focus:border-[#662d91] transition-all bg-gray-50 hover:bg-white ${extra}`,
-    dark: `block w-full py-2.5 border border-gray-700 rounded-xl text-gray-100 placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/40 focus:border-[#662d91] transition-all bg-gray-800 ${extra}`
-  });
+   const inputClass = (extra = '') => conditionalClasses({
+     light: `block w-full py-2.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/30 focus:border-[#662d91] transition-all bg-gray-50 hover:bg-white ${extra}`,
+     dark: `block w-full py-2.5 border border-gray-700 rounded-xl text-gray-300 placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/40 focus:border-[#662d91] transition-all bg-gray-800 ${extra}`
+   });
 
-  const labelClass = conditionalClasses({
-    light: 'block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide',
-    dark: 'block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wide'
-  });
+   const labelClass = conditionalClasses({
+     light: 'block text-sm font-semibold text-gray-700 mb-1.5 uppercase tracking-wide',
+     dark: 'block text-sm font-semibold text-gray-300 mb-1.5 uppercase tracking-wide'
+   });
 
   return (
     <div className={conditionalClasses({
-      light: 'min-h-screen bg-linear-to-br from-slate-950 via-[#3d1a57] to-slate-950 flex',
-      dark: 'min-h-screen bg-linear-to-br from-gray-950 via-[#2a1040] to-gray-950 flex'
+      light: 'min-h-screen flex',
+      dark: 'min-h-screen flex'
     })}>
-      {/* Left Panel - Branding */}
-      <div className={conditionalClasses({
-        light: 'hidden lg:flex lg:w-[52%] bg-linear-to-br from-[#4a1f6e] via-[#662d91] to-[#7c3aad] p-14 flex-col justify-between relative overflow-hidden',
-        dark: 'hidden lg:flex lg:w-[52%] bg-linear-to-br from-[#1a0a2e] via-[#2d1254] to-[#1a0a2e] p-14 flex-col justify-between relative overflow-hidden'
-      })}>
+       {/* Left Panel - Branding */}
+       <div className={conditionalClasses({
+         light: 'hidden lg:flex lg:w-[52%] bg-gradient-to-br from-[#4a1f6e] via-[#662d91] to-[#7c3aad] p-14 flex-col justify-between relative overflow-hidden',
+         dark: 'hidden lg:flex lg:w-[52%] bg-gradient-to-br from-[#3d1069] via-[#662d91] to-[#4a1f6e] p-14 flex-col justify-between relative overflow-hidden'
+       })}>
         {/* Geometric decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
            <div className="absolute top-0 right-0 w-125 h-125 rounded-full bg-white/3 -mr-64 -mt-64" />
@@ -122,10 +122,10 @@ const Register = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
               </svg>
             </div>
-            <div>
-              <span className="text-2xl font-bold text-white tracking-tight">DuvyClass</span>
-              <div className="text-[10px] text-purple-300 tracking-[0.2em] uppercase font-medium">Enterprise Platform</div>
-            </div>
+             <div>
+               <span className="text-2xl font-bold text-white tracking-tight">DuvyClass</span>
+               <div className="text-xs text-purple-300 tracking-[0.2em] uppercase font-medium">Enterprise Platform</div>
+             </div>
           </div>
 
           <div className="space-y-5 mb-12">
@@ -177,42 +177,54 @@ const Register = () => {
             <span className="text-xl font-bold text-[#662d91]">DuvyClass</span>
           </div>
 
-           {/* Header */}
-           <div className="mb-7">
-             <h2 className={conditionalClasses({
-               light: 'text-3xl font-bold text-gray-900 mb-2 tracking-tight',
-               dark: 'text-3xl font-bold text-white mb-2 tracking-tight'
-             })}>
-               Crear cuenta corporativa
-             </h2>
-             <p className={conditionalClasses({
-               light: 'text-sm text-gray-500 leading-relaxed',
-               dark: 'text-sm text-gray-400 leading-relaxed'
-             })}>
-               Completa el formulario para solicitar acceso al sistema.
-             </p>
-           </div>
-
-          {/* Error message */}
-          {error && (
-            <div className="mb-5 flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-3.5">
-              <svg className="w-4 h-4 text-red-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p className="text-sm text-red-700">{error}</p>
+            {/* Header */}
+            <div className="mb-7">
+              <h2 className={conditionalClasses({
+                light: 'text-2xl sm:text-3xl font-bold text-gray-900 mb-2 tracking-tight',
+                dark: 'text-2xl sm:text-3xl font-bold text-gray-100 mb-2 tracking-tight'
+              })}>
+                Crear cuenta corporativa
+              </h2>
+              <p className={conditionalClasses({
+                light: 'text-sm text-gray-600 leading-relaxed',
+                dark: 'text-sm text-gray-300 leading-relaxed'
+              })}>
+                Completa el formulario para solicitar acceso al sistema.
+              </p>
             </div>
-          )}
+
+{/* Error message */}
+            {error && (
+              <div className={`mb-5 flex items-start gap-3 rounded-xl p-3.5 animate-fade-down ${conditionalClasses({
+                light: 'bg-red-50 border border-red-200',
+                dark: 'bg-red-900/20 border border-red-800'
+              })}`}>
+               <svg className={`w-4 h-4 mt-0.5 shrink-0 ${conditionalClasses({
+                 light: 'text-red-500',
+                 dark: 'text-red-400'
+               })}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+               </svg>
+               <p className={`text-sm ${conditionalClasses({
+                 light: 'text-red-700',
+                 dark: 'text-red-200'
+               })}`}>{error}</p>
+             </div>
+           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}
             <div>
               <label htmlFor="name" className={labelClass}>Nombre completo</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                  <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
+               <div className="relative">
+                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                   <svg className={conditionalClasses({
+                     light: 'h-4 w-4 text-gray-400',
+                     dark: 'h-4 w-4 text-gray-300'
+                   })} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                   </svg>
+                 </div>
                 <input
                   id="name"
                   name="name"
@@ -230,12 +242,15 @@ const Register = () => {
             {/* Username */}
             <div>
               <label htmlFor="username" className={labelClass}>Nombre de usuario</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                  <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-                  </svg>
-                </div>
+               <div className="relative">
+                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                   <svg className={conditionalClasses({
+                     light: 'h-4 w-4 text-gray-400',
+                     dark: 'h-4 w-4 text-gray-300'
+                   })} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                   </svg>
+                 </div>
                 <input
                   id="username"
                   name="username"
@@ -253,12 +268,15 @@ const Register = () => {
             {/* Email */}
             <div>
               <label htmlFor="email" className={labelClass}>Correo electrónico corporativo</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                  <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                  </svg>
-                </div>
+               <div className="relative">
+                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                   <svg className={conditionalClasses({
+                     light: 'h-4 w-4 text-gray-400',
+                     dark: 'h-4 w-4 text-gray-300'
+                   })} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                   </svg>
+                 </div>
                 <input
                   id="email"
                   name="email"
@@ -276,12 +294,15 @@ const Register = () => {
             {/* Password */}
             <div>
               <label htmlFor="password" className={labelClass}>Contraseña</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                  <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7z" />
-                  </svg>
-                </div>
+               <div className="relative">
+                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                   <svg className={conditionalClasses({
+                     light: 'h-4 w-4 text-gray-400',
+                     dark: 'h-4 w-4 text-gray-300'
+                   })} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7z" />
+                   </svg>
+                 </div>
                 <input
                   id="password"
                   name="password"
@@ -293,11 +314,14 @@ const Register = () => {
                   className={inputClass('pl-10 pr-11')}
                   placeholder="Mínimo 8 caracteres"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
-                >
+                 <button
+                   type="button"
+                   onClick={() => setShowPassword(!showPassword)}
+                   className={`absolute inset-y-0 right-0 pr-3.5 flex items-center ${conditionalClasses({
+                     light: 'text-gray-400 hover:text-gray-600',
+                     dark: 'text-gray-300 hover:text-gray-200'
+                   })} transition-colors`}
+                 >
                   {showPassword ? (
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
@@ -337,12 +361,15 @@ const Register = () => {
             {/* Confirm Password */}
             <div>
               <label htmlFor="confirmPassword" className={labelClass}>Confirmar contraseña</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                  <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
+               <div className="relative">
+                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                   <svg className={conditionalClasses({
+                     light: 'h-4 w-4 text-gray-400',
+                     dark: 'h-4 w-4 text-gray-300'
+                   })} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                   </svg>
+                 </div>
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -354,11 +381,14 @@ const Register = () => {
                   className={inputClass('pl-10 pr-11')}
                   placeholder="Repite tu contraseña"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
-                >
+                 <button
+                   type="button"
+                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                   className={`absolute inset-y-0 right-0 pr-3.5 flex items-center ${conditionalClasses({
+                     light: 'text-gray-400 hover:text-gray-600',
+                     dark: 'text-gray-300 hover:text-gray-200'
+                   })} transition-colors`}
+                 >
                   {showConfirmPassword ? (
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
@@ -388,21 +418,27 @@ const Register = () => {
                 name="terms"
                 type="checkbox"
                 required
-                className="h-3.5 w-3.5 mt-0.5 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded"
+                className="h-3.5 w-3.5 text-[#662d91] focus:ring-[#662d91] border-gray-300 rounded dark:border-gray-600"
               />
-              <label htmlFor="terms" className={conditionalClasses({
-                light: 'text-sm text-gray-600 leading-snug',
-                dark: 'text-sm text-gray-400 leading-snug'
-              })}>
-                He leído y acepto los{' '}
-                <Link to="/terms-and-conditions" className="font-semibold text-[#662d91] hover:text-[#8e4dbf] transition-colors">
-                  Términos y Condiciones
-                </Link>{' '}
-                y la{' '}
-                <Link to="/privacy-policy" className="font-semibold text-[#662d91] hover:text-[#8e4dbf] transition-colors">
-                  Política de Privacidad
-                </Link>{' '}
-                de DuvyClass.
+               <label htmlFor="terms" className={conditionalClasses({
+                 light: 'text-sm text-gray-600 leading-snug',
+                 dark: 'text-sm text-gray-300 leading-snug'
+               })}>
+                 He leído y acepto los{' '}
+                 <Link to="/terms-and-conditions" className={`${conditionalClasses({
+                   light: 'font-semibold text-[#662d91] hover:text-[#8e4dbf]',
+                   dark: 'font-semibold text-purple-400 hover:text-purple-300'
+                 })} transition-colors`}>
+                   Términos y Condiciones
+                 </Link>{' '}
+                 y la{' '}
+                 <Link to="/privacy-policy" className={`${conditionalClasses({
+                   light: 'font-semibold text-[#662d91] hover:text-[#8e4dbf]',
+                   dark: 'font-semibold text-purple-400 hover:text-purple-300'
+                 })} transition-colors`}>
+                   Política de Privacidad
+                 </Link>{' '}
+                 de DuvyClass.
               </label>
             </div>
 
@@ -411,7 +447,7 @@ const Register = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center items-center py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#5a2480] hover:to-[#7c3aad] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#662d91] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg hover:shadow-[#662d91]/25"
+                className="w-full flex justify-center items-center py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#5a2480] hover:to-[#7c3aad] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#662d91] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg hover:shadow-[#662d91]/25"
               >
                 {loading ? (
                   <>
@@ -440,12 +476,12 @@ const Register = () => {
                   dark: 'w-full border-t border-gray-700/60'
                 })}></div>
               </div>
-              <div className="relative flex justify-center text-xs">
-                <span className={conditionalClasses({
-                  light: 'px-3 bg-white text-gray-400',
-                  dark: 'px-3 bg-gray-900 text-gray-500'
-                })}>¿Ya tienes cuenta?</span>
-              </div>
+               <div className="relative flex justify-center text-xs">
+                 <span className={`px-3 ${conditionalClasses({
+                   light: 'bg-white text-gray-500',
+                   dark: 'bg-gray-900 text-gray-300'
+                 })}`}>¿Ya tienes cuenta?</span>
+               </div>
             </div>
 
             <Link
@@ -464,7 +500,7 @@ const Register = () => {
 
           <p className={conditionalClasses({
             light: 'mt-7 text-center text-xs text-gray-400',
-            dark: 'mt-7 text-center text-xs text-gray-600'
+            dark: 'mt-7 text-center text-xs text-gray-400'
           })}>
             © 2026 DuvyClass · Desarrollado por Bryan Muñoz · Todos los derechos reservados.
           </p>

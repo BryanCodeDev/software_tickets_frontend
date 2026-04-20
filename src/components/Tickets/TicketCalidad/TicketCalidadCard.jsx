@@ -92,16 +92,16 @@ const TicketCalidadCard = ({
       <div className={`
         p-3 lg:p-4 border-b-2
         ${ticket.priority === 'alta' ? conditionalClasses({
-          light: 'bg-linear-to-r from-red-50 to-red-100 border-red-200',
-          dark: 'bg-linear-to-r from-red-900/20 to-red-800/20 border-red-700'
+          light: 'bg-gradient-to-r from-red-50 to-red-100 border-red-200',
+          dark: 'bg-gradient-to-r from-red-900/20 to-red-800/20 border-red-700'
         }) :
         ticket.priority === 'media' ? conditionalClasses({
-          light: 'bg-linear-to-r from-yellow-50 to-yellow-100 border-yellow-200',
-          dark: 'bg-linear-to-r from-yellow-900/20 to-yellow-800/20 border-yellow-700'
+          light: 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200',
+          dark: 'bg-gradient-to-r from-yellow-900/20 to-yellow-800/20 border-yellow-700'
         }) :
         conditionalClasses({
-          light: 'bg-linear-to-r from-green-50 to-green-100 border-green-200',
-          dark: 'bg-linear-to-r from-green-900/20 to-green-800/20 border-green-700'
+          light: 'bg-gradient-to-r from-green-50 to-green-100 border-green-200',
+          dark: 'bg-gradient-to-r from-green-900/20 to-green-800/20 border-green-700'
         })
       }`}>
         <div className="flex items-start justify-between mb-2">

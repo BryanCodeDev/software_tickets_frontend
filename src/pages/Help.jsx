@@ -669,13 +669,13 @@ const Help = () => {
 
   return (
     <div className={conditionalClasses({
-      light: 'min-h-screen bg-linear-to-br from-gray-50 via-gray-50 to-gray-100',
-      dark: 'min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900'
+      light: 'min-h-screen',
+      dark: 'min-h-screen'
     })}>
       <div className="max-w-7xl mx-auto px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-3 xs:py-4 sm:py-6 md:py-7 lg:py-8 space-y-4 xs:space-y-5 sm:space-y-6">
         <div className="mb-4 xs:mb-5 sm:mb-6 lg:mb-8">
           <div className="flex flex-col xs:flex-row items-center xs:items-start gap-2 xs:gap-3 mb-2">
-            <div className="p-2 xs:p-2.5 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-lg shadow-lg">
+            <div className="p-2 xs:p-2.5 bg-gradient-to-br from-[#662d91] to-[#8e4dbf] rounded-lg shadow-lg">
               <FaQuestionCircle className="text-white text-lg xs:text-xl sm:text-2xl" />
             </div>
             <div className="text-center xs:text-left">
@@ -793,8 +793,8 @@ const Help = () => {
                 </div>
 
                 <div className={conditionalClasses({
-                  light: 'bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl shadow-lg p-3 xs:p-4 sm:p-6 mb-3 xs:mb-4 sm:mb-6',
-                  dark: 'bg-linear-to-r from-[#4a1f6b] to-[#6b3590] rounded-xl shadow-lg p-3 xs:p-4 sm:p-6 mb-3 xs:mb-4 sm:mb-6'
+                  light: 'bg-gradient-to-r from-[#662d91] to-[#8e4dbf] rounded-xl shadow-lg p-3 xs:p-4 sm:p-6 mb-3 xs:mb-4 sm:mb-6',
+                  dark: 'bg-gradient-to-r from-[#4a1f6b] to-[#6b3590] rounded-xl shadow-lg p-3 xs:p-4 sm:p-6 mb-3 xs:mb-4 sm:mb-6'
                 })}>
                   <div className="flex flex-col sm:flex-row items-center gap-2 xs:gap-3 sm:gap-4">
                      <div className="p-1.5 xs:p-2 sm:p-3 bg-white/20 dark:bg-gray-700/50 backdrop-blur-sm rounded-xl shrink-0">
@@ -2174,7 +2174,7 @@ const Help = () => {
                       </p>
                       <button
                         onClick={() => navigate('/tickets')}
-                        className="flex items-center justify-center gap-1.5 xs:gap-2 w-full sm:w-auto px-2.5 xs:px-3 sm:px-4 py-1.5 xs:py-2 sm:py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5] transition-all shadow-lg hover:shadow-xl text-xs sm:text-sm"
+                        className="flex items-center justify-center gap-1.5 xs:gap-2 w-full sm:w-auto px-2.5 xs:px-3 sm:px-4 py-1.5 xs:py-2 sm:py-2.5 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5] transition-all shadow-lg hover:shadow-xl text-xs sm:text-sm"
                       >
                         <FaTicketAlt className="text-xs sm:text-sm" />
                         <span>Crear Ticket de Soporte</span>

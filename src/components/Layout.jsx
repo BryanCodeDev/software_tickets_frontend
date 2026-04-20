@@ -37,6 +37,14 @@ const Layout = ({ children }) => {
 
   return (
     <div className="flex min-h-screen">
+      {/* Skip Link for accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-purple-700 focus:text-white focus:rounded-lg focus:font-medium"
+      >
+        Saltar al contenido principal
+      </a>
+
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -47,7 +55,7 @@ const Layout = ({ children }) => {
       {/* Main content area */}
       <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-18' : 'lg:ml-70'}`}>
         <Navbar toggleSidebar={toggleSidebar} />
-        <main className="flex-1 p-3 sm:p-4 lg:p-5">
+        <main id="main-content" className="flex-1 p-3 sm:p-4 lg:p-5">
           {children}
         </main>
       </div>

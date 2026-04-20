@@ -413,8 +413,8 @@ const Users = () => {
 
   return (
     <div className={conditionalClasses({
-      light: 'min-h-screen bg-linear-to-br from-[#f3ebf9] via-[#e8d5f5] to-[#dbeafe] py-8 px-4 sm:px-6 lg:px-8',
-      dark: 'min-h-screen bg-gray-900 py-8 px-4 sm:px-6 lg:px-8'
+      light: 'min-h-screen py-8 px-4 sm:px-6 lg:px-8',
+      dark: 'min-h-screen py-8 px-4 sm:px-6 lg:px-8'
     })}>
       {/* Confirm Dialog */}
       <ConfirmDialog
@@ -432,8 +432,8 @@ const Users = () => {
                 dark: 'text-2xl sm:text-3xl font-bold text-gray-100 flex items-center'
               })}>
                 <div className={conditionalClasses({
-                  light: 'w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg',
-                  dark: 'w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg'
+                  light: 'w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg',
+                  dark: 'w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center mr-3 shadow-lg'
                 })}>
                   <FaUsers className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
@@ -458,7 +458,7 @@ const Users = () => {
               </button>
               <button
                 onClick={handleCreate}
-                className="inline-flex items-center px-6 py-2.5 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 <FaPlus className="w-5 h-5 mr-2" />
                 Nuevo Usuario
@@ -785,8 +785,8 @@ const Users = () => {
             dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-600 animate-scale-in'
           })}>
             <div className={conditionalClasses({
-              light: 'sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 sm:p-5 lg:p-6 z-10',
-              dark: 'sticky top-0 bg-linear-to-r from-[#662d91] to-[#8e4dbf] p-4 sm:p-5 lg:p-6 z-10'
+              light: 'sticky top-0 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] p-4 sm:p-5 lg:p-6 z-10',
+              dark: 'sticky top-0 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] p-4 sm:p-5 lg:p-6 z-10'
             })}>
               <div className="flex items-center justify-between">
                 <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">
@@ -1138,7 +1138,7 @@ const Users = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-3 bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#7a3da8] hover:to-[#9b5fc7] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                   disabled={formLoading}
                 >
                   {formLoading ? (
