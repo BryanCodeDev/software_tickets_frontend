@@ -162,11 +162,9 @@ const PurchaseRequests = () => {
     return stats;
   };
 
-  const stats = calculateStats();
+   const stats = calculateStats();
 
-  const canCreate = ['Administrador', 'Técnico', 'Empleado', 'Jefe', 'Coordinadora Administrativa', 'Calidad'].includes(userRole);
-
-  // Actions
+   // Actions
   const handleViewDetail = async (request) => {
     setSelectedRequest(request);
     try {

@@ -8,7 +8,7 @@ import {
   FaClipboardCheck, FaDumpster, FaUndo, FaTrash, FaEye, FaHistory, FaTag, FaFolder,
   FaComments, FaPaperclip, FaChartPie, FaServer, FaMobile, FaIdCard, FaBriefcase, FaEdit,
   FaTrashRestore, FaDownload, FaUpload, FaPlus, FaMinus, FaBan, FaStar, FaMedal,
-  FaList, FaChevronDown, FaCompass, FaShoppingCart, FaSync, FaUserCog, FaChartBar
+   FaList, FaChevronDown, FaCompass, FaShoppingCart, FaSync, FaUserCog
 } from 'react-icons/fa';
 import { useThemeClasses } from '../hooks/useThemeClasses';
 
@@ -885,7 +885,7 @@ const Help = () => {
                         })}>{role.description}</p>
                         
                         <div className="mt-3 sm:mt-4">
-                          <h4 className="conditionalClasses({
+                          <h4 className={conditionalClasses({
                             light: 'text-sm font-semibold text-gray-900 mb-2',
                             dark: 'text-sm font-semibold text-gray-100 mb-2'
                           })}>Permisos principales:</h4>

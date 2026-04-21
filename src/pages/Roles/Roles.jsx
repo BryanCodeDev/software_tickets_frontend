@@ -29,8 +29,8 @@ const Roles = () => {
   const { checkPermission } = useAuth();
   const userRole = user?.role?.name;
 
-  // Solo Administrador y Técnico tienen acceso completo a la gestión de roles
-  const hasRolesAccess = userRole === 'Administrador' || userRole === 'Técnico';
+  // Solo Administrador tiene acceso completo a la gestión de roles
+  const hasRolesAccess = userRole === 'Administrador';
   
   // Estados adicionales para mejor gestión
   const [showPermissionPreview, setShowPermissionPreview] = useState(false);
