@@ -92,29 +92,68 @@ const calidadSubItemsFull = [
   { path: '/ticket_calidad',           icon: <FaClipboardList className="w-4.25 h-4.25" />, label: 'Ticket Calidad',    description: 'Reportes de calidad' },
 ];
 
-  const buildMenuItems = (role) => {
-    const base = [{ path: '/dashboard', icon: <IconHome />, label: 'Panel Principal', description: 'Vista general del sistema' }];
+// Mapping from route paths to required permission modules for view access
+const PERMISSION_MAP = {
+  '/dashboard': { module: 'dashboard' },
+  '/tickets': { module: 'tickets' },
+  '/purchase-requests': { module: 'purchase_requests' },
+  '/inventory': { module: 'inventory' },
+  '/corporate-phones': { module: 'corporate_phones' },
+  '/tablets': { module: 'tablets' },
+  '/pdas': { module: 'pdas' },
+  '/actas-entrega': { module: 'actas-entrega' },
+  '/credentials': { module: 'credentials' },
+  '/documents': { module: 'documents' },
+  '/users': { module: 'users' },
+  '/roles': { module: 'roles' },
+  '/quality-dashboard': { module: 'quality_tickets' },
+  '/ticket_calidad': { module: 'quality_tickets' },
+  '/document-change-requests': { module: 'document_change_requests' }
+};
 
-    const ticketItem    = { path: '/tickets',           icon: <IconTicket />, label: 'Tickets',                description: 'Gestión de incidencias IT' };
-    const purchaseItem  = { path: '/purchase-requests', icon: <IconCart />,   label: 'Solicitudes de Compra',  description: 'Periféricos y equipos' };
-    const inventario    = { type: 'submenu', label: 'Inventario', icon: <IconBox />, description: 'Control de activos tecnológicos', subItems: inventarioSubItems };
-    const calidadFull   = { type: 'submenu', label: 'Calidad',    icon: <FaShieldAlt className="w-4.5 h-4.5" />, description: 'ISO 9001 y gestión documental', subItems: calidadSubItemsFull };
-    const credItem      = { path: '/credentials', icon: <IconLock />,   label: 'Credenciales',   description: 'Gestión de accesos seguros' };
-    const docItem       = { path: '/documents', icon: <IconDoc />,    label: 'Documentos',     description: 'Archivos oficiales' };
-    const usersItem     = { path: '/users',        icon: <IconUsers />,  label: 'Usuarios',       description: 'Administración de usuarios' };
-    const rolesItem     = { path: '/roles',         icon: <IconShield />, label: 'Roles',          description: 'Permisos y control de acceso' };
-    const trashItem     = { path: '/trash',         icon: <FaDumpster className="w-4.5 h-4.5" />, label: 'Papelera', description: 'Elementos eliminados' };
-    const registerItem  = { path: '/register',      icon: <FaUserCog className="w-4.5 h-4.5" />, label: 'Crear Usuario',  description: 'Registrar nuevo usuario' };
+const buildMenuItems = (role, canAccess) => {
+  const base = [{ path: '/dashboard', icon: <IconHome />, label: 'Panel Principal', description: 'Vista general del sistema' }];
 
-    if (role === 'Administrador') return [...base, ticketItem, purchaseItem, inventario, calidadFull, credItem, usersItem, rolesItem, trashItem, registerItem];
-    if (role === 'Técnico')       return [...base, ticketItem, inventario, credItem, trashItem, registerItem];
-    if (role === 'Empleado')      return [...base, ticketItem, purchaseItem, inventario, docItem];
-    if (role === 'Jefe')          return [...base, ticketItem, purchaseItem, calidadFull];
-    if (role === 'Compras')       return [...base, purchaseItem];
-    if (role === 'Calidad')       return [...base, calidadFull];
-    if (role === 'Coordinadora Administrativa') return [...base, purchaseItem, inventario];
-    return base;
+  const ticketItem    = { path: '/tickets',           icon: <IconTicket />, label: 'Tickets',                description: 'Gestión de incidencias IT' };
+  const purchaseItem  = { path: '/purchase-requests', icon: <IconCart />,   label: 'Solicitudes de Compra',  description: 'Periféricos y equipos' };
+  const inventario    = { type: 'submenu', label: 'Inventario', icon: <IconBox />, description: 'Control de activos tecnológicos', subItems: inventarioSubItems };
+  const calidadFull   = { type: 'submenu', label: 'Calidad',    icon: <FaShieldAlt className="w-4.5 h-4.5" />, description: 'ISO 9001 y gestión documental', subItems: calidadSubItemsFull };
+  const credItem      = { path: '/credentials', icon: <IconLock />,   label: 'Credenciales',   description: 'Gestión de accesos seguros' };
+  const docItem       = { path: '/documents', icon: <IconDoc />,    label: 'Documentos',     description: 'Archivos oficiales' };
+  const usersItem     = { path: '/users',        icon: <IconUsers />,  label: 'Usuarios',       description: 'Administración de usuarios' };
+  const rolesItem     = { path: '/roles',         icon: <IconShield />, label: 'Roles',          description: 'Permisos y control de acceso' };
+  const trashItem     = { path: '/trash',         icon: <FaDumpster className="w-4.5 h-4.5" />, label: 'Papelera', description: 'Elementos eliminados' };
+  const registerItem  = { path: '/register',      icon: <FaUserCog className="w-4.5 h-4.5" />, label: 'Crear Usuario',  description: 'Registrar nuevo usuario' };
+
+  // Select items based on role
+  let items = [];
+  if (role === 'Administrador') items = [...base, ticketItem, purchaseItem, inventario, calidadFull, credItem, docItem, usersItem, rolesItem, trashItem, registerItem];
+  else if (role === 'Técnico') items = [...base, ticketItem, inventario, credItem, trashItem, registerItem];
+  else if (role === 'Empleado') items = [...base, ticketItem, purchaseItem, inventario, docItem];
+  else if (role === 'Jefe') items = [...base, ticketItem, purchaseItem, calidadFull];
+  else if (role === 'Compras') items = [...base, purchaseItem];
+  else if (role === 'Calidad') items = [...base, calidadFull];
+  else if (role === 'Coordinadora Administrativa') items = [...base, purchaseItem, inventario];
+  else items = base;
+
+  // Filter items based on actual permissions
+  const filterItem = (item) => {
+    if (item.type === 'submenu') {
+      const filteredSubs = item.subItems.filter(sub => {
+        const perm = PERMISSION_MAP[sub.path];
+        if (!perm) return true; // include if no mapping defined
+        return canAccess(perm.module);
+      });
+      return filteredSubs.length > 0 ? { ...item, subItems: filteredSubs } : null;
+    } else {
+      const perm = PERMISSION_MAP[item.path];
+      if (!perm) return item; // include if no permission mapping (e.g., register, trash)
+      return canAccess(perm.module) ? item : null;
+    }
   };
+
+  return items.map(filterItem).filter(item => item !== null);
+};
 
 // ─── Role badge config ────────────────────────────────────────────────────────
 const roleBadges = {
@@ -129,13 +168,13 @@ const roleBadges = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) => {
-  const { user } = useContext(AuthContext);
+  const { user, canAccess } = useContext(AuthContext);
   const location = useLocation();
   const [openSubmenus, setOpenSubmenus] = useState({});
   const { conditionalClasses } = useThemeClasses();
 
   const role = user?.role?.name;
-  const menuItems = buildMenuItems(role);
+  const menuItems = buildMenuItems(role, canAccess);
   const badge = roleBadges[role] || roleBadges['Empleado'];
   const userInitial = (user?.name || user?.username || 'U').charAt(0).toUpperCase();
   const userName = user?.name || user?.username || 'Usuario';

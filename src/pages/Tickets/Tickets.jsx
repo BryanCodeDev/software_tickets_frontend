@@ -59,7 +59,7 @@ ChartJS.register(
 const Tickets = () => {
   const { conditionalClasses } = useThemeClasses();
   const { notifySuccess, notifyError, notifyWarning: _notifyWarning, notifyInfo: _notifyInfo } = useNotifications();
-  const { user, checkPermission } = useContext(AuthContext);
+  const { user, checkPermission, canAccess } = useContext(AuthContext);
   
   // Estados principales
   const [tickets, setTickets] = useState([]);
@@ -220,6 +220,12 @@ const Tickets = () => {
   }, [currentPage, itemsPerPage, filterStatus, filterPriority, titleFilter, debouncedSearchTerm, sortBy, sortOrder, notifyError]);
 
   const fetchUsers = useCallback(async () => {
+    // If user doesn't have permission to view users, skip API call
+    if (!canAccess('users')) {
+      setTechnicians([]);
+      setAdministrators([]);
+      return;
+    }
     try {
       // Cargar usuarios siempre para que todos los roles puedan ver el listado
       // Los empleados pueden ver técnicos para asignar tickets
@@ -259,7 +265,7 @@ const Tickets = () => {
       }
       // Si falla, usar arrays vacíos - los empleados no asignan tickets
     }
-  }, [userRole]);
+  }, [canAccess, userRole]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

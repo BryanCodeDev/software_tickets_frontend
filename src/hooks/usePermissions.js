@@ -51,6 +51,18 @@ export const usePermissions = (user) => {
   }, [selectedItemForPermissions, reloadPermissions]);
 
   const fetchUsers = useCallback(async () => {
+    // Check if user has permission to view users
+    if (!user) return;
+    
+    // Administrators have full access; others need explicit 'users:view' permission
+    const hasPermission = user.role?.name === 'Administrador' || 
+      (user.permissions && user.permissions.some(p => p.module === 'users' && p.action === 'view'));
+    
+    if (!hasPermission) {
+      setAllUsers([]);
+      return;
+    }
+    
     try {
       const usersData = await documentsAPI.fetchUsers();
       setAllUsers(usersData || []);
@@ -58,7 +70,7 @@ export const usePermissions = (user) => {
       // Error silencioso - usuarios sin permiso para ver otros usuarios
       setAllUsers([]);
     }
-  }, []);
+  }, [user]);
 
   const checkUserPermission = useCallback(async (item, type) => {
     try {
