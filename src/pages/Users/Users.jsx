@@ -14,18 +14,18 @@ const Users = () => {
   const { notifySuccess, notifyError } = useNotifications();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
-  const [formData, setFormData] = useState({ username: '', name: '', email: '', password: '', roleId: 1, it: '', hasCorporatePhone: false, corporatePhone: '' });
-  const [showPassword, setShowPassword] = useState(false);
-  const [formLoading, setFormLoading] = useState(false);
-  const [uniqueITs, setUniqueITs] = useState([]);
-  const [inventoryItems, setInventoryItems] = useState([]);
-  const [confirmDialog, setConfirmDialog] = useState(null);
-  const [availablePhones, setAvailablePhones] = useState([]);
-  const [searchPhone, setSearchPhone] = useState('');
-  const [showPhoneDropdown, setShowPhoneDropdown] = useState(false);
-  const { user } = useContext(AuthContext);
+   const [showModal, setShowModal] = useState(false);
+   const [editingUser, setEditingUser] = useState(null);
+   const [formData, setFormData] = useState({ username: '', name: '', email: '', password: '', roleId: 1, it: '', hasCorporatePhone: false, corporatePhone: '' });
+   const [showPassword, setShowPassword] = useState(false);
+   const [formLoading, setFormLoading] = useState(false);
+   const [uniqueITs, setUniqueITs] = useState([]);
+   const [inventoryItems, setInventoryItems] = useState([]);
+   const [confirmDialog, setConfirmDialog] = useState(null);
+   const [availablePhones, setAvailablePhones] = useState([]);
+   const [searchPhone, setSearchPhone] = useState('');
+   const [showPhoneDropdown, setShowPhoneDropdown] = useState(false);
+   const { user } = useContext(AuthContext);
 
   // NUEVAS FUNCIONALIDADES: Estados para búsqueda, filtros y ordenamiento
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,55 +36,55 @@ const Users = () => {
   const [showStats, setShowStats] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(null);
 
-  const fetchUsers = useCallback(async () => {
-    try {
-      const data = await usersAPI.fetchUsers();
-      setUsers(data);
-    } catch (error) {
-      console.error('Error al cargar usuarios:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+   const fetchUsers = useCallback(async () => {
+     try {
+       const data = await usersAPI.fetchUsers();
+       setUsers(data);
+     } catch (error) {
+       console.error('Error al cargar usuarios:', error);
+     } finally {
+       setLoading(false);
+     }
+   }, []);
 
-  const fetchUniqueITs = useCallback(async () => {
-    try {
-      const data = await inventoryAPI.fetchUniqueITs();
-      setUniqueITs(data);
-    } catch (error) {
-      console.error('Error al cargar ITs únicos:', error);
-    }
-  }, []);
+   const fetchUniqueITs = useCallback(async () => {
+     try {
+       const data = await inventoryAPI.fetchUniqueITs();
+       setUniqueITs(data);
+     } catch (error) {
+       console.error('Error al cargar ITs únicos:', error);
+     }
+   }, []);
 
-  const fetchInventoryItems = useCallback(async () => {
-    try {
-      const data = await inventoryAPI.fetchInventory();
-      setInventoryItems(data);
-    } catch (error) {
-      console.error('Error al cargar items de inventario:', error);
-    }
-  }, []);
+   const fetchInventoryItems = useCallback(async () => {
+     try {
+       const data = await inventoryAPI.fetchInventory();
+       setInventoryItems(data);
+     } catch (error) {
+       console.error('Error al cargar items de inventario:', error);
+     }
+   }, []);
 
-  const fetchAvailablePhones = useCallback(async () => {
-    try {
-      const phones = await corporatePhoneAPI.fetchCorporatePhones();
-      // Filtrar solo los teléfonos activos
-      const activePhones = phones.filter(phone => phone.status === 'activo');
-      setAvailablePhones(activePhones);
-    } catch (err) {
-      console.error('Error al cargar teléfonos corporativos:', err);
-    }
-  }, []);
+   const fetchAvailablePhones = useCallback(async () => {
+     try {
+       const phones = await corporatePhoneAPI.fetchCorporatePhones();
+       // Filtrar solo los teléfonos activos
+       const activePhones = phones.filter(phone => phone.status === 'activo');
+       setAvailablePhones(activePhones);
+     } catch (err) {
+       console.error('Error al cargar teléfonos corporativos:', err);
+     }
+   }, []);
 
-  useEffect(() => {
-    // Solo Administrador y Técnico tienen acceso completo a usuarios
-    if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Técnico')) {
-      fetchUsers();
-      fetchUniqueITs();
-      fetchInventoryItems();
-      fetchAvailablePhones();
-    }
-  }, [user, fetchUsers, fetchUniqueITs, fetchInventoryItems, fetchAvailablePhones]);
+   useEffect(() => {
+     // Solo Administrador y Técnico tienen acceso completo a usuarios
+     if (user && (user.role?.name === 'Administrador' || user.role?.name === 'Técnico')) {
+       fetchUsers();
+       fetchUniqueITs();
+       fetchInventoryItems();
+       fetchAvailablePhones();
+     }
+   }, [user, fetchUsers, fetchUniqueITs, fetchInventoryItems, fetchAvailablePhones]);
 
   // Socket listeners for real-time updates
   useEffect(() => {
@@ -320,7 +320,9 @@ const Users = () => {
 
   const handleCreate = () => {
     setEditingUser(null);
-    setFormData({ username: '', name: '', email: '', password: '', roleId: 1, it: '', hasCorporatePhone: false, corporatePhone: '' });
+    // Técnicos solo pueden crear Empleado (roleId=3), Administradores pueden elegir (roleId=1 por defecto)
+    const defaultRoleId = user?.role?.name === 'Técnico' ? 3 : 1;
+    setFormData({ username: '', name: '', email: '', password: '', roleId: defaultRoleId, it: '', hasCorporatePhone: false, corporatePhone: '' });
     setPasswordStrength(null);
     setShowModal(true);
   };
@@ -363,27 +365,33 @@ const Users = () => {
     setFormLoading(true);
     try {
       if (editingUser) {
-        const updateData = { roleId: formData.roleId, it: formData.it, hasCorporatePhone: formData.hasCorporatePhone, corporatePhone: formData.corporatePhone };
+        const updateData = { it: formData.it };
+        // Solo Administrador puede cambiar el rol
+        if (user?.role?.name === 'Administrador') {
+          updateData.roleId = formData.roleId;
+        }
         if (formData.password) updateData.password = formData.password;
+        // hasCorporatePhone y corporatePhone se envían siempre en edición (Técnicos pueden asignar teléfonos)
+        updateData.hasCorporatePhone = formData.hasCorporatePhone;
+        updateData.corporatePhone = formData.corporatePhone;
         await usersAPI.updateUser(editingUser.id, updateData);
         notifySuccess('Usuario actualizado exitosamente');
       } else {
-        await authAPI.register(
-          formData.name,
-          formData.username,
-          formData.email,
-          formData.password,
-          formData.roleId,
-          formData.it,
-          formData.hasCorporatePhone,
-          formData.corporatePhone
-        );
+        // Crear usuario sin iniciar sesión
+        await authAPI.createUser({
+          username: formData.username,
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          roleId: formData.roleId,
+          it: formData.it || ''
+        });
         notifySuccess('Usuario creado exitosamente');
       }
       fetchUsers();
       setShowModal(false);
-    } catch {
-      notifyError('Error al guardar el usuario. Por favor, verifica los datos e inténtalo de nuevo.');
+    } catch (error) {
+      notifyError(error?.response?.data?.error || 'Error al guardar el usuario. Verifica los datos e intenta nuevamente.');
     } finally {
       setFormLoading(false);
     }
@@ -958,30 +966,32 @@ const Users = () => {
                   </div>
                 )}
 
-                <div>
-                  <label className={conditionalClasses({
-                    light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
-                    dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
-                  })}>
-                    Rol
-                  </label>
-                  <select
-                    value={formData.roleId}
-                    onChange={(e) => setFormData({ ...formData, roleId: parseInt(e.target.value) })}
-                    className={conditionalClasses({
-                      light: 'w-full px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-lg bg-white text-gray-900',
-                      dark: 'w-full px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-lg bg-gray-700 text-gray-100'
-                    })}
-                  >
-                    <option value={1}>Administrador</option>
-                    <option value={5}>Coordinadora Administrativa</option>
-                    <option value={2}>Técnico</option>
-                    <option value={4}>Calidad</option>
-                    <option value={6}>Jefe</option>
-                    <option value={7}>Compras</option>
-                    <option value={3}>Empleado</option>
-                  </select>
-                </div>
+                {user?.role?.name === 'Administrador' && (
+                  <div>
+                    <label className={conditionalClasses({
+                      light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
+                      dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
+                    })}>
+                      Rol
+                    </label>
+                    <select
+                      value={formData.roleId}
+                      onChange={(e) => setFormData({ ...formData, roleId: parseInt(e.target.value) })}
+                      className={conditionalClasses({
+                        light: 'w-full px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-lg bg-white text-gray-900',
+                        dark: 'w-full px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base lg:text-lg bg-gray-700 text-gray-100'
+                      })}
+                    >
+                      <option value={1}>Administrador</option>
+                      <option value={5}>Coordinadora Administrativa</option>
+                      <option value={2}>Técnico</option>
+                      <option value={4}>Calidad</option>
+                      <option value={6}>Jefe</option>
+                      <option value={7}>Compras</option>
+                      <option value={3}>Empleado</option>
+                    </select>
+                  </div>
+                )}
 
                 <div>
                   <label className={conditionalClasses({
@@ -1007,120 +1017,124 @@ const Users = () => {
                   </select>
                 </div>
 
-                <div>
-                  <label className={conditionalClasses({
-                    light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
-                    dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
-                  })}>
-                    ¿Tiene teléfono corporativo?
-                  </label>
-                  <div className="flex gap-4">
-                    <label className={conditionalClasses({
-                      light: 'flex items-center',
-                      dark: 'flex items-center'
-                    })}>
-                      <input
-                        type="radio"
-                        name="hasCorporatePhone"
-                        checked={formData.hasCorporatePhone === true}
-                        onChange={() => setFormData({ ...formData, hasCorporatePhone: true })}
-                        className="mr-2"
-                      />
-                      <span className={conditionalClasses({
-                        light: 'text-gray-700',
-                        dark: 'text-gray-200'
-                      })}>Sí</span>
-                    </label>
-                    <label className={conditionalClasses({
-                      light: 'flex items-center',
-                      dark: 'flex items-center'
-                    })}>
-                      <input
-                        type="radio"
-                        name="hasCorporatePhone"
-                        checked={formData.hasCorporatePhone === false}
-                        onChange={() => {
-                          setFormData({ ...formData, hasCorporatePhone: false, corporatePhone: '' });
-                          setSearchPhone('');
-                        }}
-                        className="mr-2"
-                      />
-                      <span className={conditionalClasses({
-                        light: 'text-gray-700',
-                        dark: 'text-gray-200'
-                      })}>No</span>
-                    </label>
-                  </div>
-                </div>
-
-                {formData.hasCorporatePhone && (
-                  <div>
-                    <label className={conditionalClasses({
-                      light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
-                      dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
-                    })}>
-                      Número Corporativo
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        placeholder={`Buscar y seleccionar teléfono... (${availablePhones.length} disponibles)`}
-                        value={selectedPhone ? `${selectedPhone.numero_celular} - ${selectedPhone.nombre} (${selectedPhone.category})` : searchPhone}
-                        onChange={(e) => {
-                          setSearchPhone(e.target.value);
-                          setFormData({ ...formData, corporatePhone: '' });
-                          setShowPhoneDropdown(true);
-                        }}
-                        onFocus={() => setShowPhoneDropdown(true)}
-                        onBlur={() => setTimeout(() => setShowPhoneDropdown(false), 200)}
-                        className={conditionalClasses({
-                          light: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900',
-                          dark: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-gray-100'
-                        })}
-                      />
-                      {showPhoneDropdown && (
-                        <div className={conditionalClasses({
-                          light: 'absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg sm:rounded-xl shadow-lg max-h-60 overflow-y-auto',
-                          dark: 'absolute z-50 w-full mt-1 bg-gray-700 border border-gray-600 rounded-lg sm:rounded-xl shadow-lg max-h-60 overflow-y-auto'
+                {editingUser && (
+                  <>
+                    <div>
+                      <label className={conditionalClasses({
+                        light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
+                        dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
+                      })}>
+                        ¿Tiene teléfono corporativo?
+                      </label>
+                      <div className="flex gap-4">
+                        <label className={conditionalClasses({
+                          light: 'flex items-center',
+                          dark: 'flex items-center'
                         })}>
-                          {phonesFiltered.length > 0 ? (
-                            phonesFiltered.map(phone => (
-                              <div
-                                key={phone.id}
-                                className={conditionalClasses({
-                                  light: 'px-3 sm:px-4 py-2 sm:py-2.5 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0',
-                                  dark: 'px-3 sm:px-4 py-2 sm:py-2.5 hover:bg-gray-600 cursor-pointer border-b border-gray-600 last:border-b-0'
-                                })}
-                                onClick={() => {
-                                  setFormData({ ...formData, corporatePhone: phone.numero_celular });
-                                  setSearchPhone('');
-                                  setShowPhoneDropdown(false);
-                                }}
-                              >
-                                <div className={conditionalClasses({
-                                  light: 'font-medium text-gray-900',
-                                  dark: 'font-medium text-gray-100'
-                                })}>{phone.numero_celular}</div>
-                                <div className={conditionalClasses({
-                                  light: 'text-sm text-gray-600',
-                                  dark: 'text-sm text-gray-300'
-                                })}>{phone.nombre} ({phone.category})</div>
-                              </div>
-                            ))
-                          ) : (
+                          <input
+                            type="radio"
+                            name="hasCorporatePhone"
+                            checked={formData.hasCorporatePhone === true}
+                            onChange={() => setFormData({ ...formData, hasCorporatePhone: true })}
+                            className="mr-2"
+                          />
+                          <span className={conditionalClasses({
+                            light: 'text-gray-700',
+                            dark: 'text-gray-200'
+                          })}>Sí</span>
+                        </label>
+                        <label className={conditionalClasses({
+                          light: 'flex items-center',
+                          dark: 'flex items-center'
+                        })}>
+                          <input
+                            type="radio"
+                            name="hasCorporatePhone"
+                            checked={formData.hasCorporatePhone === false}
+                            onChange={() => {
+                              setFormData({ ...formData, hasCorporatePhone: false, corporatePhone: '' });
+                              setSearchPhone('');
+                            }}
+                            className="mr-2"
+                          />
+                          <span className={conditionalClasses({
+                            light: 'text-gray-700',
+                            dark: 'text-gray-200'
+                          })}>No</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {formData.hasCorporatePhone && (
+                      <div>
+                        <label className={conditionalClasses({
+                          light: 'block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2',
+                          dark: 'block text-xs sm:text-sm font-medium text-gray-200 mb-1.5 sm:mb-2'
+                        })}>
+                          Número Corporativo
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            placeholder={`Buscar y seleccionar teléfono... (${availablePhones.length} disponibles)`}
+                            value={selectedPhone ? `${selectedPhone.numero_celular} - ${selectedPhone.nombre} (${selectedPhone.category})` : searchPhone}
+                            onChange={(e) => {
+                              setSearchPhone(e.target.value);
+                              setFormData({ ...formData, corporatePhone: '' });
+                              setShowPhoneDropdown(true);
+                            }}
+                            onFocus={() => setShowPhoneDropdown(true)}
+                            onBlur={() => setTimeout(() => setShowPhoneDropdown(false), 200)}
+                            className={conditionalClasses({
+                              light: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-white text-gray-900',
+                              dark: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-600 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#662d91] focus:border-transparent outline-none transition-all text-sm sm:text-base bg-gray-700 text-gray-100'
+                            })}
+                          />
+                          {showPhoneDropdown && (
                             <div className={conditionalClasses({
-                              light: 'px-3 sm:px-4 py-2 sm:py-2.5 text-gray-500 text-center',
-                              dark: 'px-3 sm:px-4 py-2 sm:py-2.5 text-gray-400 text-center'
+                              light: 'absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg sm:rounded-xl shadow-lg max-h-60 overflow-y-auto',
+                              dark: 'absolute z-50 w-full mt-1 bg-gray-700 border border-gray-600 rounded-lg sm:rounded-xl shadow-lg max-h-60 overflow-y-auto'
                             })}>
-                              {availablePhones.length === 0
-                                ? 'No hay teléfonos disponibles'
-                                : 'No se encontraron teléfonos con esa búsqueda'}
+                              {phonesFiltered.length > 0 ? (
+                                phonesFiltered.map(phone => (
+                                  <div
+                                    key={phone.id}
+                                    className={conditionalClasses({
+                                      light: 'px-3 sm:px-4 py-2 sm:py-2.5 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0',
+                                      dark: 'px-3 sm:px-4 py-2 sm:py-2.5 hover:bg-gray-600 cursor-pointer border-b border-gray-600 last:border-b-0'
+                                    })}
+                                    onClick={() => {
+                                      setFormData({ ...formData, corporatePhone: phone.numero_celular });
+                                      setSearchPhone('');
+                                      setShowPhoneDropdown(false);
+                                    }}
+                                  >
+                                    <div className={conditionalClasses({
+                                      light: 'font-medium text-gray-900',
+                                      dark: 'font-medium text-gray-100'
+                                    })}>{phone.numero_celular}</div>
+                                    <div className={conditionalClasses({
+                                      light: 'text-sm text-gray-600',
+                                      dark: 'text-sm text-gray-300'
+                                    })}>{phone.nombre} ({phone.category})</div>
+                                  </div>
+                                ))
+                              ) : (
+                                <div className={conditionalClasses({
+                                  light: 'px-3 sm:px-4 py-2 sm:py-2.5 text-gray-500 text-center',
+                                  dark: 'px-3 sm:px-4 py-2 sm:py-2.5 text-gray-400 text-center'
+                                })}>
+                                  {availablePhones.length === 0
+                                    ? 'No hay teléfonos disponibles'
+                                    : 'No se encontraron teléfonos con esa búsqueda'}
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>
-                      )}
-                    </div>
-                  </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
 

@@ -8,7 +8,7 @@ import {
   FaClipboardCheck, FaDumpster, FaUndo, FaTrash, FaEye, FaHistory, FaTag, FaFolder,
   FaComments, FaPaperclip, FaChartPie, FaServer, FaMobile, FaIdCard, FaBriefcase, FaEdit,
   FaTrashRestore, FaDownload, FaUpload, FaPlus, FaMinus, FaBan, FaStar, FaMedal,
-  FaList, FaChevronDown, FaCompass, FaShoppingCart, FaSync
+  FaList, FaChevronDown, FaCompass, FaShoppingCart, FaSync, FaUserCog
 } from 'react-icons/fa';
 import { useThemeClasses } from '../hooks/useThemeClasses';
 
@@ -19,8 +19,24 @@ const Help = () => {
 
   const faqs = [
     {
-      question: '¿Cómo crear un nuevo usuario en el sistema?',
-      answer: 'Solo Administradores y Técnicos pueden crear usuarios. Ve al módulo "Crear Usuario" en el sidebar (debajo de Papelera). Completa el formulario con nombre, usuario, email, contraseña, identificación y selecciona el rol (solo visible para Administrador). Al crear el usuario, NO se inicia sesión automáticamente, manteniendo tu sesión actual intacta.'
+      question: '¿Cuál es la diferencia entre "Registrar" y "Crear Usuario"?',
+      answer: '"Registrar" (Login → ¿Aún no tienes acceso?) es una solicitud externa que redirige a WhatsApp. "Crear Usuario" (sidebar) es una acción interna solo para Admin/Técnico que registra empleados directamente en la base de datos. El segundo no inicia sesión automáticamente, manteniendo la sesión del creador.'
+    },
+    {
+      question: '¿Qué permisos tengo para editar usuarios?',
+      answer: 'Los Administradores pueden editar CUALQUIER campo de cualquier usuario: nombre, username, email, contraseña, rol, IT, teléfono corporativo. Los Técnicos pueden editar solo IT y teléfono corporativo (no rol). Los usuarios solo pueden editar su propio perfil (Mi Perfil) sin cambiar rol.'
+    },
+    {
+      question: '¿Cómo funciona la paginación en listados?',
+      answer: 'Los listados (tickets, documentos, inventario) usan paginación server-side. El backend devuelve solo la página solicitada (ej: 10-20 items). Usa los controles "Anterior/Siguiente" o los números de página. Esto hace que el sistema sea rápido incluso con miles de registros.'
+    },
+    {
+      question: '¿Por qué al crear un usuario no me desloguea automáticamente?',
+      answer: 'El sistema está diseñado para que el Administrador/Técnico mantenga su sesión activa tras crear usuarios. Esto permite crear múltiples usuarios sin interrumpir el trabajo. El endpoint POST /auth/create-user NO devuelve token, solo confirmación de creación. El nuevo usuario debe iniciar sesión por separado con sus propias credenciales.'
+    },
+    {
+      question: '¿Qué diferencias hay entre Registrar usuario y Crear usuario?',
+      answer: '"Registrar usuario" (en Login) es para usuarios externos que solicitan acceso: redirige a WhatsApp. "Crear usuario" (en sidebar) es para Administradores/Técnicos que registran empleados internamente: el formulario registra al usuario en la base de datos sin iniciar sesión. El primero es una solicitud, el segundo es una acción directa.'
     },
     {
       question: '¿Cómo funciona la paginación en listados?',
@@ -260,8 +276,9 @@ const Help = () => {
         'Gestionar permisos de usuarios',
         'Configurar parámetros de limpieza automática',
         'Ver logs de auditoría del sistema',
-        'Crear nuevos usuarios (no inicia sesión automáticamente)',
-        'Asignar roles al crear usuarios (Empleado, Jefe, Compras, Calidad)'
+        'Crear nuevos usuarios (POST /auth/create-user) - NO inicia sesión automáticamente',
+        'Asignar cualquier rol al crear usuarios (Administrador, Coordinadora, Técnico, Calidad, Jefe, Compras, Empleado)',
+        'Editar rol de cualquier usuario existente'
       ],
       modules: ['Todos los módulos', 'Usuarios', 'Roles', 'Configuración', 'Papelera', 'Auditoría']
     },
@@ -300,7 +317,9 @@ const Help = () => {
         'Crear solicitudes de cambio',
         'Gestionar teléfonos corporativos',
         'Gestionar tablets y PDAs',
-        'Crear nuevos usuarios (solo rol Empleado, no inicia sesión)'
+        'Crear nuevos usuarios (solo rol Empleado, POST /auth/create-user) - NO inicia sesión automáticamente',
+        'Asignar teléfono corporativo a usuarios',
+        'Editar IT (identificación) de usuarios'
       ],
       modules: ['Tickets', 'Inventario', 'Credenciales', 'Teléfonos', 'Tablets', 'PDAs', 'Papelera']
     },
@@ -602,10 +621,11 @@ const Help = () => {
       color: 'bg-gray-100 text-gray-800 border-gray-300',
       description: 'Gestión de usuarios del sistema',
       features: [
-        'Creación de usuarios por Administrador/Técnico',
-        'Asignación de roles al crear (Administrador asigna cualquier rol, Técnico solo Empleado)',
-        'No inicia sesión automáticamente tras crear (mantiene sesión del creador)',
-        'Asignación de roles',
+        'Creación de usuarios por Administrador/Técnico (no inicia sesión automáticamente)',
+        'Asignación de roles al crear: Administrador asigna cualquier rol, Técnico solo Empleado',
+        'Edición de perfil por cada usuario (propios datos)',
+        'Administradores pueden editar rol, IT, teléfono de cualquier usuario',
+        'Técnicos pueden editar IT y teléfono de usuarios (no rol)',
         'Gestión de permisos',
         'Perfiles de usuario',
         'Configuraciones personales',
@@ -951,23 +971,28 @@ const Help = () => {
                        elevando la calidad del sistema a nivel producción (10/10).
                      </p>
 
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 xs:gap-3">
-                       {[
-                         {
-                           title: 'Paginación Server-Side',
-                           icon: <FaChartBar className="text-purple-500" />,
-                           desc: 'Todos los listados (tickets, documentos, inventario) now usan paginación en backend. Reduce carga de datos y mejora velocidad.'
-                         },
-                         {
-                           title: 'Búsqueda con Debounce',
-                           icon: <FaSearch className="text-blue-500" />,
-                           desc: 'Búsquedas en tiempo real con espera de 300ms para evitar llamadas excesivas a la API. Aplica a tickets, docs, inventario.'
-                         },
-                         {
-                           title: 'Seguridad Robustecida',
-                           icon: <FaLock className="text-green-500" />,
-                           desc: '33+ endpoints protegidos con autorización por rol. Validación de ownership en cada operación sensible.'
-                         },
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 xs:gap-3">
+                        {[
+                          {
+                            title: 'Paginación Server-Side',
+                            icon: <FaChartBar className="text-purple-500" />,
+                            desc: 'Todos los listados (tickets, documentos, inventario) now usan paginación en backend. Reduce carga de datos y mejora velocidad.'
+                          },
+                          {
+                            title: 'Búsqueda con Debounce',
+                            icon: <FaSearch className="text-blue-500" />,
+                            desc: 'Búsquedas en tiempo real con espera de 300ms para evitar llamadas excesivas a la API. Aplica a tickets, docs, inventario.'
+                          },
+                          {
+                            title: 'Creación de Usuarios Sin Sesión',
+                            icon: <FaUserCog className="text-emerald-500" />,
+                            desc: 'Endpoint POST /auth/create-user para que Administradores/Técnicos creen usuarios sin iniciar sesión automáticamente. Mantiene sesión del creador.'
+                          },
+                          {
+                            title: 'Seguridad Robustecida',
+                            icon: <FaLock className="text-green-500" />,
+                            desc: '33+ endpoints protegidos con autorización por rol. Validación de ownership en cada operación sensible.'
+                          },
                          {
                            title: 'Transacciones DB',
                            icon: <FaSync className="text-yellow-500" />,
