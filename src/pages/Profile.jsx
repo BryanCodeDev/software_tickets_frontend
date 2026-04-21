@@ -112,6 +112,27 @@ const Profile = () => {
     }
   }, [errors]);
 
+  // Cargar datos iniciales
+  useEffect(() => {
+    fetchUniqueITs();
+    fetchAvailablePhones();
+  }, [fetchUniqueITs, fetchAvailablePhones]);
+
+  const selectedPhone = useMemo(() =>
+    availablePhones.find(p => p.numero_celular === formData.corporatePhone) || null,
+    [availablePhones, formData.corporatePhone]
+  );
+
+  const phonesFiltered = useMemo(() => {
+    if (!searchPhone) return availablePhones;
+    const q = searchPhone.toLowerCase();
+    return availablePhones.filter(p =>
+      p.numero_celular?.toLowerCase().includes(q) ||
+      p.nombre?.toLowerCase().includes(q) ||
+      p.category?.toLowerCase().includes(q)
+    );
+  }, [availablePhones, searchPhone]);
+
   useEffect(() => {
     const handleUserUpdated = (data) => {
       const { userId, user: updatedUser } = data;
