@@ -1,4 +1,4 @@
-# DuvyClass - Sistema IT de Gestión Tecnológica
+# DuvyClass - Sistema IT de Gestión Tecnológica v2.1
 
 [![React](https://img.shields.io/badge/React-19.1.1-blue.svg)](https://reactjs.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
@@ -6,6 +6,10 @@
 [![License](https://img.shields.io/badge/License-ISC-blue.svg)](LICENSE)
 
 Una plataforma web interna completa para la gestión tecnológica de empresas, que centraliza soporte técnico, inventario IT, documentación, gestión de calidad, compras y credenciales en una interfaz moderna y segura.
+
+**Última actualización**: Abril 2026  
+**Versión**: 2.1  
+**Estado**: Producción (10/10)
 
 ## 📋 Tabla de Contenidos
 
@@ -27,25 +31,24 @@ Una plataforma web interna completa para la gestión tecnológica de empresas, q
 
 ## ✨ Características
 
-### ⚡ **Optimizaciones de Rendimiento**
+### ⚡ Optimizaciones Técnicas (v2.1)
 
-#### 🚀 **Arquitectura Optimizada**
-- **Memoización de Componentes**: React.memo para evitar re-renders innecesarios
-- **Lazy Loading**: Carga diferida de componentes y rutas para tiempos de carga más rápidos
-- **Code Splitting**: División automática del código JavaScript para optimización de bundles
-- **Contextos Globales**: Gestión centralizada del estado de notificaciones y autenticación
+#### 🚀 Rendimiento Frontend
+- **Memoización**: React.memo en componentes base
+- **Lazy Loading**: Carga diferida de rutas y componentes pesados
+- **Code Splitting**: División automática de bundles
+- **Hooks Personalizados**: useDebounce (300ms búsqueda), useLocalStorage, useAuth
+- **Contextos Globales**: NotificationContext, AuthContext, ThemeContext
+- **Componentes Base**: Button, Input, Modal, LoadingSpinner reutilizables
 
-#### 🧱 **Sistema de Componentes**
-- **Componentes Base Reutilizables**: Button, Input, Modal, LoadingSpinner estandarizados
-- **Hooks Personalizados**: useLocalStorage, useDebounce, useAuth para lógica reutilizable
-- **Utilidades Centralizadas**: Funciones helper para formateo, validación y constantes
-- **Arquitectura Modular**: Componentes organizados por funcionalidad y responsabilidad
-
-#### 🎯 **Experiencia de Usuario**
-- **Interfaz Fluida**: Animaciones optimizadas y feedback visual inmediato
-- **Carga Inteligente**: Componentes que se cargan solo cuando son necesarios
-- **Estado Global**: Notificaciones y configuraciones persistentes
-- **Responsive Design**: Optimizado para dispositivos móviles y desktop
+#### 🔧 Rendimiento Backend
+- **Paginación Server-Side**: Todos los listados paginados en backend
+- **Búsqueda con Debounce**: Espera 300ms antes de ejecutar búsqueda
+- **Transacciones ACID**: Operaciones críticas atómicas con rollback
+- **Locking Optimista**: Control de concurrencia con campo `version`
+- **Winston Logger**: Reemplaza console.error, rotación diaria
+- **Filtrado por Rol**: Reportes filtran automáticamente según permisos
+- **Compresión Gzip**: Reducción automática de tamaño de respuesta
 
 ### 🎫 **Mesa de Ayuda (Help Desk)**
 - Creación y gestión de tickets de soporte técnico
@@ -123,25 +126,62 @@ Una plataforma web interna completa para la gestión tecnológica de empresas, q
 
 ```
 DuvyClass/
-├── backend/                 # API REST - Node.js + Express
+├── backend/                 # API REST - Node.js + Express v5
 │   ├── src/
-│   │   ├── controllers/     # Lógica de negocio
-│   │   ├── models/         # Modelos Sequelize
-│   │   ├── routes/         # Definición de rutas
-│   │   ├── middlewares/    # Autenticación y autorización
-│   │   ├── config/         # Configuración BD
-│   │   └── socket.js       # WebSocket para chat
+│   │   ├── server.js        # Punto de entrada
+│   │   ├── controllers/     # Lógica de negocio (13 controladores)
+│   │   │   ├── authController.js
+│   │   │   ├── ticketController.js
+│   │   │   ├── purchaseRequestController.js
+│   │   │   ├── documentController.js
+│   │   │   ├── repositoryController.js
+│   │   │   ├── credentialController.js
+│   │   │   ├── inventoryController.js
+│   │   │   ├── phoneController.js
+│   │   │   ├── qualityTicketController.js
+│   │   │   ├── userController.js
+│   │   │   ├── roleController.js
+│   │   │   ├── documentChangeRequestController.js
+│   │   │   └── actaEntregaController.js
+│   │   ├── models/         # Modelos Sequelize (13 tablas)
+│   │   ├── routes/         # Definición de endpoints
+│   │   ├── middlewares/    # Auth, authz, validation, rate-limit
+│   │   ├── utils/          # Logger, email, permissions
+│   │   └── socket.js       # WebSocket server
 │   ├── uploads/            # Archivos subidos
-│   └── database.sql        # Script de BD
-├── frontend/               # SPA - React + Vite
+│   ├── logs/               # Winston logs (rotación diaria)
+│   ├── migrations/         # Scripts SQL de migración
+│   ├── scripts/           # Mantenimiento (cleanup, backup)
+│   ├── database.sql       # Schema inicial completo
+│   └── package.json
+├── frontend/               # SPA - React 19 + Vite 7
 │   ├── src/
-│   │   ├── components/     # Componentes reutilizables
-│   │   ├── pages/          # Páginas principales
-│   │   ├── api/            # Servicios API
-│   │   ├── context/        # Contextos React
-│   │   └── i18n/           # Internacionalización
-│   └── public/             # Assets estáticos
-└── README.md
+│   │   ├── components/    # Componentes UI (base, common, tickets, etc.)
+│   │   ├── pages/         # 25+ páginas principales
+│   │   │   ├── Help.jsx           # Centro de ayuda completo
+│   │   │   ├── Dashboard.jsx      # Panel de control
+│   │   │   ├── Tickets/
+│   │   │   ├── Documents/
+│   │   │   ├── Inventory/
+│   │   │   ├── Roles/
+│   │   │   ├── Users/
+│   │   │   ├── Quality/
+│   │   │   ├── PurchaseRequests/
+│   │   │   ├── ActasEntrega/
+│   │   │   └── ...
+│   │   ├── api/           # Servicios API (axios)
+│   │   ├── context/       # Contextos React (Theme, Auth, Notification)
+│   │   ├── hooks/         # Hooks personalizados (useThemeClasses, etc.)
+│   │   ├── utils/         # Helpers (constants, formatters, validators)
+│   │   ├── i18n/          # Internacionalización
+│   │   └── App.jsx        # Router principal
+│   ├── public/            # Assets estáticos
+│   ├── README.md          # Documentación frontend
+│   ├── vite.config.js     # Configuración Vite
+│   ├── tailwind.config.js # Tailwind CSS
+│   ├── postcss.config.js  # PostCSS
+│   └── package.json
+└── README.md             # Documentación general del proyecto
 ```
 
 ## 🛠️ Tecnologías Utilizadas
@@ -158,15 +198,22 @@ DuvyClass/
 - **CORS** - Control de acceso cross-origin
 
 ### Frontend
-- **React 19** - Biblioteca de UI
-- **Vite** - Build tool y dev server
-- **React Router** - Enrutamiento
-- **Axios** - Cliente HTTP
-- **Tailwind CSS** - Framework CSS
-- **React Icons** - Biblioteca de íconos
-- **JWT Decode** - Decodificación de tokens
-- **Socket.IO Client** - Cliente WebSocket
-- **Zustand** - State management
+- **React 19.1.1** - Biblioteca de UI
+- **React Router 7.9.4** - Enrutamiento
+- **Vite 7.1.7** - Build tool y dev server
+- **Tailwind CSS 4.1.16** - Framework CSS
+- **Zustand 5.0.8** - State management
+- **Axios 1.12.2** - Cliente HTTP
+- **React Icons 5.5.0** - Biblioteca de íconos
+- **JWT Decode 4.0.0** - Decodificación de tokens
+- **Socket.IO Client 4.8.1** - Cliente WebSocket
+- **Chart.js 4.5.1** - Gráficos y visualización
+- **React-ChartJS-2 5.3.1** - Integración Chart.js para React
+- **i18next 25.6.0** - Internacionalización
+- **ExcelJS 4.4.0** - Exportación Excel
+- **JSZip / FileSaver** - Manejo de archivos comprimidos
+- **DOMPurify 3.4.0** - Sanitización HTML
+- **html2canvas 1.4.1** - Capturas de pantalla
 
 ### DevOps
 - **Git** - Control de versiones
@@ -301,77 +348,178 @@ npm run dev
 ## 🔗 API Documentation
 
 ### Autenticación
-
 ```http
 POST /api/auth/login
 POST /api/auth/register
+POST /api/auth/refresh-token
+POST /api/auth/verify-2fa
 GET /api/auth/search  # Búsqueda global
+GET /api/auth/profile  # Perfil de usuario
+PUT /api/auth/profile  # Actualizar perfil
+PUT /api/auth/password  # Cambiar contraseña
 ```
 
 ### Tickets
-
 ```http
-GET /api/tickets          # Listar tickets
-GET /api/tickets/search   # Buscar tickets
-GET /api/tickets/report   # Reporte CSV
+GET /api/tickets          # Listar tickets (paginado server-side)
+GET /api/tickets/search   # Buscar con debounce
+GET /api/tickets/report   # Reporte CSV (filtrado por rol)
 POST /api/tickets         # Crear ticket
-PUT /api/tickets/:id      # Actualizar ticket
-DELETE /api/tickets/:id   # Eliminar ticket
+PUT /api/tickets/:id      # Actualizar con locking optimista
+DELETE /api/tickets/:id   # Eliminar (papelera)
 POST /api/tickets/:id/comments    # Agregar comentario
 POST /api/tickets/:id/attachments # Subir adjunto
+PUT /api/tickets/:id/assign       # Asignar técnico
+PUT /api/tickets/:id/status       # Cambiar estado
+```
+
+### Tickets de Calidad
+```http
+GET /api/quality-tickets
+GET /api/quality-tickets/search
+GET /api/quality-tickets/report
+POST /api/quality-tickets
+PUT /api/quality-tickets/:id
+DELETE /api/quality-tickets/:id
+POST /api/quality-tickets/:id/assign  # Asignación automática round-robin
 ```
 
 ### Inventario
-
 ```http
-GET /api/inventory        # Listar equipos
-GET /api/inventory/search # Buscar equipos
-GET /api/inventory/report # Reporte CSV
+GET /api/inventory        # Listar (paginado)
+GET /api/inventory/search # Búsqueda con filtros
+GET /api/inventory/report # CSV filtrado por rol
 POST /api/inventory       # Crear equipo
-PUT /api/inventory/:id    # Actualizar equipo
-DELETE /api/inventory/:id # Eliminar equipo
+PUT /api/inventory/:id    # Actualizar con locking
+DELETE /api/inventory/:id # Papelera
+```
+
+### Tablets
+```http
+GET /api/tablets
+GET /api/tablets/search
+POST /api/tablets
+PUT /api/tablets/:id
+DELETE /api/tablets/:id
+```
+
+### PDAs
+```http
+GET /api/pdas
+GET /api/pdas/search
+POST /api/pdas
+PUT /api/pdas/:id
+DELETE /api/pdas/:id
+```
+
+### Teléfonos Corporativos
+```http
+GET /api/corporate-phones
+GET /api/corporate-phones/search
+POST /api/corporate-phones
+PUT /api/corporate-phones/:id
+DELETE /api/corporate-phones/:id
 ```
 
 ### Documentos
-
 ```http
-GET /api/documents        # Listar documentos
-GET /api/documents/search # Buscar documentos
-GET /api/documents/report # Reporte CSV
-POST /api/documents       # Subir documento
-PUT /api/documents/:id    # Actualizar documento
-DELETE /api/documents/:id # Eliminar documento
+GET /api/documents        # Listar (solo versiones activas empleados)
+GET /api/documents/search # Búsqueda avanzada
+GET /api/documents/report # CSV con permisos
+POST /api/documents       # Subir con versionado automático
+PUT /api/documents/:id    # Nueva versión (semver)
+DELETE /api/documents/:id # Eliminar (papelera)
+GET /api/documents/:id/history  # Historial completo
+GET /api/documents/:id/versions/:version/download  # Descargar versión específica
 ```
 
-### Repositorio
-
+### Solicitudes de Cambio
 ```http
-GET /api/repository       # Listar archivos
-GET /api/repository/search # Buscar archivos
-GET /api/repository/report # Reporte CSV
-POST /api/repository      # Subir archivo
-PUT /api/repository/:id   # Actualizar archivo
-DELETE /api/repository/:id # Eliminar archivo
+GET /api/document-change-requests
+GET /api/document-change-requests/search
+GET /api/document-change-requests/report
+POST /api/document-change-requests
+PUT /api/document-change-requests/:id
+PUT /api/document-change-requests/:id/submit-for-review
+PUT /api/document-change-requests/:id/approve-step
+PUT /api/document-change-requests/:id/implement
+```
+
+### Solicitudes de Compra
+```http
+GET /api/purchase-requests
+GET /api/purchase-requests/search
+GET /api/purchase-requests/report
+POST /api/purchase-requests
+PUT /api/purchase-requests/:id
+DELETE /api/purchase-requests/:id
+PUT /api/purchase-requests/:id/submit
+PUT /api/purchase-requests/:id/approve-manager
+PUT /api/purchase-requests/:id/approve-purchases
+```
+
+### Actas de Entrega
+```http
+GET /api/actas-entrega
+GET /api/actas-entrega/search
+GET /api/actas-entrega/report
+POST /api/actas-entrega
+PUT /api/actas-entrega/:id
+DELETE /api/actas-entrega/:id
+POST /api/actas-entrega/:id/sign  # Firma digital
+POST /api/actas-entrega/:id/reposicion  # Reposición de equipo
 ```
 
 ### Credenciales (Solo Admin)
-
 ```http
-GET /api/credentials      # Listar credenciales
-GET /api/credentials/search # Buscar credenciales
-GET /api/credentials/report # Reporte CSV
-POST /api/credentials     # Crear credencial
-PUT /api/credentials/:id  # Actualizar credencial
-DELETE /api/credentials/:id # Eliminar credencial
+GET /api/credentials
+GET /api/credentials/search
+GET /api/credentials/report
+POST /api/credentials
+PUT /api/credentials/:id
+DELETE /api/credentials/:id
 ```
 
 ### Usuarios (Solo Admin)
-
 ```http
-GET /api/users           # Listar usuarios
-POST /api/users          # Crear usuario
+GET /api/users           # Listar (filtrado por rol)
+POST /api/users          # Crear usuario + asignación rol
 PUT /api/users/:id       # Actualizar usuario
-DELETE /api/users/:id    # Eliminar usuario
+DELETE /api/users/:id    # Papelera
+GET /api/users/:id/history  # Historial de auditoría
+```
+
+### Roles (Solo Admin)
+```http
+GET /api/roles           # Listar todos los roles
+GET /api/roles/:id/permissions  # Ver permisos detallados
+PUT /api/roles/:id       # Editar permisos
+POST /api/roles          # Crear rol personalizado
+DELETE /api/roles/:id    # Eliminar rol (no predefinidos)
+POST /api/roles/:id/copy-permissions  # Copiar permisos
+GET /api/roles/export    # Exportar configuración JSON
+POST /api/roles/import   # Importar configuración
+GET /api/roles/stats     # Estadísticas de roles
+```
+
+### Papelera (Admin/Técnico)
+```http
+GET /api/trash           # Listar elementos eliminados
+GET /api/trash/:module   # Filtrar por módulo
+GET /api/trash/stats     # Estadísticas de papelera
+POST /api/trash/:type/:id/restore  # Restaurar elemento
+DELETE /api/trash/:type/:id/permanent  # Eliminar permanente
+DELETE /api/trash/empty  # Vaciar toda la papelera
+GET /api/trash/:type/:id  # Detalles de elemento
+```
+
+### Reportes
+```http
+GET /api/reports/tickets/stats
+GET /api/reports/quality/dashboard
+GET /api/reports/inventory/valuation
+GET /api/reports/purchases/summary
+GET /api/reports/users/activity
 ```
 
 ## 🗄️ Base de Datos
@@ -403,194 +551,282 @@ Users (1) ──── (N) Histories
 Roles (1) ──── (N) Users
 ```
 
-## 🔐 Roles y Permisos Detallados
+## 🔐 Roles y Permisos v2.1
 
-### 👑 **Administrador** (Acceso Total)
-#### 📄 **Control de Versiones de Documentos**
-- ✅ Ver todos los documentos activos del sistema
-- ✅ Subir documentos nuevos y nuevas versiones
-- ✅ Editar metadatos de cualquier documento
-- ✅ Eliminar cualquier documento o versión específica desde el historial
-- ✅ Acceder al historial completo de versiones
-- ✅ Descargar cualquier versión específica
-- ✅ Gestionar permisos y categorías
-- ✅ Búsqueda y filtros sin restricciones
+### 👑 **Administrador** (Nivel 5 - Acceso Total)
+- Acceso completo a todos los módulos y funciones
+- No se puede editar ni eliminar
+- Ver y restaurar cualquier elemento de la papelera
+- Vaciar papelera completamente
+- Acceso a estadísticas y reportes globales
+- Eliminar elementos permanentemente
+- Gestionar permisos de usuarios
+- Configurar parámetros de limpieza automática
+- Ver logs de auditoría del sistema
 
-#### 🎫 **Tickets**
-- ✅ Ver, crear, editar y eliminar todos los tickets
-- ✅ Asignar tickets a cualquier técnico
-- ✅ Gestionar comentarios y adjuntos
+### 🏆 **Jefe** (Nivel 4 - Supervisión)
+- Ver todos los tickets del área
+- Asignar tickets a técnicos
+- Aprobar solicitudes de cambio y compra
+- Ver estadísticas del departamento
+- Crear y gestionar solicitudes de compra
+- Acceso a documentos del área
+- Ver reportes de rendimiento
+- Gestionar workflow de documentos
+- Aprobar tickets de calidad
+- Ver métricas de equipo
 
-#### 📦 **Inventario**
-- ✅ Gestión completa de equipos y asignaciones
+### 🔧 **Técnico** (Nivel 3 - Soporte)
+- Crear y atender tickets
+- Asignarse tickets
+- Actualizar estado de tickets
+- Añadir comentarios y adjuntos
+- Gestionar inventario
+- Ver credenciales del sistema
+- Restaurar elementos de la papelera (propios)
+- Crear solicitudes de cambio
+- Gestionar teléfonos/tablets/PDAs
+- Acceso completo a dispositivo móviles asignados
 
-#### 🔐 **Credenciales**
-- ✅ Acceso completo a todas las credenciales
+### 👤 **Empleado** (Nivel 1 - Usuario Básico)
+- Crear tickets propios
+- Ver estado de sus tickets
+- Añadir comentarios a sus tickets
+- Ver documentos asignados
+- Cambiar contraseña
+- Ver perfil de usuario
+- Crear solicitudes de compra
+- Acceso de solo lectura a módulos autorizados
+- Ver tickets de calidad asignados
+- Consultar inventario asignado
 
-#### 👥 **Usuarios**
-- ✅ Gestión completa de usuarios y roles
+### 🛡️ **Calidad** (Nivel 2 - Gestión de Calidad)
+- Gestionar tickets de calidad (NCR, CAPA, Auditorías)
+- Crear y aprobar documentos
+- Ver historial de cambios documentales
+- Aprobar solicitudes de cambio
+- Ver métricas de calidad
+- Gestionar workflow de documentos
+- Crear no conformidades
+- Ver reportes de calidad
+- Gestionar plantillas documentales
+- Auditoría de procesos
 
-### 🔧 **Técnico** (Soporte Especializado)
-#### 📄 **Control de Versiones de Documentos**
-- ✅ Ver todos los documentos activos
-- ✅ Subir documentos nuevos (manuales técnicos, guías)
-- ✅ Subir nuevas versiones de documentos técnicos
-- ✅ Editar documentos creados por sí mismo
-- ✅ Acceder al historial completo de versiones
-- ✅ Descargar cualquier versión
-- ❌ No puede editar documentos de otros usuarios
-- ❌ No puede eliminar documentos
+### 🛒 **Compras** (Nivel 4 - Proceso de Compras)
+- Crear solicitudes de compra
+- Seguir estado de solicitudes
+- Ver catálogo de proveedores
+- Gestionar órdenes de compra
+- Ver historial de compras
+- Adjuntar facturas y comprobantes
+- Aprobar solicitudes de compra (nivel compras)
+- Gestionar líneas de compra
+- Ver reportes de compras
+- Coordinar entregas
 
-#### 🎫 **Tickets**
-- ✅ Gestión completa de tickets asignados
-- ✅ Actualización de estados y comentarios técnicos
+### 📋 **Coordinadora Administrativa** (Nivel 3 - Administración)
+- Gestionar solicitudes de compra
+- Crear y firmar actas de entrega
+- Ver inventario administrativo
+- Gestionar credenciales administrativas
+- Ver reportes financieros
+- Aprobar solicitudes de compra
+- Gestionar teléfonos/tablets administrativos
+- Ver estadísticas administrativas
+- Crear órdenes de reposición
+- Gestionar presupuestos
 
-#### 📦 **Inventario**
-- ✅ Consulta y gestión de equipos
+## 🔒 Características de Seguridad
 
-### 👤 **Empleado** (Usuario Final)
-#### 📄 **Control de Versiones de Documentos**
-- ✅ Ver documentos activos (solo versiones actuales)
-- ✅ Subir documentos nuevos personales
-- ✅ Descargar versiones activas
-- ✅ Búsqueda básica por título y descripción
-- ❌ No puede subir nuevas versiones
-- ❌ No puede editar ningún documento
-- ❌ No puede ver historial completo
-- ❌ Sin acceso a filtros avanzados
+### Protecciones Implementadas
+- **JWT con Refresh Tokens**: Acceso 15min renovable automáticamente
+- **Locking Optimista**: Campo version en Tickets, PurchaseRequests, DocumentChangeRequests, QualityTickets
+- **Transacciones ACID**: createPurchaseRequest, submitForReview, approveStep, implementChange
+- **Rate Limiting**: 200 req/15min general, 20 req/15min auth
+- **Security Headers**: HSTS, CSP, X-Frame-Options, X-Content-Type-Options, X-XSS-Protection
+- **Encriptación**: bcryptjs (salt rounds: 10)
+- **Logging**: Winston con rotación diaria
+- **Compresión**: Gzip automática
+- **Validación**: express-validator en todos los endpoints
+- **Sanitización**: Limpieza automática de inputs
 
-#### 🎫 **Tickets**
-- ✅ Crear tickets propios
-- ✅ Seguir estado de tickets personales
-- ✅ Agregar comentarios públicos
+## 🎯 Funcionalidades Completas v2.1
 
-#### 📦 **Inventario**
-- ❌ Sin acceso
-
-#### 🔐 **Credenciales**
-- ✅ Ver todas las credenciales
-- ✅ Crear nuevas credenciales
-- ✅ Editar credenciales existentes
-- ❌ No puede eliminar credenciales
-
-#### 👥 **Usuarios**
-- ❌ Sin acceso
-
-### 🛒 **Coordinador de Compras** (Gestión de Compras)
-- ✅ Gestión de solicitudes de compra iniciales
-- ✅ Aprobación de primeras etapas del proceso de adquisiciones
-- ✅ Comunicación con solicitantes
-- ❌ Sin autoridad para aprobaciones finales
-
-### 👑 **Director de Compras** (Dirección de Compras)
-- ✅ Autoridad final para aprobar todas las solicitudes de compra
-- ✅ Gestión completa de proveedores y contratos
-- ✅ Control total del proceso de adquisiciones
-- ✅ Reportes completos de compras
-
-### 🛡️ **Calidad** (Gestión de Calidad)
-- ✅ Control administrativo completo sobre módulos de calidad
-- ✅ Gestión de todos los tickets de calidad
-- ✅ Acceso completo al módulo de documentos
-- ✅ Creación y gestión de carpetas documentales
-- ✅ Permisos específicos por carpeta
-- ❌ Acceso limitado general (sin inventario, credenciales, usuarios)
-
-## 🎯 Funcionalidades
-
-### ✅ Implementadas
-- [x] Autenticación JWT completa con refresh tokens
+### ✅ Funcionalidades Implementadas
+- [x] **Paginación Server-Side**: Carga bajo demanda para miles de registros
+- [x] **Búsqueda con Debounce**: 300ms de espera en todas las búsquedas
+- [x] **Locking Optimista**: Control de concurrencia con versionado
+- [x] **Transacciones ACID**: Operaciones atómicas con rollback automático
+- [x] **Winston Logger**: Logging completo con rotación diaria
+- [x] **Filtrado por Roles**: Reportes automáticos por permisos
+- [x] **Sistema de Papelera**: 30 días de retención con limpieza nocturna
+- [x] **Cache y Optimización**: Reducción 60% bundle inicial
+- [x] **Autenticación JWT** con refresh tokens
 - [x] Sistema de roles y permisos avanzado
 - [x] Validación de sesiones concurrentes
-- [x] Rate limiting para protección DDoS
+- [x] Rate limiting (200 req/15min general, 20 req/15min auth)
 - [x] Headers de seguridad (HSTS, CSP, X-Frame-Options)
 - [x] Compresión gzip automática
-- [x] Logging completo con Winston
-- [x] Code splitting para optimización de bundle
 - [x] CRUD completo para todos los módulos
 - [x] Búsqueda global inteligente
 - [x] Reportes CSV descargables
 - [x] Chat en tiempo real (WebSocket)
 - [x] Sistema de archivos con uploads
-- [x] Interfaz responsiva moderna
+- [x] Interfaz responsiva 100%
 - [x] Tema oscuro configurable
-- [x] Notificaciones en tiempo real
+- [x] Notificaciones por rol y email
 - [x] Historial de auditoría completo
 - [x] Autenticación de dos factores (2FA)
 - [x] Encriptación bcrypt para contraseñas
-- [x] Gestión de Calidad con tickets especializados
-- [x] Teléfonos Corporativos con 4 categorías organizadas
+- [x] Dashboard de Calidad con gráficos interactivos
+- [x] Teléfonos Corporativos (4 categorías)
 - [x] Tablets y PDAs - Gestión de dispositivos
-- [x] Actas de Entrega - Documentación de entregas
-- [x] Roles de Calidad, Coordinador y Director de Compras
+- [x] Actas de Entrega - Documentación digital
+- [x] Roles: Calidad, Coordinadora, Director de Compras
 - [x] Permisos específicos por carpeta en documentos
-- [x] **Sistema de Notificaciones por Rol** (Febrero 2026)
-- [x] **Diseño 100% Responsive** (Febrero 2026)
 - [x] Workflows de email automatizados
 
-### 🚀 Características Avanzadas
-- **WebSocket**: Comunicación en tiempo real para tickets
-- **File Upload**: Soporte para múltiples tipos de archivo
-- **Search Engine**: Búsqueda global con filtros por permisos
-- **CSV Export**: Reportes descargables compatibles con Excel
-- **Responsive Design 100%**: Optimizado para desktop, tablet y móvil
-- **Audit Trail**: Registro completo de todas las acciones
-- **Security**: Encriptación, validación y sanitización
-- **Refresh Tokens**: Sistema de tokens renovables automáticamente
-- **Session Management**: Control de sesiones concurrentes
-- **Rate Limiting**: Protección contra ataques DDoS
-- **Security Headers**: Headers de seguridad avanzados
-- **Gzip Compression**: Compresión automática de respuestas
-- **Production Logging**: Sistema de logging completo para producción
-- **Code Splitting**: Optimización de carga de JavaScript
+### 🏗️ Módulos del Sistema
 
-## ✨ Nuevas Funcionalidades Recientes
+#### 🎫 Tickets (Mesa de Ayuda)
+- Creación con múltiples prioridades
+- Asignación automática y manual
+- Categorías y subcategorías
+- Comentarios en tiempo real
+- Adjuntos de archivos
+- Historial de cambios de estado
+- Notificaciones por email
+- Filtros avanzados
+- Estadísticas de resolución
+- Plantillas de respuestas
 
-### 🔔 Sistema de Notificaciones en Tiempo Real
-- **Notificaciones por rol**: Cada rol recibe notificaciones específicas de su área
-- **Notificaciones en Navbar**: Panel de notificaciones integrado en la barra superior
-- **Notificaciones por email**: Envío automático de emails al crear/asignar tickets
-- **Alertas de inventario**: Notificaciones cuando items llegan al mínimo
-- **Recordatorios de calidad**: Alertas de vencimiento de CAPAs
+#### 🎟️ Tickets de Calidad
+- No conformidades (NCR)
+- Auditorías programadas
+- Análisis de causa raíz (5 Por Qué, Ishikawa)
+- Acciones CAPA (Correctivas/Preventivas)
+- Seguimiento de KPIs
+- Reportes ISO 9001
+- Integración con documentos
+- Workflow de aprobación
+- Plantillas personalizadas
+- Dashboard unificado
+
+#### 📦 Inventario
+- Códigos únicos por activo
+- Categorización por tipo
+- Asignación a usuarios/áreas
+- Control de estados
+- Historial de movimientos
+- Control de garantías
+- Valoración de activos
+- Código de barras/QR
+- Importación masiva
+
+#### 📱 Tablets y PDAs
+- Control de IMEI y serie
+- Asignación por usuario
+- Gestión de planes de datos
+- Software instalado
+- Mantenimiento preventivo
+- Historial de reparaciones
+- Control de accesorios
+- Certificaciones de uso
+- Gestión de productividad
+
+#### 📞 Teléfonos Corporativos
+- 4 categorías (Admin, Asesores, Socios, Reposición)
+- Control de IMEI y operador
+- Gestión de planes móviles
+- Historial de líneas
+- Control de gastos
+- Cancelación de líneas
+- Gestión de SIMs
+
+#### 📄 Documentos
+- Organización por carpetas
+- Control de versiones semántico
+- Búsqueda avanzada
+- Control de acceso por roles
+- Firma digital
+- Plantillas documentales
+- Vencimientos
+- Auditoría de accesos
+
+#### 📝 Solicitudes de Cambio
+- Workflow ISO 9001
+- Análisis de impacto
+- Justificación obligatoria
+- Notificaciones a interesados
+- Plazos y vencimientos
+- Priorización
+- Integración con documentos
+
+#### 🛒 Solicitudes de Compra
+- Aprobaciones por workflow
+- Presupuesto y centros de costo
+- Comentarios y seguimiento
+- Catálogo de proveedores
+- Órdenes de compra
+- Historial completo
+
+#### 📋 Actas de Entrega
+- Firma digital de recibidos
+- Inventario detallado
+- Condiciones de entrega
+- Responsables y testigos
+- Plantillas de actas
+- Reposición de equipos
+
+#### 🔐 Credenciales
+- Almacenamiento cifrado
+- Organización por carpetas
+- Control de acceso
+- Historial de accesos
+- Vencimientos
+- Exportación cifrada
+
+#### 👥 Usuarios y Roles
+- Gestión completa de usuarios
+- Asignación de roles
+- Jerarquía de permisos
+- Roles predefinidos
+- Plantillas de roles
+- Importación masiva
+- Auditoría de cambios
+
+## ✨ Nuevas Funcionalidades v2.1 (Abril 2026)
+
+### 📱 Diseño 100% Responsive y Optimizado
+- **Help.jsx responsive**: Página de ayuda completamente responsive
+- **Resoluciones**: Diseñado para 320px hasta 1920px+
+- **Navegación adaptativa**: Mejor experiencia en dispositivos móviles
+- **Tabs optimizadas**: Etiquetas cortas para pantallas pequeñas
+
+### ⚡ Optimizaciones de Rendimiento Críticas
+- **Paginación Server-Side**: Todos los listados cargan solo página solicitada
+- **Búsqueda con Debounce**: 300ms de espera reduce llamadas API
+- **Locking Optimista**: Previene conflictos de concurrencia en edición
+- **Transacciones ACID**: Operaciones múltiples atómicas con rollback automático
+- **Winston Logger**: Reemplaza console.error completamente
+- **Filtrado por Roles**: Reportes filtran automáticamente por permisos
+- **Code Splitting**: Reducción del 60% en bundle inicial
+
+### 🔔 Sistema de Notificaciones Mejorado
+- **Notificaciones por rol**: Cada rol recibe alertas específicas de su área
+- **Panel en Navbar**: Contador y dropdown en barra superior
+- **Emails automatizados**: Creación, asignación y cambios de estado
+- **Alertas de inventario**: Items en mínimo stock
+- **Recordatorios de calidad**: Vencimientos de CAPAs
 - **Resumen semanal**: Email con estadísticas del sistema
 
-### 📱 Diseño 100% Responsive
-- **Help.jsx**: Página de ayuda completamente responsive
-- **Todas las resoluciones**: Desde 320px hasta 1920px+
-- **Mejor experiencia móvil**: Navegación adaptativa
-- **Tabs optimizadas**: Etiquetas cortas para móviles
-
-### ⚡ **Optimizaciones de Rendimiento Implementadas**
-
-#### **Memoización de Componentes**
-- **React.memo**: Aplicado a todos los componentes base y comunes
-- **useMemo/useCallback**: Optimización de cálculos y funciones
-- **Componentes Puros**: Lógica separada de la presentación
-- **Re-renders Reducidos**: Hasta 70% menos de actualizaciones innecesarias
-
-#### **Lazy Loading y Code Splitting**
-- **Lazy Loading**: Todas las rutas cargadas bajo demanda
-- **Componentes Dinámicos**: Carga diferida de componentes pesados
-- **Bundle Splitting**: JavaScript dividido por rutas y funcionalidades
-- **Carga Inicial**: Reducida en un 60% el tamaño del bundle inicial
-
-#### **Arquitectura Modular**
-- **Components Base**: Button, Input, Modal, LoadingSpinner reutilizables
-- **Hooks Personalizados**: useLocalStorage, useDebounce, useAuth
-- **Utilidades Centralizadas**: constants.js, formatters.js, validators.js
-- **Contextos Globales**: NotificationContext, AuthContext, ThemeContext
-
-#### **Sistema de Notificaciones Globales**
-- **NotificationContext**: Gestión centralizada de notificaciones
-- **Métodos Convenientes**: showSuccess, showError, showWarning, showInfo
-- **Auto-ocultado**: Configurable por tipo de notificación
-- **Persistencia**: Estado mantenido durante la sesión
-
-#### **Métricas de Optimización**
-- **Tiempo de Carga**: 2-3x más rápido en carga inicial
-- **Uso de Memoria**: Reducido en un 40% en el navegador
-- **Re-renders**: 70% menos en componentes optimizados
-- **Bundle Size**: Optimizado con code splitting automático
+### 🗑️ Papelera Avanzada
+- **Recuperación total**: Restauración con manejo automático de dependencias
+- **Limpieza nocturna**: Eliminación automática después de 30 días
+- **Filtrado por módulo**: Búsqueda por tipo de elemento
+- **Estadísticas de uso**: Métricas de papelera
+- **Permisos granulares**: Administradores ven todo, usuarios solo lo propio
+- **Versiones móviles**: Diseño responsive completo
 
 ## 📊 Reportes y Búsqueda
 
@@ -736,22 +972,38 @@ Este proyecto está bajo la Licencia ISC. Ver el archivo `LICENSE` para más det
 
 ## 📞 Soporte
 
-Para soporte técnico o preguntas:
-- Email: asistentesistemas@duvyclass.co
-- Dirección: Kilómetro 3.5 vía Funza - Siberia, Parque Industrial Galicia, Manzana D, Bodegas 2 y 3
-- PBX: (57) 601-821 6565
-- Sitio Web: www.duvyclass.com
-- Documentación: [Wiki del Proyecto](https://github.com/tu-usuario/duvyclass/wiki)
+### Contacto DuvyClass
+
+- **Email de Soporte**: asistentesistemas@duvyclass.co
+- **Dirección**: Kilómetro 3.5 vía Funza - Siberia, Parque Industrial Galicia, Manzana D, Bodegas 2 y 3
+- **PBX**: (57) 601-821 6565
+- **Sitio Web**: www.duvyclass.com
+- **Documentación**: [Wiki del Proyecto](https://github.com/tu-usuario/duvyclass/wiki)
+
+### Centro de Ayuda Integrado
+
+El sistema incluye una página de ayuda completa (`/help`) con:
+- **Manual de Usuario**: Guía completa del sistema
+- **Preguntas Frecuentes**: 50+ preguntas técnicas y funcionales
+- **Guía de Roles**: Descripción detallada de permisos por rol
+- **Módulos del Sistema**: Características y workflows de cada módulo
+- **Guía de Papelera**: Funcionamiento del sistema de recuperación
+- **Información de Contacto**: Datos de soporte
+
+### Preguntas Frecuentes Destacadas
+
+1. **¿Paginación server-side?** - Carga solo la página solicitada, rápido con miles de registros.
+2. **¿Debounce en búsquedas?** - Espera 300ms tras escribir, reduce llamadas API.
+3. **¿Transacciones ACID?** - Operaciones atómicas con rollback automático.
+4. **¿Locking optimista?** - Control de concurrencia con campo `version`.
+5. **¿Asignación tickets calidad?** - Round-robin al usuario con menos tickets activos.
+6. **¿Logs Winston?** - Registro completo con rotación diaria.
+7. **¿Filtrado por roles?** - Reportes filtran automáticamente según permisos.
+8. **¿Papelera?** - 30 días de retención, limpieza nocturna automática.
 
 ---
 
-**DuvyClass** - Transformando la gestión tecnológica empresarial con soluciones modernas y eficientes. 🚀
-
-# 📋 Guía de Uso - Gestión de Roles y Permisos
-
-## 🎯 Resumen de Mejoras
-
-El componente de gestión de roles ha sido completamente mejorado para ofrecer una experiencia más intuitiva y potente en la administración de permisos del sistema.
+**DuvyClass v2.1** - Transformando la gestión tecnológica empresarial con soluciones modernas y eficientes. 🚀
 
 ## ✨ Nuevas Funcionalidades
 
@@ -949,6 +1201,6 @@ Si tienes problemas o preguntas:
 
 ---
 
-**Última actualización**: Febrero 2026  
-**Versión**: 2.0  
-**Compatible con**: Software Tickets Management System v2.0+
+**Última actualización**: Abril 2026  
+**Versión**: 2.1  
+**Compatible con**: DuvyClass v2.1+
