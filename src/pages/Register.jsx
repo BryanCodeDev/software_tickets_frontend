@@ -1,25 +1,59 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import AuthContext from '../context/AuthContext.jsx';
 import { useThemeClasses } from '../hooks/useThemeClasses';
+import { authAPI } from '../api';
 
 const Register = () => {
+  // ─── Context (al inicio) ───────────────────────────────────────────────────────
   const { conditionalClasses } = useThemeClasses();
+  const { hasAnyRole, loading: authLoading } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  // ─── Estado de autorización ────────────────────────────────────────────────────
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // ─── Protección de ruta ─────────────────────────────────────────────────────────
+  useEffect(() => {
+    const checkAuth = async () => {
+      if (authLoading) return;
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      if (!hasAnyRole(['Administrador', 'Técnico'])) {
+        navigate('/dashboard');
+        return;
+      }
+
+      setIsAuthorized(true);
+      setIsCheckingAuth(false);
+    };
+
+    checkAuth();
+  }, [authLoading, hasAnyRole, navigate]);
+
+  // ─── Estados del formulario ─────────────────────────────────────────────────────
   const [formData, setFormData] = useState({
     name: '',
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    roleId: 3
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
-  const { register } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState('');
 
+  // ─── Helpers ────────────────────────────────────────────────────────────────────
   const calculatePasswordStrength = (password) => {
     let strength = 0;
     if (password.length >= 8) strength++;
@@ -28,38 +62,6 @@ const Register = () => {
     if (/[0-9]/.test(password)) strength++;
     if (/[^a-zA-Z0-9]/.test(password)) strength++;
     return strength;
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    if (name === 'password') setPasswordStrength(calculatePasswordStrength(value));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Las contraseñas no coinciden. Por favor verifica e intenta nuevamente.');
-      setLoading(false);
-      return;
-    }
-    if (formData.password.length < 8) {
-      setError('La contraseña debe contener al menos 8 caracteres.');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      await register(formData.name, formData.username, formData.email, formData.password);
-      navigate('/login');
-    } catch (err) {
-      setError(err.response?.data?.error || 'No fue posible completar el registro. Intenta nuevamente.');
-    } finally {
-      setLoading(false);
-    }
   };
 
   const getStrengthColor = () => {
@@ -83,31 +85,100 @@ const Register = () => {
 
   const strengthLabel = getStrengthLabel();
 
-   const inputClass = (extra = '') => conditionalClasses({
-     light: `block w-full py-2.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/30 focus:border-[#662d91] transition-all bg-gray-50 hover:bg-white ${extra}`,
-     dark: `block w-full py-2.5 border border-gray-700 rounded-xl text-gray-300 placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/40 focus:border-[#662d91] transition-all bg-gray-800 ${extra}`
-   });
+  const inputClass = (extra = '') => conditionalClasses({
+    light: `block w-full py-2.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/30 focus:border-[#662d91] transition-all bg-gray-50 hover:bg-white ${extra}`,
+    dark: `block w-full py-2.5 border border-gray-700 rounded-xl text-gray-300 placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#662d91]/40 focus:border-[#662d91] transition-all bg-gray-800 ${extra}`
+  });
 
-   const labelClass = conditionalClasses({
-     light: 'block text-sm font-semibold text-gray-700 mb-1.5 uppercase tracking-wide',
-     dark: 'block text-sm font-semibold text-gray-300 mb-1.5 uppercase tracking-wide'
-   });
+  const labelClass = conditionalClasses({
+    light: 'block text-sm font-semibold text-gray-700 mb-1.5 uppercase tracking-wide',
+    dark: 'block text-sm font-semibold text-gray-300 mb-1.5 uppercase tracking-wide'
+  });
 
+  const isAdmin = hasAnyRole(['Administrador']);
+
+  const availableRoles = [
+    { id: 3, name: 'Empleado' },
+    { id: 5, name: 'Jefe' },
+    { id: 6, name: 'Compras' },
+    { id: 7, name: 'Calidad' },
+  ];
+
+  // ─── Event handlers ─────────────────────────────────────────────────────────────
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    if (name === 'password') setPasswordStrength(calculatePasswordStrength(value));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccessMessage('');
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Las contraseñas no coinciden. Por favor verifica e intenta nuevamente.');
+      setLoading(false);
+      return;
+    }
+    if (formData.password.length < 8) {
+      setError('La contraseña debe contener al menos 8 caracteres.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Usar createUser - no inicia sesión
+      await authAPI.createUser(formData);
+      setSuccessMessage('Usuario creado exitosamente. Ya puedes cerrar esta pestaña o crear otro usuario.');
+      // Limpiar formulario
+      setFormData({
+        name: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        roleId: 3
+      });
+      setPasswordStrength(0);
+    } catch (err) {
+      setError(err || 'No fue posible crear el usuario. Intenta nuevamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ─── Loading / No autorizado ────────────────────────────────────────────────────
+  if (isCheckingAuth || authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <div className="text-white">Verificando permisos...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthorized) {
+    return null;
+  }
+
+  // ─── Render ─────────────────────────────────────────────────────────────────────
   return (
     <div className={conditionalClasses({
       light: 'min-h-screen flex',
       dark: 'min-h-screen flex'
     })}>
-       {/* Left Panel - Branding */}
-       <div className={conditionalClasses({
-         light: 'hidden lg:flex lg:w-[52%] bg-gradient-to-br from-[#4a1f6e] via-[#662d91] to-[#7c3aad] p-14 flex-col justify-between relative overflow-hidden',
-         dark: 'hidden lg:flex lg:w-[52%] bg-gradient-to-br from-[#3d1069] via-[#662d91] to-[#4a1f6e] p-14 flex-col justify-between relative overflow-hidden'
-       })}>
+      {/* Left Panel - Branding */}
+      <div className={conditionalClasses({
+        light: 'hidden lg:flex lg:w-[52%] bg-gradient-to-br from-[#4a1f6e] via-[#662d91] to-[#7c3aad] p-14 flex-col justify-between relative overflow-hidden',
+        dark: 'hidden lg:flex lg:w-[52%] bg-gradient-to-br from-[#3d1069] via-[#662d91] to-[#4a1f6e] p-14 flex-col justify-between relative overflow-hidden'
+      })}>
         {/* Geometric decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
            <div className="absolute top-0 right-0 w-125 h-125 rounded-full bg-white/3 -mr-64 -mt-64" />
            <div className="absolute bottom-0 left-0 w-100 h-100 rounded-full bg-white/3 -ml-48 -mb-48" />
            <div className="absolute top-1/2 left-1/2 w-75 h-75 rounded-full bg-[#8e4dbf]/10 -translate-x-1/2 -translate-y-1/2" />
+          {/* Subtle grid pattern */}
           <div className="absolute inset-0" style={{
             backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
             backgroundSize: '60px 60px'
@@ -123,9 +194,9 @@ const Register = () => {
               </svg>
             </div>
              <div>
-               <span className="text-2xl font-bold text-white tracking-tight">DuvyClass</span>
-               <div className="text-xs text-purple-300 tracking-[0.2em] uppercase font-medium">Enterprise Platform</div>
-             </div>
+                <span className="text-2xl font-bold text-white tracking-tight">DuvyClass</span>
+                <div className="text-xs text-purple-300 tracking-[0.2em] uppercase font-medium">Enterprise Platform</div>
+              </div>
           </div>
 
           <div className="space-y-5 mb-12">
@@ -177,28 +248,28 @@ const Register = () => {
             <span className="text-xl font-bold text-[#662d91]">DuvyClass</span>
           </div>
 
-            {/* Header */}
-            <div className="mb-7">
-              <h2 className={conditionalClasses({
-                light: 'text-2xl sm:text-3xl font-bold text-gray-900 mb-2 tracking-tight',
-                dark: 'text-2xl sm:text-3xl font-bold text-gray-100 mb-2 tracking-tight'
-              })}>
-                Crear cuenta corporativa
-              </h2>
-              <p className={conditionalClasses({
-                light: 'text-sm text-gray-600 leading-relaxed',
-                dark: 'text-sm text-gray-300 leading-relaxed'
-              })}>
-                Completa el formulario para solicitar acceso al sistema.
-              </p>
-            </div>
+          {/* Header */}
+          <div className="mb-7">
+            <h2 className={conditionalClasses({
+              light: 'text-2xl sm:text-3xl font-bold text-gray-900 mb-2 tracking-tight',
+              dark: 'text-2xl sm:text-3xl font-bold text-gray-100 mb-2 tracking-tight'
+            })}>
+              Crear usuario corporativo
+            </h2>
+            <p className={conditionalClasses({
+              light: 'text-sm text-gray-600 leading-relaxed',
+              dark: 'text-sm text-gray-300 leading-relaxed'
+            })}>
+              Completa el formulario para crear un nuevo usuario en el sistema.
+            </p>
+          </div>
 
-{/* Error message */}
-            {error && (
-              <div className={`mb-5 flex items-start gap-3 rounded-xl p-3.5 animate-fade-down ${conditionalClasses({
-                light: 'bg-red-50 border border-red-200',
-                dark: 'bg-red-900/20 border border-red-800'
-              })}`}>
+          {/* Error message */}
+          {error && (
+            <div className={`mb-5 flex items-start gap-3 rounded-xl p-3.5 animate-fade-down ${conditionalClasses({
+              light: 'bg-red-50 border border-red-200',
+              dark: 'bg-red-900/20 border border-red-800'
+            })}`}>
                <svg className={`w-4 h-4 mt-0.5 shrink-0 ${conditionalClasses({
                  light: 'text-red-500',
                  dark: 'text-red-400'
@@ -209,8 +280,27 @@ const Register = () => {
                  light: 'text-red-700',
                  dark: 'text-red-200'
                })}`}>{error}</p>
-             </div>
-           )}
+            </div>
+          )}
+
+          {/* Success message */}
+          {successMessage && (
+            <div className={`mb-5 flex items-start gap-3 rounded-xl p-3.5 animate-fade-down ${conditionalClasses({
+              light: 'bg-green-50 border border-green-200',
+              dark: 'bg-green-900/20 border border-green-800'
+            })}`}>
+               <svg className={`w-4 h-4 mt-0.5 shrink-0 ${conditionalClasses({
+                 light: 'text-green-500',
+                 dark: 'text-green-400'
+               })}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+               </svg>
+               <p className={`text-sm ${conditionalClasses({
+                 light: 'text-green-700',
+                 dark: 'text-green-200'
+               })}`}>{successMessage}</p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}
@@ -300,7 +390,7 @@ const Register = () => {
                      light: 'h-4 w-4 text-gray-400',
                      dark: 'h-4 w-4 text-gray-300'
                    })} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7z" />
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                    </svg>
                  </div>
                 <input
@@ -401,15 +491,52 @@ const Register = () => {
                   )}
                 </button>
               </div>
-              {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-                <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                  Las contraseñas no coinciden
-                </p>
-              )}
-            </div>
+                {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                  <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Las contraseñas no coinciden
+                  </p>
+                )}
+              </div>
+
+            {/* Selector de rol - solo visible para Administrador */}
+            {isAdmin && (
+              <div>
+                <label htmlFor="roleId" className={labelClass}>Rol del usuario</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                    <svg className={conditionalClasses({
+                      light: 'h-4 w-4 text-gray-400',
+                      dark: 'h-4 w-4 text-gray-300'
+                    })} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <select
+                    id="roleId"
+                    name="roleId"
+                    value={formData.roleId}
+                    onChange={(e) => setFormData({ ...formData, roleId: parseInt(e.target.value) })}
+                    className={inputClass('pl-10 pr-4 appearance-none')}
+                  >
+                    {availableRoles.map(role => (
+                      <option key={role.id} value={role.id}>{role.name}</option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                    <svg className={conditionalClasses({
+                      light: 'h-4 w-4 text-gray-400',
+                      dark: 'h-4 w-4 text-gray-300'
+                    })} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Los Técnicos solo pueden crear usuarios con rol Empleado</p>
+              </div>
+            )}
 
             {/* Terms */}
             <div className="flex items-start gap-3 pt-1">
@@ -424,21 +551,21 @@ const Register = () => {
                  light: 'text-sm text-gray-600 leading-snug',
                  dark: 'text-sm text-gray-300 leading-snug'
                })}>
-                 He leído y acepto los{' '}
+                He leído y acepto los{' '}
                  <Link to="/terms-and-conditions" className={`${conditionalClasses({
                    light: 'font-semibold text-[#662d91] hover:text-[#8e4dbf]',
                    dark: 'font-semibold text-purple-400 hover:text-purple-300'
                  })} transition-colors`}>
                    Términos y Condiciones
                  </Link>{' '}
-                 y la{' '}
+                y la{' '}
                  <Link to="/privacy-policy" className={`${conditionalClasses({
                    light: 'font-semibold text-[#662d91] hover:text-[#8e4dbf]',
                    dark: 'font-semibold text-purple-400 hover:text-purple-300'
                  })} transition-colors`}>
                    Política de Privacidad
                  </Link>{' '}
-                 de DuvyClass.
+                de DuvyClass.
               </label>
             </div>
 
@@ -455,14 +582,14 @@ const Register = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Creando cuenta...
+                    Creando usuario...
                   </>
                 ) : (
                   <>
                     <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
-                    Crear cuenta y solicitar acceso
+                    Crear usuario
                   </>
                 )}
               </button>
@@ -480,21 +607,21 @@ const Register = () => {
                  <span className={`px-3 ${conditionalClasses({
                    light: 'bg-white text-gray-500',
                    dark: 'bg-gray-900 text-gray-300'
-                 })}`}>¿Ya tienes cuenta?</span>
-               </div>
+                 })}`}>¿Regresar al panel?</span>
+                </div>
             </div>
 
             <Link
-              to="/login"
+              to="/dashboard"
               className={conditionalClasses({
                 light: 'w-full flex justify-center items-center py-2.5 px-4 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#662d91]/20 transition-all duration-200',
                 dark: 'w-full flex justify-center items-center py-2.5 px-4 border border-gray-700 rounded-xl text-sm font-medium text-gray-300 bg-gray-800 hover:bg-gray-750 focus:outline-none focus:ring-2 focus:ring-[#662d91]/30 transition-all duration-200'
               })}
             >
               <svg className="w-4 h-4 mr-2 text-[#662d91]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
               </svg>
-              Iniciar sesión con cuenta existente
+              Volver al Panel Principal
             </Link>
           </form>
 

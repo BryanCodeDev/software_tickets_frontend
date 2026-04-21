@@ -98,28 +98,29 @@ const calidadSubItemsBasic = [
   { path: '/ticket_calidad',           icon: <FaClipboardList className="w-4.25 h-4.25" />, label: 'Ticket Calidad', description: 'Reportes de calidad' },
 ];
 
-const buildMenuItems = (role) => {
-  const base = [{ path: '/dashboard', icon: <IconHome />, label: 'Panel Principal', description: 'Vista general del sistema' }];
+  const buildMenuItems = (role) => {
+    const base = [{ path: '/dashboard', icon: <IconHome />, label: 'Panel Principal', description: 'Vista general del sistema' }];
 
-  const ticketItem    = { path: '/tickets',           icon: <IconTicket />, label: 'Tickets',                description: 'Gestión de incidencias IT' };
-  const purchaseItem  = { path: '/purchase-requests', icon: <IconCart />,   label: 'Solicitudes de Compra',  description: 'Periféricos y equipos' };
-  const inventario    = { type: 'submenu', label: 'Inventario', icon: <IconBox />, description: 'Control de activos tecnológicos', subItems: inventarioSubItems };
-  const calidadFull   = { type: 'submenu', label: 'Calidad',    icon: <FaShieldAlt className="w-4.5 h-4.5" />, description: 'ISO 9001 y gestión documental', subItems: calidadSubItemsFull };
-  const calidadBasic  = { type: 'submenu', label: 'Calidad',    icon: <FaShieldAlt className="w-4.5 h-4.5" />, description: 'ISO 9001 y gestión documental', subItems: calidadSubItemsBasic };
-  const credItem      = { path: '/credentials', icon: <IconLock />,   label: 'Credenciales',   description: 'Gestión de accesos seguros' };
-  const usersItem     = { path: '/users',        icon: <IconUsers />,  label: 'Usuarios',       description: 'Administración de usuarios' };
-  const rolesItem     = { path: '/roles',         icon: <IconShield />, label: 'Roles',          description: 'Permisos y control de acceso' };
-  const trashItem     = { path: '/trash',         icon: <FaDumpster className="w-4.5 h-4.5" />, label: 'Papelera', description: 'Elementos eliminados' };
+    const ticketItem    = { path: '/tickets',           icon: <IconTicket />, label: 'Tickets',                description: 'Gestión de incidencias IT' };
+    const purchaseItem  = { path: '/purchase-requests', icon: <IconCart />,   label: 'Solicitudes de Compra',  description: 'Periféricos y equipos' };
+    const inventario    = { type: 'submenu', label: 'Inventario', icon: <IconBox />, description: 'Control de activos tecnológicos', subItems: inventarioSubItems };
+    const calidadFull   = { type: 'submenu', label: 'Calidad',    icon: <FaShieldAlt className="w-4.5 h-4.5" />, description: 'ISO 9001 y gestión documental', subItems: calidadSubItemsFull };
+    const calidadBasic  = { type: 'submenu', label: 'Calidad',    icon: <FaShieldAlt className="w-4.5 h-4.5" />, description: 'ISO 9001 y gestión documental', subItems: calidadSubItemsBasic };
+    const credItem      = { path: '/credentials', icon: <IconLock />,   label: 'Credenciales',   description: 'Gestión de accesos seguros' };
+    const usersItem     = { path: '/users',        icon: <IconUsers />,  label: 'Usuarios',       description: 'Administración de usuarios' };
+    const rolesItem     = { path: '/roles',         icon: <IconShield />, label: 'Roles',          description: 'Permisos y control de acceso' };
+    const trashItem     = { path: '/trash',         icon: <FaDumpster className="w-4.5 h-4.5" />, label: 'Papelera', description: 'Elementos eliminados' };
+    const registerItem  = { path: '/register',      icon: <FaUserCog className="w-4.5 h-4.5" />, label: 'Crear Usuario',  description: 'Registrar nuevo usuario' };
 
-  if (role === 'Administrador') return [...base, ticketItem, purchaseItem, inventario, calidadFull, credItem, usersItem, rolesItem, trashItem];
-  if (role === 'Técnico')       return [...base, ticketItem, purchaseItem, inventario, calidadBasic, credItem, trashItem];
-  if (role === 'Empleado')      return [...base, ticketItem, purchaseItem, inventario, calidadBasic];
-  if (role === 'Jefe')          return [...base, ticketItem, purchaseItem, calidadBasic];
-  if (role === 'Compras')       return [...base, ticketItem, purchaseItem, calidadBasic];
-  if (role === 'Calidad')       return [...base, ticketItem, calidadFull];
-  if (role === 'Coordinadora Administrativa') return [...base, ticketItem, purchaseItem, inventario, calidadFull, credItem, usersItem, rolesItem, trashItem];
-  return base;
-};
+    if (role === 'Administrador') return [...base, ticketItem, purchaseItem, inventario, calidadFull, credItem, usersItem, rolesItem, trashItem, registerItem];
+    if (role === 'Técnico')       return [...base, ticketItem, purchaseItem, inventario, calidadBasic, credItem, trashItem, registerItem];
+    if (role === 'Empleado')      return [...base, ticketItem, purchaseItem, inventario, calidadBasic];
+    if (role === 'Jefe')          return [...base, ticketItem, purchaseItem, calidadBasic];
+    if (role === 'Compras')       return [...base, ticketItem, purchaseItem, calidadBasic];
+    if (role === 'Calidad')       return [...base, ticketItem, calidadFull];
+    if (role === 'Coordinadora Administrativa') return [...base, ticketItem, purchaseItem, inventario, calidadFull, credItem, usersItem, rolesItem, trashItem, registerItem];
+    return base;
+  };
 
 // ─── Role badge config ────────────────────────────────────────────────────────
 const roleBadges = {

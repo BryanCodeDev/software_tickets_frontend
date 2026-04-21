@@ -19,6 +19,16 @@ const authAPI = {
     }
   },
 
+  // Crear usuario sin iniciar sesión (solo Admin/Técnico)
+  createUser: async (userData) => {
+    try {
+      const response = await api.post('/auth/create-user', userData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || 'Error al crear usuario';
+    }
+  },
+
   requestPasswordReset: async (email) => {
     try {
       const response = await api.post('/users/request-password-reset', { email });

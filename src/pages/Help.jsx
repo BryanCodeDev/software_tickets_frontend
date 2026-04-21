@@ -19,6 +19,10 @@ const Help = () => {
 
   const faqs = [
     {
+      question: '¿Cómo crear un nuevo usuario en el sistema?',
+      answer: 'Solo Administradores y Técnicos pueden crear usuarios. Ve al módulo "Crear Usuario" en el sidebar (debajo de Papelera). Completa el formulario con nombre, usuario, email, contraseña, identificación y selecciona el rol (solo visible para Administrador). Al crear el usuario, NO se inicia sesión automáticamente, manteniendo tu sesión actual intacta.'
+    },
+    {
       question: '¿Cómo funciona la paginación en listados?',
       answer: 'Los listados (tickets, documentos, inventario) usan paginación server-side. El backend devuelve solo la página solicitada (ej: 10-20 items). Usa los controles "Anterior/Siguiente" o los números de página. Esto hace que el sistema sea rápido incluso con miles de registros.'
     },
@@ -255,7 +259,9 @@ const Help = () => {
         'Eliminar elementos permanentemente',
         'Gestionar permisos de usuarios',
         'Configurar parámetros de limpieza automática',
-        'Ver logs de auditoría del sistema'
+        'Ver logs de auditoría del sistema',
+        'Crear nuevos usuarios (no inicia sesión automáticamente)',
+        'Asignar roles al crear usuarios (Empleado, Jefe, Compras, Calidad)'
       ],
       modules: ['Todos los módulos', 'Usuarios', 'Roles', 'Configuración', 'Papelera', 'Auditoría']
     },
@@ -293,7 +299,8 @@ const Help = () => {
         'Restaurar elementos de la papelera (propios)',
         'Crear solicitudes de cambio',
         'Gestionar teléfonos corporativos',
-        'Gestionar tablets y PDAs'
+        'Gestionar tablets y PDAs',
+        'Crear nuevos usuarios (solo rol Empleado, no inicia sesión)'
       ],
       modules: ['Tickets', 'Inventario', 'Credenciales', 'Teléfonos', 'Tablets', 'PDAs', 'Papelera']
     },
@@ -595,7 +602,9 @@ const Help = () => {
       color: 'bg-gray-100 text-gray-800 border-gray-300',
       description: 'Gestión de usuarios del sistema',
       features: [
-        'Creación de usuarios',
+        'Creación de usuarios por Administrador/Técnico',
+        'Asignación de roles al crear (Administrador asigna cualquier rol, Técnico solo Empleado)',
+        'No inicia sesión automáticamente tras crear (mantiene sesión del creador)',
         'Asignación de roles',
         'Gestión de permisos',
         'Perfiles de usuario',
