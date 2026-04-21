@@ -46,7 +46,6 @@ const DocumentChangeRequestModal = ({
   const [newComment, setNewComment] = useState('');
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingCommentContent, setEditingCommentContent] = useState('');
-  const [deletingCommentId, setDeletingCommentId] = useState(null);
 
   const userRole = user?.role?.name;
 
@@ -150,7 +149,7 @@ const DocumentChangeRequestModal = ({
         resetForm();
       }
     }
-  }, [isOpen, request]);
+  }, [isOpen, request, loadComments]);
 
   const loadDocuments = async () => {
     try {
@@ -166,18 +165,18 @@ const DocumentChangeRequestModal = ({
     } catch (err) { console.error('Error loading folders:', err); }
   };
 
-  const loadComments = async () => {
+  const loadComments = useCallback(async () => {
     if (!request?.id) return;
     setLoadingComments(true);
     try {
       const response = await documentChangeRequestsAPI.getComments(request.id);
       setComments(response || []);
-    } catch (err) { 
-      console.error('Error loading comments:', err); 
+    } catch (err) {
+      console.error('Error loading comments:', err);
     } finally {
       setLoadingComments(false);
     }
-  };
+  }, [request.id]);
 
   const handleAddComment = async () => {
     if (!request?.id || !newComment.trim()) return;
@@ -237,8 +236,6 @@ const DocumentChangeRequestModal = ({
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
-
-  const handleFileChange = (e) => setSelectedFile(e.target.files[0]);
 
   const validateForm = () => {
     if (!formData.title.trim()) return 'El título es requerido';

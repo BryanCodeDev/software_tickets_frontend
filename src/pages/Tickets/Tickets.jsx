@@ -91,7 +91,7 @@ const Tickets = () => {
 
    // Paginación
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
+    const [, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState('10'); // string | 'all'
 

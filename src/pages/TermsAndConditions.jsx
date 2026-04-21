@@ -16,7 +16,7 @@ const TermsAndConditions = () => {
           dark: 'bg-gray-800 shadow-xl rounded-2xl overflow-hidden'
         })}>
           {/* Header */}
-          <div className="bg-gradient-to-r from-[#662d91] to-[#8e4dbf] px-8 py-6">
+          <div className="bg-linear-to-r from-[#662d91] to-[#8e4dbf] px-8 py-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg ${conditionalClasses({

@@ -401,7 +401,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
         <div className={`px-3 py-3 shrink-0 ${conditionalClasses({ light: 'border-b border-gray-100', dark: 'border-b border-gray-800/60' })}`}>
           {isCollapsed ? (
             <div className="flex justify-center">
-               <div className={`relative w-10 h-10 bg-gradient-to-br ${badge.gradient} rounded-xl flex items-center justify-center shadow-md`}>
+               <div className={`relative w-10 h-10 bg-linear-to-br ${badge.gradient} rounded-xl flex items-center justify-center shadow-md`}>
                 <span className="text-white font-bold text-sm">{userInitial}</span>
                 <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white dark:border-gray-950" />
               </div>
@@ -409,7 +409,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
           ) : (
             <div className={`flex items-center gap-3 px-3 py-3 rounded-xl ${conditionalClasses({ light: 'bg-gray-50', dark: 'bg-gray-900/60' })}`}>
               {/* Avatar */}
-               <div className={`relative w-10 h-10 bg-gradient-to-br ${badge.gradient} rounded-xl flex items-center justify-center shadow-md shrink-0`}>
+               <div className={`relative w-10 h-10 bg-linear-to-br ${badge.gradient} rounded-xl flex items-center justify-center shadow-md shrink-0`}>
                 <span className="text-white font-bold text-sm">{userInitial}</span>
                 <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white dark:border-gray-950" />
               </div>
@@ -426,7 +426,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                      {user.email}
                    </p>
                  )}
-                   <span className={`inline-flex items-center mt-1.5 px-2 py-0.5 rounded-md text-xs font-semibold text-white bg-gradient-to-r ${badge.gradient}`}>
+                    <span className={`inline-flex items-center mt-1.5 px-2 py-0.5 rounded-md text-xs font-semibold text-white bg-linear-to-r ${badge.gradient}`}>
                    {user?.role?.name || 'Empleado'}
                  </span>
                </div>

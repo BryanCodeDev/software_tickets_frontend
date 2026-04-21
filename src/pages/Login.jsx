@@ -80,8 +80,8 @@ const Login = () => {
     })}>
       {/* Left Panel - Branding */}
       <div className={conditionalClasses({
-        light: 'hidden lg:flex lg:w-[52%] bg-gradient-to-br from-[#4a1f6e] via-[#662d91] to-[#7c3aad] p-14 flex-col justify-between relative overflow-hidden',
-        dark: 'hidden lg:flex lg:w-[52%] bg-gradient-to-br from-[#3d1069] via-[#662d91] to-[#4a1f6e] p-14 flex-col justify-between relative overflow-hidden'
+        light: 'hidden lg:flex lg:w-[52%] bg-linear-to-br from-[#4a1f6e] via-[#662d91] to-[#7c3aad] p-14 flex-col justify-between relative overflow-hidden',
+        dark: 'hidden lg:flex lg:w-[52%] bg-linear-to-br from-[#3d1069] via-[#662d91] to-[#4a1f6e] p-14 flex-col justify-between relative overflow-hidden'
       })}>
         {/* Geometric decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -355,7 +355,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center items-center py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#5a2480] hover:to-[#7c3aad] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#662d91] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg hover:shadow-[#662d91]/25"
+                className="w-full flex justify-center items-center py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-linear-to-r from-[#662d91] to-[#8e4dbf] hover:from-[#5a2480] hover:to-[#7c3aad] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#662d91] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg hover:shadow-[#662d91]/25"
               >
                 {loading ? (
                   <>

@@ -657,7 +657,7 @@ const TicketCalidad = () => {
           })}>
             <div className="p-4 lg:p-6">
               <div className="flex items-center justify-center mb-4">
-                <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
+                <div className="w-12 h-12 lg:w-16 lg:h-16 bg-linear-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
                   <svg className="w-6 h-6 lg:w-8 lg:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                   </svg>
@@ -686,7 +686,7 @@ const TicketCalidad = () => {
                     confirmDialog.onConfirm();
                     setConfirmDialog(null);
                   }}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base touch-manipulation"
+                  className="flex-1 px-4 py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm lg:text-base touch-manipulation"
                 >
                   Confirmar
                 </button>
@@ -813,7 +813,7 @@ const TicketCalidad = () => {
               light: 'bg-white rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-2xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-200 animate-scale-in',
               dark: 'bg-gray-800 rounded-xl lg:rounded-2xl shadow-2xl w-full max-w-2xl max-h-[95vh] lg:max-h-[90vh] overflow-y-auto border-2 border-gray-600 animate-scale-in'
             })}>
-              <div className="sticky top-0 bg-gradient-to-r from-green-600 to-green-700 p-4 lg:p-6 z-10">
+              <div className="sticky top-0 bg-linear-to-r from-green-600 to-green-700 p-4 lg:p-6 z-10">
                 <div className="flex items-center justify-between">
                   <div className="min-w-0 flex-1">
                     <h2 className="text-xl lg:text-2xl font-bold text-white mb-2">Crear Solicitud de Cambio</h2>
@@ -978,7 +978,7 @@ const TicketCalidad = () => {
                   <button
                     type="submit"
                     disabled={formLoading}
-                    className="flex-1 px-4 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                      className="flex-1 px-4 py-3 bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {formLoading ? (
                       <>

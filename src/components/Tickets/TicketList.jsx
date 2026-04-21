@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
 import { FaClipboardList, FaChartBar, FaEye, FaEdit, FaTrash, FaExclamationTriangle, FaSpinner, FaCheckCircle, FaCheck, FaClock } from 'react-icons/fa';
 import TicketCard from './TicketCard';
-import { getTimeAgo } from '../../utils';
 
 const TicketList = ({
   tickets,
@@ -14,7 +13,6 @@ const TicketList = ({
   handleDelete,
   canEditTicket,
   canDeleteTicket,
-  user,
   viewMode,
   setViewMode,
   onPageChange,
@@ -61,16 +59,6 @@ const TicketList = ({
     return colors[priority?.toLowerCase()] || (isDark
       ? 'bg-gray-700 text-gray-400 border-gray-600'
       : 'bg-gray-100 text-gray-600 border-gray-200');
-  };
-
-  const getStatusIcon = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'abierto': return <FaExclamationTriangle />;
-      case 'en progreso': return <FaSpinner className="animate-spin" />;
-      case 'resuelto': return <FaCheckCircle />;
-      case 'cerrado': return <FaCheck />;
-      default: return <FaClock />;
-    }
   };
 
    // ✅ Controles de paginación definidos FUERA del return principal

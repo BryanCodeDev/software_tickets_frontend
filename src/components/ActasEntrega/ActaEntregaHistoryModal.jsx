@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaTimes, FaHistory, FaUser, FaCalendarAlt, FaEdit, FaPlus, FaTrash, FaEye } from 'react-icons/fa';
 
 // Componente de historial con manejo robusto de errores
@@ -14,24 +14,24 @@ const ActaEntregaHistoryModal = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (show && apiCall) {
-      const loadHistory = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-          const response = await apiCall();
-          setHistoryData(response);
-        } catch (err) {
-          console.error('Error fetching history:', err);
-          setError('Error al cargar el historial');
-        } finally {
-          setLoading(false);
-        }
-      };
-      loadHistory();
+  const fetchHistory = useCallback(async () => {
+    if (!show || !apiCall) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await apiCall();
+      setHistoryData(response);
+    } catch (err) {
+      console.error('Error fetching history:', err);
+      setError('Error al cargar el historial');
+    } finally {
+      setLoading(false);
     }
   }, [show, apiCall]);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
 
   const getActionIcon = (action) => {
     switch (action) {

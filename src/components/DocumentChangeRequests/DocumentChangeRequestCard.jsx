@@ -7,8 +7,7 @@ const DocumentChangeRequestCard = ({
   onViewDetail,
   onEdit,
   canEdit,
-  canApprove,
-  onApprove
+  canApprove
 }) => {
   const { conditionalClasses } = useThemeClasses();
 
@@ -65,19 +64,9 @@ const DocumentChangeRequestCard = ({
       }
     };
     return configs[status] || configs['borrador'];
-  };
+   };
 
-  const getTypeConfig = (type) => {
-    const configs = {
-      'create': { label: 'Crear', icon: '➕', color: 'text-green-600' },
-      'edit': { label: 'Editar', icon: '✏️', color: 'text-blue-600' },
-      'delete': { label: 'Eliminar', icon: '🗑️', color: 'text-red-600' },
-      'version_update': { label: 'Nueva Versión', icon: '📄', color: 'text-purple-600' }
-    };
-    return configs[type] || { label: type, icon: '📋', color: 'text-gray-600' };
-  };
-
-  const getPriorityConfig = (priority) => {
+   const getPriorityConfig = (priority) => {
     const configs = {
       'urgente': { color: 'bg-red-500', text: 'text-red-600', darkText: 'text-red-400', label: 'Urgente' },
       'alta': { color: 'bg-orange-500', text: 'text-orange-600', darkText: 'text-orange-400', label: 'Alta' },
@@ -98,9 +87,8 @@ const DocumentChangeRequestCard = ({
     return `${days}d`;
   };
 
-  const statusConfig = getStatusConfig(request.workflowStatus);
-  const typeConfig = getTypeConfig(request.requestType);
-  const priorityConfig = getPriorityConfig(request.priority);
+   const statusConfig = getStatusConfig(request.workflowStatus);
+   const priorityConfig = getPriorityConfig(request.priority);
   const StatusIcon = statusConfig.icon;
 
   const progressPercent = ((request.currentStep || 1) / (request.totalSteps || 5)) * 100;

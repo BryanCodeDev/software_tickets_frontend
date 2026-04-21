@@ -288,7 +288,7 @@ const PurchaseRequests = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center shadow-lg">
               <FaShoppingCart className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -312,11 +312,11 @@ const PurchaseRequests = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           {/* Pendiente Coordinador */}
           <div className={conditionalClasses({
-            light: 'bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-4 border border-yellow-200',
-            dark: 'bg-gradient-to-br from-yellow-900/30 to-yellow-800/20 rounded-2xl p-4 border border-yellow-700/50'
+            light: 'bg-linear-to-br from-yellow-50 to-yellow-100 rounded-2xl p-4 border border-yellow-200',
+            dark: 'bg-linear-to-br from-yellow-900/30 to-yellow-800/20 rounded-2xl p-4 border border-yellow-700/50'
           })}>
             <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
+              <div className="w-10 h-10 bg-linear-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
                 <FaBalanceScale className="w-5 h-5 text-white" />
               </div>
               <span className="text-2xl font-bold text-yellow-600">{dashboardStats.summary?.pendingCoordinator || 0}</span>
@@ -326,11 +326,11 @@ const PurchaseRequests = () => {
 
           {/* Pendiente Jefe */}
           <div className={conditionalClasses({
-            light: 'bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-4 border border-purple-200',
-            dark: 'bg-gradient-to-br from-purple-900/30 to-purple-800/20 rounded-2xl p-4 border border-purple-700/50'
+            light: 'bg-linear-to-br from-purple-50 to-purple-100 rounded-2xl p-4 border border-purple-200',
+            dark: 'bg-linear-to-br from-purple-900/30 to-purple-800/20 rounded-2xl p-4 border border-purple-700/50'
           })}>
             <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-xl flex items-center justify-center shadow-md">
+              <div className="w-10 h-10 bg-linear-to-br from-purple-400 to-purple-500 rounded-xl flex items-center justify-center shadow-md">
                 <FaUser className="w-5 h-5 text-white" />
               </div>
               <span className="text-2xl font-bold text-purple-600">{dashboardStats.summary?.pendingManager || 0}</span>
@@ -340,11 +340,11 @@ const PurchaseRequests = () => {
 
           {/* En Compras */}
           <div className={conditionalClasses({
-            light: 'bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl p-4 border border-cyan-200',
-            dark: 'bg-gradient-to-br from-cyan-900/30 to-cyan-800/20 rounded-2xl p-4 border border-cyan-700/50'
+            light: 'bg-linear-to-br from-cyan-50 to-cyan-100 rounded-2xl p-4 border border-cyan-200',
+            dark: 'bg-linear-to-br from-cyan-900/30 to-cyan-800/20 rounded-2xl p-4 border border-cyan-700/50'
           })}>
             <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-md">
+              <div className="w-10 h-10 bg-linear-to-br from-cyan-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-md">
                 <FaShoppingCart className="w-5 h-5 text-white" />
               </div>
               <span className="text-2xl font-bold text-cyan-600">{dashboardStats.summary?.inPurchases || 0}</span>
@@ -354,11 +354,11 @@ const PurchaseRequests = () => {
 
           {/* Comprados */}
           <div className={conditionalClasses({
-            light: 'bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl p-4 border border-teal-200',
-            dark: 'bg-gradient-to-br from-teal-900/30 to-teal-800/20 rounded-2xl p-4 border border-teal-700/50'
+            light: 'bg-linear-to-br from-teal-50 to-teal-100 rounded-2xl p-4 border border-teal-200',
+            dark: 'bg-linear-to-br from-teal-900/30 to-teal-800/20 rounded-2xl p-4 border border-teal-700/50'
           })}>
             <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-teal-400 to-teal-500 rounded-xl flex items-center justify-center shadow-md">
+              <div className="w-10 h-10 bg-linear-to-br from-teal-400 to-teal-500 rounded-xl flex items-center justify-center shadow-md">
                 <FaCheck className="w-5 h-5 text-white" />
               </div>
               <span className="text-2xl font-bold text-teal-600">{dashboardStats.summary?.purchased || 0}</span>
@@ -368,11 +368,11 @@ const PurchaseRequests = () => {
 
           {/* Entregados */}
           <div className={conditionalClasses({
-            light: 'bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-4 border border-green-200',
-            dark: 'bg-gradient-to-br from-green-900/30 to-green-800/20 rounded-2xl p-4 border border-green-700/50'
+            light: 'bg-linear-to-br from-green-50 to-green-100 rounded-2xl p-4 border border-green-200',
+            dark: 'bg-linear-to-br from-green-900/30 to-green-800/20 rounded-2xl p-4 border border-green-700/50'
           })}>
             <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-500 rounded-xl flex items-center justify-center shadow-md">
+              <div className="w-10 h-10 bg-linear-to-br from-green-400 to-green-500 rounded-xl flex items-center justify-center shadow-md">
                 <FaTruck className="w-5 h-5 text-white" />
               </div>
               <span className="text-2xl font-bold text-green-600">{dashboardStats.summary?.delivered || 0}</span>
@@ -382,11 +382,11 @@ const PurchaseRequests = () => {
 
           {/* Para Corrección */}
           <div className={conditionalClasses({
-            light: 'bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-4 border border-amber-200',
-            dark: 'bg-gradient-to-br from-amber-900/30 to-amber-800/20 rounded-2xl p-4 border border-amber-700/50'
+            light: 'bg-linear-to-br from-amber-50 to-amber-100 rounded-2xl p-4 border border-amber-200',
+            dark: 'bg-linear-to-br from-amber-900/30 to-amber-800/20 rounded-2xl p-4 border border-amber-700/50'
           })}>
             <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-500 rounded-xl flex items-center justify-center shadow-md">
+              <div className="w-10 h-10 bg-linear-to-br from-amber-400 to-amber-500 rounded-xl flex items-center justify-center shadow-md">
                 <FaUndo className="w-5 h-5 text-white" />
               </div>
               <span className="text-2xl font-bold text-amber-600">{dashboardStats.summary?.rejectedCorrection || 0}</span>
@@ -505,8 +505,8 @@ const PurchaseRequests = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
           {/* By Type Chart */}
           <div className={conditionalClasses({
-            light: 'bg-gradient-to-r from-[#f3ebf9] to-[#e8d5f5] rounded-2xl p-5 border border-[#e8d5f5]',
-            dark: 'bg-gradient-to-r from-purple-900/30 to-purple-800/20 rounded-2xl p-5 border border-purple-700/50'
+            light: 'bg-linear-to-r from-[#f3ebf9] to-[#e8d5f5] rounded-2xl p-5 border border-[#e8d5f5]',
+            dark: 'bg-linear-to-r from-purple-900/30 to-purple-800/20 rounded-2xl p-5 border border-purple-700/50'
           })}>
             <h3 className={conditionalClasses({ light: 'text-lg font-bold text-gray-900 mb-4', dark: 'text-lg font-bold text-gray-100 mb-4' })}>
               <FaBox className="inline-block mr-2 text-[#662d91]" />
@@ -532,8 +532,8 @@ const PurchaseRequests = () => {
 
           {/* Quick Stats */}
           <div className={conditionalClasses({
-            light: 'bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-5 border border-gray-200',
-            dark: 'bg-gradient-to-r from-gray-700/50 to-gray-600/50 rounded-2xl p-5 border border-gray-600'
+            light: 'bg-linear-to-r from-gray-50 to-gray-100 rounded-2xl p-5 border border-gray-200',
+            dark: 'bg-linear-to-r from-gray-700/50 to-gray-600/50 rounded-2xl p-5 border border-gray-600'
           })}>
             <h3 className={conditionalClasses({ light: 'text-lg font-bold text-gray-900 mb-4', dark: 'text-lg font-bold text-gray-100 mb-4' })}>
               <FaChartLine className="inline-block mr-2 text-[#662d91]" />
@@ -608,7 +608,7 @@ const PurchaseRequests = () => {
         <div className="mb-4 sm:mb-6">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center shadow-xl">
+              <div className="w-12 h-12 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-xl flex items-center justify-center shadow-xl">
                 <FaShoppingCart className="w-6 h-6 text-white" />
               </div>
               <div>

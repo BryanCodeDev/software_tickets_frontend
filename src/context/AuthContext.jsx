@@ -191,9 +191,7 @@ export const AuthProvider = ({ children }) => {
     );
   }, [user]);
 
-  // Memoizar checkPermission para evitar recálculos innecesarios
-  const memoizedCheckPermission = useCallback(checkPermission, [user]);
-
+   // Memoizar checkPermission para evitar recálculos innecesarios
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -202,11 +200,11 @@ export const AuthProvider = ({ children }) => {
       logout, 
       updateUser, 
       loading, 
-      checkPermission: memoizedCheckPermission,
+      checkPermission: checkPermission,
       isAuthenticated: !!user, 
       hasRole: (role) => user?.role?.name === role, 
       hasAnyRole: (roles) => roles.includes(user?.role?.name), 
-      canAccess: (module) => memoizedCheckPermission(module, 'view') || user?.role?.name === 'Administrador' 
+      canAccess: (module) => checkPermission(module, 'view') || user?.role?.name === 'Administrador' 
     }}>
       {children}
     </AuthContext.Provider>

@@ -83,7 +83,6 @@ const Documents = () => {
   // Paginación para documentos
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(12);
-  const [totalDocuments, setTotalDocuments] = useState(0);
 
   // Permissions states
   const [showPermissionsModal, setShowPermissionsModal] = useState(false);
@@ -512,7 +511,7 @@ const Documents = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         <div className={`rounded-2xl shadow-lg border ${conditionalClasses({ light: 'bg-white border-gray-200', dark: 'bg-gray-800 border-gray-700' })}`}>
-          <div className={`px-6 py-4 border-b ${conditionalClasses({ light: 'bg-gradient-to-r from-[#f3ebf9] to-[#e8d5f5] border-gray-200', dark: 'bg-gray-800 border-gray-700' })}`}>
+           <div className={`px-6 py-4 border-b ${conditionalClasses({ light: 'bg-linear-to-r from-[#f3ebf9] to-[#e8d5f5] border-gray-200', dark: 'bg-gray-800 border-gray-700' })}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <FaFile className={`text-[#662d91] text-lg ${conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}`} />

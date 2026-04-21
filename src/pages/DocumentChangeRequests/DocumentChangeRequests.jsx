@@ -119,9 +119,9 @@ const DocumentChangeRequestsPage = () => {
       return true;
     }
     
-    // Compras no tiene permisos de aprobación en el workflow de documentos
-    return false;
-  }, [user, userRole]);
+     // Compras no tiene permisos de aprobación en el workflow de documentos
+     return false;
+   }, [userRole]);
 
   // Handlers
   const handleViewDetail = (request) => {

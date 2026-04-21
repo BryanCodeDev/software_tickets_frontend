@@ -14,7 +14,6 @@ const TicketCalidadList = React.memo(({
   handleDelete,
   canEditTicket,
   canDeleteTicket,
-  userRole,
   handleCreate,
   canCreate,
   searchTerm,

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { 
   FaQuestionCircle, FaEnvelope, FaPhone, FaBook, FaTicketAlt, FaBox, FaFileAlt, FaKey, 
   FaSearch, FaChartBar, FaSignInAlt, FaTachometerAlt, FaCog, FaUsers, FaShieldAlt, 
@@ -8,14 +7,13 @@ import {
   FaClipboardCheck, FaDumpster, FaUndo, FaTrash, FaEye, FaHistory, FaTag, FaFolder,
   FaComments, FaPaperclip, FaChartPie, FaServer, FaMobile, FaIdCard, FaBriefcase, FaEdit,
   FaTrashRestore, FaDownload, FaUpload, FaPlus, FaMinus, FaBan, FaStar, FaMedal,
-   FaList, FaChevronDown, FaCompass, FaShoppingCart, FaSync, FaUserCog
+    FaList, FaChevronDown, FaCompass, FaShoppingCart, FaSync, FaUserCog
 } from 'react-icons/fa';
 import { useThemeClasses } from '../hooks/useThemeClasses';
 
 const Help = () => {
   const [activeTab, setActiveTab] = useState('manual');
   const { conditionalClasses } = useThemeClasses();
-  const navigate = useNavigate();
 
   const faqs = [
     {
@@ -232,7 +230,7 @@ const Help = () => {
     }
   ];
 
-  const contactInfo = [
+  const _contactInfo = [
     {
       type: 'Email',
       value: 'asistentesistemas@duvyclass.co',
@@ -726,7 +724,7 @@ const Help = () => {
       <div className="max-w-7xl mx-auto px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-3 xs:py-4 sm:py-6 md:py-7 lg:py-8 space-y-4 xs:space-y-5 sm:space-y-6">
         <div className="mb-4 xs:mb-5 sm:mb-6 lg:mb-8">
           <div className="flex flex-col xs:flex-row items-center xs:items-start gap-2 xs:gap-3 mb-2">
-            <div className="p-2 xs:p-2.5 bg-gradient-to-br from-[#662d91] to-[#8e4dbf] rounded-lg shadow-lg">
+             <div className="p-2 xs:p-2.5 bg-linear-to-br from-[#662d91] to-[#8e4dbf] rounded-lg shadow-lg">
               <FaQuestionCircle className="text-white text-lg xs:text-xl sm:text-2xl" />
             </div>
             <div className="text-center xs:text-left">

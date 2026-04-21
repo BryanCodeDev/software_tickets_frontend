@@ -1,11 +1,11 @@
-import { clsx, type ClassValue } from 'clsx';
+import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 /**
  * Utility function to merge Tailwind classes with conflict resolution
  * Usage: cn('px-4 py-2', conditionalClass, 'rounded-lg')
  */
-export function cn(...inputs: ClassValue[]) {
+export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
@@ -13,14 +13,14 @@ export function cn(...inputs: ClassValue[]) {
  * Conditional class merger for light/dark themes
  * Usage: cn(conditional({ light: 'bg-white', dark: 'bg-gray-800' }))
  */
-export function conditional<T extends Record<string, string>>(classes: T): string {
+export function conditional(classes) {
   return clsx(classes);
 }
 
 /**
  * Get brand gradient classes (full background)
  */
-export function brandGradient(darkMode = false): string {
+export function brandGradient(darkMode = false) {
   return darkMode
     ? 'bg-gradient-to-br from-[#3d1069] via-[#662d91] to-[#4a1f6e]'
     : 'bg-gradient-to-br from-[#4a1f6e] via-[#662d91] to-[#7c3aad]';
@@ -29,7 +29,7 @@ export function brandGradient(darkMode = false): string {
 /**
  * Get brand horizontal gradient classes
  */
-export function brandGradientHorizontal(darkMode = false): string {
+export function brandGradientHorizontal(darkMode = false) {
   return darkMode
     ? 'bg-gradient-to-r from-[#3d1069] via-[#662d91] to-[#4a1f6e]'
     : 'bg-gradient-to-r from-[#4a1f6e] via-[#662d91] to-[#7c3aad]';
@@ -38,35 +38,35 @@ export function brandGradientHorizontal(darkMode = false): string {
 /**
  * Get brand hover background color
  */
-export function brandHoverBg(darkMode = false): string {
+export function brandHoverBg(darkMode = false) {
   return darkMode ? 'hover:bg-gray-800' : 'hover:bg-[#f8f3ff]';
 }
 
 /**
  * Get brand active background color
  */
-export function brandActiveBg(darkMode = false): string {
+export function brandActiveBg(darkMode = false) {
   return darkMode ? 'bg-purple-900/30' : 'bg-[#f3ebff]';
 }
 
 /**
  * Get brand subtle hover background (for inactive items)
  */
-export function brandSubtleHoverBg(darkMode = false): string {
+export function brandSubtleHoverBg(darkMode = false) {
   return darkMode ? 'hover:bg-gray-800/60' : 'hover:bg-[#ede5f9]';
 }
 
 /**
  * Get brand text color (main)
  */
-export function brandText(darkMode = false): string {
+export function brandText(darkMode = false) {
   return darkMode ? 'text-purple-300' : 'text-[#662d91]';
 }
 
 /**
  * Get brand border color
  */
-export function brandBorder(darkMode = false): string {
+export function brandBorder(darkMode = false) {
   return darkMode ? 'border-purple-800/30' : 'border-[#662d91]/20';
 }
 
