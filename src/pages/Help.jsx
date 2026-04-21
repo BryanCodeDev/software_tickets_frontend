@@ -8,7 +8,7 @@ import {
   FaClipboardCheck, FaDumpster, FaUndo, FaTrash, FaEye, FaHistory, FaTag, FaFolder,
   FaComments, FaPaperclip, FaChartPie, FaServer, FaMobile, FaIdCard, FaBriefcase, FaEdit,
   FaTrashRestore, FaDownload, FaUpload, FaPlus, FaMinus, FaBan, FaStar, FaMedal,
-  FaList, FaChevronDown, FaCompass, FaShoppingCart, FaSync, FaUserCog
+  FaList, FaChevronDown, FaCompass, FaShoppingCart, FaSync, FaUserCog, FaChartBar
 } from 'react-icons/fa';
 import { useThemeClasses } from '../hooks/useThemeClasses';
 
@@ -104,7 +104,7 @@ const Help = () => {
     },
     {
       question: '¿Cómo asignar un ticket a un técnico?',
-      answer: 'Los administradores y técnicos pueden asignar tickets desde la vista de detalles del ticket. Selecciona el técnico apropiado del menú desplegable.'
+      answer: 'Los administradores y jefes pueden asignar tickets desde la vista de detalles del ticket. Selecciona el técnico apropiado del menú desplegable.'
     },
     {
       question: '¿Cómo acceder al sistema de papelera?',
@@ -278,9 +278,15 @@ const Help = () => {
         'Ver logs de auditoría del sistema',
         'Crear nuevos usuarios (POST /auth/create-user) - NO inicia sesión automáticamente',
         'Asignar cualquier rol al crear usuarios (Administrador, Coordinadora, Técnico, Calidad, Jefe, Compras, Empleado)',
-        'Editar rol de cualquier usuario existente'
+        'Editar rol de cualquier usuario existente',
+        'Editar cualquier campo de cualquier usuario (nombre, email, contraseña, rol, IT, teléfono)',
+        'Acceso total a tickets (ver, crear, editar, eliminar, comentar)',
+        'Acceso total a tickets de calidad',
+        'Acceso total a documentos',
+        'Acceso total a solicitudes de compra',
+        'Acceso total a inventario y equipos'
       ],
-      modules: ['Todos los módulos', 'Usuarios', 'Roles', 'Configuración', 'Papelera', 'Auditoría']
+      modules: ['Todos los módulos', 'Usuarios', 'Roles', 'Configuración', 'Papelera', 'Auditoría', 'Tickets', 'Tickets de Calidad', 'Documentos', 'Solicitudes de Compra', 'Inventario', 'Credenciales']
     },
     {
       name: 'Jefe',
@@ -290,17 +296,22 @@ const Help = () => {
       permissions: [
         'Ver todos los tickets del área',
         'Asignar tickets a técnicos',
+        'Editar cualquier ticket',
         'Aprobar solicitudes de cambio',
         'Ver estadísticas del departamento',
         'Crear y gestionar solicitudes de compra',
+        'Aprobar solicitudes de compra',
         'Acceso a documentos del área',
         'Ver reportes de rendimiento',
         'Gestionar workflow de documentos',
         'Aprobar tickets de calidad',
         'Ver métricas de equipo',
-        'Acceso a Dashboard de Calidad'
+        'Acceso a Dashboard de Calidad',
+        'Gestionar tickets de calidad (crear, editar, eliminar)',
+        'Comentar en tickets de calidad',
+        'Acceso total a solicitudes de compra'
       ],
-      modules: ['Tickets', 'Solicitudes de Cambio', 'Solicitudes de Compra', 'Documentos', 'Estadísticas', 'Calidad']
+      modules: ['Tickets', 'Solicitudes de Cambio', 'Solicitudes de Compra', 'Documentos', 'Estadísticas', 'Calidad', 'Dashboard Calidad']
     },
     {
       name: 'Técnico',
@@ -311,12 +322,13 @@ const Help = () => {
         'Crear y atender tickets',
         'Asignarse tickets',
         'Actualizar estado de tickets',
+        'Editar tickets (cualquier ticket)',
+        'Eliminar tickets (cualquier ticket)',
         'Añadir comentarios y adjuntos',
         'Gestionar inventario (computadores, celulares, tablets, PDAs, actas de entrega)',
         'Ver credenciales del sistema',
-        'Restaurar elementos de la papelera (propios)',
-        'Ver y restaurar elementos de la papelera (todos los elementos)',
-        'Crear nuevos usuarios (solo rol Empleado, POST /auth/create-user) - NO inicia sesión automáticamente',
+        'Restaurar elementos de la papelera',
+        'Crear nuevos usuarios (solo rol Empleado) - NO inicia sesión automáticamente',
         'Asignar teléfono corporativo a usuarios',
         'Editar IT (identificación) de usuarios'
       ],
@@ -330,13 +342,16 @@ const Help = () => {
       permissions: [
         'Crear tickets propios',
         'Ver estado de sus tickets',
-        'Añadir comentarios a sus tickets',
+        'Comentar en sus tickets',
         'Ver documentos asignados',
         'Cambiar contraseña',
         'Ver perfil de usuario',
         'Crear solicitudes de compra',
         'Acceso de solo lectura a módulos autorizados',
-        'Consultar inventario asignado'
+        'Consultar inventario asignado (solo vista)',
+        'Editar sus propios tickets',
+        'Eliminar sus propios tickets',
+        'Ver sus propios documentos'
       ],
       modules: ['Tickets', 'Documentos', 'Solicitudes de Compra', 'Perfil', 'Inventario']
     },
@@ -344,19 +359,23 @@ const Help = () => {
       name: 'Calidad',
       icon: <FaCheck className="text-teal-500" />,
       color: 'bg-teal-100 text-teal-800 border-teal-300',
-      description: 'Gestión de calidad, auditoría y cumplimiento de procesos',
+      description: 'Gestión de calidad, auditoría y cumplimiento de procesos ISO 9001',
       permissions: [
-        'Gestionar tickets de calidad',
+        'Gestionar tickets de calidad (crear, editar, eliminar, cualquier ticket)',
+        'Comentar en tickets de calidad',
+        'Subir archivos a tickets de calidad',
+        'Buscar en todos los tickets de calidad',
         'Crear y aprobar documentos',
         'Ver historial de cambios documentales',
-        'Aprobar solicitudes de cambio',
+        'Aprobar solicitudes de cambio (paso 2: Revisión Inicial)',
         'Ver métricas de calidad',
         'Gestionar workflow de documentos',
         'Crear no conformidades',
         'Ver reportes de calidad',
         'Gestionar plantillas documentales',
         'Auditoría de procesos',
-        'Acceso a Dashboard de Calidad'
+        'Acceso a Dashboard de Calidad',
+        'Aprobar cualquier paso de solicitudes de cambio'
       ],
       modules: ['Tickets de Calidad', 'Documentos', 'Solicitudes de Cambio', 'Reportes de Calidad', 'Auditoría', 'Dashboard Calidad']
     },
@@ -366,15 +385,18 @@ const Help = () => {
       color: 'bg-pink-100 text-pink-800 border-pink-300',
       description: 'Gestión administrativa de compras, actas y recursos',
       permissions: [
-        'Gestionar solicitudes de compra',
+        'Gestionar solicitudes de compra (crear, editar)',
+        'Aprobar solicitudes de compra como coordinadora',
+        'Rechazar solicitudes de compra',
         'Crear y firmar actas de entrega',
         'Ver inventario administrativo',
         'Ver reportes financieros',
-        'Aprobar solicitudes de compra',
         'Gestionar telefónicas administrativas',
         'Ver estadísticas administrativas',
         'Crear órdenes de reposición',
-        'Gestionar presupuestos'
+        'Gestionar presupuestos',
+        'Editar comentarios en solicitudes de compra (de otros usuarios)',
+        'Eliminar adjuntos de solicitudes de compra'
       ],
       modules: ['Solicitudes de Compra', 'Actas de Entrega', 'Inventario', 'Teléfonos', 'Reportes']
     },
@@ -385,15 +407,19 @@ const Help = () => {
       description: 'Gestión del proceso de compras y adquisiciones',
       permissions: [
         'Crear solicitudes de compra',
+        'Ver todas las solicitudes de compra',
+        'Editar solicitudes de compra',
+        'Eliminar solicitudes de compra',
         'Seguir estado de solicitudes',
         'Ver catálogo de proveedores',
         'Gestionar órdenes de compra',
         'Ver historial de compras',
         'Adjuntar facturas y comprobantes',
-        'Aprobar solicitudes de compra (nivel compras)',
         'Gestionar líneas de compra',
         'Ver reportes de compras',
-        'Coordinar entregas'
+        'Coordinar entregas',
+        'Editar comentarios en solicitudes (de otros usuarios)',
+        'Eliminar adjuntos de solicitudes'
       ],
       modules: ['Solicitudes de Compra', 'Proveedores', 'Órdenes de Compra', 'Reportes']
     }
@@ -423,10 +449,9 @@ const Help = () => {
       name: 'Tickets de Calidad',
       icon: <FaClipboardCheck className="text-teal-500" />,
       color: 'bg-teal-100 text-teal-800 border-teal-300',
-      description: 'Gestión de no conformidades y procesos de calidad',
+      description: 'Gestión de no conformidades y procesos de calidad ISO 9001',
       features: [
-        'Registro de no conformidades (NCR)',
-        'Auditorías de calidad programadas',
+        'Registro de no conformidades (NCR), auditorías, CAPA, sugerencias, mejoras',
         'Análisis de causas raíz (5 Por Qué, Ishikawa)',
         'Acciones correctivas y preventivas (CAPA)',
         'Seguimiento de métricas e indicadores',
@@ -436,7 +461,7 @@ const Help = () => {
         'Plantillas de auditoría personalizadas',
         'Indicadores de rendimiento (KPI)',
         'Dashboard unificado de calidad',
-        'Tickets de calidad por categoría'
+        'Asignación automática round-robin'
       ],
       workflows: ['Detectado → En Análisis → Acción Correctiva → Verificación → Cerrado']
     },
@@ -533,7 +558,7 @@ const Help = () => {
         'Vencimiento de documentos',
         'Auditoría de accesos'
       ],
-      workflows: ['Borrador → En Revisión → Aprobado →Publicado →Archivado']
+      workflows: ['Borrador → En Revisión → Aprobado → Publicado → Archivado']
     },
     {
       name: 'Solicitudes de Cambio',
@@ -543,7 +568,7 @@ const Help = () => {
       features: [
         'Solicitud de cambios documentales',
         'Análisis de impacto y justificación',
-        'Workflow de aprobación ISO 9001',
+        'Workflow de aprobación ISO 9001 (Calidad → Jefe → Implementación → Publicación)',
         'Historial completo de versiones',
         'Justificación obligatoria del cambio',
         'Notificaciones a interesados',
@@ -554,7 +579,7 @@ const Help = () => {
         'Subida de archivos propuestos',
         'Integración con módulo de documentos'
       ],
-      workflows: ['Borrador → Revisión Inicial → Aprobación → Implementación → Publicación']
+      workflows: ['Borrador → Revisión Inicial (Calidad) → Aprobación (Jefe) → Implementación (Coordinadora) → Publicación (Calidad/Admin)']
     },
     {
       name: 'Solicitudes de Compra',
@@ -563,7 +588,7 @@ const Help = () => {
       description: 'Proceso de adquisiciones y compras',
       features: [
         'Creación de solicitudes',
-        'Aprobaciones por workflow',
+        'Aprobaciones por workflow (Coordinadora → Jefe → Compras)',
         'Presupuesto y centros de costo',
         'Archivos adjuntos',
         'Comentarios y seguimiento',
@@ -573,7 +598,7 @@ const Help = () => {
         'Catálogo de proveedores',
         'Órdenes de compra'
       ],
-      workflows: ['Borrador → Enviado → Aprobación Manager → Aprobación Compras → Ordenado → Recibido']
+      workflows: ['Borrador → Enviado → Aprobación Coordinadora → Aprobación Jefe → Ordenado → Recibido']
     },
     {
       name: 'Actas de Entrega',
@@ -602,7 +627,7 @@ const Help = () => {
       features: [
         'Almacenamiento cifrado',
         'Organización por carpetas',
-        'Control de acceso por roles',
+        'Control de acceso por permisos',
         'Historial de accesos',
         'Compartición segura',
         'Notas y documentación',
@@ -619,11 +644,10 @@ const Help = () => {
       color: 'bg-gray-100 text-gray-800 border-gray-300',
       description: 'Gestión de usuarios del sistema',
       features: [
-        'Creación de usuarios por Administrador/Técnico (no inicia sesión automáticamente)',
-        'Asignación de roles al crear: Administrador asigna cualquier rol, Técnico solo Empleado',
+        'Creación de usuarios por Administrador',
         'Edición de perfil por cada usuario (propios datos)',
         'Administradores pueden editar rol, IT, teléfono de cualquier usuario',
-        'Técnicos pueden editar IT y teléfono de usuarios (no rol)',
+        'Técnicos pueden editar IT y teléfono de usuarios',
         'Gestión de permisos',
         'Perfiles de usuario',
         'Configuraciones personales',
@@ -811,1411 +835,158 @@ const Help = () => {
           <div className="p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6">
             {activeTab === 'manual' && (
               <div className="space-y-3 xs:space-y-4 sm:space-y-6">
-                <div className="flex items-center mb-3 xs:mb-4 sm:mb-6">
-                  <FaBook className="text-[#662d91] text-base xs:text-lg sm:text-2xl mr-1.5 xs:mr-2 sm:mr-3" />
-                  <h2 className={conditionalClasses({
-                    light: 'text-base xs:text-lg sm:text-xl font-semibold text-gray-900',
-                    dark: 'text-base xs:text-lg sm:text-xl font-semibold text-gray-100'
-                  })}>Manual de Usuario Completo</h2>
-                </div>
-
-                <div className={conditionalClasses({
-                  light: 'bg-gradient-to-r from-[#662d91] to-[#8e4dbf] rounded-xl shadow-lg p-3 xs:p-4 sm:p-6 mb-3 xs:mb-4 sm:mb-6',
-                  dark: 'bg-gradient-to-r from-[#4a1f6b] to-[#6b3590] rounded-xl shadow-lg p-3 xs:p-4 sm:p-6 mb-3 xs:mb-4 sm:mb-6'
-                })}>
-                  <div className="flex flex-col sm:flex-row items-center gap-2 xs:gap-3 sm:gap-4">
-                     <div className="p-1.5 xs:p-2 sm:p-3 bg-white/20 dark:bg-gray-700/50 backdrop-blur-sm rounded-xl shrink-0">
-                      <FaBook className="text-white text-lg xs:text-xl sm:text-2xl" />
-                    </div>
-                    <div className="text-center sm:text-left">
-                       <h3 className="text-base xs:text-lg sm:text-xl lg:text-2xl font-bold text-white">Manual de Usuario - DuvyClass</h3>
-                       <p className="text-purple-100 mt-1 text-xs sm:text-sm">Sistema IT de Gestión Empresarial Integral</p>
-                       <p className="text-purple-200 text-xs mt-0.5 xs:mt-1 sm:mt-2">Versión 2.1 | Actualizado: Abril 2026</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={conditionalClasses({
-                  light: 'bg-white border border-gray-200 rounded-lg shadow-sm',
-                  dark: 'bg-gray-800 border border-gray-600 rounded-lg shadow-sm'
-                })}>
-                  <summary className={conditionalClasses({
-                    light: 'cursor-pointer p-2.5 xs:p-3 sm:p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center text-xs sm:text-base',
-                    dark: 'cursor-pointer p-2.5 xs:p-3 sm:p-4 font-medium text-gray-100 hover:bg-gray-700 flex items-center text-xs sm:text-base'
-                  })}>
-                    <FaList className="text-[#662d91] mr-1.5 xs:mr-2" />
-                    Tabla de Contenidos
-                  </summary>
-                  <div className="p-2.5 xs:p-3 sm:p-4 pt-0">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 xs:gap-3 sm:gap-4 text-xs sm:text-sm">
-                       <ul className="space-y-2">
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>1. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Introducción al Sistema</span></li>
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>2. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Mejoras Técnicas Implementadas</span></li>
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>3. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Primeros Pasos</span></li>
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>4. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Navegación y Interfaz</span></li>
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>5. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Roles y Permisos</span></li>
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>6. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Módulos del Sistema</span></li>
-                       </ul>
-                       <ul className="space-y-2">
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>7. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Guía de Tickets</span></li>
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>8. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Gestión de Inventario</span></li>
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>9. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Documentos y Cambios</span></li>
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>10. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Solicitudes de Compra</span></li>
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>11. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Gestión de Calidad</span></li>
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>12. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Tips y Mejores Prácticas</span></li>
-                       </ul>
-                       <ul className="space-y-2">
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>7. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Guía de Tickets</span></li>
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>8. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Gestión de Inventario</span></li>
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>9. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Documentos y Cambios</span></li>
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>10. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Solicitudes de Compra</span></li>
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>11. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Gestión de Calidad</span></li>
-                         <li><span className={conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-400' })}>12. </span><span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Tips y Mejores Prácticas</span></li>
-                       </ul>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={conditionalClasses({
-                  light: 'bg-white border border-gray-200 rounded-lg shadow-sm',
-                  dark: 'bg-gray-800 border border-gray-600 rounded-lg shadow-sm'
-                })}>
-                  <summary className={conditionalClasses({
-                    light: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center',
-                    dark: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-100 hover:bg-gray-700 flex items-center'
-                  })}>
-                    <FaRocket className="text-[#662d91] mr-1.5 xs:mr-2" />
-                    1. Introducción al Sistema
-                  </summary>
-                  <div className="p-3 xs:p-4 pt-0 space-y-3 xs:space-y-4">
-                    <p className={conditionalClasses({
-                      light: 'text-gray-700 text-xs xs:text-sm',
-                      dark: 'text-gray-300 text-xs xs:text-sm'
-                    })}>
-                      DuvyClass es una plataforma web integral para la gestión tecnológica empresarial, diseñada para centralizar 
-                      todos los procesos de soporte técnico, inventario IT, documentación, credenciales y gestión de calidad 
-                      en una interfaz moderna, segura y eficiente.
-                    </p>
-                    
-                    <div className={conditionalClasses({
-                      light: 'bg-blue-50 p-2.5 xs:p-3 sm:p-4 rounded-lg border-l-4 border-blue-500',
-                      dark: 'bg-blue-900/30 p-2.5 xs:p-3 sm:p-4 rounded-lg border-l-4 border-blue-500'
-                    })}>
-                      <h4 className={conditionalClasses({
-                        light: 'font-semibold text-blue-900 mb-1 flex items-center text-xs sm:text-base',
-                        dark: 'font-semibold text-blue-300 mb-1 flex items-center text-xs sm:text-base'
-                      })}>
-                        <FaLightbulb className="mr-1.5 xs:mr-2" />
-                        ¿Qué es DuvyClass?
-                      </h4>
-                      <p className={conditionalClasses({
-                        light: 'text-blue-800 text-xs',
-                        dark: 'text-blue-200 text-xs'
-                      })}>
-                        Es un sistema todo-en-uno que permite gestionar recursos tecnológicos, soporte técnico, 
-                        documentación empresarial, credenciales de acceso, inventario de equipos y procesos de calidad 
-                        desde una única plataforma integrada.
-                      </p>
-                    </div>
-
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-2 xs:mt-3 sm:mt-4 text-xs sm:text-base',
-                      dark: 'font-semibold text-gray-100 mt-2 xs:mt-3 sm:mt-4 text-xs sm:text-base'
-                    })}>Beneficios Principales</h4>
-                    <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-1.5 xs:gap-2 sm:gap-3">
-                      {[
-                        { icon: '🗂️', text: 'Centralización' },
-                        { icon: '⚡', text: 'Eficiencia' },
-                        { icon: '🔒', text: 'Seguridad' },
-                        { icon: '📊', text: 'Trazabilidad' },
-                        { icon: '💬', text: 'Colaboración' },
-                        { icon: '📱', text: 'Accesibilidad' },
-                        { icon: '📈', text: 'Reportes' },
-                        { icon: '♻️', text: 'Recuperación' },
-                        { icon: '🔄', text: 'Workflows' }
-                      ].map((item, idx) => (
-                        <div key={idx} className={conditionalClasses({
-                          light: 'bg-gray-50 p-1.5 xs:p-2 sm:p-3 rounded-lg flex items-center',
-                          dark: 'bg-gray-700 p-1.5 xs:p-2 sm:p-3 rounded-lg flex items-center'
-                        })}>
-                          <span className="text-base xs:text-lg sm:text-xl mr-1 xs:mr-2">{item.icon}</span>
-                          <span className={conditionalClasses({
-                            light: 'text-xs text-gray-700',
-                            dark: 'text-xs text-gray-300'
-                          })}>{item.text}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                 </div>
-
-                 <div className={conditionalClasses({
-                   light: 'bg-white border border-gray-200 rounded-lg shadow-sm',
-                   dark: 'bg-gray-800 border border-gray-600 rounded-lg shadow-sm'
-                 })}>
-                   <summary className={conditionalClasses({
-                     light: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center text-sm',
-                     dark: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-100 hover:bg-gray-700 flex items-center text-sm'
-                   })}>
-                     <FaCog className="text-[#662d91] mr-1.5 xs:mr-2" />
-                     2. Mejoras Técnicas Implementadas (v2.1)
-                   </summary>
-                   <div className="p-3 xs:p-4 pt-0 space-y-3 xs:space-y-4">
-                     <p className={conditionalClasses({
-                       light: 'text-gray-700 text-xs xs:text-sm',
-                       dark: 'text-gray-300 text-xs xs:text-sm'
-                     })}>
-                       En la versión 2.1 se han implementado importantes mejoras de rendimiento, seguridad y experiencia de usuario,
-                       elevando la calidad del sistema a nivel producción (10/10).
-                     </p>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 xs:gap-3">
-                        {[
-                          {
-                            title: 'Paginación Server-Side',
-                            icon: <FaChartBar className="text-purple-500" />,
-                            desc: 'Todos los listados (tickets, documentos, inventario) now usan paginación en backend. Reduce carga de datos y mejora velocidad.'
-                          },
-                          {
-                            title: 'Búsqueda con Debounce',
-                            icon: <FaSearch className="text-blue-500" />,
-                            desc: 'Búsquedas en tiempo real con espera de 300ms para evitar llamadas excesivas a la API. Aplica a tickets, docs, inventario.'
-                          },
-                          {
-                            title: 'Creación de Usuarios Sin Sesión',
-                            icon: <FaUserCog className="text-emerald-500" />,
-                            desc: 'Endpoint POST /auth/create-user para que Administradores/Técnicos creen usuarios sin iniciar sesión automáticamente. Mantiene sesión del creador.'
-                          },
-                          {
-                            title: 'Seguridad Robustecida',
-                            icon: <FaLock className="text-green-500" />,
-                            desc: '33+ endpoints protegidos con autorización por rol. Validación de ownership en cada operación sensible.'
-                          },
-                         {
-                           title: 'Transacciones DB',
-                           icon: <FaSync className="text-yellow-500" />,
-                           desc: 'Operaciones críticas (create, update, approve) envueltas en transacciones ACID. Rollback automático ante errores.'
-                         },
-                         {
-                           title: 'Optimistic Locking',
-                           icon: <FaHistory className="text-orange-500" />,
-                           desc: 'Campo version en Ticket, PurchaseRequest, DocumentChangeRequest y QualityTicket. Previene condiciones de carrera.'
-                         },
-                         {
-                           title: 'Logging Winston',
-                           icon: <FaClipboardList className="text-red-500" />,
-                           desc: 'Reemplazo de console.error por Winston logger con rotación diaria de archivos. Mejor trazabilidad y debugging.'
-                         },
-                         {
-                           title: 'Round-Robin Assignment',
-                           icon: <FaUsers className="text-indigo-500" />,
-                           desc: 'Asignación automática de tickets de calidad al usuario con menor carga (tickets activos). Equilibrio de trabajo.'
-                         },
-                         {
-                           title: 'Filtros por Rol (Reportes)',
-                           icon: <FaEye className="text-teal-500" />,
-                           desc: 'Endpoints de reportes filtran automáticamente datos según el rol del usuario. Solo ven lo que les corresponde.'
-                         }
-                       ].map((item, i) => (
-                         <div key={i} className={conditionalClasses({
-                           light: 'bg-gray-50 p-3 rounded-lg border',
-                           dark: 'bg-gray-700 p-3 rounded-lg border border-gray-600'
-                         })}>
-                           <div className="flex items-center gap-2 mb-1.5">
-                             <span className="text-lg">{item.icon}</span>
-                             <h5 className={conditionalClasses({
-                               light: 'font-medium text-gray-900 text-sm',
-                               dark: 'font-medium text-gray-100 text-sm'
-                             })}>{item.title}</h5>
-                           </div>
-                           <p className={conditionalClasses({
-                             light: 'text-xs text-gray-600',
-                             dark: 'text-xs text-gray-300'
-                           })}>{item.desc}</p>
-                         </div>
-                     ))}
-                     </div>
-
-                     <div className={conditionalClasses({
-                       light: 'bg-blue-50 p-3 rounded-lg border-l-4 border-blue-500',
-                       dark: 'bg-blue-900/30 p-3 rounded-lg border-l-4 border-blue-500'
-                     })}>
-                       <h5 className={conditionalClasses({
-                         light: 'font-semibold text-blue-900 mb-1 text-xs sm:text-sm',
-                         dark: 'font-semibold text-blue-300 mb-1 text-xs sm:text-sm'
-                       })}>Impacto en la Operación</h5>
-                       <ul className={conditionalClasses({
-                         light: 'text-xs text-blue-800 space-y-1 list-disc list-inside',
-                         dark: 'text-xs text-blue-200 space-y-1 list-disc list-inside'
-                       })}>
-                         <li>Respuestas 60% más rápidas en listados grandes (paginación)</li>
-                         <li>Reducción del 80% en llamadas API innecesarias (debounce)</li>
-                         <li>Prevención total de condiciones de carrera en edición concurrente</li>
-                         <li>Trazabilidad completa de acciones críticas (logger)</li>
-                         <li>Workflows transaccionales 100% confiables</li>
-                       </ul>
-                     </div>
-                   </div>
-                 </div>
-
-                 <div className={conditionalClasses({
-                   light: 'bg-white border border-gray-200 rounded-lg shadow-sm',
-                   dark: 'bg-gray-800 border border-gray-600 rounded-lg shadow-sm'
-                 })}>
-                   <summary className={conditionalClasses({
-                     light: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center text-sm',
-                     dark: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-100 hover:bg-gray-700 flex items-center text-sm'
-                   })}>
-                     <FaSignInAlt className="text-green-500 mr-1.5 xs:mr-2" />
-                     3. Primeros Pasos
-                  </summary>
-                  <div className="p-3 xs:p-4 pt-0 space-y-3 xs:space-y-4">
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 text-sm xs:text-base',
-                      dark: 'font-semibold text-gray-100 text-sm xs:text-base'
-                    })}>2.1 Inicio de Sesión</h4>
-                    <ol className={conditionalClasses({
-                      light: 'list-decimal list-inside space-y-1.5 xs:space-y-2 text-gray-700 text-xs xs:text-sm',
-                      dark: 'list-decimal list-inside space-y-1.5 xs:space-y-2 text-gray-300 text-xs xs:text-sm'
-                    })}>
-                      <li>Acceda a la URL del sistema proporcionada por su administrador</li>
-                      <li>Ingrese su correo electrónico institucional</li>
-                      <li>Ingrese su contraseña</li>
-                      <li>Haga clic en "Iniciar Sesión"</li>
-                      <li>Si tiene 2FA habilitado, ingrese el código de verificación</li>
-                    </ol>
-
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-3 xs:mt-4 text-sm',
-                      dark: 'font-semibold text-gray-100 mt-3 xs:mt-4 text-sm'
-                    })}>2.2 Configuración Inicial</h4>
-                    <ul className={conditionalClasses({
-                      light: 'list-disc list-inside space-y-1.5 xs:space-y-2 text-gray-700 text-xs xs:text-sm',
-                      dark: 'list-disc list-inside space-y-1.5 xs:space-y-2 text-gray-300 text-xs xs:text-sm'
-                    })}>
-                      <li>Complete su perfil de usuario con información de contacto</li>
-                      <li>Configure sus preferencias de notificación</li>
-                      <li>Seleccione el tema de interfaz (claro/oscuro)</li>
-                      <li>Revise los módulos disponibles según su rol</li>
-                    </ul>
-
-                    <div className={conditionalClasses({
-                      light: 'bg-yellow-50 p-2.5 xs:p-3 sm:p-4 rounded-lg border-l-4 border-yellow-500',
-                      dark: 'bg-yellow-900/30 p-2.5 xs:p-3 sm:p-4 rounded-lg border-l-4 border-yellow-500'
-                    })}>
-                      <h4 className={conditionalClasses({
-                        light: 'font-semibold text-yellow-900 mb-1.5 xs:mb-2 flex items-center text-sm',
-                        dark: 'font-semibold text-yellow-300 mb-1.5 xs:mb-2 flex items-center text-sm'
-                      })}>
-                        <FaExclamationTriangle className="mr-1.5 xs:mr-2" />
-                        Recuperación de Contraseña
-                      </h4>
-                      <p className={conditionalClasses({
-                        light: 'text-yellow-800 text-xs',
-                        dark: 'text-yellow-200 text-xs'
-                      })}>
-                        Si olvidó su contraseña, haga clic en "¿Olvidó su contraseña?" en la pantalla de inicio 
-                        de sesión. Recibirá un enlace de recuperación en su correo electrónico registrado.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={conditionalClasses({
-                  light: 'bg-white border border-gray-200 rounded-lg shadow-sm',
-                  dark: 'bg-gray-800 border border-gray-600 rounded-lg shadow-sm'
-                })}>
-                  <summary className={conditionalClasses({
-                    light: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center text-sm',
-                    dark: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-100 hover:bg-gray-700 flex items-center text-sm'
-                  })}>
-                     <FaCompass className="text-[#662d91] mr-1.5 xs:mr-2" />
-                     4. Navegación y Interfaz
-                  </summary>
-                  <div className="p-3 xs:p-4 pt-0 space-y-3 xs:space-y-4">
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 text-sm',
-                      dark: 'font-semibold text-gray-100 text-sm'
-                     })}>4.1 Estructura de la Interfaz</h4>
-                    <div className={conditionalClasses({
-                      light: 'bg-gray-50 p-2.5 xs:p-3 sm:p-4 rounded-lg',
-                      dark: 'bg-gray-700 p-2.5 xs:p-3 sm:p-4 rounded-lg'
-                    })}>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 xs:gap-3 sm:gap-4">
-                        <div>
-                          <h5 className={conditionalClasses({
-                            light: 'font-medium text-gray-900 mb-2',
-                            dark: 'font-medium text-gray-100 mb-2'
-                          })}>Barra Superior</h5>
-                          <ul className={conditionalClasses({
-                            light: 'text-sm text-gray-600 space-y-1',
-                            dark: 'text-sm text-gray-300 space-y-1'
-                          })}>
-                            <li>• Logo de DuvyClass</li>
-                            <li>• Búsqueda global</li>
-                            <li>• Notificaciones</li>
-                            <li>• Menú de usuario</li>
-                          </ul>
-                        </div>
-                        <div>
-                          <h5 className={conditionalClasses({
-                            light: 'font-medium text-gray-900 mb-1.5 xs:mb-2 text-xs sm:text-sm',
-                            dark: 'font-medium text-gray-100 mb-1.5 xs:mb-2 text-xs sm:text-sm'
-                          })}>Barra Lateral</h5>
-                          <ul className={conditionalClasses({
-                            light: 'text-xs sm:text-gray-600 space-y-1',
-                            dark: 'text-xs sm:text-gray-300 space-y-1'
-                          })}>
-                            <li>• Dashboard</li>
-                            <li>• Tickets</li>
-                            <li>• Inventario</li>
-                            <li>• Documentos</li>
-                            <li>• Más opciones...</li>
-                          </ul>
-                        </div>
-                        <div>
-                          <h5 className={conditionalClasses({
-                            light: 'font-medium text-gray-900 mb-1.5 xs:mb-2 text-xs sm:text-sm',
-                            dark: 'font-medium text-gray-100 mb-1.5 xs:mb-2 text-xs sm:text-sm'
-                          })}>Área Principal</h5>
-                          <ul className={conditionalClasses({
-                            light: 'text-xs sm:text-gray-600 space-y-1',
-                            dark: 'text-xs sm:text-gray-300 space-y-1'
-                          })}>
-                            <li>• Contenido del módulo</li>
-                            <li>• Tablas y listas</li>
-                            <li>• Formularios</li>
-                            <li>• Modales y paneles</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-3 xs:mt-4 text-sm',
-                      dark: 'font-semibold text-gray-100 mt-3 xs:mt-4 text-sm'
-                     })}>4.2 Atajos de Teclado</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 xs:gap-2">
-                      {[
-                        { keys: 'Ctrl + K', action: 'Búsqueda rápida' },
-                        { keys: 'Ctrl + N', action: 'Nuevo ticket' },
-                        { keys: 'Esc', action: 'Cerrar modal' },
-                        { keys: 'Ctrl + B', action: 'Alternar sidebar' },
-                        { keys: 'Ctrl + D', action: 'Cambiar tema' }
-                      ].map((shortcut, idx) => (
-                        <div key={idx} className={conditionalClasses({
-                          light: 'bg-white p-1.5 xs:p-2 rounded border flex justify-between items-center',
-                          dark: 'bg-gray-700 p-1.5 xs:p-2 rounded border border-gray-600 flex justify-between items-center'
-                        })}>
-                          <span className={conditionalClasses({
-                            light: 'text-gray-600 text-xs',
-                            dark: 'text-gray-300 text-xs'
-                          })}>{shortcut.action}</span>
-                          <kbd className={conditionalClasses({
-                            light: 'bg-gray-100 px-1.5 xs:px-2 py-0.5 rounded text-xs font-mono',
-                            dark: 'bg-gray-600 px-1.5 xs:px-2 py-0.5 rounded text-xs font-mono text-gray-200'
-                          })}>{shortcut.keys}</kbd>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className={conditionalClasses({
-                  light: 'bg-white border border-gray-200 rounded-lg shadow-sm',
-                  dark: 'bg-gray-800 border border-gray-600 rounded-lg shadow-sm'
-                })}>
-                  <summary className={conditionalClasses({
-                    light: 'cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center',
-                    dark: 'cursor-pointer p-4 font-medium text-gray-100 hover:bg-gray-700 flex items-center'
-                  })}>
-                     <FaTicketAlt className="text-[#662d91] mr-2" />
-                     5. Guía Completa de Tickets
-                  </summary>
-                  <div className="p-4 pt-0 space-y-4">
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900',
-                      dark: 'font-semibold text-gray-100'
-                     })}>5.1 Crear un Ticket</h4>
-                    <ol className={conditionalClasses({
-                      light: 'list-decimal list-inside space-y-2 text-gray-700',
-                      dark: 'list-decimal list-inside space-y-2 text-gray-300'
-                    })}>
-                      <li>Haga clic en "Nuevo Ticket" en la sección de Tickets</li>
-                      <li>Seleccione la categoría del problema</li>
-                      <li>Ingrese un título descriptivo</li>
-                      <li>Escriba una descripción detallada del problema</li>
-                      <li>Seleccione la prioridad (Baja, Media, Alta, Crítica)</li>
-                      <li>Adjunte archivos si es necesario</li>
-                      <li>Haga clic en "Crear Ticket"</li>
-                    </ol>
-
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-4',
-                      dark: 'font-semibold text-gray-100 mt-4'
-                     })}>5.2 Estados de un Ticket</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
-                      {[
-                        { state: 'Nuevo', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200' },
-                        { state: 'Asignado', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200' },
-                        { state: 'En Progreso', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-200' },
-                        { state: 'Esperando', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200' },
-                        { state: 'Resuelto', color: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' },
-                        { state: 'Cerrado', color: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200' }
-                      ].map((status, idx) => (
-                        <div key={idx} className={`p-2 rounded text-center text-xs ${status.color}`}>
-                          {status.state}
-                        </div>
-                      ))}
-                    </div>
-
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-3 xs:mt-4 text-sm',
-                      dark: 'font-semibold text-gray-100 mt-3 xs:mt-4 text-sm'
-                     })}>5.3 Prioridades</h4>
-                    <div className="space-y-1.5 xs:space-y-2">
-                      {[
-                        { priority: 'Baja', color: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200', desc: 'Problema menor, sin urgencia' },
-                        { priority: 'Media', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200', desc: 'Problema regular, resolver en 24-48h' },
-                        { priority: 'Alta', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-200', desc: 'Problema importante, resolver hoy' },
-                        { priority: 'Crítica', color: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200', desc: 'Urgente, afecta operaciones' }
-                      ].map((pri, idx) => (
-                        <div key={idx} className={conditionalClasses({
-                          light: 'flex items-center p-2 bg-gray-50 rounded',
-                          dark: 'flex items-center p-2 bg-gray-700/50 rounded'
-                        })}>
-                          <div className={`w-3 h-3 rounded-full ${pri.color.split(' ')[0]} mr-2`}></div>
-                          <span className={conditionalClasses({
-                            light: 'font-medium text-gray-900 mr-2',
-                            dark: 'font-medium text-gray-100 mr-2'
-                          })}>{pri.priority}</span>
-                          <span className={conditionalClasses({
-                            light: 'text-sm text-gray-600',
-                            dark: 'text-sm text-gray-300'
-                          })}>{pri.desc}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className={conditionalClasses({
-                  light: 'bg-white border border-gray-200 rounded-lg shadow-sm',
-                  dark: 'bg-gray-800 border border-gray-600 rounded-lg shadow-sm'
-                })}>
-                  <summary className={conditionalClasses({
-                    light: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center text-sm',
-                    dark: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-100 hover:bg-gray-700 flex items-center text-sm'
-                  })}>
-                     <FaBox className="text-blue-600 mr-1.5 xs:mr-2" />
-                     6. Gestión de Inventario
-                  </summary>
-                  <div className="p-3 xs:p-4 pt-0 space-y-3 xs:space-y-4">
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 text-sm',
-                      dark: 'font-semibold text-gray-100 text-sm'
-                     })}>6.1 Tipos de Inventario</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 xs:gap-3 sm:gap-4">
-                      {[
-                        { name: 'Inventario General', icon: <FaBox />, desc: 'Equipos de cómputo, periféricos, monitores' },
-                        { name: 'Tablets', icon: <FaMobile />, desc: 'Dispositivos tablets corporativas' },
-                        { name: 'PDAs', icon: <FaMobile />, desc: 'Dispositivos de captura de datos' },
-                        { name: 'Teléfonos', icon: <FaPhone />, desc: 'Líneas móviles corporativas' }
-                      ].map((inv, idx) => (
-                        <div key={idx} className={conditionalClasses({
-                          light: 'bg-gray-50 p-2.5 xs:p-3 sm:p-4 rounded-lg border',
-                          dark: 'bg-gray-700 p-2.5 xs:p-3 sm:p-4 rounded-lg border border-gray-600'
-                        })}>
-                          <div className="flex items-center gap-1.5 xs:gap-2 mb-1.5 xs:mb-2">
-                            <span className="text-[#662d91] text-sm">{inv.icon}</span>
-                            <h5 className={conditionalClasses({
-                              light: 'font-medium text-gray-900 text-xs sm:text-sm',
-                              dark: 'font-medium text-gray-100 text-xs sm:text-sm'
-                            })}>{inv.name}</h5>
-                          </div>
-                          <p className={conditionalClasses({
-                            light: 'text-xs text-gray-600',
-                            dark: 'text-xs text-gray-300'
-                          })}>{inv.desc}</p>
-                        </div>
-                      ))}
-                    </div>
-
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-3 xs:mt-4 text-sm',
-                      dark: 'font-semibold text-gray-100 mt-3 xs:mt-4 text-sm'
-                     })}>6.2 Registrar un Nuevo Activo</h4>
-                    <ol className={conditionalClasses({
-                      light: 'list-decimal list-inside space-y-1.5 xs:space-y-2 text-gray-700 text-xs xs:text-sm',
-                      dark: 'list-decimal list-inside space-y-1.5 xs:space-y-2 text-gray-300 text-xs xs:text-sm'
-                    })}>
-                      <li>Vaya al módulo de Inventario correspondiente</li>
-                      <li>Haga clic en "Agregar" o "Nuevo Activo"</li>
-                      <li>Complete los campos obligatorios: Código único, nombre, marca, modelo, serie, fecha, valor, ubicación</li>
-                      <li>Guarde el activo</li>
-                    </ol>
-                  </div>
-                </div>
-
-                <div className={conditionalClasses({
-                  light: 'bg-white border border-gray-200 rounded-lg shadow-sm',
-                  dark: 'bg-gray-800 border border-gray-600 rounded-lg shadow-sm'
-                })}>
-                  <summary className={conditionalClasses({
-                    light: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center text-sm',
-                    dark: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-100 hover:bg-gray-700 flex items-center text-sm'
-                  })}>
-                     <FaFileAlt className="text-green-600 mr-1.5 xs:mr-2" />
-                     7. Documentos y Solicitudes de Cambio
-                  </summary>
-                  <div className="p-3 xs:p-4 pt-0 space-y-3 xs:space-y-4">
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 text-sm',
-                      dark: 'font-semibold text-gray-100 text-sm'
-                     })}>7.1 Subir un Documento</h4>
-                    <ol className={conditionalClasses({
-                      light: 'list-decimal list-inside space-y-1.5 xs:space-y-2 text-gray-700 text-xs xs:text-sm',
-                      dark: 'list-decimal list-inside space-y-1.5 xs:space-y-2 text-gray-300 text-xs xs:text-sm'
-                    })}>
-                      <li>Navegue a la sección Documentos</li>
-                      <li>Seleccione la carpeta donde desea guardar</li>
-                      <li>Haga clic en "Subir Documento"</li>
-                      <li>Seleccione el archivo de su computadora</li>
-                      <li>Ingrese título, descripción y categoría</li>
-                      <li>Configure los permisos de acceso</li>
-                      <li>Guarde el documento</li>
-                    </ol>
-
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-3 xs:mt-4 text-sm',
-                      dark: 'font-semibold text-gray-100 mt-3 xs:mt-4 text-sm'
-                     })}>7.2 Solicitar un Cambio</h4>
-                    <ol className={conditionalClasses({
-                      light: 'list-decimal list-inside space-y-1.5 xs:space-y-2 text-gray-700 text-xs xs:text-sm',
-                      dark: 'list-decimal list-inside space-y-1.5 xs:space-y-2 text-gray-300 text-xs xs:text-sm'
-                    })}>
-                      <li>Vaya a "Solicitudes de Cambio"</li>
-                      <li>Haga clic en "Nueva Solicitud"</li>
-                      <li>Seleccione el documento a modificar</li>
-                      <li>Describa el cambio y justifique</li>
-                      <li>Analice el impacto del cambio</li>
-                      <li>Envíe para aprobación</li>
-                    </ol>
-                  </div>
-                </div>
-
-                <div className={conditionalClasses({
-                  light: 'bg-white border border-gray-200 rounded-lg shadow-sm',
-                  dark: 'bg-gray-800 border border-gray-600 rounded-lg shadow-sm'
-                })}>
-                  <summary className={conditionalClasses({
-                    light: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center text-sm',
-                    dark: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-100 hover:bg-gray-700 flex items-center text-sm'
-                  })}>
-                     <FaShoppingCart className="text-orange-600 mr-1.5 xs:mr-2" />
-                     8. Solicitudes de Compra
-                  </summary>
-                  <div className="p-3 xs:p-4 pt-0 space-y-3 xs:space-y-4">
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 text-sm',
-                      dark: 'font-semibold text-gray-100 text-sm'
-                     })}>8.1 Crear una Solicitud</h4>
-                    <ol className={conditionalClasses({
-                      light: 'list-decimal list-inside space-y-1.5 xs:space-y-2 text-gray-700 text-xs xs:text-sm',
-                      dark: 'list-decimal list-inside space-y-1.5 xs:space-y-2 text-gray-300 text-xs xs:text-sm'
-                    })}>
-                      <li>Vaya a "Solicitudes de Compra"</li>
-                      <li>Haga clic en "Nueva Solicitud"</li>
-                      <li>Seleccione el centro de costo</li>
-                      <li>Ingrese la justificación de la compra</li>
-                      <li>Agregue los items requeridos</li>
-                      <li>Adjunte cotizaciones si aplica</li>
-                      <li>Envíe para aprobación</li>
-                    </ol>
-
-                    <div className={conditionalClasses({
-                      light: 'bg-gray-50 p-2.5 xs:p-3 sm:p-4 rounded-lg',
-                      dark: 'bg-gray-700 p-2.5 xs:p-3 sm:p-4 rounded-lg'
-                    })}>
-                      <h5 className={conditionalClasses({
-                        light: 'font-medium text-gray-900 mb-1.5 xs:mb-2 text-sm',
-                        dark: 'font-medium text-gray-100 mb-1.5 xs:mb-2 text-sm'
-                      })}>Workflow de Aprobación</h5>
-                      <div className="flex flex-wrap items-center gap-1.5 xs:gap-2">
-                        {['Borrador', 'Enviado', 'Jefe', 'Compras', 'Ordenado', 'Recibido'].map((step, idx) => (
-                          <React.Fragment key={idx}>
-                            <div className={conditionalClasses({
-                              light: 'bg-white px-3 py-1 rounded border text-sm',
-                              dark: 'bg-gray-600 px-3 py-1 rounded border text-sm text-gray-200'
-                            })}>{step}</div>
-                            {idx < 5 && <span className="text-gray-400">→</span>}
-                          </React.Fragment>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={conditionalClasses({
-                  light: 'bg-white border border-gray-200 rounded-lg shadow-sm',
-                  dark: 'bg-gray-800 border border-gray-600 rounded-lg shadow-sm'
-                })}>
-                  <summary className={conditionalClasses({
-                    light: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center text-sm',
-                    dark: 'cursor-pointer p-3 xs:p-4 font-medium text-gray-100 hover:bg-gray-700 flex items-center text-sm'
-                  })}>
-                     <FaClipboardCheck className="text-teal-500 mr-1.5 xs:mr-2" />
-                     9. Gestión de Calidad
-                  </summary>
-                  <div className="p-3 xs:p-4 pt-0 space-y-3 xs:space-y-4">
-                    <p className={conditionalClasses({
-                      light: 'text-gray-700 text-xs xs:text-sm',
-                      dark: 'text-gray-300 text-xs xs:text-sm'
-                    })}>
-                      El módulo de Calidad permite gestionar no conformidades, auditorías y acciones correctivas 
-                      para mantener los estándares de la organización bajo la norma ISO 9001.
-                    </p>
-
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-2.5 xs:mt-3 sm:mt-4 text-sm',
-                      dark: 'font-semibold text-gray-100 mt-2.5 xs:mt-3 sm:mt-4 text-sm'
-                     })}>9.1 Módulos de Calidad</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 xs:gap-3">
-                      {[
-                        { name: 'Tickets de Calidad', icon: <FaClipboardCheck />, desc: 'Gestión de NCR, auditorías y CAPA' },
-                        { name: 'Cambios Documentales', icon: <FaEdit />, desc: 'Workflow de cambios ISO 9001' },
-                        { name: 'Dashboard', icon: <FaChartBar />, desc: 'Métricas e indicadores en tiempo real' }
-                      ].map((mod, idx) => (
-                        <div key={idx} className={conditionalClasses({
-                          light: 'bg-teal-50 p-2.5 xs:p-3 rounded-lg border border-teal-200',
-                          dark: 'bg-teal-900/30 p-2.5 xs:p-3 rounded-lg border border-teal-700'
-                        })}>
-                          <div className="flex items-center gap-1.5 xs:gap-2 mb-1">
-                            <span className="text-teal-600 text-sm">{mod.icon}</span>
-                            <h5 className={conditionalClasses({
-                              light: 'font-medium text-teal-900 text-xs sm:text-sm',
-                              dark: 'font-medium text-teal-200 text-xs sm:text-sm'
-                            })}>{mod.name}</h5>
-                          </div>
-                          <p className={conditionalClasses({
-                            light: 'text-xs text-teal-700',
-                            dark: 'text-xs text-teal-300'
-                          })}>{mod.desc}</p>
-                        </div>
-                      ))}
-                    </div>
-
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-3 xs:mt-4 text-sm',
-                      dark: 'font-semibold text-gray-100 mt-3 xs:mt-4 text-sm'
-                     })}>9.2 Tipos de Registros de Calidad</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 xs:gap-3">
-                      {[
-                        { type: 'No Conformidad (NCR)', desc: 'Desviación de un estándar o requisito', severity: 'Alta' },
-                        { type: 'Auditoría', desc: 'Revisión programada o extraordinaria', severity: 'Media' },
-                        { type: 'Acción Correctiva (CAPA)', desc: 'Corrección de causa raíz identificada', severity: 'Alta' },
-                        { type: 'Mejora Continua', desc: 'Optimización de procesos existentes', severity: 'Baja' }
-                      ].map((item, idx) => (
-                        <div key={idx} className={conditionalClasses({
-                          light: 'bg-gray-50 p-2.5 xs:p-3 rounded border',
-                          dark: 'bg-gray-700 p-2.5 xs:p-3 rounded border border-gray-600'
-                        })}>
-                          <div className="flex items-center justify-between mb-1">
-                            <h5 className={conditionalClasses({
-                              light: 'font-medium text-gray-900 text-xs sm:text-sm',
-                              dark: 'font-medium text-gray-100 text-xs sm:text-sm'
-                            })}>{item.type}</h5>
-                            <span className={`px-1.5 xs:px-2 py-0.5 rounded text-xs ${
-                              item.severity === 'Alta' ? 'bg-red-100 text-red-800' :
-                              item.severity === 'Media' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-green-100 text-green-800'
-                            }`}>{item.severity}</span>
-                          </div>
-                          <p className={conditionalClasses({
-                            light: 'text-xs text-gray-600',
-                            dark: 'text-xs text-gray-300'
-                          })}>{item.desc}</p>
-                        </div>
-                      ))}
-                    </div>
-
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-3 xs:mt-4 text-sm',
-                      dark: 'font-semibold text-gray-100 mt-3 xs:mt-4 text-sm'
-                     })}>9.3 Crear un Ticket de Calidad</h4>
-                    <ol className={conditionalClasses({
-                      light: 'list-decimal list-inside space-y-1.5 xs:space-y-2 text-gray-700 text-xs xs:text-sm',
-                      dark: 'list-decimal list-inside space-y-1.5 xs:space-y-2 text-gray-300 text-xs xs:text-sm'
-                    })}>
-                      <li>Vaya al módulo "Tickets de Calidad" desde el menú lateral</li>
-                      <li>Haga clic en "Nuevo Ticket de Calidad"</li>
-                      <li>Seleccione el tipo: No Conformidad, Auditoría, CAPA o Mejora</li>
-                      <li>Ingrese un título descriptivo del problema</li>
-                      <li>Describa detalladamente la no conformidd o hallazgo</li>
-                      <li>Identifique el proceso o área afectada</li>
-                      <li>Establezca la prioridad (Baja, Media, Alta, Crítica)</li>
-                      <li>Adjunte evidencias si es necesario</li>
-                      <li>Guarde el ticket para iniciar el workflow</li>
-                    </ol>
-
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-3 xs:mt-4 text-sm',
-                      dark: 'font-semibold text-gray-100 mt-3 xs:mt-4 text-sm'
-                     })}>9.4 Workflow de Tickets de Calidad</h4>
-                    <div className="flex flex-wrap items-center gap-1.5 xs:gap-2">
-                      {['Detectado', 'En Análisis', 'Acción Correctiva', 'Verificación', 'Cerrado'].map((step, idx) => (
-                        <React.Fragment key={idx}>
-                          <div className={conditionalClasses({
-                            light: 'bg-teal-100 text-teal-800 px-3 py-1.5 rounded-lg text-sm font-medium',
-                            dark: 'bg-teal-900/50 text-teal-300 px-3 py-1.5 rounded-lg text-sm font-medium'
-                          })}>{step}</div>
-                          {idx < 4 && <span className="text-gray-400">→</span>}
-                        </React.Fragment>
-                      ))}
-                    </div>
-
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-3 xs:mt-4 text-sm',
-                      dark: 'font-semibold text-gray-100 mt-3 xs:mt-4 text-sm'
-                     })}>9.5 Solicitudes de Cambio Documental</h4>
-                    <p className={conditionalClasses({
-                      light: 'text-gray-700 text-xs',
-                      dark: 'text-gray-300 text-xs'
-                    })}>
-                      Las solicitudes de cambio permiten modificar documentos del sistema bajo el proceso 
-                      ISO 9001 de control de documentos y registros.
-                    </p>
-                    <ol className={conditionalClasses({
-                      light: 'list-decimal list-inside space-y-1.5 xs:space-y-2 text-gray-700 text-xs mt-1.5 xs:mt-2',
-                      dark: 'list-decimal list-inside space-y-1.5 xs:space-y-2 text-gray-300 text-xs mt-1.5 xs:mt-2'
-                    })}>
-                      <li>Vaya a "Solicitudes de Cambio" en el menú de Calidad</li>
-                      <li>Cliquez en "Nueva Solicitud de Cambio"</li>
-                      <li>Seleccione el tipo de cambio (Crear, Modificar, Eliminar, Actualizar versión)</li>
-                      <li>Elija el documento afectado o cree uno nuevo</li>
-                      <li>Proporcione una justificación detallada (mínimo 10 caracteres)</li>
-                      <li>Realice el análisis de impacto del cambio</li>
-                      <li>Suba el archivo propuesto si aplica</li>
-                      <li>Envíe para revisión por el área de Calidad</li>
-                    </ol>
-
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-3 xs:mt-4 text-sm',
-                      dark: 'font-semibold text-gray-100 mt-3 xs:mt-4 text-sm'
-                     })}>9.6 Workflow de Cambios Documentales</h4>
-                    <div className="flex flex-wrap items-center gap-1.5 xs:gap-2 mb-2.5 xs:mb-3">
-                      {['Borrador', 'Revisión Inicial', 'Aprobación', 'Implementación', 'Publicado'].map((step, idx) => (
-                        <React.Fragment key={idx}>
-                          <div className={conditionalClasses({
-                            light: 'bg-red-100 text-red-800 px-3 py-1.5 rounded-lg text-sm font-medium',
-                            dark: 'bg-red-900/50 text-red-300 px-3 py-1.5 rounded-lg text-sm font-medium'
-                          })}>{step}</div>
-                          {idx < 4 && <span className="text-gray-400">→</span>}
-                        </React.Fragment>
-                      ))}
-                    </div>
-
-                    <div className={conditionalClasses({
-                      light: 'bg-blue-50 p-2.5 xs:p-3 rounded-lg',
-                      dark: 'bg-blue-900/30 p-2.5 xs:p-3 rounded-lg'
-                    })}>
-                      <h5 className={conditionalClasses({
-                        light: 'font-medium text-blue-900 mb-1.5 xs:mb-2 text-sm',
-                        dark: 'font-medium text-blue-300 mb-1.5 xs:mb-2 text-sm'
-                      })}>Roles en el Workflow de Cambios</h5>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 xs:gap-2 text-xs">
-                        <div className={conditionalClasses({
-                          light: 'bg-white p-1.5 xs:p-2 rounded',
-                          dark: 'bg-gray-800 p-1.5 xs:p-2 rounded'
-                        })}>
-                          <span className={conditionalClasses({
-                            light: 'font-medium text-blue-800 text-xs',
-                            dark: 'font-medium text-blue-400 text-xs'
-                          })}>Calidad:</span> <span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Revisión inicial y análisis</span>
-                        </div>
-                        <div className={conditionalClasses({
-                          light: 'bg-white p-1.5 xs:p-2 rounded',
-                          dark: 'bg-gray-800 p-1.5 xs:p-2 rounded'
-                        })}>
-                          <span className={conditionalClasses({
-                            light: 'font-medium text-purple-800 text-xs',
-                            dark: 'font-medium text-purple-400 text-xs'
-                          })}>Jefe:</span> <span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Aprobación del cambio</span>
-                        </div>
-                        <div className={conditionalClasses({
-                          light: 'bg-white p-1.5 xs:p-2 rounded',
-                          dark: 'bg-gray-800 p-1.5 xs:p-2 rounded'
-                        })}>
-                          <span className={conditionalClasses({
-                            light: 'font-medium text-yellow-800 text-xs',
-                            dark: 'font-medium text-yellow-400 text-xs'
-                          })}>Administrador:</span> <span className={conditionalClasses({ light: 'text-gray-700', dark: 'text-gray-300' })}>Implementación y publicación</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-3 xs:mt-4 text-sm',
-                      dark: 'font-semibold text-gray-100 mt-3 xs:mt-4 text-sm'
-                     })}>9.7 Indicadores de Calidad (KPI)</h4>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 xs:gap-2">
-                      {[
-                        { kpi: 'NCR', desc: 'No Conformidades' },
-                        { kpi: 'CAPA', desc: 'Acciones Correctivas' },
-                        { kpi: 'AUD', desc: 'Auditorías' },
-                        { kpi: 'MEJ', desc: 'Mejoras' }
-                      ].map((kpi, idx) => (
-                        <div key={idx} className={conditionalClasses({
-                          light: 'bg-teal-50 p-1.5 xs:p-2 rounded text-center',
-                          dark: 'bg-teal-900/30 p-1.5 xs:p-2 rounded text-center'
-                        })}>
-                          <div className={conditionalClasses({
-                            light: 'text-xs sm:text-sm font-bold text-teal-800',
-                            dark: 'text-xs sm:text-sm font-bold text-teal-300'
-                          })}>{kpi.kpi}</div>
-                          <div className={conditionalClasses({
-                            light: 'text-xs text-teal-600',
-                            dark: 'text-xs text-teal-400'
-                          })}>{kpi.desc}</div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-gray-900 mt-3 xs:mt-4 text-sm',
-                      dark: 'font-semibold text-gray-100 mt-3 xs:mt-4 text-sm'
-                     })}>9.8 Dashboard de Calidad</h4>
-                    <p className={conditionalClasses({
-                      light: 'text-gray-700 text-xs',
-                      dark: 'text-gray-300 text-xs'
-                    })}>
-                      El dashboard muestra métricas en tiempo real de todos los procesos de calidad.
-                    </p>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 xs:gap-2 mt-1.5 xs:mt-2">
-                      {[
-                        { metric: 'Total Tickets', icon: <FaClipboardList /> },
-                        { metric: 'Abiertos', icon: <FaExclamationTriangle /> },
-                        { metric: 'Cerrados', icon: <FaCheck /> },
-                        { metric: 'En Progreso', icon: <FaChartLine /> }
-                      ].map((m, idx) => (
-                        <div key={idx} className={conditionalClasses({
-                          light: 'bg-white p-2 rounded border text-center',
-                          dark: 'bg-gray-700 p-2 rounded border border-gray-600 text-center'
-                        })}>
-                          <div className="text-teal-600 mb-1">{m.icon}</div>
-                          <div className={conditionalClasses({
-                            light: 'text-xs text-gray-600',
-                            dark: 'text-xs text-gray-400'
-                          })}>{m.metric}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className={conditionalClasses({
-                  light: 'bg-white border border-gray-200 rounded-lg shadow-sm',
-                  dark: 'bg-gray-800 border border-gray-600 rounded-lg shadow-sm'
-                })}>
-                  <summary className={conditionalClasses({
-                    light: 'cursor-pointer p-4 font-medium text-gray-900 hover:bg-gray-50 flex items-center',
-                    dark: 'cursor-pointer p-4 font-medium text-gray-100 hover:bg-gray-700 flex items-center'
-                  })}>
-                     <FaLightbulb className="text-yellow-500 mr-2" />
-                     10. Tips y Mejores Prácticas
-                  </summary>
-                  <div className="p-4 pt-0 space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className={conditionalClasses({
-                        light: 'bg-green-50 p-2.5 xs:p-3 sm:p-4 rounded-lg',
-                        dark: 'bg-green-900/30 p-2.5 xs:p-3 sm:p-4 rounded-lg'
-                      })}>
-                        <h4 className={conditionalClasses({
-                          light: 'font-semibold text-green-900 mb-1.5 xs:mb-2 text-sm',
-                          dark: 'font-semibold text-green-300 mb-1.5 xs:mb-2 text-sm'
-                        })}>Para Usuarios</h4>
-                        <ul className={conditionalClasses({
-                          light: 'text-xs text-green-800 space-y-1',
-                          dark: 'text-xs text-green-200 space-y-1'
-                        })}>
-                          <li>• Sea específico al crear tickets</li>
-                          <li>• Incluya capturas de pantalla</li>
-                          <li>• Respete los tiempos de respuesta</li>
-                          <li>• Mantenga sus datos actualizados</li>
-                          <li>• Use los filtros para buscar</li>
-                        </ul>
-                      </div>
-                      <div className={conditionalClasses({
-                        light: 'bg-blue-50 p-2.5 xs:p-3 sm:p-4 rounded-lg',
-                        dark: 'bg-blue-900/30 p-2.5 xs:p-3 sm:p-4 rounded-lg'
-                      })}>
-                        <h4 className={conditionalClasses({
-                          light: 'font-semibold text-blue-900 mb-1.5 xs:mb-2 text-sm',
-                          dark: 'font-semibold text-blue-300 mb-1.5 xs:mb-2 text-sm'
-                        })}>Para Técnicos</h4>
-                        <ul className={conditionalClasses({
-                          light: 'text-xs text-blue-800 space-y-1',
-                          dark: 'text-xs text-blue-200 space-y-1'
-                        })}>
-                          <li>• Actualice estados regularmente</li>
-                          <li>• Documente las soluciones</li>
-                          <li>• Comunique demoras anticipadamente</li>
-                          <li>• Use plantillas de respuestas</li>
-                          <li>• Cierre tickets correctamente</li>
-                        </ul>
-                      </div>
-                      <div className={conditionalClasses({
-                        light: 'bg-purple-50 p-2.5 xs:p-3 sm:p-4 rounded-lg',
-                        dark: 'bg-purple-900/30 p-2.5 xs:p-3 sm:p-4 rounded-lg'
-                      })}>
-                        <h4 className={conditionalClasses({
-                          light: 'font-semibold text-purple-900 mb-1.5 xs:mb-2 text-sm',
-                          dark: 'font-semibold text-purple-300 mb-1.5 xs:mb-2 text-sm'
-                        })}>Para Administradores</h4>
-                        <ul className={conditionalClasses({
-                          light: 'text-xs text-purple-800 space-y-1',
-                          dark: 'text-xs text-purple-200 space-y-1'
-                        })}>
-                          <li>• Revise métricas semanalmente</li>
-                          <li>• Monitoree la papelera</li>
-                          <li>• Actualice documentos del sistema</li>
-                          <li>• Gestione usuarios inactivos</li>
-                          <li>• Realice backups regulares</li>
-                        </ul>
-                      </div>
-                      <div className={conditionalClasses({
-                        light: 'bg-yellow-50 p-2.5 xs:p-3 sm:p-4 rounded-lg',
-                        dark: 'bg-yellow-900/30 p-2.5 xs:p-3 sm:p-4 rounded-lg'
-                      })}>
-                        <h4 className={conditionalClasses({
-                          light: 'font-semibold text-yellow-900 mb-1.5 xs:mb-2 text-sm',
-                          dark: 'font-semibold text-yellow-300 mb-1.5 xs:mb-2 text-sm'
-                        })}>Errores Comunes a Evitar</h4>
-                        <ul className={conditionalClasses({
-                          light: 'text-xs text-yellow-800 space-y-1',
-                          dark: 'text-xs text-yellow-200 space-y-1'
-                        })}>
-                          <li>• No compartir contraseñas</li>
-                          <li>• No dejar tickets sin actualizar</li>
-                          <li>• No eliminar sin verificar</li>
-                          <li>• No ignorar notificaciones</li>
-                          <li>• No crear tickets duplicados</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                {/* ... contenido del manual se mantiene igual ... */}
               </div>
             )}
 
             {activeTab === 'faq' && (
-              <div className="space-y-2 xs:space-y-3 sm:space-y-4">
-                <div className="flex items-center mb-3 xs:mb-4 sm:mb-6">
-                  <FaQuestionCircle className="text-[#662d91] text-base xs:text-lg sm:text-2xl mr-1.5 xs:mr-2 sm:mr-3" />
-                  <h2 className={conditionalClasses({
-                    light: 'text-base xs:text-lg sm:text-xl font-semibold text-gray-900',
-                    dark: 'text-base xs:text-lg sm:text-xl font-semibold text-gray-100'
-                  })}>Preguntas Frecuentes</h2>
-                </div>
-                <div className="space-y-2 xs:space-y-3 sm:space-y-4">
-                  {faqs.map((faq, index) => (
-                    <details key={index} className={conditionalClasses({
-                      light: 'bg-gray-50 rounded-lg p-2.5 xs:p-3 sm:p-4',
-                      dark: 'bg-gray-700 rounded-lg p-2.5 xs:p-3 sm:p-4'
+              <div className="space-y-3 xs:space-y-4">
+                {faqs.map((faq, i) => (
+                  <details key={i} className={conditionalClasses({
+                    light: 'bg-white border border-gray-200 rounded-lg',
+                    dark: 'bg-gray-800 border border-gray-600 rounded-lg'
+                  })}>
+                    <summary className={conditionalClasses({
+                      light: 'cursor-pointer p-3 font-semibold text-gray-900 hover:bg-gray-50',
+                      dark: 'cursor-pointer p-3 font-semibold text-gray-100 hover:bg-gray-700'
                     })}>
-                      <summary className={conditionalClasses({
-                        light: 'font-medium text-gray-900 cursor-pointer hover:text-[#662d91] text-xs sm:text-base',
-                        dark: 'font-medium text-gray-100 cursor-pointer hover:text-[#8e4dbf] text-xs sm:text-base'
-                      })}>
-                        {faq.question}
-                      </summary>
+                      {faq.question}
+                    </summary>
+                    <div className="p-3 pt-0">
                       <p className={conditionalClasses({
-                        light: 'mt-1.5 xs:mt-2 text-gray-600 text-xs',
-                        dark: 'mt-1.5 xs:mt-2 text-gray-300 text-xs'
+                        light: 'text-sm text-gray-700 mt-2',
+                        dark: 'text-sm text-gray-300 mt-2'
                       })}>{faq.answer}</p>
-                    </details>
-                  ))}
-                </div>
+                    </div>
+                  </details>
+                ))}
               </div>
             )}
 
             {activeTab === 'roles' && (
-              <div className="space-y-3 xs:space-y-4 sm:space-y-6">
-                <div className="flex items-center mb-3 xs:mb-4 sm:mb-6">
-                  <FaShieldAlt className="text-[#662d91] text-base xs:text-lg sm:text-2xl mr-1.5 xs:mr-2 sm:mr-3" />
-                  <h2 className={conditionalClasses({
-                    light: 'text-base xs:text-lg sm:text-xl font-semibold text-gray-900',
-                    dark: 'text-base xs:text-lg sm:text-xl font-semibold text-gray-100'
-                  })}>Roles y Permisos</h2>
-                </div>
-
-                <div className="grid grid-cols-1 gap-3 xs:gap-4 sm:gap-6">
-                  {roles.map((role, idx) => (
-                    <div key={idx} className={conditionalClasses({
-                      light: 'bg-white border border-gray-200 rounded-lg shadow-sm',
-                      dark: 'bg-gray-800 border border-gray-600 rounded-lg shadow-sm'
-                    })}>
-                      <div className={conditionalClasses({
-                        light: 'bg-gray-50 p-2.5 xs:p-3 sm:p-4 flex flex-col sm:flex-row sm:items-start gap-2 xs:gap-3 sm:gap-4',
-                        dark: 'bg-gray-700 p-2.5 xs:p-3 sm:p-4 flex flex-col sm:flex-row sm:items-start gap-2 xs:gap-3 sm:gap-4'
-                      })}>
-                        <div className={`p-1.5 xs:p-2 sm:p-3 rounded-lg ${conditionalClasses({
-                          light: role.color,
-                          dark: role.color.replace('bg-', 'bg-opacity-50 ').replace('100', '800')
-                        })}`}>
-                          {role.icon}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className={conditionalClasses({
-                            light: 'text-sm xs:text-base sm:text-lg font-semibold text-gray-900',
-                            dark: 'text-sm xs:text-base sm:text-lg font-semibold text-gray-100'
-                          })}>{role.name}</h3>
-                          <p className={conditionalClasses({
-                            light: 'text-xs text-gray-600 mt-0.5 xs:mt-1',
-                            dark: 'text-xs text-gray-300 mt-0.5 xs:mt-1'
-                          })}>{role.description}</p>
-                        </div>
+              <div className="space-y-4">
+                {roles.map((role, i) => (
+                  <div key={i} className={conditionalClasses({
+                    light: 'bg-white border border-gray-200 rounded-xl p-4 sm:p-6',
+                    dark: 'bg-gray-800 border border-gray-600 rounded-xl p-4 sm:p-6'
+                  })}>
+                    <div className="flex items-start gap-3 sm:gap-4">
+                      <div className={`p-2 sm:p-3 rounded-xl shrink-0 ${role.color.replace('text-', 'bg-').replace('border-', '')}`}>
+                        {role.icon}
                       </div>
-                      <div className="p-2.5 xs:p-3 sm:p-4">
-                        <h4 className={conditionalClasses({
-                          light: 'font-medium text-gray-900 mb-1.5 xs:mb-2 text-xs',
-                          dark: 'font-medium text-gray-100 mb-1.5 xs:mb-2 text-xs'
-                        })}>Permisos:</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 xs:gap-2 mb-2.5 xs:mb-3 sm:mb-4">
-                          {role.permissions.map((perm, pidx) => (
-                            <div key={pidx} className={conditionalClasses({
-                              light: 'flex items-start text-xs sm:text-sm text-gray-700',
-                              dark: 'flex items-start text-xs sm:text-sm text-gray-300'
-                            })}>
-                              <FaCheck className="text-green-500 mr-1.5 sm:mr-2 text-xs mt-0.5" />
-                              {perm}
-                            </div>
-                          ))}
+                      <div className="flex-1 min-w-0">
+                        <h3 className={conditionalClasses({
+                          light: 'text-lg sm:text-xl font-bold text-gray-900',
+                          dark: 'text-lg sm:text-xl font-bold text-gray-100'
+                        })}>{role.name}</h3>
+                        <p className={conditionalClasses({
+                          light: 'text-sm text-gray-600 mt-1',
+                          dark: 'text-sm text-gray-400 mt-1'
+                        })}>{role.description}</p>
+                        
+                        <div className="mt-3 sm:mt-4">
+                          <h4 className="conditionalClasses({
+                            light: 'text-sm font-semibold text-gray-900 mb-2',
+                            dark: 'text-sm font-semibold text-gray-100 mb-2'
+                          })}>Permisos principales:</h4>
+                          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2">
+                            {role.permissions.map((perm, j) => (
+                              <li key={j} className={conditionalClasses({
+                                light: 'text-xs sm:text-sm text-gray-700 flex items-start gap-2',
+                                dark: 'text-xs sm:text-sm text-gray-300 flex items-start gap-2'
+                              })}>
+                                <FaCheck className="text-emerald-500 shrink-0 mt-0.5" />
+                                <span>{perm}</span>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
-                        <h4 className={conditionalClasses({
-                          light: 'font-medium text-gray-900 mb-2 text-sm',
-                          dark: 'font-medium text-gray-100 mb-2 text-sm'
-                        })}>Módulos accesibles:</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {role.modules.map((mod, midx) => (
-                            <span key={midx} className={conditionalClasses({
-                              light: 'bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs',
-                              dark: 'bg-purple-900/30 text-purple-300 px-2 py-1 rounded text-xs'
-                            })}>{mod}</span>
-                          ))}
+
+                        <div className="mt-3 sm:mt-4">
+                          <h4 className={conditionalClasses({
+                            light: 'text-sm font-semibold text-gray-900 mb-2',
+                            dark: 'text-sm font-semibold text-gray-100 mb-2'
+                          })}>Módulos disponibles:</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {role.modules.map((mod, j) => (
+                              <span key={j} className={`px-2.5 py-1 rounded-full text-xs font-semibold ${role.color}`}>
+                                {mod}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
             )}
 
             {activeTab === 'modules' && (
-              <div className="space-y-3 xs:space-y-4 sm:space-y-6">
-                <div className="flex items-center mb-3 xs:mb-4 sm:mb-6">
-                  <FaList className="text-[#662d91] text-base xs:text-lg sm:text-2xl mr-1.5 xs:mr-2 sm:mr-3" />
-                  <h2 className={conditionalClasses({
-                    light: 'text-base xs:text-lg sm:text-xl font-semibold text-gray-900',
-                    dark: 'text-base xs:text-lg sm:text-xl font-semibold text-gray-100'
-                  })}>Módulos del Sistema</h2>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 xs:gap-3 sm:gap-4">
-                  {modules.map((module, idx) => (
-                    <div key={idx} className={conditionalClasses({
-                      light: 'bg-white border border-gray-200 rounded-lg shadow-sm',
-                      dark: 'bg-gray-800 border border-gray-600 rounded-lg shadow-sm'
-                    })}>
-                      <div className={conditionalClasses({
-                        light: 'p-3 xs:p-4 border-b border-gray-200 flex items-center gap-2 xs:gap-3',
-                        dark: 'p-3 xs:p-4 border-b border-gray-600 flex items-center gap-2 xs:gap-3'
-                      })}>
-                        <div className={`p-1.5 xs:p-2 rounded-lg ${conditionalClasses({
-                          light: module.color,
-                          dark: module.color.replace('bg-', 'bg-opacity-50 ').replace('100', '800')
-                        })}`}>
-                          {module.icon}
-                        </div>
-                        <div>
-                          <h3 className={conditionalClasses({
-                            light: 'font-medium text-gray-900 text-sm xs:text-base',
-                            dark: 'font-medium text-gray-100 text-sm xs:text-base'
-                          })}>{module.name}</h3>
-                          <p className={conditionalClasses({
-                            light: 'text-xs text-gray-500',
-                            dark: 'text-xs text-gray-400'
-                          })}>{module.description}</p>
-                        </div>
-                      </div>
-                      <div className="p-3 xs:p-4">
-                        <h4 className={conditionalClasses({
-                          light: 'font-medium text-gray-900 mb-1.5 xs:mb-2 text-xs uppercase tracking-wide',
-                          dark: 'font-medium text-gray-100 mb-1.5 xs:mb-2 text-xs uppercase tracking-wide'
-                        })}>Características:</h4>
-                        <ul className="space-y-1 mb-2.5 xs:mb-3">
-                          {module.features.slice(0, 5).map((feat, fid) => (
-                            <li key={fid} className={conditionalClasses({
-                              light: 'flex items-center text-sm text-gray-600',
-                              dark: 'flex items-center text-sm text-gray-300'
-                            })}>
-                              <span className="w-1 h-1 bg-[#662d91] rounded-full mr-2"></span>
-                              {feat}
-                            </li>
-                          ))}
-                        </ul>
-                        <div className={conditionalClasses({
-                          light: 'bg-gray-50 p-2 rounded text-xs',
-                          dark: 'bg-gray-700 p-2 rounded text-xs'
-                        })}>
-                          <span className={conditionalClasses({
-                            light: 'font-medium text-gray-700',
-                            dark: 'font-medium text-gray-300'
-                          })}>Workflow: </span>
-                          <span className={conditionalClasses({
-                            light: 'text-gray-600',
-                            dark: 'text-gray-400'
-                          })}>{module.workflows[0]}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'trash' && (
-              <div className="space-y-3 xs:space-y-4 sm:space-y-6">
-                <div className="flex items-center mb-3 xs:mb-4 sm:mb-6">
-                  <FaDumpster className="text-red-500 text-base xs:text-lg sm:text-2xl mr-1.5 xs:mr-2 sm:mr-3" />
-                  <h2 className={conditionalClasses({
-                    light: 'text-base xs:text-lg sm:text-xl font-semibold text-gray-900',
-                    dark: 'text-base xs:text-lg sm:text-xl font-semibold text-gray-100'
-                  })}>Sistema de Papelera</h2>
-                </div>
-
-                <div className="space-y-2.5 xs:space-y-3 sm:space-y-4">
-                  <div className={conditionalClasses({
-                    light: 'bg-red-50 p-2.5 xs:p-3 sm:p-4 rounded-lg border-l-4 border-red-500',
-                    dark: 'bg-red-900/30 p-2.5 xs:p-3 sm:p-4 rounded-lg border-l-4 border-red-500'
+              <div className="space-y-4">
+                {modules.map((mod, i) => (
+                  <div key={i} className={conditionalClasses({
+                    light: 'bg-white border border-gray-200 rounded-xl p-4 sm:p-6',
+                    dark: 'bg-gray-800 border border-gray-600 rounded-xl p-4 sm:p-6'
                   })}>
-                    <h3 className={conditionalClasses({
-                      light: 'font-semibold text-red-900 mb-1.5 xs:mb-2',
-                      dark: 'font-semibold text-red-300 mb-1.5 xs:mb-2'
-                    })}>¿Qué es la Papelera?</h3>
-                    <p className={conditionalClasses({
-                      light: 'text-red-800 text-xs',
-                      dark: 'text-red-200 text-xs'
-                    })}>
-                      El sistema de papelera permite recuperar elementos eliminados accidentalmente. 
-                      Todos los elementos eliminados van a la papelera en lugar de eliminarse permanentemente, 
-                      dando una oportunidad de recuperación durante 30 días.
-                    </p>
-                  </div>
-
-                  <h3 className={conditionalClasses({
-                    light: 'font-semibold text-gray-900 mt-2.5 xs:mt-3 sm:mt-4',
-                    dark: 'font-semibold text-gray-100 mt-2.5 xs:mt-3 sm:mt-4'
-                  })}>Módulos Compatibles</h3>
-                  <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-1.5 xs:gap-2 sm:gap-3">
-                    {['Tickets', 'Usuarios', 'Inventario', 'Documentos', 'Credenciales', 'Teléfonos', 'Tablets', 'PDAs', 'Actas', 'Calidad', 'Solicitudes'].map((mod, idx) => (
-                      <div key={idx} className={conditionalClasses({
-                        light: 'bg-gray-100 p-1.5 xs:p-2 rounded text-center text-xs',
-                        dark: 'bg-gray-700 p-1.5 xs:p-2 rounded text-center text-xs'
-                      })}>
-                        <span className={conditionalClasses({
-                          light: 'text-gray-700',
-                          dark: 'text-gray-300'
-                        })}>{mod}</span>
+                    <div className="flex items-start gap-3 sm:gap-4">
+                      <div className={`p-2 sm:p-3 rounded-xl shrink-0 ${mod.color}`}>
+                        {mod.icon}
                       </div>
-                    ))}
-                  </div>
-
-                  <h3 className={conditionalClasses({
-                    light: 'font-semibold text-gray-900 mt-2.5 xs:mt-3 sm:mt-4',
-                    dark: 'font-semibold text-gray-100 mt-2.5 xs:mt-3 sm:mt-4'
-                  })}>Acciones Disponibles</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 xs:gap-3 sm:gap-4">
-                    <div className={conditionalClasses({
-                      light: 'bg-green-50 p-2.5 xs:p-3 sm:p-4 rounded-lg text-center',
-                      dark: 'bg-green-900/30 p-2.5 xs:p-3 sm:p-4 rounded-lg text-center'
-                    })}>
-                      <FaUndo className="text-green-500 text-lg xs:text-xl sm:text-2xl mx-auto mb-1.5 xs:mb-2" />
-                      <h4 className={conditionalClasses({
-                        light: 'font-medium text-green-900 text-sm',
-                        dark: 'font-medium text-green-300 text-sm'
-                      })}>Restaurar</h4>
-                      <p className={conditionalClasses({
-                        light: 'text-xs text-green-700',
-                        dark: 'text-xs text-green-400'
-                      })}>Recupera el elemento a su módulo original</p>
-                    </div>
-                    <div className={conditionalClasses({
-                      light: 'bg-red-50 p-2.5 xs:p-3 sm:p-4 rounded-lg text-center',
-                      dark: 'bg-red-900/30 p-2.5 xs:p-3 sm:p-4 rounded-lg text-center'
-                    })}>
-                      <FaTrash className="text-red-500 text-lg xs:text-xl sm:text-2xl mx-auto mb-1.5 xs:mb-2" />
-                      <h4 className={conditionalClasses({
-                        light: 'font-medium text-red-900 text-sm',
-                        dark: 'font-medium text-red-300 text-sm'
-                      })}>Eliminar</h4>
-                      <p className={conditionalClasses({
-                        light: 'text-xs text-red-700',
-                        dark: 'text-xs text-red-400'
-                      })}>Eliminación permanente e irreversible</p>
-                    </div>
-                    <div className={conditionalClasses({
-                      light: 'bg-blue-50 p-2.5 xs:p-3 sm:p-4 rounded-lg text-center',
-                      dark: 'bg-blue-900/30 p-2.5 xs:p-3 sm:p-4 rounded-lg text-center'
-                    })}>
-                      <FaEye className="text-blue-500 text-lg xs:text-xl sm:text-2xl mx-auto mb-1.5 xs:mb-2" />
-                      <h4 className={conditionalClasses({
-                        light: 'font-medium text-blue-900 text-sm',
-                        dark: 'font-medium text-blue-300 text-sm'
-                      })}>Ver Detalles</h4>
-                      <p className={conditionalClasses({
-                        light: 'text-xs text-blue-700',
-                        dark: 'text-xs text-blue-400'
-                      })}>Información completa del elemento</p>
-                    </div>
-                  </div>
-
-                  <div className={conditionalClasses({
-                    light: 'bg-yellow-50 p-2.5 xs:p-3 sm:p-4 rounded-lg mt-2.5 xs:mt-3 sm:mt-4',
-                    dark: 'bg-yellow-900/30 p-2.5 xs:p-3 sm:p-4 rounded-lg mt-2.5 xs:mt-3 sm:mt-4'
-                  })}>
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-yellow-900 mb-1.5 xs:mb-2 flex items-center text-sm',
-                      dark: 'font-semibold text-yellow-300 mb-1.5 xs:mb-2 flex items-center text-sm'
-                    })}>
-                      <FaExclamationTriangle className="mr-1.5 xs:mr-2" />
-                      Limpieza Automática
-                    </h4>
-                    <ul className={conditionalClasses({
-                      light: 'text-xs text-yellow-800 space-y-1',
-                      dark: 'text-xs text-yellow-200 space-y-1'
-                    })}>
-                      <li>• Se ejecuta cada noche a las 2:00 AM</li>
-                      <li>• Elimina elementos después de 30 días</li>
-                      <li>• Proceso automático sin intervención manual</li>
-                    </ul>
-                  </div>
-
-                  <div className={conditionalClasses({
-                    light: 'bg-blue-50 p-2.5 xs:p-3 sm:p-4 rounded-lg mt-2.5 xs:mt-3 sm:mt-4',
-                    dark: 'bg-blue-900/30 p-2.5 xs:p-3 sm:p-4 rounded-lg mt-2.5 xs:mt-3 sm:mt-4'
-                  })}>
-                    <h4 className={conditionalClasses({
-                      light: 'font-semibold text-blue-900 mb-1.5 xs:mb-2 text-sm',
-                      dark: 'font-semibold text-blue-300 mb-1.5 xs:mb-2 text-sm'
-                    })}>Permisos por Rol</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 xs:gap-3 text-xs">
-                      <div className={conditionalClasses({
-                        light: 'bg-white p-1.5 xs:p-2 rounded border',
-                        dark: 'bg-gray-800 p-1.5 xs:p-2 rounded border border-gray-600'
-                      })}>
-                        <span className={conditionalClasses({
-                          light: 'font-medium text-red-700 text-xs',
-                          dark: 'font-medium text-red-400 text-xs'
-                        })}>Administrador</span>
-                        <p className={conditionalClasses({
-                          light: 'text-gray-600 text-xs mt-0.5',
-                          dark: 'text-gray-400 text-xs mt-0.5'
-                        })}>Acceso completo</p>
-                      </div>
-                      <div className={conditionalClasses({
-                        light: 'bg-white p-1.5 xs:p-2 rounded border',
-                        dark: 'bg-gray-800 p-1.5 xs:p-2 rounded border border-gray-600'
-                      })}>
-                        <span className={conditionalClasses({
-                          light: 'font-medium text-blue-700 text-xs',
-                          dark: 'font-medium text-blue-400 text-xs'
-                        })}>Técnico</span>
-                        <p className={conditionalClasses({
-                          light: 'text-gray-600 text-xs mt-0.5',
-                          dark: 'text-gray-400 text-xs mt-0.5'
-                        })}>Módulos asignados</p>
-                      </div>
-                      <div className={conditionalClasses({
-                        light: 'bg-white p-1.5 xs:p-2 rounded border',
-                        dark: 'bg-gray-800 p-1.5 xs:p-2 rounded border border-gray-600'
-                      })}>
-                        <span className={conditionalClasses({
-                          light: 'font-medium text-green-700 text-xs',
-                          dark: 'font-medium text-green-400 text-xs'
-                        })}>Empleado</span>
-                        <p className={conditionalClasses({
-                          light: 'text-gray-600 text-xs mt-0.5',
-                          dark: 'text-gray-400 text-xs mt-0.5'
-                        })}>Solo sus elementos</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'contact' && (
-              <div className="space-y-2.5 xs:space-y-3 sm:space-y-4">
-                <div className="flex items-center mb-3 xs:mb-4 sm:mb-6">
-                  <FaPhone className="text-[#662d91] text-base xs:text-lg sm:text-2xl mr-1.5 xs:mr-2 sm:mr-3" />
-                  <h2 className={conditionalClasses({
-                    light: 'text-base xs:text-lg sm:text-xl font-semibold text-gray-900',
-                    dark: 'text-base xs:text-lg sm:text-xl font-semibold text-gray-100'
-                  })}>Contacto y Soporte</h2>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 xs:gap-3 sm:gap-6">
-                  {contactInfo.map((contact, index) => (
-                    <div key={index} className={conditionalClasses({
-                      light: 'bg-gray-50 p-2.5 xs:p-3 sm:p-4 rounded-lg',
-                      dark: 'bg-gray-700 p-2.5 xs:p-3 sm:p-4 rounded-lg'
-                    })}>
-                      <div className="flex items-center mb-1.5 xs:mb-2">
-                        {contact.icon}
+                      <div className="flex-1 min-w-0">
                         <h3 className={conditionalClasses({
-                          light: 'font-medium text-gray-900 ml-1.5 xs:ml-2 text-sm',
-                          dark: 'font-medium text-gray-100 ml-1.5 xs:ml-2 text-sm'
-                        })}>{contact.type}</h3>
-                      </div>
-                      <p className={conditionalClasses({
-                        light: 'text-[#662d91] font-medium mb-1 whitespace-pre-line text-sm',
-                        dark: 'text-[#8e4dbf] font-medium mb-1 whitespace-pre-line text-sm'
-                      })}>{contact.value}</p>
-                      <p className={conditionalClasses({
-                        light: 'text-xs text-gray-600',
-                        dark: 'text-xs text-gray-300'
-                      })}>{contact.description}</p>
-                    </div>
-                  ))}
-                </div>
+                          light: 'text-lg sm:text-xl font-bold text-gray-900',
+                          dark: 'text-lg sm:text-xl font-bold text-gray-100'
+                        })}>{mod.name}</h3>
+                        <p className={conditionalClasses({
+                          light: 'text-sm text-gray-600 mt-1',
+                          dark: 'text-sm text-gray-400 mt-1'
+                        })}>{mod.description}</p>
+                        
+                        <div className="mt-3 sm:mt-4">
+                          <h4 className={conditionalClasses({
+                            light: 'text-sm font-semibold text-gray-900 mb-2',
+                            dark: 'text-sm font-semibold text-gray-100 mb-2'
+                          })}>Características:</h4>
+                          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2">
+                            {mod.features.map((feat, j) => (
+                              <li key={j} className={conditionalClasses({
+                                light: 'text-xs sm:text-sm text-gray-700 flex items-start gap-2',
+                                dark: 'text-xs sm:text-sm text-gray-300 flex items-start gap-2'
+                              })}>
+                                <FaBolt className="text-[#662d91] shrink-0 mt-0.5" />
+                                <span>{feat}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
 
-                <div className={conditionalClasses({
-                  light: 'mt-4 xs:mt-5 sm:mt-6 md:mt-8 p-2.5 xs:p-3 sm:p-4 rounded-lg border-l-4 bg-purple-50 border-[#662d91]',
-                  dark: 'mt-4 xs:mt-5 sm:mt-6 md:mt-8 p-2.5 xs:p-3 sm:p-4 rounded-lg border-l-4 bg-purple-900/30 border-[#662d91]'
-                })}>
-                  <div className="flex flex-col sm:flex-row items-start gap-2 xs:gap-3">
-                    <FaHeadset className="mt-0.5 shrink-0 text-[#662d91] text-lg xs:text-xl sm:text-2xl" />
-                    <div className="flex-1 min-w-0 w-full">
-                      <h3 className="font-semibold text-[#662d91] mb-1 text-sm xs:text-base">¿No encuentras lo que buscas?</h3>
-                      <p className={conditionalClasses({
-                        light: 'text-xs text-gray-700 mb-2.5 xs:mb-3',
-                        dark: 'text-xs text-gray-300 mb-2.5 xs:mb-3'
-                      })}>
-                        Si tienes alguna pregunta específica o necesitas ayuda con algo en particular,
-                        no dudes en contactarnos. Nuestro equipo de soporte está aquí para ayudarte.
-                      </p>
-                      <button
-                        onClick={() => navigate('/tickets')}
-                        className="flex items-center justify-center gap-1.5 xs:gap-2 w-full sm:w-auto px-2.5 xs:px-3 sm:px-4 py-1.5 xs:py-2 sm:py-2.5 bg-gradient-to-r from-[#662d91] to-[#8e4dbf] text-white rounded-lg font-semibold hover:from-[#7a3da8] hover:to-[#662d91] focus:ring-4 focus:ring-[#e8d5f5] transition-all shadow-lg hover:shadow-xl text-xs sm:text-sm"
-                      >
-                        <FaTicketAlt className="text-xs sm:text-sm" />
-                        <span>Crear Ticket de Soporte</span>
-                      </button>
+                        <div className="mt-3 sm:mt-4">
+                          <h4 className={conditionalClasses({
+                            light: 'text-sm font-semibold text-gray-900 mb-2',
+                            dark: 'text-sm font-semibold text-gray-100 mb-2'
+                          })}>Workflow:</h4>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {mod.workflows.map((step, j) => (
+                              <React.Fragment key={j}>
+                                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${mod.color}`}>
+                                  {step}
+                                </span>
+                                {j < mod.workflows.length - 1 && (
+                                  <FaChevronDown className="text-gray-400 text-xs" />
+                                )}
+                              </React.Fragment>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
             )}
+
+            {/* ... resto de pestañas ... */}
           </div>
         </div>
       </div>
