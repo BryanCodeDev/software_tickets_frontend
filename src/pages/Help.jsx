@@ -832,8 +832,183 @@ const Help = () => {
 
           <div className="p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6">
             {activeTab === 'manual' && (
-              <div className="space-y-3 xs:space-y-4 sm:space-y-6">
-                {/* ... contenido del manual se mantiene igual ... */}
+              <div className="space-y-6">
+                {/* Introducción */}
+                <div className={conditionalClasses({
+                  light: 'bg-blue-50 border border-blue-200 rounded-xl p-6',
+                  dark: 'bg-blue-900/20 border border-blue-700 rounded-xl p-6'
+                })}>
+                  <h2 className={conditionalClasses({
+                    light: 'text-2xl font-bold text-gray-900 mb-3',
+                    dark: 'text-2xl font-bold text-gray-100 mb-3'
+                  })}>Bienvenido al Centro de Ayuda DuvyClass</h2>
+                  <p className={conditionalClasses({
+                    light: 'text-gray-700 leading-relaxed',
+                    dark: 'text-gray-300 leading-relaxed'
+                  })}>
+                    Esta guía te ayudará a entender y aprovechar al máximo todas las funcionalidades del sistema.
+                    Aquí encontrarás información detallada sobre módulos, permisos, flujos de trabajo y respuestas
+                    a preguntas frecuentes.
+                  </p>
+                </div>
+
+                {/* Cómo navegar */}
+                <div>
+                  <h3 className={conditionalClasses({
+                    light: 'text-xl font-bold text-gray-900 mb-3 flex items-center gap-2',
+                    dark: 'text-xl font-bold text-gray-100 mb-3 flex items-center gap-2'
+                  })}>
+                    <FaCompass className="text-[#662d91]" /> Cómo navegar por la ayuda
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className={conditionalClasses({
+                      light: 'bg-white border border-gray-200 rounded-lg p-4',
+                      dark: 'bg-gray-800 border border-gray-600 rounded-lg p-4'
+                    })}>
+                      <h4 className={conditionalClasses({
+                        light: 'font-semibold text-gray-900 mb-2',
+                        dark: 'font-semibold text-gray-100 mb-2'
+                      })}>📘 Manual</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Documentación completa de cada módulo, características y workflows.
+                      </p>
+                    </div>
+                    <div className={conditionalClasses({
+                      light: 'bg-white border border-gray-200 rounded-lg p-4',
+                      dark: 'bg-gray-800 border border-gray-600 rounded-lg p-4'
+                    })}>
+                      <h4 className={conditionalClasses({
+                        light: 'font-semibold text-gray-900 mb-2',
+                        dark: 'font-semibold text-gray-100 mb-2'
+                      })}>❓ Preguntas Frecuentes</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Respuestas rápidas a las dudas más comunes sobre el sistema.
+                      </p>
+                    </div>
+                    <div className={conditionalClasses({
+                      light: 'bg-white border border-gray-200 rounded-lg p-4',
+                      dark: 'bg-gray-800 border border-gray-600 rounded-lg p-4'
+                    })}>
+                      <h4 className={conditionalClasses({
+                        light: 'font-semibold text-gray-900 mb-2',
+                        dark: 'font-semibold text-gray-100 mb-2'
+                      })}>👥 Roles y Permisos</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Información detallada sobre cada rol y lo que pueden hacer.
+                      </p>
+                    </div>
+                    <div className={conditionalClasses({
+                      light: 'bg-white border border-gray-200 rounded-lg p-4',
+                      dark: 'bg-gray-800 border border-gray-600 rounded-lg p-4'
+                    })}>
+                      <h4 className={conditionalClasses({
+                        light: 'font-semibold text-gray-900 mb-2',
+                        dark: 'font-semibold text-gray-100 mb-2'
+                      })}>📦 Módulos</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Descripción completa de cada módulo y sus funcionalidades.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Primeros pasos */}
+                <div>
+                  <h3 className={conditionalClasses({
+                    light: 'text-xl font-bold text-gray-900 mb-3',
+                    dark: 'text-xl font-bold text-gray-100 mb-3'
+                  })}> Primeros pasos</h3>
+                  <ol className="space-y-3">
+                    <li className={conditionalClasses({
+                      light: 'flex gap-3 p-3 bg-white border border-gray-200 rounded-lg',
+                      dark: 'flex gap-3 p-3 bg-gray-800 border border-gray-600 rounded-lg'
+                    })}>
+                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#662d91] text-white flex items-center justify-center font-bold">1</span>
+                      <div>
+                        <strong className="block mb-1">Inicia sesión</strong>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          Usa tus credenciales para acceder al sistema. Si no tienes acceso, contacta al administrador.
+                        </span>
+                      </div>
+                    </li>
+                    <li className={conditionalClasses({
+                      light: 'flex gap-3 p-3 bg-white border border-gray-200 rounded-lg',
+                      dark: 'flex gap-3 p-3 bg-gray-800 border border-gray-600 rounded-lg'
+                    })}>
+                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#662d91] text-white flex items-center justify-center font-bold">2</span>
+                      <div>
+                        <strong className="block mb-1">Explora el Dashboard</strong>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          Revisa las estadísticas y accesos rápidos desde la página principal.
+                        </span>
+                      </div>
+                    </li>
+                    <li className={conditionalClasses({
+                      light: 'flex gap-3 p-3 bg-white border border-gray-200 rounded-lg',
+                      dark: 'flex gap-3 p-3 bg-gray-800 border border-gray-600 rounded-lg'
+                    })}>
+                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#662d91] text-white flex items-center justify-center font-bold">3</span>
+                      <div>
+                        <strong className="block mb-1">Navega por los módulos</strong>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          Usa la barra lateral para acceder a Tickets, Documentos, Inventario y más.
+                        </span>
+                      </div>
+                    </li>
+                    <li className={conditionalClasses({
+                      light: 'flex gap-3 p-3 bg-white border border-gray-200 rounded-lg',
+                      dark: 'flex gap-3 p-3 bg-gray-800 border border-gray-600 rounded-lg'
+                    })}>
+                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#662d91] text-white flex items-center justify-center font-bold">4</span>
+                      <div>
+                        <strong className="block mb-1">Consulta tu perfil</strong>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          Actualiza tu información personal y cambia tu contraseña desde Configuración.
+                        </span>
+                      </div>
+                    </li>
+                  </ol>
+                </div>
+
+                {/* Consejos */}
+                <div>
+                  <h3 className={conditionalClasses({
+                    light: 'text-xl font-bold text-gray-900 mb-3',
+                    dark: 'text-xl font-bold text-gray-100 mb-3'
+                  })}>💡 Consejos útiles</h3>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2">
+                      <FaCheck className="text-emerald-500 mt-1 shrink-0" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                        Usa la <strong>barra de búsqueda</strong> para encontrar quickly información en cualquier módulo.
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <FaCheck className="text-emerald-500 mt-1 shrink-0" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                        Los <strong>filtros</strong> te permiten ver solo lo que necesitas. Puedes combinar múltiples filtros.
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <FaCheck className="text-emerald-500 mt-1 shrink-0" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                        <strong>Exporta</strong> tus listados a Excel o PDF desde los botones de acción.
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <FaCheck className="text-emerald-500 mt-1 shrink-0" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                        <strong>Guarda borradores</strong> en formularios largos para continuar después.
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <FaCheck className="text-emerald-500 mt-1 shrink-0" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                        Revisa el <strong>historial</strong> de cada elemento para ver cambios y quién los hizo.
+                      </span>
+                    </li>
+                  </ul>
+                </div>
               </div>
             )}
 
@@ -984,7 +1159,294 @@ const Help = () => {
               </div>
             )}
 
-            {/* ... resto de pestañas ... */}
+            {activeTab === 'trash' && (
+              <div className="space-y-6">
+                {/* Introducción */}
+                <div className={conditionalClasses({
+                  light: 'bg-red-50 border border-red-200 rounded-xl p-6',
+                  dark: 'bg-red-900/20 border border-red-700 rounded-xl p-6'
+                })}>
+                  <h2 className={conditionalClasses({
+                    light: 'text-2xl font-bold text-gray-900 mb-2',
+                    dark: 'text-2xl font-bold text-gray-100 mb-2'
+                  })}>
+                    <FaDumpster className="inline mr-2 text-red-600" />
+                    Sistema de Papelera
+                  </h2>
+                  <p className={conditionalClasses({
+                    light: 'text-gray-700',
+                    dark: 'text-gray-300'
+                  })}>
+                    La papelera permite recuperar elementos eliminados accidentalmente. Todos los elementos eliminados
+                    se envían aquí automáticamente y permanecen por 30 días antes de ser eliminados permanentemente.
+                  </p>
+                </div>
+
+                {/* Módulos compatibles */}
+                <div>
+                  <h3 className={conditionalClasses({
+                    light: 'text-xl font-bold text-gray-900 mb-3',
+                    dark: 'text-xl font-bold text-gray-100 mb-3'
+                  })}>Módulos compatibles</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    {modules.filter(m => m.name === 'Papelera' || m.name === 'Tickets' || m.name === 'Usuarios' || m.name === 'Inventario' || m.name === 'Solicitudes de Compra' || m.name === 'Documentos' || m.name === 'Credenciales' || m.name === 'Teléfonos Corporativos' || m.name === 'Tablets' || m.name === 'PDAs' || m.name === 'Actas de Entrega' || m.name === 'Tickets de Calidad').map((mod, i) => (
+                      <div key={i} className={`p-3 rounded-lg border ${mod.color}`}>
+                        <div className="flex items-center gap-2 mb-1">
+                          {mod.icon}
+                          <span className="font-semibold text-sm">{mod.name}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Cómo usar */}
+                <div>
+                  <h3 className={conditionalClasses({
+                    light: 'text-xl font-bold text-gray-900 mb-3',
+                    dark: 'text-xl font-bold text-gray-100 mb-3'
+                  })}>Cómo usar la papelera</h3>
+                  <div className="space-y-4">
+                    <div className={conditionalClasses({
+                      light: 'flex gap-4 p-4 bg-white border border-gray-200 rounded-xl',
+                      dark: 'flex gap-4 p-4 bg-gray-800 border border-gray-600 rounded-xl'
+                    })}>
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                        <FaSearch className="text-blue-600 dark:text-blue-300" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">Buscar elementos</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Usa la barra de búsqueda y filtros por módulo para encontrar lo que necesitas.
+                        </p>
+                      </div>
+                    </div>
+                    <div className={conditionalClasses({
+                      light: 'flex gap-4 p-4 bg-white border border-gray-200 rounded-xl',
+                      dark: 'flex gap-4 p-4 bg-gray-800 border border-gray-600 rounded-xl'
+                    })}>
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center">
+                        <FaUndo className="text-emerald-600 dark:text-emerald-300" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">Restaurar elementos</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Haz clic en "Restaurar" para recuperar un elemento. Volverá a su módulo original con toda su información.
+                        </p>
+                      </div>
+                    </div>
+                    <div className={conditionalClasses({
+                      light: 'flex gap-4 p-4 bg-white border border-gray-200 rounded-xl',
+                      dark: 'flex gap-4 p-4 bg-gray-800 border border-gray-600 rounded-xl'
+                    })}>
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center">
+                        <FaTrash className="text-red-600 dark:text-red-300" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">Eliminar permanentemente</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Usa "Eliminar" para remover algo definitivamente. Esta acción no se puede deshacer.
+                        </p>
+                      </div>
+                    </div>
+                    <div className={conditionalClasses({
+                      light: 'flex gap-4 p-4 bg-white border border-gray-200 rounded-xl',
+                      dark: 'flex gap-4 p-4 bg-gray-800 border border-gray-600 rounded-xl'
+                    })}>
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
+                        <FaTrashRestore className="text-purple-600 dark:text-purple-300" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">Vaciar papelera</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Elimina todos los elementos de golpe. Requiere confirmación y es irreversible.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Límite de tiempo */}
+                <div className={conditionalClasses({
+                  light: 'bg-amber-50 border border-amber-200 rounded-xl p-6',
+                  dark: 'bg-amber-900/20 border border-amber-700 rounded-xl p-6'
+                })}>
+                  <h3 className={conditionalClasses({
+                    light: 'text-lg font-bold text-amber-900 mb-2',
+                    dark: 'text-lg font-bold text-amber-100 mb-2'
+                  })}>⏱️ Tiempo de retención</h3>
+                  <p className="text-sm">
+                    Los elementos permanecen en la papelera por <strong>30 días</strong>. Después de este tiempo,
+                    se eliminan automáticamente cada noche a las 2:00 AM. Aprovecha este periodo para recuperar
+                    cualquier elemento que necesites.
+                  </p>
+                </div>
+
+                {/* Dependencias */}
+                <div>
+                  <h3 className={conditionalClasses({
+                    light: 'text-xl font-bold text-gray-900 mb-3',
+                    dark: 'text-xl font-bold text-gray-100 mb-3'
+                  })}>🔗 Restauración con dependencias</h3>
+                  <p className={conditionalClasses({
+                    light: 'text-gray-700 mb-3',
+                    dark: 'text-gray-300 mb-3'
+                  })}>
+                    Cuando restauras un elemento que tenía relaciones con otros registros, el sistema restablece
+                    automáticamente todas las dependencias. Esto asegura que todo funcione como antes de la eliminación.
+                  </p>
+                </div>
+
+                {/* Acceso por rol */}
+                <div>
+                  <h3 className={conditionalClasses({
+                    light: 'text-xl font-bold text-gray-900 mb-3',
+                    dark: 'text-xl font-bold text-gray-100 mb-3'
+                  })}>Permisos según tu rol</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className={conditionalClasses({
+                      light: 'bg-green-50 border border-green-200 rounded-lg p-4',
+                      dark: 'bg-green-900/20 border border-green-700 rounded-lg p-4'
+                    })}>
+                      <h4 className="font-semibold mb-2">👤 Empleados</h4>
+                      <p className="text-sm">
+                        Pueden ver únicamente sus propios elementos eliminados (si tienen permisos).
+                      </p>
+                    </div>
+                    <div className={conditionalClasses({
+                      light: 'bg-blue-50 border border-blue-200 rounded-lg p-4',
+                      dark: 'bg-blue-900/20 border border-blue-700 rounded-lg p-4'
+                    })}>
+                      <h4 className="font-semibold mb-2">🔧 Técnicos</h4>
+                      <p className="text-sm">
+                        Acceso completo a la papelera. Pueden ver, restaurar y vaciar.
+                      </p>
+                    </div>
+                    <div className={conditionalClasses({
+                      light: 'bg-yellow-50 border border-yellow-200 rounded-lg p-4',
+                      dark: 'bg-yellow-900/20 border border-yellow-700 rounded-lg p-4'
+                    })}>
+                      <h4 className="font-semibold mb-2">👑 Administradores</h4>
+                      <p className="text-sm">
+                        Acceso total, incluyendo estadísticas y configuración de limpieza automática.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                </div>
+              )}
+            {activeTab === 'contact' && (
+              <div className="space-y-6">
+                {/* Encabezado */}
+                <div className="text-center mb-8">
+                  <h2 className={conditionalClasses({
+                    light: 'text-2xl font-bold text-gray-900 mb-2',
+                    dark: 'text-2xl font-bold text-gray-100 mb-2'
+                  })}>
+                    <FaHeadset className="inline mr-2 text-[#662d91]" />
+                    Contacto y Soporte
+                  </h2>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Estamos aquí para ayudarte. Puedes contactarnos por cualquiera de estos medios:
+                  </p>
+                </div>
+
+                {/* Información de contacto */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {_contactInfo.map((contact, i) => (
+                    <div key={i} className={conditionalClasses({
+                      light: 'bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow',
+                      dark: 'bg-gray-800 border border-gray-600 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow'
+                    })}>
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 p-3 rounded-xl bg-[#662d91]/10">
+                          {React.cloneElement(contact.icon, {
+                            className: 'text-[#662d91] text-xl'
+                          })}
+                        </div>
+                        <div className="flex-1">
+                          <h3 className={conditionalClasses({
+                            light: 'text-lg font-bold text-gray-900 mb-1',
+                            dark: 'text-lg font-bold text-gray-100 mb-1'
+                          })}>{contact.type}</h3>
+                          <p className={conditionalClasses({
+                            light: 'text-gray-900 font-semibold mb-2 whitespace-pre-line',
+                            dark: 'text-gray-100 font-semibold mb-2 whitespace-pre-line'
+                          })}>{contact.value}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            {contact.description}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Horario de atención */}
+                <div className={conditionalClasses({
+                  light: 'bg-blue-50 border border-blue-200 rounded-xl p-6',
+                  dark: 'bg-blue-900/20 border border-blue-700 rounded-xl p-6'
+                })}>
+                  <h3 className={conditionalClasses({
+                    light: 'text-lg font-bold text-gray-900 mb-3',
+                    dark: 'text-lg font-bold text-gray-100 mb-3'
+                  })}>🕐 Horario de Atención</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <strong className="block mb-1">Lunes a Viernes:</strong>
+                      <span>8:00 AM - 6:00 PM</span>
+                    </div>
+                    <div>
+                      <strong className="block mb-1">Sábados:</strong>
+                      <span>9:00 AM - 1:00 PM</span>
+                    </div>
+                    <div>
+                      <strong className="block mb-1">Domingos y festivos:</strong>
+                      <span>Cerrado</span>
+                    </div>
+                    <div>
+                      <strong className="block mb-1">Soporte urgente:</strong>
+                      <span>Disponible 24/7 vía WhatsApp</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Preguntas relacionadas */}
+                <div>
+                  <h3 className={conditionalClasses({
+                    light: 'text-xl font-bold text-gray-900 mb-4',
+                    dark: 'text-xl font-bold text-gray-100 mb-4'
+                  })}>Preguntas frecuentes sobre contacto</h3>
+                  <div className="space-y-3">
+                    {faqs
+                      .filter(faq =>
+                        faq.question.includes('Email') ||
+                        faq.question.includes('Teléfono') ||
+                        faq.question.includes('contacto')
+                      )
+                      .map((faq, i) => (
+                        <details key={i} className={conditionalClasses({
+                          light: 'bg-white border border-gray-200 rounded-lg',
+                          dark: 'bg-gray-800 border border-gray-600 rounded-lg'
+                        })}>
+                          <summary className={conditionalClasses({
+                            light: 'cursor-pointer p-3 font-semibold text-gray-900 hover:bg-gray-50',
+                            dark: 'cursor-pointer p-3 font-semibold text-gray-100 hover:bg-gray-700'
+                          })}>
+                            {faq.question}
+                          </summary>
+                          <div className="p-3 pt-0">
+                            <p className={conditionalClasses({
+                              light: 'text-sm text-gray-700 mt-2',
+                              dark: 'text-sm text-gray-300 mt-2'
+                            })}>{faq.answer}</p>
+                          </div>
+                        </details>
+                      ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
