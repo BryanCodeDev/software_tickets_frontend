@@ -112,29 +112,28 @@ const Profile = () => {
     }
   }, [errors]);
 
-  // Cargar datos iniciales
-  useEffect(() => {
-    fetchUniqueITs();
-    fetchAvailablePhones();
-  }, [fetchUniqueITs, fetchAvailablePhones]);
+   // Cargar datos iniciales
+   useEffect(() => {
+     fetchUniqueITs();
+     fetchAvailablePhones();
+   }, [fetchUniqueITs, fetchAvailablePhones]);
 
-  const selectedPhone = useMemo(() =>
-    availablePhones.find(p => p.numero_celular === formData.corporatePhone) || null,
-    [availablePhones, formData.corporatePhone]
-  );
+   // Inicializar formData con los datos del usuario actual
+   useEffect(() => {
+     if (user) {
+       setFormData({
+         name: user.name || user.username || '',
+         email: user.email || '',
+         username: user.username || '',
+         it: user.it || '',
+         hasCorporatePhone: user.hasCorporatePhone || false,
+         corporatePhone: user.corporatePhone || ''
+       });
+     }
+   }, [user]);
 
-  const phonesFiltered = useMemo(() => {
-    if (!searchPhone) return availablePhones;
-    const q = searchPhone.toLowerCase();
-    return availablePhones.filter(p =>
-      p.numero_celular?.toLowerCase().includes(q) ||
-      p.nombre?.toLowerCase().includes(q) ||
-      p.category?.toLowerCase().includes(q)
-    );
-  }, [availablePhones, searchPhone]);
-
-  useEffect(() => {
-    const handleUserUpdated = (data) => {
+   useEffect(() => {
+     const handleUserUpdated = (data) => {
       const { userId, user: updatedUser } = data;
       if (user && userId === user.id) {
         setFormData({
