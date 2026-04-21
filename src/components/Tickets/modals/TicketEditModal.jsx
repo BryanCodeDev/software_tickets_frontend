@@ -17,7 +17,7 @@ const TicketEditModal = ({
   isCalidad = false
 }) => {
   const { conditionalClasses } = useThemeClasses();
-  const canShowAssignment = ['Administrador', 'Jefe', 'Compras', 'Coordinadora Administrativa', 'Calidad', 'Empleado'].includes(userRole);
+   const canShowAssignment = ['Administrador', 'Jefe'].includes(userRole);
 
   // Validación
   const [errors, setErrors] = useState({});
@@ -189,7 +189,7 @@ const TicketEditModal = ({
                )}
              </div>
 
-            {(userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Calidad' || userRole === 'Coordinadora Administrativa' || userRole === 'Jefe' || userRole === 'Compras') && (
+             {(userRole === 'Administrador' || userRole === 'Técnico' || userRole === 'Jefe') && (
               <div>
                 <label className={conditionalClasses({
                   light: 'block text-sm font-semibold text-gray-700 mb-2',

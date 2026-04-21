@@ -76,6 +76,7 @@ const PurchaseRequests = () => {
 
   const userRole = user?.role?.name;
   const isPurchasesRole = userRole === 'Compras' || userRole === 'Administrador' || userRole === 'Coordinadora Administrativa' || userRole === 'Jefe';
+  const canCreate = ['Administrador', 'Empleado', 'Jefe', 'Coordinadora Administrativa', 'Compras'].includes(userRole);
 
   const fetchPurchaseRequests = useCallback(async () => {
     try {

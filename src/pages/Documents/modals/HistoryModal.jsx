@@ -64,15 +64,15 @@ const HistoryModal = ({
                         <FaDownload className="mr-1" />
                         Descargar
                       </button>
-                      {(user.role?.name === 'Administrador' || user.role?.name === 'Técnico') && (
-                        <button
-                          onClick={() => handleDeleteVersion(version.id)}
-                          className="inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-all"
-                        >
-                          <FaTrash className="mr-1" />
-                          Eliminar
-                        </button>
-                      )}
+                       {user.role?.name === 'Administrador' && (
+                         <button
+                           onClick={() => handleDeleteVersion(version.id)}
+                           className="inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-all"
+                         >
+                           <FaTrash className="mr-1" />
+                           Eliminar
+                         </button>
+                       )}
                     </div>
                   </div>
                   {version.changeDescription && (

@@ -344,33 +344,28 @@ const Tickets = () => {
    // Filtrado y ordenamiento se realizan en el backend mediante parámetros
    // Los estados se envían a la API y se devuelven tickets ya filtrados
 
-   // Funciones de permisos - Solo roles específicos tienen acceso completo
-   const privilegedRolesForCRUD = useMemo(() => ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa', 'Jefe', 'Compras'], []);
-  const canCreate = checkPermission('tickets', 'create') ||
-                   privilegedRolesForCRUD.includes(userRole);
+    // Funciones de permisos
+    const canCreate = checkPermission('tickets', 'create');
 
-  const canEditTicket = useCallback((ticket) => {
-    if (privilegedRolesForCRUD.includes(userRole)) return true;
-    if (checkPermission('tickets', 'edit')) return true;
-    if (ticket.userId === user?.id && checkPermission('tickets', 'edit_own')) return true;
-    return false;
-  }, [userRole, user?.id, checkPermission, privilegedRolesForCRUD]);
+    const canEditTicket = useCallback((ticket) => {
+      if (user?.role?.name === 'Administrador') return true;
+      if (checkPermission('tickets', 'edit')) return true;
+      if (ticket.userId === user?.id && checkPermission('tickets', 'edit_own')) return true;
+      return false;
+    }, [user, checkPermission]);
 
-  const canDeleteTicket = useCallback((ticket) => {
-    if (privilegedRolesForCRUD.includes(userRole)) return true;
-    if (checkPermission('tickets', 'delete')) return true;
-    if (ticket.userId === user?.id && checkPermission('tickets', 'delete_own')) return true;
-    return false;
-  }, [userRole, user?.id, checkPermission, privilegedRolesForCRUD]);
+    const canDeleteTicket = useCallback((ticket) => {
+      if (user?.role?.name === 'Administrador') return true;
+      if (checkPermission('tickets', 'delete')) return true;
+      if (ticket.userId === user?.id && checkPermission('tickets', 'delete_own')) return true;
+      return false;
+    }, [user, checkPermission]);
 
-  const canSendMessage = useCallback((ticket) => {
-    // Todos los roles pueden enviar mensajes en tickets
-    const messagingRoles = ['Administrador', 'Técnico', 'Calidad', 'Coordinadora Administrativa', 'Empleado', 'Jefe', 'Compras'];
-    if (messagingRoles.includes(userRole)) return true;
-    if (checkPermission('tickets', 'comment')) return true;
-    if (ticket.userId === user?.id && checkPermission('tickets', 'comment_own')) return true;
-    return false;
-  }, [userRole, user?.id, checkPermission]);
+    const canSendMessage = useCallback((ticket) => {
+      if (checkPermission('tickets', 'comment')) return true;
+      if (ticket.userId === user?.id && checkPermission('tickets', 'comment_own')) return true;
+      return false;
+    }, [user, checkPermission]);
 
    // Datos para gráficos
   const adminChartData = useMemo(() => {

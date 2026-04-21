@@ -175,8 +175,8 @@ const TicketCalidad = () => {
     }
   }, []);
 
-  // Roles con acceso total a todos los tickets
-  const ROLES_CON_ACCESO_TOTAL = useMemo(() => ['Administrador', 'Técnico', 'Calidad'], []);
+  // Roles con acceso total a todos los tickets de calidad
+  const ROLES_CON_ACCESO_TOTAL = useMemo(() => ['Administrador', 'Calidad', 'Jefe'], []);
   
   // Funciones helper para verificar permisos por ticket específico
   const canEditTicket = useCallback((ticket) => {
@@ -590,8 +590,8 @@ const TicketCalidad = () => {
     }
   };
 
-  // Todos los roles pueden crear tickets de calidad
-  const canCreate = true;
+   // Solo Administrador y Calidad pueden crear tickets de calidad
+   const canCreate = userRole === 'Administrador' || userRole === 'Calidad';
 
 
   if (loading) {

@@ -92,12 +92,6 @@ const calidadSubItemsFull = [
   { path: '/ticket_calidad',           icon: <FaClipboardList className="w-4.25 h-4.25" />, label: 'Ticket Calidad',    description: 'Reportes de calidad' },
 ];
 
-const calidadSubItemsBasic = [
-  { path: '/documents',                icon: <IconDoc />,   label: 'Documentos',            description: 'Archivos oficiales' },
-  { path: '/document-change-requests', icon: <IconDocAlt />, label: 'Solicitudes de Cambio', description: 'Workflow documental' },
-  { path: '/ticket_calidad',           icon: <FaClipboardList className="w-4.25 h-4.25" />, label: 'Ticket Calidad', description: 'Reportes de calidad' },
-];
-
   const buildMenuItems = (role) => {
     const base = [{ path: '/dashboard', icon: <IconHome />, label: 'Panel Principal', description: 'Vista general del sistema' }];
 
@@ -105,20 +99,20 @@ const calidadSubItemsBasic = [
     const purchaseItem  = { path: '/purchase-requests', icon: <IconCart />,   label: 'Solicitudes de Compra',  description: 'Periféricos y equipos' };
     const inventario    = { type: 'submenu', label: 'Inventario', icon: <IconBox />, description: 'Control de activos tecnológicos', subItems: inventarioSubItems };
     const calidadFull   = { type: 'submenu', label: 'Calidad',    icon: <FaShieldAlt className="w-4.5 h-4.5" />, description: 'ISO 9001 y gestión documental', subItems: calidadSubItemsFull };
-    const calidadBasic  = { type: 'submenu', label: 'Calidad',    icon: <FaShieldAlt className="w-4.5 h-4.5" />, description: 'ISO 9001 y gestión documental', subItems: calidadSubItemsBasic };
     const credItem      = { path: '/credentials', icon: <IconLock />,   label: 'Credenciales',   description: 'Gestión de accesos seguros' };
+    const docItem       = { path: '/documents', icon: <IconDoc />,    label: 'Documentos',     description: 'Archivos oficiales' };
     const usersItem     = { path: '/users',        icon: <IconUsers />,  label: 'Usuarios',       description: 'Administración de usuarios' };
     const rolesItem     = { path: '/roles',         icon: <IconShield />, label: 'Roles',          description: 'Permisos y control de acceso' };
     const trashItem     = { path: '/trash',         icon: <FaDumpster className="w-4.5 h-4.5" />, label: 'Papelera', description: 'Elementos eliminados' };
     const registerItem  = { path: '/register',      icon: <FaUserCog className="w-4.5 h-4.5" />, label: 'Crear Usuario',  description: 'Registrar nuevo usuario' };
 
     if (role === 'Administrador') return [...base, ticketItem, purchaseItem, inventario, calidadFull, credItem, usersItem, rolesItem, trashItem, registerItem];
-    if (role === 'Técnico')       return [...base, ticketItem, purchaseItem, inventario, calidadBasic, credItem, trashItem, registerItem];
-    if (role === 'Empleado')      return [...base, ticketItem, purchaseItem, inventario, calidadBasic];
-    if (role === 'Jefe')          return [...base, ticketItem, purchaseItem, calidadBasic];
-    if (role === 'Compras')       return [...base, ticketItem, purchaseItem, calidadBasic];
-    if (role === 'Calidad')       return [...base, ticketItem, calidadFull];
-    if (role === 'Coordinadora Administrativa') return [...base, ticketItem, purchaseItem, inventario, calidadFull, credItem, usersItem, rolesItem, trashItem, registerItem];
+    if (role === 'Técnico')       return [...base, ticketItem, inventario, credItem, trashItem, registerItem];
+    if (role === 'Empleado')      return [...base, ticketItem, purchaseItem, inventario, docItem];
+    if (role === 'Jefe')          return [...base, ticketItem, purchaseItem, calidadFull];
+    if (role === 'Compras')       return [...base, purchaseItem];
+    if (role === 'Calidad')       return [...base, calidadFull];
+    if (role === 'Coordinadora Administrativa') return [...base, purchaseItem, inventario];
     return base;
   };
 
@@ -330,9 +324,9 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                     {isSubActive && (
                       <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${conditionalClasses({ light: 'bg-purple-600', dark: 'bg-purple-400' })}`} />
                     )}
-                </Link>
-              );
-            })}
+                  </Link>
+                );
+              })}
           </div>
         )}
       </div>
@@ -432,10 +426,10 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                      {user.email}
                    </p>
                  )}
-                  <span className={`inline-flex items-center mt-1.5 px-2 py-0.5 rounded-md text-xs font-semibold text-white bg-gradient-to-r ${badge.gradient}`}>
-                  {user?.role?.name || 'Empleado'}
-                </span>
-              </div>
+                   <span className={`inline-flex items-center mt-1.5 px-2 py-0.5 rounded-md text-xs font-semibold text-white bg-gradient-to-r ${badge.gradient}`}>
+                   {user?.role?.name || 'Empleado'}
+                 </span>
+               </div>
             </div>
           )}
         </div>
@@ -499,11 +493,11 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleSidebarCollapse }) 
                 </div>
               </div>
                <p className={`text-xs text-center ${conditionalClasses({ light: 'text-gray-500', dark: 'text-gray-400' })}`}>
-                © 2026 Desarrollado por{' '}
-                <span className={`font-semibold ${conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-500' })}`}>
-                  Bryan Muñoz
-                </span>
-              </p>
+                 © 2026 Desarrollado por{' '}
+                 <span className={`font-semibold ${conditionalClasses({ light: 'text-[#662d91]', dark: 'text-purple-500' })}`}>
+                   Bryan Muñoz
+                 </span>
+               </p>
             </div>
           )}
         </div>

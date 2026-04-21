@@ -8,12 +8,12 @@ export const useDocumentPermissions = () => {
   // Caché para permisos de documentos/carpetas
   const permissionsCache = useRef(new Map());
   
-  // Función para verificar si el usuario tiene rol con permisos totales
-  const hasFullAccess = useCallback(() => {
-    if (!user?.role?.name) return false;
-    const fullAccessRoles = ['Administrador', 'Técnico', 'Calidad'];
-    return fullAccessRoles.includes(user.role.name);
-  }, [user]);
+   // Función para verificar si el usuario tiene rol con permisos totales
+   const hasFullAccess = useCallback(() => {
+     if (!user?.role?.name) return false;
+     const fullAccessRoles = ['Administrador', 'Calidad'];
+     return fullAccessRoles.includes(user.role.name);
+   }, [user]);
   
   // Función para verificar si el usuario es creador
   const isOwner = useCallback((item) => {

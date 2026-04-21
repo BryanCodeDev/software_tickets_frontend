@@ -297,7 +297,8 @@ const Help = () => {
         'Ver reportes de rendimiento',
         'Gestionar workflow de documentos',
         'Aprobar tickets de calidad',
-        'Ver métricas de equipo'
+        'Ver métricas de equipo',
+        'Acceso a Dashboard de Calidad'
       ],
       modules: ['Tickets', 'Solicitudes de Cambio', 'Solicitudes de Compra', 'Documentos', 'Estadísticas', 'Calidad']
     },
@@ -311,17 +312,15 @@ const Help = () => {
         'Asignarse tickets',
         'Actualizar estado de tickets',
         'Añadir comentarios y adjuntos',
-        'Gestionar inventario',
+        'Gestionar inventario (computadores, celulares, tablets, PDAs, actas de entrega)',
         'Ver credenciales del sistema',
         'Restaurar elementos de la papelera (propios)',
-        'Crear solicitudes de cambio',
-        'Gestionar teléfonos corporativos',
-        'Gestionar tablets y PDAs',
+        'Ver y restaurar elementos de la papelera (todos los elementos)',
         'Crear nuevos usuarios (solo rol Empleado, POST /auth/create-user) - NO inicia sesión automáticamente',
         'Asignar teléfono corporativo a usuarios',
         'Editar IT (identificación) de usuarios'
       ],
-      modules: ['Tickets', 'Inventario', 'Credenciales', 'Teléfonos', 'Tablets', 'PDAs', 'Papelera']
+      modules: ['Tickets', 'Inventario', 'Credenciales', 'Teléfonos', 'Tablets', 'PDAs', 'Actas de Entrega', 'Papelera']
     },
     {
       name: 'Empleado',
@@ -337,7 +336,6 @@ const Help = () => {
         'Ver perfil de usuario',
         'Crear solicitudes de compra',
         'Acceso de solo lectura a módulos autorizados',
-        'Ver tickets de calidad asignados',
         'Consultar inventario asignado'
       ],
       modules: ['Tickets', 'Documentos', 'Solicitudes de Compra', 'Perfil', 'Inventario']
@@ -357,9 +355,10 @@ const Help = () => {
         'Crear no conformidades',
         'Ver reportes de calidad',
         'Gestionar plantillas documentales',
-        'Auditoría de procesos'
+        'Auditoría de procesos',
+        'Acceso a Dashboard de Calidad'
       ],
-      modules: ['Tickets de Calidad', 'Documentos', 'Solicitudes de Cambio', 'Reportes de Calidad', 'Auditoría']
+      modules: ['Tickets de Calidad', 'Documentos', 'Solicitudes de Cambio', 'Reportes de Calidad', 'Auditoría', 'Dashboard Calidad']
     },
     {
       name: 'Coordinadora Administrativa',
@@ -370,7 +369,6 @@ const Help = () => {
         'Gestionar solicitudes de compra',
         'Crear y firmar actas de entrega',
         'Ver inventario administrativo',
-        'Gestionar credenciales administrativas',
         'Ver reportes financieros',
         'Aprobar solicitudes de compra',
         'Gestionar telefónicas administrativas',
@@ -378,7 +376,7 @@ const Help = () => {
         'Crear órdenes de reposición',
         'Gestionar presupuestos'
       ],
-      modules: ['Solicitudes de Compra', 'Actas de Entrega', 'Inventario', 'Credenciales', 'Teléfonos', 'Reportes']
+      modules: ['Solicitudes de Compra', 'Actas de Entrega', 'Inventario', 'Teléfonos', 'Reportes']
     },
     {
       name: 'Compras',
@@ -397,7 +395,7 @@ const Help = () => {
         'Ver reportes de compras',
         'Coordinar entregas'
       ],
-      modules: ['Solicitudes de Compra', 'Proveedores', 'Órdenes de Compra', 'Inventario', 'Reportes']
+      modules: ['Solicitudes de Compra', 'Proveedores', 'Órdenes de Compra', 'Reportes']
     }
   ];
 
