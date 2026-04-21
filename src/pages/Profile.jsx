@@ -116,10 +116,25 @@ const Profile = () => {
    useEffect(() => {
      fetchUniqueITs();
      fetchAvailablePhones();
-   }, [fetchUniqueITs, fetchAvailablePhones]);
+  }, [fetchUniqueITs, fetchAvailablePhones]);
 
-   // Inicializar formData con los datos del usuario actual
-   useEffect(() => {
+  const selectedPhone = useMemo(() =>
+    availablePhones.find(p => p.numero_celular === formData.corporatePhone) || null,
+    [availablePhones, formData.corporatePhone]
+  );
+
+  const phonesFiltered = useMemo(() => {
+    if (!searchPhone) return availablePhones;
+    const q = searchPhone.toLowerCase();
+    return availablePhones.filter(p =>
+      p.numero_celular?.toLowerCase().includes(q) ||
+      p.nombre?.toLowerCase().includes(q) ||
+      p.category?.toLowerCase().includes(q)
+    );
+  }, [availablePhones, searchPhone]);
+
+  // Inicializar formData con los datos del usuario actual
+  useEffect(() => {
      if (user) {
        setFormData({
          name: user.name || user.username || '',
